@@ -2,6 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="140dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="horizontal"
     android:layout_marginTop="14dp"
     android:layout_marginBottom="14dp"
@@ -11,7 +12,60 @@
     <com.google.android.material.imageview.ShapeableImageView
         android:layout_width="140dp"
         android:layout_height="140dp"
-        android:src="@drawable/default_profile">
+        android:layout_marginEnd="25dp"
+        android:scaleType="centerCrop"
+        app:shapeAppearanceOverlay="@style/RoundedSquare"
+        android:src="@drawable/moo_deng">
     </com.google.android.material.imageview.ShapeableImageView>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:paddingTop="10dp">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/subtitle_text"
+            android:fontFamily="@font/roboto_bold"
+            android:text="User name"
+            android:textSize="24sp"
+            android:textStyle="bold">
+        </TextView>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/mid_purple"
+            android:fontFamily="@font/roboto_medium"
+            android:text="780 123 4567"
+            android:textSize="16sp">
+        </TextView>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/mid_purple"
+            android:fontFamily="@font/roboto_medium"
+            android:text="person@gmail.com"
+            android:textSize="16sp">
+        </TextView>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/mid_purple"
+            android:fontFamily="@font/roboto_medium"
+            android:text="Edmonton AB"
+            android:textSize="16sp"
+            android:textStyle="bold">
+        </TextView>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/mid_purple"
+            android:fontFamily="@font/roboto_medium"
+            android:text="Status: Invited"
+            android:textSize="16sp">
+        </TextView>
+    </LinearLayout>
 
 </LinearLayout>
