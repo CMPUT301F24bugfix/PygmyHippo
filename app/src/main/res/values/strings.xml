@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">PygmyHippo</string>
+    <string name="title_activity_main">MainActivity</string>
+    <string name="title_myevents">My Events</string>
+    <string name="title_qr">QR Scanner</string>
+    <string name="title_profile">Profile</string>
 </resources>
