@@ -1,6 +1,5 @@
 plugins {
     alias(libs.plugins.android.application)
-    id("com.android.application") // for datatbase
     id("com.google.gms.google-services") // for database
 }
 
