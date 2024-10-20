@@ -14,15 +14,30 @@
         android:layout_width="125dp"
         android:layout_height="wrap_content"
         android:layout_marginBottom="28dp"
-        android:background="@color/dark_purple"
+        android:background="@drawable/rounded_corners"
         android:backgroundTint="@color/dark_purple"
+        android:fontFamily="@font/roboto_mono_medium"
         android:padding="2dp"
         android:popupBackground="@color/dark_purple"
-        android:textColor="@color/light_purple"
         android:popupTheme="@color/light_purple"
+        android:textColor="@color/light_purple"
+        android:textSize="15dp"
         app:layout_constraintBottom_toTopOf="@+id/profile_image"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/E_P_header" />
+
+
+    <ImageView
+        android:layout_width="27dp"
+        android:layout_height="21dp"
+        app:layout_constraintBottom_toBottomOf="@+id/E_P_role"
+        app:layout_constraintEnd_toEndOf="@+id/E_P_role"
+        app:layout_constraintHorizontal_bias="0.98"
+        app:layout_constraintStart_toStartOf="@+id/E_P_role"
+        app:layout_constraintTop_toTopOf="@+id/E_P_role"
+        app:layout_constraintVertical_bias="0.64"
+        app:srcCompat="@drawable/down_arrow"
+        tools:srcCompat="@drawable/down_arrow" />
 
     <TextView
         android:id="@+id/E_P_header"
@@ -71,6 +86,21 @@
         app:layout_constraintHorizontal_bias="0.503"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/E_P_name" />
+
+    <ImageView
+        android:layout_width="54dp"
+        android:layout_height="54dp"
+        android:clickable="true"
+        android:focusable="true"
+        android:pointerIcon="wait"
+        app:layout_constraintBottom_toBottomOf="@+id/profile_image"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.579"
+        app:layout_constraintStart_toStartOf="@+id/profile_image"
+        app:layout_constraintTop_toTopOf="@+id/profile_image"
+        app:layout_constraintVertical_bias="0.942"
+        app:srcCompat="@drawable/edit"
+        tools:srcCompat="@drawable/edit" />
 
     <RadioButton
         android:id="@+id/E_P_allowGps"
