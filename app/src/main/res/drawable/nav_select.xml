@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+Code to change color of active icon from Jared Burrows at The Stack Overflow on November 29, 2019
+https://stackoverflow.com/questions/51579977/how-to-change-the-icon-color-selected-on-bottom-navigation-bar-in-android-studio
+-->
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_checked="true" android:color="@color/light_purple" />
+    <item android:color="@color/mid_purple"  />
+</selector>
+
+
+

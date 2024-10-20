@@ -1,4 +1,4 @@
-package com.example.pygmyhippo.ui.dashboard;
+package com.example.pygmyhippo.ui.myEvents;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -10,22 +10,22 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.example.pygmyhippo.databinding.FragmentDashboardBinding;
+import com.example.pygmyhippo.databinding.FragmentMyeventsBinding;
 
-public class DashboardFragment extends Fragment {
+public class MyEventsFragment extends Fragment {
 
-    private FragmentDashboardBinding binding;
+    private FragmentMyeventsBinding binding;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        DashboardViewModel dashboardViewModel =
-                new ViewModelProvider(this).get(DashboardViewModel.class);
+        MyEventsViewModel myEventsViewModel =
+                new ViewModelProvider(this).get(MyEventsViewModel.class);
 
-        binding = FragmentDashboardBinding.inflate(inflater, container, false);
+        binding = FragmentMyeventsBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
-        final TextView textView = binding.textDashboard;
-        dashboardViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
+        final TextView textView = binding.textHome;
+        myEventsViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
         return root;
     }
 

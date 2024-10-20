@@ -1,4 +1,4 @@
-package com.example.pygmyhippo.ui.home;
+package com.example.pygmyhippo.ui.QR;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -10,22 +10,22 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.example.pygmyhippo.databinding.FragmentHomeBinding;
+import com.example.pygmyhippo.databinding.FragmentQrBinding;
 
-public class HomeFragment extends Fragment {
+public class QRFragment extends Fragment {
 
-    private FragmentHomeBinding binding;
+    private FragmentQrBinding binding;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        HomeViewModel homeViewModel =
-                new ViewModelProvider(this).get(HomeViewModel.class);
+        QRViewModel QRViewModel =
+                new ViewModelProvider(this).get(QRViewModel.class);
 
-        binding = FragmentHomeBinding.inflate(inflater, container, false);
+        binding = FragmentQrBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
-        final TextView textView = binding.textHome;
-        homeViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
+        final TextView textView = binding.textDashboard;
+        QRViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
         return root;
     }
 

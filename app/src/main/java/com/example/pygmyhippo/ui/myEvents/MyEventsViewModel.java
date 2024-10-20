@@ -1,16 +1,16 @@
-package com.example.pygmyhippo.ui.home;
+package com.example.pygmyhippo.ui.myEvents;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-public class HomeViewModel extends ViewModel {
+public class MyEventsViewModel extends ViewModel {
 
     private final MutableLiveData<String> mText;
 
-    public HomeViewModel() {
+    public MyEventsViewModel() {
         mText = new MutableLiveData<>();
-        mText.setValue("This is home fragment");
+        mText.setValue("This is the My Events fragment");
     }
 
     public LiveData<String> getText() {

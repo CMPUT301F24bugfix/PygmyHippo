@@ -4,16 +4,18 @@
     <item
         android:id="@+id/navigation_home"
         android:icon="@drawable/ic_calendar"
-        android:title="@string/title_myevents" />
+        android:title="@null"
+        android:background="@color/dark_purple"/>
+
 
     <item
         android:id="@+id/navigation_dashboard"
         android:icon="@drawable/ic_barcode"
-        android:title="@string/title_qr" />
+        android:title="@null"/>
 
     <item
         android:id="@+id/navigation_notifications"
         android:icon="@drawable/ic_user"
-        android:title="@string/title_profile" />
+        android:title="@null"/>
 
 </menu>

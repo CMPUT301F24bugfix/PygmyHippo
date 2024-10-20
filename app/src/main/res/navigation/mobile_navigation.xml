@@ -7,19 +7,22 @@
 
     <fragment
         android:id="@+id/navigation_home"
-        android:name="com.example.pygmyhippo.ui.home.HomeFragment"
+        android:name="com.example.pygmyhippo.ui.myEvents.MyEventsFragment"
         android:label="@string/title_myevents"
-        tools:layout="@layout/fragment_home" />
+        tools:layout="@layout/fragment_myevents"
+        android:background="@color/dark_purple"/>
 
     <fragment
         android:id="@+id/navigation_dashboard"
-        android:name="com.example.pygmyhippo.ui.dashboard.DashboardFragment"
+        android:name="com.example.pygmyhippo.ui.QR.QRFragment"
         android:label="@string/title_qr"
-        tools:layout="@layout/fragment_dashboard" />
+        tools:layout="@layout/fragment_qr"
+        android:background="@color/dark_purple"/>
 
     <fragment
         android:id="@+id/navigation_notifications"
-        android:name="com.example.pygmyhippo.ui.notifications.NotificationsFragment"
+        android:name="com.example.pygmyhippo.ui.Profile.ProfileFragment"
         android:label="@string/title_profile"
-        tools:layout="@layout/fragment_notifications" />
+        tools:layout="@layout/fragment_profile"
+        android:background="@color/dark_purple"/>
 </navigation>
