@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Learned code from https://www.geeksforgeeks.org/how-to-add-a-textview-with-rounded-corner-in-android/ on Oct 19, 2024 -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <corners android:radius="15dp" />
+    <solid android:color="@color/light_purple" />
+</shape>

@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">PygmyHippo</string>
+    <string name="entrants_header">Entrants</string>
+    <string name="filter_by">Filter By:</string>
 </resources>

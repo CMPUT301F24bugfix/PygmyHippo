@@ -9,4 +9,5 @@
     <color name="gray">#BFBCCD</color>
     <color name="red">#B91212</color>
     <color name="green">#35B35D</color>
+    <color name="subtitle_text">#565DA4</color>
 </resources>
