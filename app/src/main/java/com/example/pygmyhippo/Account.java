@@ -29,14 +29,15 @@ import java.util.ArrayList;
 // accountID is the document ID.
 public class Account {
     private String accountID;
-    private String firstName;
-    private String lastName;
+    private String name;
     private String pronouns;
     private String phoneNumber;
     private String emailAddress;
     private String deviceID;
     private String profilePicture;
+    private String location; // TODO: revaluate once we have a location API
     private boolean receiveNotifications;
+    private boolean enableGeolocation;
 
     private ArrayList<AccountRole> roles;
     private AccountRole currentRole;
@@ -61,21 +62,14 @@ public class Account {
         }
     }
 
-    public String getFirstName() {
-        return firstName;
+    public String getName() {
+        return name;
     }
 
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public String getLastName() {
-        return lastName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
 
     public String getAccountID() {
         return accountID;
@@ -127,12 +121,28 @@ public class Account {
         this.profilePicture = profilePicture;
     }
 
+    public String getLocation() {
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
+    }
+
     public boolean isReceiveNotifications() {
         return receiveNotifications;
     }
 
     public void setReceiveNotifications(boolean receiveNotifications) {
         this.receiveNotifications = receiveNotifications;
+    }
+
+    public boolean isEnableGeolocation() {
+        return enableGeolocation;
+    }
+
+    public void setEnableGeolocation(boolean enableGeolocation) {
+        this.enableGeolocation = enableGeolocation;
     }
 
     public ArrayList<AccountRole> getRoles() {
