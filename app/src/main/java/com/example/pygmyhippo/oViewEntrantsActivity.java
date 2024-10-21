@@ -7,6 +7,9 @@ Deals with user stories 02.06.01, 02.06.02, 02.06.03, and 02.02.01
 Author: Kori Kozicki
 
 Current Issues: Navigation to this activity and source of user list
+                No image handling
+                Still needs status change shown
+                Data is hardcoded, it's not passed by any other fragment yet
  */
 
 import android.content.Context;

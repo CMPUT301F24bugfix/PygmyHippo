@@ -15,6 +15,7 @@ import java.util.ArrayList;
 /*
 The purpose of this class is to take the data from the users in the given filtered list and display that
 on the app listview
+Author: Kori Kozicki
 
 Outstanding Issues: Needs work everywhere, implement the list and filtering features. Needs picture functionality
                     Need to finish account class to utilize getters and setters
