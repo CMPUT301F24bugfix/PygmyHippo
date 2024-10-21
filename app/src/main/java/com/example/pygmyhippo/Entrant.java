@@ -12,9 +12,9 @@ package com.example.pygmyhippo;
  */
 public class Entrant {
 
-    String accountID;
+    private String accountID;
 
-    EntrantStatus entrantStatus;
+    private EntrantStatus entrantStatus;
 
     public enum EntrantStatus {
         waitlisted("waitlisted"),

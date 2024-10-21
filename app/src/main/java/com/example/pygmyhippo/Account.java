@@ -39,6 +39,7 @@ public class Account {
     private boolean receiveNotifications;
 
     private ArrayList<AccountRole> roles;
+    private AccountRole currentRole;
 
     @Nullable
     Facility facilityProfile;
@@ -140,6 +141,14 @@ public class Account {
 
     public void setRoles(ArrayList<AccountRole> roles) {
         this.roles = roles;
+    }
+
+    public AccountRole getCurrentRole() {
+        return currentRole;
+    }
+
+    public void setCurrentRole(AccountRole currentRole) {
+        this.currentRole = currentRole;
     }
 
     @Nullable

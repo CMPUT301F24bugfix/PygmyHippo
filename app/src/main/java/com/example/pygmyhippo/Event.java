@@ -20,17 +20,19 @@ import java.util.ArrayList;
 //
 public class Event {
 
-    String eventID;
-    String organizerID;
-    ArrayList<Entrant> entrants;
+    private String eventID;
+    private String organizerID;
+    private ArrayList<Entrant> entrants;
 
-    String location;
-    String date;
-    String time;
+    private String location;
+    private String date;
+    private String time;
 
-    String description;
-    String cost;
-    String eventPoster;
+    private String description;
+    private String cost;
+    private String eventPoster;
+
+    private EventStatus eventStatus;
 
     public enum EventStatus {
         cancelled("cancelled"),
@@ -115,6 +117,14 @@ public class Event {
     public void setEventPoster(String eventPoster) {
         // FIXME: Need to think about how were going to upload images sicne they will be stored in Firestore
         this.eventPoster = eventPoster;
+    }
+
+    public EventStatus getEventStatus() {
+        return eventStatus;
+    }
+
+    public void setEventStatus(EventStatus eventStatus) {
+        this.eventStatus = eventStatus;
     }
 }
 
