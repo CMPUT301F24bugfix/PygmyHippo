@@ -10,11 +10,15 @@ package com.example.pygmyhippo;
  *
  * @author James Fu
  */
-public class Entrant {
+public class Entrant extends Account{
 
     private String accountID;
 
     private EntrantStatus entrantStatus;
+
+    public Entrant(String accountID, String name, String pronouns, String phoneNumber, String emailAddress, String deviceID, String profilePicture, String location, boolean receiveNotifications, boolean enableGeolocation) {
+        super(accountID, name, pronouns, phoneNumber, emailAddress, deviceID, profilePicture, location, receiveNotifications, enableGeolocation);
+    }
 
     public enum EntrantStatus {
         waitlisted("waitlisted"),

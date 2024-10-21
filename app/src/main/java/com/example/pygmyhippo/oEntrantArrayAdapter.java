@@ -19,13 +19,13 @@ on the app listview
 Outstanding Issues: Needs work everywhere, implement the list and filtering features. Needs picture functionality
                     Need to finish account class to utilize getters and setters
  */
-public class oEntrantArrayAdapter extends ArrayAdapter<Account> {
+public class oEntrantArrayAdapter extends ArrayAdapter<Entrant> {
     /*
     Methods:
         - An overridden getView method used to format the info displayed per list entry
      */
 
-    public oEntrantArrayAdapter(Context context, ArrayList<Account> entrantListData) {
+    public oEntrantArrayAdapter(Context context, ArrayList<Entrant> entrantListData) {
         super(context, 0, entrantListData);
     }
 
@@ -44,7 +44,7 @@ public class oEntrantArrayAdapter extends ArrayAdapter<Account> {
         }
 
         // Get the current Account we want to display
-        Account account = getItem(position);
+        Entrant entrant = getItem(position);
 
         // Get all the views from the entrants_content in our xml file
         TextView accountName = view.findViewById(R.id.o_entrant_name_view);
@@ -53,7 +53,9 @@ public class oEntrantArrayAdapter extends ArrayAdapter<Account> {
         TextView accountStatus = view.findViewById(R.id.o_entrant_status_txt_view);
 
         // Replace the placeholder texts with the real values from this current Account
-
+        accountName.setText(entrant.getName());
+        accountPhone.setText(entrant.getPhoneNumber());
+        accountEmail.setText(entrant.getEmailAddress());
 
         return view;
     }

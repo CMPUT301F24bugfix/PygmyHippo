@@ -24,5 +24,16 @@
         android:name="com.example.pygmyhippo.ProfileFragment"
         android:label="@string/title_profile"
         tools:layout="@layout/fragment_profile"
+        android:background="@color/dark_purple">
+        <action
+            android:id="@+id/action_navigation_notifications_to_navigation_o_view_entrants"
+            app:destination="@id/navigation_o_view_entrants" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/navigation_o_view_entrants"
+        android:name="com.example.pygmyhippo.oViewEntrantsActivity"
+        android:label="View Entrants"
+        tools:layout="@layout/o_view_entrants"
         android:background="@color/dark_purple"/>
 </navigation>
