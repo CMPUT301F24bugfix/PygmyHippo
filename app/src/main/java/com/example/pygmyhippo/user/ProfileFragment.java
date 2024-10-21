@@ -11,7 +11,7 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
 import com.example.pygmyhippo.R;
-import com.example.pygmyhippo.databinding.UserFragmentMyeventsBinding;
+import com.example.pygmyhippo.databinding.UserFragmentProfileBinding;
 
 /**
  * This fragment holds most of the information about a user which is returned from a call to the database
@@ -26,7 +26,7 @@ import com.example.pygmyhippo.databinding.UserFragmentMyeventsBinding;
 public class ProfileFragment extends Fragment {
 
 
-    private UserFragmentMyeventsBinding binding;
+    private UserFragmentProfileBinding binding;
 
     /**
      * Creates the view
@@ -40,7 +40,7 @@ public class ProfileFragment extends Fragment {
                              ViewGroup container, Bundle savedInstanceState) {
 
 
-        binding = UserFragmentMyeventsBinding.inflate(inflater, container, false);
+        binding = UserFragmentProfileBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
         Spinner role_dropdown = (Spinner) root.findViewById(R.id.user_E_P_role);
