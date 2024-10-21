@@ -53,10 +53,7 @@ public class oEntrantArrayAdapter extends ArrayAdapter<Account> {
         TextView accountStatus = view.findViewById(R.id.o_entrant_status_txt_view);
 
         // Replace the placeholder texts with the real values from this current Account
-        accountName.setText(account.getfirstName() + " " + account.getlastName());
-        accountPhone.setText(account.getPhone());
-        accountEmail.setText(account.getEmail());
-        accountStatus.setText(account.getStatus());
+
 
         return view;
     }

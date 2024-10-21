@@ -2,4 +2,10 @@
     <string name="app_name">PygmyHippo</string>
     <string name="entrants_header">Entrants</string>
     <string name="filter_by">Filter By:</string>
+    <string-array name="entrant_status">
+        <item>Waitlist</item>
+        <item>Invited</item>
+        <item>Canceled</item>
+        <item>Enrolled</item>
+    </string-array>
 </resources>
