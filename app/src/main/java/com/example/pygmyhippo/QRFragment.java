@@ -1,31 +1,39 @@
-package com.example.pygmyhippo.ui.QR;
+package com.example.pygmyhippo;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProvider;
 
 import com.example.pygmyhippo.databinding.FragmentQrBinding;
-
+/**
+ * This fragment will hold the QR scanner
+ * @author none
+ * @version none
+ * No returns and no parameters
+ */
 public class QRFragment extends Fragment {
+    /* The future fragment for the QR Code Scanner */
 
     private FragmentQrBinding binding;
 
+    /**
+     * Creates the view
+     * @author none
+     * @param inflater not sure
+     * @param container not sure
+     * @param savedInstanceState  not surre
+     * @return root not sure
+     */
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        QRViewModel QRViewModel =
-                new ViewModelProvider(this).get(QRViewModel.class);
 
         binding = FragmentQrBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
-        final TextView textView = binding.textDashboard;
-        QRViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
         return root;
     }
 

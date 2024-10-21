@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.Profile.ProfileFragment"
+    tools:context=".ProfileFragment"
     >
 
 
@@ -14,7 +14,7 @@
         android:layout_width="125dp"
         android:layout_height="wrap_content"
         android:layout_marginBottom="28dp"
-        android:background="@drawable/rounded_corners"
+        android:background="@drawable/e_p_rounded_corners"
         android:backgroundTint="@color/dark_purple"
         android:fontFamily="@font/roboto_mono_medium"
         android:padding="2dp"
@@ -47,6 +47,7 @@
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="24dp"
         android:fontFamily="@font/roboto_mono_bold"
+        android:text="My Profile"
         android:textAlignment="textStart"
         android:textColor="@color/dark_purple"
         android:textSize="34sp"
@@ -99,8 +100,8 @@
         app:layout_constraintStart_toStartOf="@+id/profile_image"
         app:layout_constraintTop_toTopOf="@+id/profile_image"
         app:layout_constraintVertical_bias="0.942"
-        app:srcCompat="@drawable/edit"
-        tools:srcCompat="@drawable/edit" />
+        app:srcCompat="@drawable/e_p_ic_edit"
+        tools:srcCompat="@drawable/e_p_ic_edit" />
 
     <RadioButton
         android:id="@+id/E_P_allowGps"
