@@ -11,7 +11,9 @@ package com.example.pygmyhippo;
  * @author James Fu
  */
 public class Entrant {
+
     String accountID;
+
     EntrantStatus entrantStatus;
 
     public enum EntrantStatus {
@@ -26,4 +28,20 @@ public class Entrant {
             this.value = value;
         }
     };
+
+    public String getAccountID() {
+        return accountID;
+    }
+
+    public void setAccountID(String accountID) {
+        this.accountID = accountID;
+    }
+
+    public EntrantStatus getEntrantStatus() {
+        return entrantStatus;
+    }
+
+    public void setEntrantStatus(EntrantStatus entrantStatus) {
+        this.entrantStatus = entrantStatus;
+    }
 }

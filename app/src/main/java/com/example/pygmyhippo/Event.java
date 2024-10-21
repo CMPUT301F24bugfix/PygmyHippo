@@ -19,6 +19,7 @@ import java.util.ArrayList;
 
 //
 public class Event {
+
     String eventID;
     String organizerID;
     ArrayList<Entrant> entrants;
@@ -40,6 +41,80 @@ public class Event {
         EventStatus(String value) {
             this.value = value;
         }
+    }
+
+    public String getEventID() {
+        return eventID;
+    }
+
+    public void setEventID(String eventID) {
+        this.eventID = eventID;
+    }
+
+    public String getOrganizerID() {
+        return organizerID;
+    }
+
+    public void setOrganizerID(String organizerID) {
+        this.organizerID = organizerID;
+    }
+
+    public ArrayList<Entrant> getEntrants() {
+        return entrants;
+    }
+
+    public void setEntrants(ArrayList<Entrant> entrants) {
+        this.entrants = entrants;
+    }
+
+    public String getLocation() {
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
+    }
+
+    public String getDate() {
+        return date;
+    }
+
+    public void setDate(String date) {
+        this.date = date;
+    }
+
+    public String getTime() {
+        return time;
+    }
+
+    public void setTime(String time) {
+        this.time = time;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getCost() {
+        return cost;
+    }
+
+    public void setCost(String cost) {
+        this.cost = cost;
+    }
+
+    public String getEventPoster() {
+        // FIXME: how are we going to handle images since this would have to return a link to image on firestore
+        return eventPoster;
+    }
+
+    public void setEventPoster(String eventPoster) {
+        // FIXME: Need to think about how were going to upload images sicne they will be stored in Firestore
+        this.eventPoster = eventPoster;
     }
 }
 

@@ -28,16 +28,17 @@ import java.util.ArrayList;
 
 // accountID is the document ID.
 public class Account {
-    String accountID;
-    String firstName;
-    String lastName;
-    String pronouns;
-    String phoneNumber;
-    String deviceID;
-    String profilePicture;
-    boolean receiveNotifications;
+    private String accountID;
+    private String firstName;
+    private String lastName;
+    private String pronouns;
+    private String phoneNumber;
+    private String emailAddress;
+    private String deviceID;
+    private String profilePicture;
+    private boolean receiveNotifications;
 
-    ArrayList<AccountRole> roles;
+    private ArrayList<AccountRole> roles;
 
     @Nullable
     Facility facilityProfile;
@@ -57,5 +58,96 @@ public class Account {
         AccountRole(String value) {
             this.value = value;
         }
+    }
+
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    public String getAccountID() {
+        return accountID;
+    }
+
+    public void setAccountID(String accountID) {
+        this.accountID = accountID;
+    }
+
+    public String getPronouns() {
+        return pronouns;
+    }
+
+    public void setPronouns(String pronouns) {
+        this.pronouns = pronouns;
+    }
+
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
+
+    public String getEmailAddress() {
+        return emailAddress;
+    }
+
+    public void setEmailAddress(String emailAddress) {
+        this.emailAddress = emailAddress;
+    }
+
+    public String getDeviceID() {
+        return deviceID;
+    }
+
+    public void setDeviceID(String deviceID) {
+        this.deviceID = deviceID;
+    }
+
+    public String getProfilePicture() {
+        // FIXME: how are we going to handle images since this would have to return a link to image on firestore
+        return profilePicture;
+    }
+
+    public void setProfilePicture(String profilePicture) {
+        // FIXME: How are we going to handle images, for now this can be a link to a image in firestore
+        this.profilePicture = profilePicture;
+    }
+
+    public boolean isReceiveNotifications() {
+        return receiveNotifications;
+    }
+
+    public void setReceiveNotifications(boolean receiveNotifications) {
+        this.receiveNotifications = receiveNotifications;
+    }
+
+    public ArrayList<AccountRole> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(ArrayList<AccountRole> roles) {
+        this.roles = roles;
+    }
+
+    @Nullable
+    public Facility getFacilityProfile() {
+        return facilityProfile;
+    }
+
+    public void setFacilityProfile(@Nullable Facility facilityProfile) {
+        this.facilityProfile = facilityProfile;
     }
 }
