@@ -43,7 +43,7 @@ public class ProfileFragment extends Fragment {
         binding = OrganiserFragmentProfileBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
-        Spinner role_dropdown = (Spinner) root.findViewById(R.id.E_P_role);
+        Spinner role_dropdown = (Spinner) root.findViewById(R.id.organiser_E_P_role);
 // Create an ArrayAdapter using the string array and a default role_dropdown layout.
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(
                 root.getContext(),
