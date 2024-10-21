@@ -13,7 +13,7 @@
  */
 
 
-package com.example.pygmyhippo;
+package com.example.pygmyhippo.common;
 
 import java.util.ArrayList;
 

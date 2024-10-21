@@ -1,5 +1,5 @@
 
-package com.example.pygmyhippo;
+package com.example.pygmyhippo.common;
 
 /**
  * Entrant is a dataclass which contains relevant information for relating an User account to an

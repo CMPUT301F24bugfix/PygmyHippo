@@ -6,6 +6,10 @@ android {
     namespace = "com.example.pygmyhippo"
     compileSdk = 34
 
+    dataBinding {
+        android.buildFeatures.dataBinding = true
+    }
+
     defaultConfig {
         applicationId = "com.example.pygmyhippo"
         minSdk = 24
