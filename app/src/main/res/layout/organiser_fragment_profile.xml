@@ -10,7 +10,7 @@
 
 
     <Spinner
-        android:id="@+id/E_P_role"
+        android:id="@+id/organiser_E_P_role"
         style="@style/Widget.AppCompat.Spinner.DropDown.ActionBar"
         android:layout_width="125dp"
         android:layout_height="wrap_content"
@@ -31,11 +31,11 @@
     <ImageView
         android:layout_width="27dp"
         android:layout_height="21dp"
-        app:layout_constraintBottom_toBottomOf="@+id/E_P_role"
-        app:layout_constraintEnd_toEndOf="@+id/E_P_role"
+        app:layout_constraintBottom_toBottomOf="@+id/organiser_E_P_role"
+        app:layout_constraintEnd_toEndOf="@+id/organiser_E_P_role"
         app:layout_constraintHorizontal_bias="0.98"
-        app:layout_constraintStart_toStartOf="@+id/E_P_role"
-        app:layout_constraintTop_toTopOf="@+id/E_P_role"
+        app:layout_constraintStart_toStartOf="@+id/organiser_E_P_role"
+        app:layout_constraintTop_toTopOf="@+id/organiser_E_P_role"
         app:layout_constraintVertical_bias="0.64"
         app:srcCompat="@drawable/down_arrow"
         tools:srcCompat="@drawable/down_arrow" />
