@@ -4,8 +4,7 @@
     <item
         android:id="@+id/navigation_home"
         android:icon="@drawable/nav_ic_calendar"
-        android:title="@null"
-        android:background="@color/dark_purple"/>
+        android:title="@null"/>
 
 
     <item

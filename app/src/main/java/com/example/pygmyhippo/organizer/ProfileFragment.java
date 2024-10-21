@@ -1,4 +1,4 @@
-package com.example.pygmyhippo;
+package com.example.pygmyhippo.organizer;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -10,7 +10,8 @@ import android.widget.Spinner;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
-import com.example.pygmyhippo.databinding.FragmentProfileBinding;
+import com.example.pygmyhippo.R;
+import com.example.pygmyhippo.databinding.OrganiserFragmentProfileBinding;
 
 /**
  * This fragment holds most of the information about a user which is returned from a call to the database
@@ -25,7 +26,7 @@ import com.example.pygmyhippo.databinding.FragmentProfileBinding;
 public class ProfileFragment extends Fragment {
 
 
-    private FragmentProfileBinding binding;
+    private OrganiserFragmentProfileBinding binding;
 
     /**
      * Creates the view
@@ -39,7 +40,7 @@ public class ProfileFragment extends Fragment {
                              ViewGroup container, Bundle savedInstanceState) {
 
 
-        binding = FragmentProfileBinding.inflate(inflater, container, false);
+        binding = OrganiserFragmentProfileBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
         Spinner role_dropdown = (Spinner) root.findViewById(R.id.E_P_role);

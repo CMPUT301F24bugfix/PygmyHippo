@@ -19,7 +19,7 @@
  * facility to create an event, but only account with organizer role can have facilities.
  */
 
-package com.example.pygmyhippo;
+package com.example.pygmyhippo.common;
 
 import androidx.annotation.Nullable;
 
