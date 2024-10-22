@@ -44,7 +44,7 @@ public class MainActivity extends AppCompatActivity implements OnRoleSelectedLis
                 true,  // receiveNotifications
                 true,  // enableGeolocation
                 new ArrayList<>(Arrays.asList(Account.AccountRole.user, Account.AccountRole.organizer)),  // roles
-                Account.AccountRole.organizer,  // currentRole
+                Account.AccountRole.organizer,  // currentRole (TODO: Change this if you want to test with user)
                 null  // facilityProfile
         );
 
@@ -69,32 +69,32 @@ public class MainActivity extends AppCompatActivity implements OnRoleSelectedLis
 
     @Override
     public void onRoleSelected(String role) {
-        switch (role) {
-            case "User":
-                if (organiserBinder != null) {
-                    organiserBinder = null;
-                }
-                if (userBinding == null) {
-                    userBinding = UserMainActivityNagivationBinding.inflate(getLayoutInflater());
-                }
-                setContentView(userBinding.getRoot());  // Set layout for user
-                // Initialize NavController for user view
-                setupNavController(userBinding.navView);
-                break;
-            case "Organizer":
-                if (userBinding != null) {
-                    userBinding = null;
-                }
-                if (organiserBinder == null) {
-                    organiserBinder = OrganiserMainActivityNagivationBinding.inflate(getLayoutInflater());
-                }
-                setContentView(organiserBinder.getRoot());  // Set layout for organizer
-                // Initialize NavController for organizer view
-                setupNavController(organiserBinder.navView);
-                break;
-            default:
-                break;
-        }
+//        switch (role) {
+//            case "User":
+//                if (organiserBinder != null) {
+//                    organiserBinder = null;
+//                }
+//                if (userBinding == null) {
+//                    userBinding = UserMainActivityNagivationBinding.inflate(getLayoutInflater());
+//                }
+//                setContentView(userBinding.getRoot());  // Set layout for user
+//                // Initialize NavController for user view
+//                setupNavController(userBinding.navView);
+//                break;
+//            case "Organizer":
+//                if (userBinding != null) {
+//                    userBinding = null;
+//                }
+//                if (organiserBinder == null) {
+//                    organiserBinder = OrganiserMainActivityNagivationBinding.inflate(getLayoutInflater());
+//                }
+//                setContentView(organiserBinder.getRoot());  // Set layout for organizer
+//                // Initialize NavController for organizer view
+//                setupNavController(organiserBinder.navView);
+//                break;
+//            default:
+//                break;
+//        }
     }
 
     // Method to setup NavController
