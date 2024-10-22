@@ -18,12 +18,20 @@ import com.example.pygmyhippo.databinding.OrganiserFragmentProfileBinding;
 
 /**
  * This fragment holds most of the information about a user which is returned from a call to the database
- * To be Implemented: the edit button will change the interface and allow the user to edit all fields and send it to
- * the database.
+ * To be Implemented:
+ * - the edit button will change the interface and allow the user to edit all fields and send it to
+ *   the database.
+ * - Organiser proifile page
+ *
+ * To be fixed:
+ * - The framework for the communication between this can the main activity needs to be more robust
+ *   (right now when this fragment is open the drop down is triggered sending roleSelectedListener,
+ *   which would change the role to user since its he first role in the drop down)
+ *
  * Currently just a static page.
- * Allows the user to edit or view their current provided information.
- * @author Jennifer
- * @version 1.0
+ * Allows the ognaiser to edit or view their current provided information.
+ * @author Jennifer, Griffin
+ * @version 1.1
  * No returns and no parameters
  */
 public class ProfileFragment extends Fragment implements AdapterView.OnItemSelectedListener {
@@ -31,18 +39,23 @@ public class ProfileFragment extends Fragment implements AdapterView.OnItemSelec
 
     private OrganiserFragmentProfileBinding binding;
 
-    // Listener interface to communicate the selected role
+    // Listener interface to communicate with the main activity
     private OnRoleSelectedListener roleSelectedListener;
 
+    // initialized the listener
     public void setOnRoleSelectedListener(OnRoleSelectedListener listener) {
         this.roleSelectedListener = listener;
     }
 
+    /**
+     * This is called when the fragment is created, this ensure a connection the onrole listener to the parent
+     * @author Griffin
+     * @param context not sure
+     */
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         try {
-            // Ensure the activity implements the listener interface
             roleSelectedListener = (OnRoleSelectedListener) context;
         } catch (ClassCastException e) {
             throw new ClassCastException(context.toString() + " must implement OnRoleSelectedListener");
@@ -65,24 +78,31 @@ public class ProfileFragment extends Fragment implements AdapterView.OnItemSelec
         View root = binding.getRoot();
 
         Spinner role_dropdown = (Spinner) root.findViewById(R.id.organiser_E_P_role);
-        // Create an ArrayAdapter using the string array and a default role_dropdown layout.
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(
                 root.getContext(),
                 R.array.role,
                 R.layout.e_p_role_dropdown
         );
 
-        // Specify the layout to use when the list of choices appears.
         adapter.setDropDownViewResource(R.layout.e_p_role_dropdown);
 
-        // Apply the adapter to the role_dropdown.
         role_dropdown.setAdapter(adapter);
 
+        // need to do this so the listener is connected
         role_dropdown.setOnItemSelectedListener(this);
 
         return root;
     }
 
+    /**
+     * since this implements the OnTimeSelectedLister we need to override these two methods to get
+     * the communication working
+     * @author Griffin
+     * @param adapterView: The adapter view of the selectable options
+     * @param view: not sure
+     * @param i: position of item clicked
+     * @param l: not sure
+     */
     @Override
     public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
         String selectedRole = adapterView.getItemAtPosition(i).toString();
@@ -91,9 +111,13 @@ public class ProfileFragment extends Fragment implements AdapterView.OnItemSelec
         }
     }
 
+    /**
+     * This is for the case when nothing is selected
+     * @author Griffin
+     * @param adapterView: The adapter view of the selectable options
+     */
     @Override
     public void onNothingSelected(AdapterView<?> adapterView) {
-
     }
 
     @Override

@@ -17,7 +17,13 @@ package com.example.pygmyhippo.common;
 
 import java.util.ArrayList;
 
-//
+/**
+ * Our event class
+ * TODO:
+ *  - Use a builder for initialization
+ *  - connect to the database
+ * @author James, Griffin
+ */
 public class Event {
 
     private String eventID;

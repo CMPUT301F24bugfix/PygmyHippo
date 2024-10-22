@@ -26,7 +26,13 @@ import androidx.annotation.Nullable;
 import java.util.ArrayList;
 
 
-// accountID is the document ID.
+/**
+ * Our account class
+ * TODO:
+ *  - Use a builder for initialization
+ *  - connect to the database
+ * @author James, Griffin
+ */
 public class Account {
 
     private String accountID;
