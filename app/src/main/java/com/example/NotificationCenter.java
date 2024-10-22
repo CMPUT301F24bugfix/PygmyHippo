@@ -31,16 +31,16 @@ public class NotificationCenter {
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_ONE_SHOT);
 
-        // Build the notification
+        // building the notification
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(context, CHANNEL_ID)
                 .setSmallIcon(R.drawable.ic_notification)  // We still have to decide what icon to go with
                 .setCustomContentView(notificationLayout)  // Use the custom layout
                 .setAutoCancel(true)
                 .setPriority(NotificationCompat.PRIORITY_HIGH)  // High priority for heads-up notification
-                .setDefaults(NotificationCompat.DEFAULT_ALL)  // Default sound and vibration
-                .setContentIntent(pendingIntent);  // Open app when notification is tapped
+                .setDefaults(NotificationCompat.DEFAULT_ALL)  // This feature will give the user a sound and vibration on the device for the notification 
+                .setContentIntent(pendingIntent);  // opens the app when notification is tapped
 
-        // Get the NotificationManager
+        // get the NotificationManager
         NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
 
         // For Android, we need to create a notification channel
