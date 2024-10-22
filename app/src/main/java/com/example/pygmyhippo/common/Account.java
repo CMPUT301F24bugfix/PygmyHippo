@@ -28,6 +28,7 @@ import java.util.ArrayList;
 
 // accountID is the document ID.
 public class Account {
+
     private String accountID;
     private String name;
     private String pronouns;
@@ -44,6 +45,39 @@ public class Account {
 
     @Nullable
     Facility facilityProfile;
+
+    public Account(){
+
+    }
+
+    public Account(
+            String accountID,
+            String name,
+            String pronouns,
+            String phoneNumber,
+            String emailAddress,
+            String deviceID,
+            String profilePicture,
+            String location,
+            boolean receiveNotifications,
+            boolean enableGeolocation,
+            ArrayList<AccountRole> roles,
+            AccountRole currentRole,
+            @Nullable Facility facilityProfile) {
+        this.accountID = accountID;
+        this.name = name;
+        this.pronouns = pronouns;
+        this.phoneNumber = phoneNumber;
+        this.emailAddress = emailAddress;
+        this.deviceID = deviceID;
+        this.profilePicture = profilePicture;
+        this.location = location;
+        this.receiveNotifications = receiveNotifications;
+        this.enableGeolocation = enableGeolocation;
+        this.roles = roles;
+        this.currentRole = currentRole;
+        this.facilityProfile = facilityProfile;
+    }
 
     public static class Facility {
         String facilityPicture;
