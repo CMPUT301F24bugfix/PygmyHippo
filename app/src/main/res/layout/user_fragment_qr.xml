@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".user.QRFragment">
-
+    <!--TODO: ID should be changed since its not descriptive -->
     <TextView
         android:id="@+id/text_dashboard"
         android:layout_width="match_parent"

@@ -2,17 +2,17 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-        android:id="@+id/navigation_home"
+        android:id="@+id/organiser_myEvents_page"
         android:icon="@drawable/nav_ic_calendar"
         android:title="@null"/>
 
     <item
-        android:id="@+id/navigation_dashboard"
+        android:id="@+id/organiser_calander_page"
         android:icon="@drawable/nav_add_event"
         android:title="@null"/>
 
     <item
-        android:id="@+id/navigation_notifications"
+        android:id="@+id/organiser_profile_page"
         android:icon="@drawable/nav_ic_user"
         android:title="@null"/>
 
