@@ -50,7 +50,7 @@ public class Account {
     private AccountRole currentRole;
 
     @Nullable
-    Facility facilityProfile;
+    private Facility facilityProfile;
 
     public Account(){
 
@@ -86,9 +86,34 @@ public class Account {
     }
 
     public static class Facility {
-        String facilityPicture;
-        String name;
-        String location;
+        private String facilityPicture;
+        private String name;
+
+        public String getLocation() {
+            return location;
+        }
+
+        public void setLocation(String location) {
+            this.location = location;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public String getFacilityPicture() {
+            return facilityPicture;
+        }
+
+        public void setFacilityPicture(String facilityPicture) {
+            this.facilityPicture = facilityPicture;
+        }
+
+        private String location;
     }
 
     public enum AccountRole {
