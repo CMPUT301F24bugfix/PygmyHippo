@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-    <!-- Title (e.g., Congratulations or Sorry) -->
+    <!-- Title, this can be either Congratulations or Sorry -->
     <TextView
         android:id="@+id/notificationTitle"
         android:textSize="18sp"
@@ -15,7 +15,7 @@
         android:layout_height="wrap_content"
         android:text="Notification Title" />  <!-- Placeholder text -->
 
-    <!-- Message (e.g., You've won the lottery or Better luck next time) -->
+    <!-- Message, this can be won or lost -->
     <TextView
         android:id="@+id/notificationMessage"
         android:textSize="14sp"
