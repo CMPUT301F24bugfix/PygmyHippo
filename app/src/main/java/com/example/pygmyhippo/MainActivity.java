@@ -1,10 +1,13 @@
 package com.example.pygmyhippo;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 
+import com.example.pygmyhippo.common.Account;
+import com.example.pygmyhippo.common.OnRoleSelectedListener;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -14,25 +17,92 @@ import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
 import com.example.pygmyhippo.databinding.UserMainActivityNagivationBinding;
+import com.example.pygmyhippo.databinding.OrganiserMainActivityNagivationBinding;
 
-public class MainActivity extends AppCompatActivity {
+import java.util.ArrayList;
+import java.util.Arrays;
 
-    private UserMainActivityNagivationBinding binding;
+public class MainActivity extends AppCompatActivity implements OnRoleSelectedListener {
+
+    private OrganiserMainActivityNagivationBinding organiserBinder;
+    private UserMainActivityNagivationBinding userBinding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        binding = UserMainActivityNagivationBinding.inflate(getLayoutInflater());
-        setContentView(binding.getRoot());
+        // Create the Account object
+        Account currentAccount = new Account(
+                "1",  // accountID
+                "Moo Deng",  // name
+                "She/Her",  // pronouns
+                "7801234567",  // phoneNumber
+                "MooDeng@ualberta.ca",  // emailAddress
+                "1",  // deviceID
+                "profilePic.png",  // profilePicture
+                "Edmonton, Alberta",  // location
+                true,  // receiveNotifications
+                true,  // enableGeolocation
+                new ArrayList<>(Arrays.asList(Account.AccountRole.user, Account.AccountRole.organizer)),  // roles
+                Account.AccountRole.organizer,  // currentRole
+                null  // facilityProfile
+        );
 
-        BottomNavigationView navView = findViewById(R.id.nav_view);
-        // Passing each menu ID as a set of Ids because each
-        // menu should be considered as top level destinations.
+        // Use a switch to determine the layout based on the current role
+        switch (currentAccount.getCurrentRole()) {
+            case user:
+                userBinding = UserMainActivityNagivationBinding.inflate(getLayoutInflater());
+                setContentView(userBinding.getRoot());  // Set layout for user
+                // Initialize NavController for user view
+                setupNavController(userBinding.navView);
+                break;
+            case organizer:
+                organiserBinder = OrganiserMainActivityNagivationBinding.inflate(getLayoutInflater());
+                setContentView(organiserBinder.getRoot());  // Set layout for organizer
+                // Initialize NavController for organizer view
+                setupNavController(organiserBinder.navView);
+                break;
+            default:
+                break;
+        }
+    }
+
+    @Override
+    public void onRoleSelected(String role) {
+        switch (role) {
+            case "User":
+                if (organiserBinder != null) {
+                    organiserBinder = null;
+                }
+                if (userBinding == null) {
+                    userBinding = UserMainActivityNagivationBinding.inflate(getLayoutInflater());
+                }
+                setContentView(userBinding.getRoot());  // Set layout for user
+                // Initialize NavController for user view
+                setupNavController(userBinding.navView);
+                break;
+            case "Organizer":
+                if (userBinding != null) {
+                    userBinding = null;
+                }
+                if (organiserBinder == null) {
+                    organiserBinder = OrganiserMainActivityNagivationBinding.inflate(getLayoutInflater());
+                }
+                setContentView(organiserBinder.getRoot());  // Set layout for organizer
+                // Initialize NavController for organizer view
+                setupNavController(organiserBinder.navView);
+                break;
+            default:
+                break;
+        }
+    }
+
+    // Method to setup NavController
+    private void setupNavController(BottomNavigationView navView) {
         AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(
                 R.id.navigation_home, R.id.navigation_dashboard, R.id.navigation_notifications)
                 .build();
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_activity_main);
-        NavigationUI.setupWithNavController(binding.navView, navController);
+        NavigationUI.setupWithNavController(navView, navController);
     }
 }

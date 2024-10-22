@@ -25,7 +25,9 @@
         android:textSize="15dp"
         app:layout_constraintBottom_toTopOf="@+id/profile_image"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/E_P_header" />
+        app:layout_constraintStart_toEndOf="@+id/E_P_header"
+        android:clickable="true"
+        android:focusable="true"/>
 
 
     <ImageView
@@ -48,7 +50,7 @@
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="24dp"
         android:fontFamily="@font/roboto_mono_bold"
-        android:text="My Profile"
+        android:text="Organiser"
         android:textAlignment="textStart"
         android:textColor="@color/dark_purple"
         android:textSize="34sp"
