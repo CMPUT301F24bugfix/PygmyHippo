@@ -22,6 +22,10 @@ import com.example.pygmyhippo.databinding.OrganiserMainActivityNagivationBinding
 import java.util.ArrayList;
 import java.util.Arrays;
 
+/**
+ * Main Activity for our android app
+ * @author Jennifer, Griffin
+ */
 public class MainActivity extends AppCompatActivity implements OnRoleSelectedListener {
 
     private OrganiserMainActivityNagivationBinding organiserBinder;
@@ -31,7 +35,6 @@ public class MainActivity extends AppCompatActivity implements OnRoleSelectedLis
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // Create the Account object
         Account currentAccount = new Account(
                 "1",  // accountID
                 "Moo Deng",  // name
@@ -48,18 +51,16 @@ public class MainActivity extends AppCompatActivity implements OnRoleSelectedLis
                 null  // facilityProfile
         );
 
-        // Use a switch to determine the layout based on the current role
+        // Use a switch to determine the nagivation based on the current role
         switch (currentAccount.getCurrentRole()) {
             case user:
                 userBinding = UserMainActivityNagivationBinding.inflate(getLayoutInflater());
-                setContentView(userBinding.getRoot());  // Set layout for user
-                // Initialize NavController for user view
+                setContentView(userBinding.getRoot());
                 setupNavController(userBinding.navView);
                 break;
             case organizer:
                 organiserBinder = OrganiserMainActivityNagivationBinding.inflate(getLayoutInflater());
-                setContentView(organiserBinder.getRoot());  // Set layout for organizer
-                // Initialize NavController for organizer view
+                setContentView(organiserBinder.getRoot());
                 setupNavController(organiserBinder.navView);
                 break;
             default:
@@ -67,6 +68,15 @@ public class MainActivity extends AppCompatActivity implements OnRoleSelectedLis
         }
     }
 
+    /**
+     * This is the call back function that listens for when the role is changed on the profile page.
+     * Right now it is commented out because the navigation doesnt like to be switched.
+     * TODO
+     *  - need to check if the account has this permissions before changing
+     *  - need to update the account with the new current role
+     * @author Griffin
+     * @param role: this is a string this is sent from the drop down for switching the roles
+     */
     @Override
     public void onRoleSelected(String role) {
 //        switch (role) {
@@ -97,7 +107,11 @@ public class MainActivity extends AppCompatActivity implements OnRoleSelectedLis
 //        }
     }
 
-    // Method to setup NavController
+    /**
+     * This function does the initialization on the BottomNavigationView object passed
+     * @author Griffin
+     * @param navView: not sure
+     */
     private void setupNavController(BottomNavigationView navView) {
         AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(
                 R.id.navigation_home, R.id.navigation_dashboard, R.id.navigation_notifications)
