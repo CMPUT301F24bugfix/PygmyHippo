@@ -1,10 +1,6 @@
 package com.example.pygmyhippo;
 
 import android.os.Bundle;
-import android.util.Log;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.Spinner;
 
 import com.example.pygmyhippo.common.Account;
 import com.example.pygmyhippo.common.OnRoleSelectedListener;
@@ -29,7 +25,7 @@ import java.util.Arrays;
 public class MainActivity extends AppCompatActivity implements OnRoleSelectedListener {
 
     private OrganiserMainActivityNagivationBinding organiserBinder;
-    private UserMainActivityNagivationBinding userBinding;
+    private UserMainActivityNagivationBinding userBinder;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,9 +50,9 @@ public class MainActivity extends AppCompatActivity implements OnRoleSelectedLis
         // Use a switch to determine the nagivation based on the current role
         switch (currentAccount.getCurrentRole()) {
             case user:
-                userBinding = UserMainActivityNagivationBinding.inflate(getLayoutInflater());
-                setContentView(userBinding.getRoot());
-                setupNavController(userBinding.navView);
+                userBinder = UserMainActivityNagivationBinding.inflate(getLayoutInflater());
+                setContentView(userBinder.getRoot());
+                setupNavController(userBinder.navView);
                 break;
             case organizer:
                 organiserBinder = OrganiserMainActivityNagivationBinding.inflate(getLayoutInflater());
