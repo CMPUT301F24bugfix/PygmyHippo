@@ -3,9 +3,10 @@
     <string name="title_activity_main">MainActivity</string>
     <string name="title_myevents">My Events</string>
     <string name="title_qr">QR Scanner</string>
+    <string name="title_post_event">Post Event</string>
     <string name="title_profile">Profile</string>
     <string-array name="role">
-        <item>Entrant</item>
+        <item>User</item>
         <item>Organizer</item>
         <item>Admin</item>
     </string-array>
