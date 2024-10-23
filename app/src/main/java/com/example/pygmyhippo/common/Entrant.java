@@ -1,5 +1,5 @@
 
-package com.example.pygmyhippo;
+package com.example.pygmyhippo.common;
 
 /**
  * Entrant is a dataclass which contains relevant information for relating an User account to an
@@ -7,8 +7,10 @@ package com.example.pygmyhippo;
  * will be composed inside of a Event with a singular Entrant linking an Account with their
  * current status relating to the Event. Statuses for entrants are conveyed used EntrantStatus
  * enum below.
- *
- * @author James Fu
+ * TODO:
+ *  - Use a builder for initialization
+ *  - connect to the database
+ * @author James Fu, Griffin
  */
 public class Entrant extends Account{
 

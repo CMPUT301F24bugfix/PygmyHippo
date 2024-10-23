@@ -19,15 +19,22 @@
  * facility to create an event, but only account with organizer role can have facilities.
  */
 
-package com.example.pygmyhippo;
+package com.example.pygmyhippo.common;
 
 import androidx.annotation.Nullable;
 
 import java.util.ArrayList;
 
 
-// accountID is the document ID.
+/**
+ * Our account class
+ * TODO:
+ *  - Use a builder for initialization
+ *  - connect to the database
+ * @author James, Griffin
+ */
 public class Account {
+
     private String accountID;
     private String name;
     private String pronouns;
@@ -43,7 +50,40 @@ public class Account {
     private AccountRole currentRole;
 
     @Nullable
-    Facility facilityProfile;
+    private Facility facilityProfile;
+
+    public Account(){
+
+    }
+
+    public Account(
+            String accountID,
+            String name,
+            String pronouns,
+            String phoneNumber,
+            String emailAddress,
+            String deviceID,
+            String profilePicture,
+            String location,
+            boolean receiveNotifications,
+            boolean enableGeolocation,
+            ArrayList<AccountRole> roles,
+            AccountRole currentRole,
+            @Nullable Facility facilityProfile) {
+        this.accountID = accountID;
+        this.name = name;
+        this.pronouns = pronouns;
+        this.phoneNumber = phoneNumber;
+        this.emailAddress = emailAddress;
+        this.deviceID = deviceID;
+        this.profilePicture = profilePicture;
+        this.location = location;
+        this.receiveNotifications = receiveNotifications;
+        this.enableGeolocation = enableGeolocation;
+        this.roles = roles;
+        this.currentRole = currentRole;
+        this.facilityProfile = facilityProfile;
+    }
 
     public Account(String accountID, String name, String pronouns, String phoneNumber, String emailAddress, String deviceID, String profilePicture, String location, boolean receiveNotifications, boolean enableGeolocation) {
         this.accountID = accountID;
@@ -59,9 +99,34 @@ public class Account {
     }
 
     public static class Facility {
-        String facilityPicture;
-        String name;
-        String location;
+        private String facilityPicture;
+        private String name;
+
+        public String getLocation() {
+            return location;
+        }
+
+        public void setLocation(String location) {
+            this.location = location;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public String getFacilityPicture() {
+            return facilityPicture;
+        }
+
+        public void setFacilityPicture(String facilityPicture) {
+            this.facilityPicture = facilityPicture;
+        }
+
+        private String location;
     }
 
     public enum AccountRole {
