@@ -45,6 +45,16 @@ public class Account {
     @Nullable
     Facility facilityProfile;
 
+    public Account() {}
+
+    public Account(String accountID, String name, String phoneNumber, String emailAddress, String location) {
+        this.accountID = accountID;
+        this.name = name;
+        this.phoneNumber = phoneNumber;
+        this.emailAddress = emailAddress;
+        this.location = location;
+    }
+
     public static class Facility {
         String facilityPicture;
         String name;

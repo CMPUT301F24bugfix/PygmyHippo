@@ -3,7 +3,14 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/mobile_navigation"
-    app:startDestination="@+id/navigation_home">
+    app:startDestination="@+id/navigation_all_list">
+
+    <fragment
+        android:id="@+id/navigation_all_list"
+        android:name="com.example.pygmyhippo.AllListFragment"
+        android:label="All List"
+        tools:layout="@layout/fragment_all_list"
+        android:background="@color/dark_purple"/>
 
     <fragment
         android:id="@+id/navigation_home"
