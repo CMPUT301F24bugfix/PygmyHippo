@@ -4,11 +4,14 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.Navigation;
 
+import com.example.pygmyhippo.R;
 import com.example.pygmyhippo.databinding.OrganiserFragmentMyeventsBinding;
 
 /**
@@ -37,6 +40,13 @@ public class MyEventsFragment extends Fragment {
         View root = binding.getRoot();
 
         final TextView textView = binding.textHome;
+
+
+        //FIXME: add a button to navigate to entrant list
+        Button button = binding.buttonViewEntrants;
+        button.setOnClickListener(view -> {
+            Navigation.findNavController(view).navigate(R.id.action_navigation_home_to_oViewEntrantsFragment);
+        });
 
         return root;
     }
