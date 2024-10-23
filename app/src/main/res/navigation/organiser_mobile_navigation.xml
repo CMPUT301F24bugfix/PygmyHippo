@@ -13,8 +13,8 @@ app:startDestination="@+id/organiser_myEvents_page">
     android:background="@color/dark_purple"/>
 
 <fragment
-    android:id="@+id/organiser_calander_page"
-    android:name="com.example.pygmyhippo.organizer.PostEvent"
+    android:id="@+id/organiser_postEvent_page"
+    android:name="com.example.pygmyhippo.organizer.PostEventFragment"
     android:label="@string/title_post_event"
     tools:layout="@layout/organiser_post_event"
     android:background="@color/dark_purple"/>
