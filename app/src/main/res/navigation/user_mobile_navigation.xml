@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--TODO: make names more descriptive-->
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -7,22 +8,22 @@
 
     <fragment
         android:id="@+id/navigation_home"
-        android:name="com.example.pygmyhippo.MyEventsFragment"
+        android:name="com.example.pygmyhippo.organizer.MyEventsFragment"
         android:label="@string/title_myevents"
-        tools:layout="@layout/fragment_myevents"
+        tools:layout="@layout/user_fragment_myevents"
         android:background="@color/dark_purple"/>
 
     <fragment
         android:id="@+id/navigation_dashboard"
-        android:name="com.example.pygmyhippo.QRFragment"
-        android:label="@string/title_qr"
-        tools:layout="@layout/fragment_qr"
+        android:name="com.example.pygmyhippo.organizer.PostEvent"
+        android:label="@string/title_post_event"
+        tools:layout="@layout/user_fragment_qr"
         android:background="@color/dark_purple"/>
 
     <fragment
         android:id="@+id/navigation_notifications"
-        android:name="com.example.pygmyhippo.ProfileFragment"
+        android:name="com.example.pygmyhippo.organizer.ProfileFragment"
         android:label="@string/title_profile"
-        tools:layout="@layout/fragment_profile"
+        tools:layout="@layout/user_fragment_profile"
         android:background="@color/dark_purple"/>
 </navigation>
