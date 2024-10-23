@@ -56,7 +56,55 @@ public class oViewEntrantsActivity extends Fragment {
 
         // Set up the list and adapter
         //FIXME: A sample array used to look at this fragment
-        entrantListData.add(new Entrant("id", "Cool Name", "she/her", "780 666 3333", "user@gmail.com", "DEVICEID", "Enter image here", "Edmonton AB", true, false));
+        Entrant entrant = new Entrant("id",
+                "Cool Name",
+                "she/her",
+                "780 666 3333",
+                "user@gmail.com",
+                "DEVICEID",
+                "Enter image here",
+                "Edmonton AB",
+                true,
+                false);
+        entrant.setEntrantStatus(Entrant.EntrantStatus.waitlisted);
+        entrantListData.add(entrant);
+        Entrant entrant2 = new Entrant("id",
+                "Bob Builder",
+                "she/her",
+                "780 666 3333",
+                "user@gmail.com",
+                "DEVICEID",
+                "Enter image here",
+                "Edmonton AB",
+                true,
+                false);
+        entrant2.setEntrantStatus(Entrant.EntrantStatus.invited);
+        entrantListData.add(entrant2);
+        Entrant entrant3 = new Entrant("id",
+                "Harry Potter",
+                "she/her",
+                "780 666 3333",
+                "user@gmail.com",
+                "DEVICEID",
+                "Enter image here",
+                "Edmonton AB",
+                true,
+                false);
+        entrant3.setEntrantStatus(Entrant.EntrantStatus.accepted);
+        entrantListData.add(entrant3);
+        Entrant entrant4 = new Entrant("id",
+                "Canceled user",
+                "she/her",
+                "780 666 3333",
+                "user@gmail.com",
+                "DEVICEID",
+                "Enter image here",
+                "Edmonton AB",
+                true,
+                false);
+        entrant4.setEntrantStatus(Entrant.EntrantStatus.cancelled);
+        entrantListData.add(entrant4);
+
 
         // Initialize our ListView
         entrantListView = view.findViewById(R.id.o_entrant_listview);

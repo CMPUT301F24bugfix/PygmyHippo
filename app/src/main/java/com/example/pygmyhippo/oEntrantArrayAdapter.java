@@ -57,6 +57,7 @@ public class oEntrantArrayAdapter extends ArrayAdapter<Entrant> {
         accountName.setText(entrant.getName());
         accountPhone.setText(entrant.getPhoneNumber());
         accountEmail.setText(entrant.getEmailAddress());
+        accountStatus.setText("Status: " + entrant.getEntrantStatus().value);
 
         return view;
     }
