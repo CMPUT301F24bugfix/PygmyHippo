@@ -1,10 +1,6 @@
 package com.example.pygmyhippo;
 
 import android.os.Bundle;
-import android.util.Log;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.Spinner;
 
 import com.example.pygmyhippo.common.Account;
 import com.example.pygmyhippo.common.OnRoleSelectedListener;
@@ -29,7 +25,7 @@ import java.util.Arrays;
 public class MainActivity extends AppCompatActivity implements OnRoleSelectedListener {
 
     private OrganiserMainActivityNagivationBinding organiserBinder;
-    private UserMainActivityNagivationBinding userBinding;
+    private UserMainActivityNagivationBinding userBinder;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,21 +43,21 @@ public class MainActivity extends AppCompatActivity implements OnRoleSelectedLis
                 true,  // receiveNotifications
                 true,  // enableGeolocation
                 new ArrayList<>(Arrays.asList(Account.AccountRole.user, Account.AccountRole.organizer)),  // roles
-                Account.AccountRole.organizer,  // currentRole (TODO: Change this if you want to test with user)
+                Account.AccountRole.user,  // currentRole (TODO: Change this if you want to test with user)
                 null  // facilityProfile
         );
 
         // Use a switch to determine the nagivation based on the current role
         switch (currentAccount.getCurrentRole()) {
             case user:
-                userBinding = UserMainActivityNagivationBinding.inflate(getLayoutInflater());
-                setContentView(userBinding.getRoot());
-                setupNavController(userBinding.navView);
+                userBinder = UserMainActivityNagivationBinding.inflate(getLayoutInflater());
+                setContentView(userBinder.getRoot());
+                setupNavControllerUser(userBinder.navView);
                 break;
             case organizer:
                 organiserBinder = OrganiserMainActivityNagivationBinding.inflate(getLayoutInflater());
                 setContentView(organiserBinder.getRoot());
-                setupNavController(organiserBinder.navView);
+                setupNavControllerOrganiser(organiserBinder.navView);
                 break;
             default:
                 break;
@@ -112,9 +108,23 @@ public class MainActivity extends AppCompatActivity implements OnRoleSelectedLis
      * @author Griffin
      * @param navView: not sure
      */
-    private void setupNavController(BottomNavigationView navView) {
+    private void setupNavControllerUser(BottomNavigationView navView) {
         AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(
+                // TODO: change the navigation names for user to be more descriptive
                 R.id.navigation_home, R.id.navigation_dashboard, R.id.navigation_notifications)
+                .build();
+        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_activity_main);
+        NavigationUI.setupWithNavController(navView, navController);
+    }
+
+    /**
+     * This function does the initialization on the BottomNavigationView object passed
+     * @author Griffin
+     * @param navView: not sure
+     */
+    private void setupNavControllerOrganiser(BottomNavigationView navView) {
+        AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(
+                R.id.organiser_myEvents_page, R.id.organiser_calander_page, R.id.organiser_profile_page)
                 .build();
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_activity_main);
         NavigationUI.setupWithNavController(navView, navController);
