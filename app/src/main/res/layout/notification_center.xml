@@ -1,26 +1,85 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-<LinearLayout 
-    android:orientation="vertical"
-    android:padding="16dp"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content">
-
-    <!-- Title, this can be either Congratulations or Sorry -->
-    <TextView
-        android:id="@+id/notificationTitle"
-        android:textSize="18sp"
-        android:textColor="@android:color/black"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:orientation="horizontal"
+        android:padding="16dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Notification Title" />  <!-- Placeholder text -->
+        android:background="@android:color/background_dark">
 
-    <!-- Message, this can be won or lost -->
-    <TextView
-        android:id="@+id/notificationMessage"
-        android:textSize="14sp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Notification message will go here" />  <!-- Placeholder text -->
-        
+        <!-- App icon -->
+        <ImageView
+            android:id="@+id/notificationIcon"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:src="@mipmap/ic_launcher"
+            android:layout_marginEnd="16dp" />
+
+        <!-- Layout for text (title and message) -->
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <!-- Title for the notification (e.g., Congratulations or Sorry) -->
+            <TextView
+                android:id="@+id/notificationTitle"
+                android:textSize="18sp"
+                android:textColor="@android:color/white"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:te<?xml version="1.0" encoding="utf-8"?>
+            <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:orientation="horizontal"
+                android:padding="16dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@android:color/background_dark">
+
+                <!-- App icon -->
+                <ImageView
+                    android:id="@+id/notificationIcon"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:src="@mipmap/ic_launcher"
+                    android:layout_marginEnd="16dp" />
+
+                <!-- Layout for text (title and message) -->
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+
+                    <!-- Title for the notification (e.g., Congratulations or Sorry) -->
+                    <TextView
+                        android:id="@+id/notificationTitle"
+                        android:textSize="18sp"
+                        android:textColor="@android:color/white"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Title" /> <!-- Placeholder text -->
+
+                    <!-- Message for the notification (e.g., You've won the lottery or Better luck next time) -->
+                    <TextView
+                        android:id="@+id/notificationMessage"
+                        android:textSize="14sp"
+                        android:textColor="@android:color/white"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingTop="8dp"
+                        android:text="Message" /> <!-- Placeholder text -->
+                </LinearLayout>
+
+            </LinearLayout>xt="Title" /> <!-- Placeholder text -->
+
+            <!-- Message for the notification (e.g., You've won the lottery or Better luck next time) -->
+            <TextView
+                android:id="@+id/notificationMessage"
+                android:textSize="14sp"
+                android:textColor="@android:color/white"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingTop="8dp"
+                android:text="Message" /> <!-- Placeholder text -->
+        </LinearLayout>
+
 </LinearLayout>
