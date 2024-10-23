@@ -42,8 +42,8 @@ public class MainActivity extends AppCompatActivity implements OnRoleSelectedLis
                 "Edmonton, Alberta",  // location
                 true,  // receiveNotifications
                 true,  // enableGeolocation
-                new ArrayList<>(Arrays.asList(Account.AccountRole.user, Account.AccountRole.organizer)),  // roles
-                Account.AccountRole.user,  // currentRole (TODO: Change this if you want to test with user)
+                new ArrayList<>(Arrays.asList(Account.AccountRole.user, Account.AccountRole.organiser)),  // roles
+                Account.AccountRole.organiser,  // currentRole (TODO: Change this if you want to test with user)
                 null  // facilityProfile
         );
 
@@ -54,7 +54,7 @@ public class MainActivity extends AppCompatActivity implements OnRoleSelectedLis
                 setContentView(userBinder.getRoot());
                 setupNavControllerUser(userBinder.navView);
                 break;
-            case organizer:
+            case organiser:
                 organiserBinder = OrganiserMainActivityNagivationBinding.inflate(getLayoutInflater());
                 setContentView(organiserBinder.getRoot());
                 setupNavControllerOrganiser(organiserBinder.navView);
@@ -124,7 +124,7 @@ public class MainActivity extends AppCompatActivity implements OnRoleSelectedLis
      */
     private void setupNavControllerOrganiser(BottomNavigationView navView) {
         AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(
-                R.id.organiser_myEvents_page, R.id.organiser_calander_page, R.id.organiser_profile_page)
+                R.id.organiser_myEvents_page, R.id.organiser_postEvent_page, R.id.organiser_profile_page)
                 .build();
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_activity_main);
         NavigationUI.setupWithNavController(navView, navController);
