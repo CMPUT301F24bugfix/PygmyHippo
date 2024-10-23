@@ -41,11 +41,10 @@ public class MyEventsFragment extends Fragment {
 
         final TextView textView = binding.textHome;
 
-
         //FIXME: add a button to navigate to entrant list
         Button button = binding.buttonViewEntrants;
         button.setOnClickListener(view -> {
-            Navigation.findNavController(view).navigate(R.id.action_navigation_home_to_oViewEntrantsFragment);
+            Navigation.findNavController(view).navigate(R.id.action_navigation_home_to_ViewEntrantsFragment);
         });
 
         return root;

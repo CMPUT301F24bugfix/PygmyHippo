@@ -1,14 +1,16 @@
-package com.example.pygmyhippo;
+package com.example.pygmyhippo.organizer;
 
 /*
-This Activity is meant for the Organizer to view the users who entered the waitlist on an event the Organizer made.
+This Fragment is meant for the Organizer to view the users who entered the waitlist on an event the Organizer made.
 Will contain the functionality to filter the given list depending on the status of the entrant
 Deals with user stories 02.06.01, 02.06.02, 02.06.03, and 02.02.01
 Author: Kori Kozicki
 
-Current Issues: Navigation to this activity
-                No image handling
-                Data is hardcoded, it's not passed by any other fragment yet
+Issues: Navigation to and from this activity
+      Do image handling
+      Data is hardcoded, so should work on data passing from fragments
+      Need to connect to db and actually get the list filter working
+      Get Event ID somewhere for querying the users
  */
 
 import android.os.Bundle;
@@ -16,40 +18,53 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.Spinner;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.Navigation;
 
+import com.example.pygmyhippo.R;
 import com.example.pygmyhippo.common.Account;
 import com.example.pygmyhippo.common.Entrant;
-import com.example.pygmyhippo.databinding.OrganiserFragmentMyeventsBinding;
-import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 
-public class oViewEntrantsFragment extends Fragment {
+/**
+ * This fragment allows the Organizer to view the entrants who signed up for their event
+ * @author Kori
+ * TODO:
+ *  - Set up to DB
+ *  - Get list filtering working
+ *  - Set up so not hardcoded examples
+ */
+public class ViewEntrantsFragment extends Fragment {
     private ArrayList<Entrant> entrantListData = new ArrayList<Entrant>();
     private ArrayAdapter<Entrant> entrantListAdapter;
     private ListView entrantListView;
     private Spinner status_spinner;
-    private FirebaseFirestore db;
-    private CollectionReference entrantsRef;
-    private OrganiserFragmentMyeventsBinding binding;
+    private ImageButton backButton;
 
+    /**
+     * OnCreateView sets up the interactables on viewEntrants page and deals with the list data
+     * @param inflater The LayoutInflater object that can be used to inflate
+     * any views in the fragment,
+     * @param container If non-null, this is the parent view that the fragment's
+     * UI should be attached to.  The fragment should not add the view itself,
+     * but this can be used to generate the LayoutParams of the view.
+     * @param savedInstanceState If non-null, this fragment is being re-constructed
+     * from a previous saved state as given here.
+     * @author Kori
+     * @return
+     */
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.o_view_entrants, container, false);
-
-        // Set up our database instance and reference to entrants
-        db = FirebaseFirestore.getInstance();
-        //entrantsRef = db.collection("Entrants");
 
         // Get the spinner view
         status_spinner = view.findViewById(R.id.o_entrant_list_spinner);
@@ -65,8 +80,7 @@ public class oViewEntrantsFragment extends Fragment {
         o_spinner_adapter.setDropDownViewResource(R.layout.e_p_role_dropdown);
         status_spinner.setAdapter(o_spinner_adapter);
 
-        // Set up the list and adapter
-        //FIXME: A sample array used to look at this fragment
+        //FIXME: A sample entrant/list used to look at this fragment
         Entrant entrant = new Entrant("id",
                 "Cool Name",
                 "she/her",
@@ -78,18 +92,25 @@ public class oViewEntrantsFragment extends Fragment {
                 true,
                 false,
                 new ArrayList<>(Arrays.asList(Account.AccountRole.user, Account.AccountRole.organizer)),  // roles
-                Account.AccountRole.user,  // currentRole (TODO: Change this if you want to test with user)
+                Account.AccountRole.user,  // currentRole
                 null  // facilityProfile
-                );
+        );
         entrant.setEntrantStatus(Entrant.EntrantStatus.waitlisted);
-        entrantListData.add(entrant);
+        entrantListData.add(entrant); // adding test entrant to list
 
         // Initialize our ListView
         entrantListView = view.findViewById(R.id.o_entrant_listview);
 
         // Set up our array adapter and connect it to our listView
-        entrantListAdapter = new com.example.pygmyhippo.oEntrantArrayAdapter(view.getContext(), entrantListData);
+        entrantListAdapter = new com.example.pygmyhippo.EntrantArrayAdapter(view.getContext(), entrantListData);
         entrantListView.setAdapter(entrantListAdapter);
+
+        // Get and set up navigation for the back button
+        backButton = view.findViewById(R.id.o_entrant_view_back_button);
+        backButton.setOnClickListener(view1 -> {
+            //FIXME: Navigate back for now, but eventually should navigate to an event view
+            Navigation.findNavController(view1).navigate(R.id.action_ViewEntrantsFragment_to_navigation_home);
+        });
 
         return view;
     }

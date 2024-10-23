@@ -1,5 +1,13 @@
 package com.example.pygmyhippo;
 
+/*
+The purpose of this class is to take the data from the entrants in the given filtered entrant list and display that
+on the app listview
+Author: Kori Kozicki
+
+Outstanding Issues: Needs image functionality to be customizable, not from drawables
+ */
+
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,24 +22,25 @@ import com.example.pygmyhippo.common.Entrant;
 
 import java.util.ArrayList;
 
-/*
-The purpose of this class is to take the data from the users in the given filtered list and display that
-on the app listview
-Author: Kori Kozicki
-
-Outstanding Issues: Needs work everywhere, implement the list and filtering features. Needs picture functionality
-                    Need to finish account class to utilize getters and setters
+/**
+ * This Array Adapter is customized for the viewing entrants list
+ * @author Kori
+ * TODO:
+ *  - Make profile image change based on the user profile
  */
-public class oEntrantArrayAdapter extends ArrayAdapter<Entrant> {
-    /*
-    Methods:
-        - An overridden getView method used to format the info displayed per list entry
-     */
+public class EntrantArrayAdapter extends ArrayAdapter<Entrant> {
 
-    public oEntrantArrayAdapter(Context context, ArrayList<Entrant> entrantListData) {
+    public EntrantArrayAdapter(Context context, ArrayList<Entrant> entrantListData) {
         super(context, 0, entrantListData);
     }
 
+    /**
+     * This Method will customize the entrant list depending on their profile values
+     * @param position The index of the current entrant
+     * @param convertView not sure
+     * @param parent
+     * @return view (The view of the list content
+     */
     @NonNull
     @Override
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
@@ -55,7 +64,7 @@ public class oEntrantArrayAdapter extends ArrayAdapter<Entrant> {
         TextView accountEmail = view.findViewById(R.id.o_entrant_email_view);
         TextView accountStatus = view.findViewById(R.id.o_entrant_status_txt_view);
 
-        // Replace the placeholder texts with the real values from this current Account
+        // Replace the placeholder texts with the real values from this current Entrant account
         accountName.setText(entrant.getName());
         accountPhone.setText(entrant.getPhoneNumber());
         accountEmail.setText(entrant.getEmailAddress());
