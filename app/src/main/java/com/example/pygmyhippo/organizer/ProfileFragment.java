@@ -3,7 +3,6 @@ package com.example.pygmyhippo.organizer;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,8 +11,6 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.RadioButton;
-import android.widget.RadioGroup;
 import android.widget.Spinner;
 
 import androidx.activity.result.ActivityResultLauncher;
@@ -27,20 +24,9 @@ import com.example.pygmyhippo.common.OnRoleSelectedListener;
 import com.example.pygmyhippo.databinding.OrganiserFragmentProfileBinding;
 import com.squareup.picasso.Picasso;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedReader;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.StringWriter;
-import java.io.UnsupportedEncodingException;
-import java.net.HttpURLConnection;
-import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URL;
+import java.util.Objects;
 
-import kotlin.text.Charsets;
 
 /**
  * This fragment holds most of the information about a user which is returned from a call to the database
@@ -62,6 +48,7 @@ import kotlin.text.Charsets;
  */
 public class ProfileFragment extends Fragment implements AdapterView.OnItemSelectedListener {
     Uri imagePath;
+    String uploadType = "avatar";
 
     private OrganiserFragmentProfileBinding binding;
 
@@ -99,7 +86,11 @@ public class ProfileFragment extends Fragment implements AdapterView.OnItemSelec
                 // photo picker.
                 if (uri != null) {
                     imagePath = uri;
-                    binding.OProfileImage.setImageURI(uri);
+                    if (Objects.equals(uploadType, "avatar")) binding.OProfileImage.setImageURI(uri);
+                    else Picasso.get()
+                            .load(imagePath)
+                            .fit()
+                            .into(binding.OProfileFacilityImg);
                 }
             });
 
@@ -158,18 +149,14 @@ public class ProfileFragment extends Fragment implements AdapterView.OnItemSelec
         EditText pronoun_f = root.findViewById(R.id.O_P_textPronouns);
         EditText phone_f = root.findViewById(R.id.O_P_textPhone);
         EditText email_f = root.findViewById(R.id.O_P_textEmail);
+        EditText facilityName_f = root.findViewById(R.id.O_Profile_facilityNameText);
+        EditText facilityLocation_f = root.findViewById(R.id.O_Profile_facilityLocationText);
 
-        // Decorator radio buttons
-        RadioButton dec_geo = root.findViewById(R.id.O_P_gps_dec);
-        RadioButton dec_notify = root.findViewById(R.id.O_P_notification_dec);
-
-        // Functional Radio Groups
-        RadioGroup notify_g = root.findViewById(R.id.O_P_notify_setting);
-        RadioGroup geolocation_g = root.findViewById(R.id.O_P_geo_setting);
 
         // Image Buttons
         Button uploadIm_btn = root.findViewById(R.id.O_P_uploadImage);
         Button deleteIm_btn = root.findViewById(R.id.O_P_deleteImage);
+        Button facility_uploadIm_btn = root.findViewById(R.id.O_Profile_facilityUploadImage);
 
         /**
          * Allows te page elements to be edited by the user if the edit button is clicked
@@ -183,23 +170,28 @@ public class ProfileFragment extends Fragment implements AdapterView.OnItemSelec
              */
             @Override
             public void onClick(View view) {
+                // set focusable
                 name_f.setFocusable(true);
                 pronoun_f.setFocusable(true);
                 phone_f.setFocusable(true);
                 email_f.setFocusable(true);
+                facilityName_f.setFocusable(true);
+                facilityLocation_f.setFocusable(true);
+
+                // set focusable in touch mode
                 name_f.setFocusableInTouchMode(true);
                 pronoun_f.setFocusableInTouchMode(true);
                 phone_f.setFocusableInTouchMode(true);
                 email_f.setFocusableInTouchMode(true);
+                facilityName_f.setFocusableInTouchMode(true);
+                facilityLocation_f.setFocusableInTouchMode(true);
+
+                // set visibility
                 updateButton.setVisibility(View.VISIBLE);
-                dec_notify.setVisibility(View.GONE);
-                dec_geo.setVisibility(View.GONE);
-                notify_g.setVisibility(View.VISIBLE);
-                geolocation_g.setVisibility(View.VISIBLE);
                 editButton.setVisibility(View.GONE);
                 uploadIm_btn.setVisibility(View.VISIBLE);
                 deleteIm_btn.setVisibility(View.VISIBLE);
-
+                facility_uploadIm_btn.setVisibility(View.VISIBLE);
             }
         };
 
@@ -216,31 +208,37 @@ public class ProfileFragment extends Fragment implements AdapterView.OnItemSelec
              */
             @Override
             public void onClick(View view) {
+                // remove focus
                 name_f.setFocusable(false);
                 pronoun_f.setFocusable(false);
                 phone_f.setFocusable(false);
                 email_f.setFocusable(false);
+                facilityName_f.setFocusable(false);
+                facilityLocation_f.setFocusable(false);
+
+                // remove focus in touch mode
                 name_f.setFocusableInTouchMode(false);
                 pronoun_f.setFocusableInTouchMode(false);
                 phone_f.setFocusableInTouchMode(false);
                 email_f.setFocusableInTouchMode(false);
+                facilityName_f.setFocusableInTouchMode(false);
+                facilityLocation_f.setFocusableInTouchMode(false);
+
+                // set visibility
                 updateButton.setVisibility(View.GONE);
-                dec_notify.setVisibility(View.VISIBLE);
-                dec_geo.setVisibility(View.VISIBLE);
-                notify_g.setVisibility(View.GONE);
-                geolocation_g.setVisibility(View.GONE);
                 editButton.setVisibility(View.VISIBLE);
                 uploadIm_btn.setVisibility(View.GONE);
                 deleteIm_btn.setVisibility(View.GONE);
+                facility_uploadIm_btn.setVisibility(View.GONE);
 
             }
         };
 
         /**
-         * Listener for the upload image button, it allows the user to select a photo from their photo gallery by launching the media picker
+         * Listener for the uploadAvatar image button, it allows the user to select a photo from their photo gallery by launching the media picker
          * @author Jennifer
          */
-        View.OnClickListener upload = new View.OnClickListener() {
+        View.OnClickListener uploadAvatar = new View.OnClickListener() {
             /**
              * Tells the media picker to launch when the button listener is triggered
              * @author Jennifer
@@ -248,14 +246,28 @@ public class ProfileFragment extends Fragment implements AdapterView.OnItemSelec
              */
             @Override
             public void onClick(View view) {
-
+                uploadType = "avatar";
                 // Launch the photo picker and let the user choose only images.
                 pickMedia.launch(new PickVisualMediaRequest.Builder()
                         .setMediaType(ActivityResultContracts.PickVisualMedia.ImageOnly.INSTANCE)
                         .build());
-
             }
+        };
 
+        View.OnClickListener uploadFacility = new View.OnClickListener() {
+            /**
+             * Tells the media picker to launch when the button listener is triggered
+             * @author Jennifer
+             * @param view the fragment view
+             */
+            @Override
+            public void onClick(View view) {
+                uploadType = "facility";
+                // Launch the photo picker and let the user choose only images.
+                pickMedia.launch(new PickVisualMediaRequest.Builder()
+                        .setMediaType(ActivityResultContracts.PickVisualMedia.ImageOnly.INSTANCE)
+                        .build());
+            }
         };
 
         /**
@@ -278,7 +290,8 @@ public class ProfileFragment extends Fragment implements AdapterView.OnItemSelec
             }
         };
 
-        uploadIm_btn.setOnClickListener(upload);
+        facility_uploadIm_btn.setOnClickListener(uploadFacility);
+        uploadIm_btn.setOnClickListener(uploadAvatar);
         deleteIm_btn.setOnClickListener(delete);
         editButton.setOnClickListener(edit);
         updateButton.setOnClickListener(update);

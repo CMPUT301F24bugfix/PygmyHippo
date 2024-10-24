@@ -1,20 +1,32 @@
 package com.example.pygmyhippo.user;
 
 import android.content.Context;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.Spinner;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.PickVisualMediaRequest;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
 import com.example.pygmyhippo.R;
 import com.example.pygmyhippo.databinding.UserFragmentProfileBinding;
 import com.example.pygmyhippo.common.OnRoleSelectedListener;
+import com.squareup.picasso.Picasso;
+
+import java.net.URISyntaxException;
 
 /**
  * This fragment holds most of the information about a user which is returned from a call to the database
@@ -33,7 +45,7 @@ import com.example.pygmyhippo.common.OnRoleSelectedListener;
  * No returns and no parameters
  */
 public class ProfileFragment extends Fragment  implements AdapterView.OnItemSelectedListener{
-
+    Uri imagePath;
 
     private UserFragmentProfileBinding binding;
 
@@ -61,6 +73,39 @@ public class ProfileFragment extends Fragment  implements AdapterView.OnItemSele
     }
 
     /**
+     * Registers a photo picker activity launcher in single-select mode and sets the profile image to the new URI
+     * @author Jennifer
+     * @version 1.0
+     */
+    ActivityResultLauncher<PickVisualMediaRequest> pickMedia =
+            registerForActivityResult(new ActivityResultContracts.PickVisualMedia(), uri -> {
+                // Callback is invoked after the user selects a media item or closes the
+                // photo picker.
+                if (uri != null) {
+                    imagePath = uri;
+                    binding.EProfileImage.setImageURI(uri);
+                }
+            });
+
+    /**
+     * If a user hits the delete image button, this method will generate an avatar from the given link based upon the name field
+     * and set the image view to the URI
+     * @author Jennifer
+     * @param name the name the user has entered
+     * @return void
+     * @version 1.0
+     */
+    public void getAvatar (String name) throws URISyntaxException {
+        if (name.isEmpty()) name = "null";
+        String url = "https://api.multiavatar.com/";
+        imagePath = Uri.parse(url+name+".png");
+
+        Picasso.get()
+                .load(imagePath)
+                .into(binding.EProfileImage);
+
+    }
+    /**
      * Creates the view
      * @author Jennifer
      * @param inflater not sure
@@ -71,9 +116,9 @@ public class ProfileFragment extends Fragment  implements AdapterView.OnItemSele
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
 
-
         binding = UserFragmentProfileBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
+
 
         Spinner role_dropdown = (Spinner) root.findViewById(R.id.user_E_P_role);
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(
@@ -87,6 +132,140 @@ public class ProfileFragment extends Fragment  implements AdapterView.OnItemSele
 
         // need to do this so the listener is connected
         role_dropdown.setOnItemSelectedListener(this);
+
+
+        ImageView editButton = root.findViewById(R.id.E_P_edit);
+        Button updateButton = root.findViewById(R.id.E_P_update);
+
+        // All the text fields
+        EditText name_f = root.findViewById(R.id.E_P_textName);
+        EditText pronoun_f = root.findViewById(R.id.E_P_textPronouns);
+        EditText phone_f = root.findViewById(R.id.E_P_textPhone);
+        EditText email_f = root.findViewById(R.id.E_P_textEmail);
+
+        // Decorator radio buttons
+        RadioButton dec_geo = root.findViewById(R.id.E_P_gps_dec);
+        RadioButton dec_notify = root.findViewById(R.id.E_P_notification_dec);
+
+        // Functional Radio Groups
+        RadioGroup notify_g = root.findViewById(R.id.E_P_notify_setting);
+        RadioGroup geolocation_g = root.findViewById(R.id.E_P_geo_setting);
+
+        // Image Buttons
+        Button uploadIm_btn = root.findViewById(R.id.E_P_uploadImage);
+        Button deleteIm_btn = root.findViewById(R.id.E_P_deleteImage);
+
+        /**
+         * Allows te page elements to be edited by the user if the edit button is clicked
+         * @author Jennifer
+         */
+        View.OnClickListener edit = new View.OnClickListener() {
+            /**
+             * Tell whichs elements to become focusable, to appear or disappear
+             * @author Jennifer
+             * @param view the fragment view
+             */
+            @Override
+            public void onClick(View view) {
+                name_f.setFocusable(true);
+                pronoun_f.setFocusable(true);
+                phone_f.setFocusable(true);
+                email_f.setFocusable(true);
+                name_f.setFocusableInTouchMode(true);
+                pronoun_f.setFocusableInTouchMode(true);
+                phone_f.setFocusableInTouchMode(true);
+                email_f.setFocusableInTouchMode(true);
+                updateButton.setVisibility(View.VISIBLE);
+                dec_notify.setVisibility(View.GONE);
+                dec_geo.setVisibility(View.GONE);
+                notify_g.setVisibility(View.VISIBLE);
+                geolocation_g.setVisibility(View.VISIBLE);
+                editButton.setVisibility(View.GONE);
+                uploadIm_btn.setVisibility(View.VISIBLE);
+                deleteIm_btn.setVisibility(View.VISIBLE);
+
+            }
+        };
+
+        /**
+         * Exit edit mode the submit
+         * TODO: this needs to call whatever method will submit to the database
+         * @author Jennifer
+         */
+        View.OnClickListener update = new View.OnClickListener() {
+            /**
+             * Tell whichs elements to become unfocusable, to appear or disappear
+             * @author Jennifer
+             * @param view the fragment view
+             */
+            @Override
+            public void onClick(View view) {
+                name_f.setFocusable(false);
+                pronoun_f.setFocusable(false);
+                phone_f.setFocusable(false);
+                email_f.setFocusable(false);
+                name_f.setFocusableInTouchMode(false);
+                pronoun_f.setFocusableInTouchMode(false);
+                phone_f.setFocusableInTouchMode(false);
+                email_f.setFocusableInTouchMode(false);
+                updateButton.setVisibility(View.GONE);
+                dec_notify.setVisibility(View.VISIBLE);
+                dec_geo.setVisibility(View.VISIBLE);
+                notify_g.setVisibility(View.GONE);
+                geolocation_g.setVisibility(View.GONE);
+                editButton.setVisibility(View.VISIBLE);
+                uploadIm_btn.setVisibility(View.GONE);
+                deleteIm_btn.setVisibility(View.GONE);
+
+            }
+        };
+
+        /**
+         * Listener for the upload image button, it allows the user to select a photo from their photo gallery by launching the media picker
+         * @author Jennifer
+         */
+        View.OnClickListener upload = new View.OnClickListener() {
+            /**
+             * Tells the media picker to launch when the button listener is triggered
+             * @author Jennifer
+             * @param view the fragment view
+             */
+            @Override
+            public void onClick(View view) {
+
+                // Launch the photo picker and let the user choose only images.
+                pickMedia.launch(new PickVisualMediaRequest.Builder()
+                        .setMediaType(ActivityResultContracts.PickVisualMedia.ImageOnly.INSTANCE)
+                        .build());
+
+            }
+
+        };
+
+        /**
+         * On click Listener for the delete image button
+         * @author Jennifer
+         */
+        View.OnClickListener delete = new View.OnClickListener() {
+            /**
+             * Sends the users name to the method getAvatar
+             * @author Jennifer
+             * @param view the fragment view
+             */
+            @Override
+            public void onClick(View view) {
+                try {
+                    getAvatar(name_f.getText().toString());
+                } catch (URISyntaxException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        };
+
+        uploadIm_btn.setOnClickListener(upload);
+        deleteIm_btn.setOnClickListener(delete);
+        editButton.setOnClickListener(edit);
+        updateButton.setOnClickListener(update);
 
         return root;
     }

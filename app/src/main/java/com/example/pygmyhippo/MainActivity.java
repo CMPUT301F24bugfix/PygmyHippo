@@ -32,6 +32,7 @@ public class MainActivity extends AppCompatActivity implements OnRoleSelectedLis
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+
         Account currentAccount = new Account(
                 "1",  // accountID
                 "Moo Deng",  // name

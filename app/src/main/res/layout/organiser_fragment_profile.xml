@@ -6,7 +6,7 @@
     android:id="@+id/O_roleLabel"
     android:layout_width="wrap_content"
     android:layout_height="match_parent"
-    tools:context=".user.ProfileFragment">
+    tools:context=".organizer.ProfileFragment">
 
 
     <Spinner
@@ -14,7 +14,8 @@
         style="@style/Widget.AppCompat.Spinner.DropDown.ActionBar"
         android:layout_width="125dp"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="600dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="16dp"
         android:background="@drawable/e_p_rounded_corners"
         android:backgroundTint="@color/dark_purple"
         android:clickable="true"
@@ -24,11 +25,11 @@
         android:popupBackground="@color/dark_purple"
         android:popupTheme="@color/light_purple"
         android:textColor="@color/light_purple"
-        android:textSize="15sp"
-        app:layout_constraintBottom_toTopOf="@+id/O_P_form"
+        android:textSize="15dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.422"
-        app:layout_constraintStart_toEndOf="@+id/O_P_header" />
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toEndOf="@+id/O_P_header"
+        tools:layout_editor_absoluteY="23dp" />
 
     <ImageView
         android:layout_width="27dp"
@@ -47,36 +48,31 @@
         android:layout_width="236dp"
         android:layout_height="46dp"
         android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginBottom="4dp"
         android:fontFamily="@font/roboto_mono_bold"
         android:text="My Profile"
         android:textAlignment="textStart"
         android:textColor="@color/dark_purple"
         android:textSize="34sp"
         android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@+id/O_P_form"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.115"
+        app:layout_constraintHorizontal_bias="0.093"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.073" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <ScrollView
         android:id="@+id/O_P_form"
         android:layout_width="533dp"
         android:layout_height="708dp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginTop="16dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/organiser_E_P_role"
-        app:layout_constraintVertical_bias="1.0">
+        app:layout_constraintTop_toBottomOf="@+id/O_P_header">
 
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            tools:context=".user.ProfileFragment">
+            tools:context=".organiser.ProfileFragment">
 
             <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@+id/O_profile_image"
@@ -256,148 +252,128 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/O_P_email" />
 
-            <RadioButton
-                android:id="@+id/O_P_gps_dec"
-                android:layout_width="203dp"
-                android:layout_height="48dp"
-                android:checked="true"
-                android:fontFamily="@font/roboto_mono_medium"
-                android:text="Allow Geolocation"
-                android:textColor="@color/dark_purple"
-                app:layout_constraintBottom_toBottomOf="parent"
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:layout_marginEnd="228dp"
+                android:text="⭐Organiser"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.342"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/O_P_notification_dec"
-                app:layout_constraintVertical_bias="0.0" />
+                app:layout_constraintTop_toBottomOf="@+id/O_profile_image" />
 
-            <RadioButton
-                android:id="@+id/O_P_notification_dec"
-                android:layout_width="216dp"
-                android:layout_height="29dp"
-                android:layout_marginTop="8dp"
-                android:checked="true"
-                android:fontFamily="@font/roboto_mono_medium"
-                android:text="Allow Notifications"
-                android:textColor="@color/dark_purple"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.356"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/O_P_textPhone" />
-
-            <RadioGroup
-                android:id="@+id/O_P_notify_setting"
+            <TextView
+                android:id="@+id/O_profile_facility"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="12dp"
-                android:visibility="gone"
+                android:layout_marginBottom="8dp"
+                android:fontFamily="@font/roboto_mono_medium"
+                android:text="Facility"
+                android:textColor="@color/dark_purple"
+                android:textSize="22sp"
+                app:layout_constraintBottom_toTopOf="@+id/O_profile_facilityImg"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.381"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/O_P_textPhone">
+                app:layout_constraintTop_toBottomOf="@+id/O_P_textPhone" />
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="@font/roboto_mono_medium"
-                    android:text="Allow Notifications?:"
-                    android:textColor="@color/dark_purple"
-                    android:textSize="16sp" />
+            <ImageView
+                android:id="@+id/O_profile_facilityImg"
+                android:layout_width="300dp"
+                android:layout_height="220dp"
+                android:layout_marginTop="8dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/O_profile_facility"
+                app:srcCompat="@drawable/rec_centre"
+                tools:srcCompat="@drawable/rec_centre" />
 
-                <RadioButton
-                    android:id="@+id/O_P_notifications_yes"
-                    android:layout_width="216dp"
-                    android:layout_height="29dp"
-                    android:layout_marginTop="8dp"
-                    android:checked="true"
-                    android:fontFamily="@font/roboto_mono_medium"
-                    android:text="Allow"
-                    android:textColor="@color/dark_purple"
-                    app:layout_constraintEnd_toStartOf="@id/O_P_notifications_no"
-                    app:layout_constraintStart_toStartOf="parent" />
+            <Button
+                android:id="@+id/O_Profile_facilityUploadImage"
+                android:layout_width="wrap_content"
+                android:layout_height="48dp"
+                android:layout_marginTop="8dp"
+                android:backgroundTint="@color/dark_purple"
+                android:text="Upload Image"
+                android:textColor="@color/light_purple"
+                android:visibility="gone"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/O_profile_facilityImg" />
 
-                <RadioButton
-                    android:id="@+id/O_P_notifications_no"
-                    android:layout_width="216dp"
-                    android:layout_height="29dp"
-                    android:layout_marginTop="8dp"
-                    android:checked="true"
-                    android:fontFamily="@font/roboto_mono_medium"
-                    android:text="Don't Allow"
-                    android:textColor="@color/dark_purple"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.356"
-                    app:layout_constraintStart_toEndOf="@+id/O_P_notifications_yes" />
-
-            </RadioGroup>
-
-            <RadioGroup
-                android:id="@+id/O_P_geo_setting"
+            <TextView
+                android:id="@+id/O_Profile_facilityName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:visibility="gone"
+                android:layout_marginTop="12dp"
+                android:fontFamily="@font/roboto_mono_medium"
+                android:text="Facility Name:"
+                android:textColor="@color/dark_purple"
+                android:textSize="20sp"
+                android:inputType="textPostalAddress"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.381"
+                app:layout_constraintHorizontal_bias="0.325"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/O_P_notify_setting">
+                app:layout_constraintTop_toBottomOf="@+id/O_Profile_facilityUploadImage" />
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="@font/roboto_mono_medium"
-                    android:text="Allow Geolocation?:"
-                    android:textColor="@color/dark_purple"
-                    android:textSize="16sp" />
+            <EditText
+                android:id="@+id/O_Profile_facilityNameText"
+                android:layout_width="wrap_content"
+                android:layout_height="48dp"
+                android:ems="13"
+                android:focusable="false"
+                android:focusableInTouchMode="false"
+                android:fontFamily="@font/roboto_mono_medium"
+                android:hint="Johnson Recreation Centre"
+                android:textColor="@color/dark_purple"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.503"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/O_Profile_facilityName" />
 
-                <RadioButton
-                    android:id="@+id/O_P_geo_yes"
-                    android:layout_width="216dp"
-                    android:layout_height="29dp"
-                    android:layout_marginTop="8dp"
-                    android:checked="true"
-                    android:fontFamily="@font/roboto_mono_medium"
-                    android:text="Allow"
-                    android:textColor="@color/dark_purple"
-                    app:layout_constraintEnd_toStartOf="@id/O_P_notifications_no"
-                    app:layout_constraintStart_toStartOf="parent" />
+            <TextView
+                android:id="@+id/O_Profile_facilityLocation"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:fontFamily="@font/roboto_mono_medium"
+                android:text="Facility Location:"
+                android:textColor="@color/dark_purple"
+                android:textSize="20sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.375"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/O_Profile_facilityNameText" />
 
-                <RadioButton
-                    android:id="@+id/O_P_geo_no"
-                    android:layout_width="216dp"
-                    android:layout_height="29dp"
-                    android:layout_marginTop="8dp"
-                    android:checked="true"
-                    android:fontFamily="@font/roboto_mono_medium"
-                    android:text="Don't Allow"
-                    android:textColor="@color/dark_purple"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.356"
-                    app:layout_constraintStart_toEndOf="@+id/O_P_notifications_yes" />
+            <EditText
+                android:id="@+id/O_Profile_facilityLocationText"
+                android:layout_width="wrap_content"
+                android:layout_height="48dp"
+                android:ems="13"
+                android:focusable="false"
+                android:focusableInTouchMode="false"
+                android:fontFamily="@font/roboto_mono_medium"
+                android:hint="10323 112 Ave Edmonton"
+                android:textColor="@color/dark_purple"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.503"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/O_Profile_facilityLocation" />
 
-            </RadioGroup>
 
             <Button
                 android:id="@+id/O_P_update"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
                 android:backgroundTint="@color/dark_purple"
                 android:text="Update"
                 android:textColor="@color/light_purple"
                 android:visibility="gone"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/O_P_geo_setting" />
+                app:layout_constraintTop_toBottomOf="@+id/O_Profile_facilityLocationText" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:layout_marginEnd="228dp"
-                android:text="⭐ Organiser"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/O_profile_image" />
+
+
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>
