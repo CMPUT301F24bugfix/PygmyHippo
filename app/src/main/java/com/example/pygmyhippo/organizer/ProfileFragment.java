@@ -47,7 +47,7 @@ import kotlin.text.Charsets;
  * To be Implemented:
  * - the edit button will change the interface and allow the user to edit all fields and send it to
  *   the database.
- * - Organiser proifile page
+ * - Organiser profile page
  *
  * To be fixed:
  * - The framework for the communication between this can the main activity needs to be more robust
@@ -168,7 +168,6 @@ public class ProfileFragment extends Fragment implements AdapterView.OnItemSelec
         RadioGroup geolocation_g = root.findViewById(R.id.O_P_geo_setting);
 
         // Image Buttons
-
         Button uploadIm_btn = root.findViewById(R.id.O_P_uploadImage);
         Button deleteIm_btn = root.findViewById(R.id.O_P_deleteImage);
 
@@ -193,13 +192,47 @@ public class ProfileFragment extends Fragment implements AdapterView.OnItemSelec
                 phone_f.setFocusableInTouchMode(true);
                 email_f.setFocusableInTouchMode(true);
                 updateButton.setVisibility(View.VISIBLE);
-                dec_notify.setVisibility(View.INVISIBLE);
-                dec_geo.setVisibility(View.INVISIBLE);
+                dec_notify.setVisibility(View.GONE);
+                dec_geo.setVisibility(View.GONE);
                 notify_g.setVisibility(View.VISIBLE);
                 geolocation_g.setVisibility(View.VISIBLE);
-                editButton.setVisibility(View.INVISIBLE);
+                editButton.setVisibility(View.GONE);
                 uploadIm_btn.setVisibility(View.VISIBLE);
                 deleteIm_btn.setVisibility(View.VISIBLE);
+
+            }
+        };
+
+
+        /**
+         * Exit edit mode the submit
+         * TODO: this needs to call whatever method will submit to the database
+         * @author Jennifer
+         */
+        View.OnClickListener update = new View.OnClickListener() {
+            /**
+             * Tell whichs elements to become unfocusable, to appear or disappear
+             * @author Jennifer
+             * @param view the fragment view
+             */
+            @Override
+            public void onClick(View view) {
+                name_f.setFocusable(false);
+                pronoun_f.setFocusable(false);
+                phone_f.setFocusable(false);
+                email_f.setFocusable(false);
+                name_f.setFocusableInTouchMode(false);
+                pronoun_f.setFocusableInTouchMode(false);
+                phone_f.setFocusableInTouchMode(false);
+                email_f.setFocusableInTouchMode(false);
+                updateButton.setVisibility(View.GONE);
+                dec_notify.setVisibility(View.VISIBLE);
+                dec_geo.setVisibility(View.VISIBLE);
+                notify_g.setVisibility(View.GONE);
+                geolocation_g.setVisibility(View.GONE);
+                editButton.setVisibility(View.VISIBLE);
+                uploadIm_btn.setVisibility(View.GONE);
+                deleteIm_btn.setVisibility(View.GONE);
 
             }
         };
@@ -246,10 +279,10 @@ public class ProfileFragment extends Fragment implements AdapterView.OnItemSelec
             }
         };
 
-
         uploadIm_btn.setOnClickListener(upload);
         deleteIm_btn.setOnClickListener(delete);
         editButton.setOnClickListener(edit);
+        updateButton.setOnClickListener(update);
         return root;
     }
 
