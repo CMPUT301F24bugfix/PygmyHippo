@@ -1,6 +1,7 @@
 package com.example.pygmyhippo;
 
 import android.os.Bundle;
+import android.os.StrictMode;
 
 import com.example.pygmyhippo.common.Account;
 import com.example.pygmyhippo.common.OnRoleSelectedListener;
@@ -60,6 +61,7 @@ public class MainActivity extends AppCompatActivity implements OnRoleSelectedLis
                 setupNavControllerOrganiser(organiserBinder.navView);
                 break;
             default:
+                // needs a case for admin
                 break;
         }
     }

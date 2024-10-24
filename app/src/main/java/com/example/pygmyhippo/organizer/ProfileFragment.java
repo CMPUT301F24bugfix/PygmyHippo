@@ -1,20 +1,46 @@
 package com.example.pygmyhippo.organizer;
 
 import android.content.Context;
+import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.Spinner;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.PickVisualMediaRequest;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
 import com.example.pygmyhippo.R;
 import com.example.pygmyhippo.common.OnRoleSelectedListener;
 import com.example.pygmyhippo.databinding.OrganiserFragmentProfileBinding;
+import com.squareup.picasso.Picasso;
+
+import java.io.BufferedInputStream;
+import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.StringWriter;
+import java.io.UnsupportedEncodingException;
+import java.net.HttpURLConnection;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
+
+import kotlin.text.Charsets;
 
 /**
  * This fragment holds most of the information about a user which is returned from a call to the database
@@ -29,13 +55,13 @@ import com.example.pygmyhippo.databinding.OrganiserFragmentProfileBinding;
  *   which would change the role to user since its he first role in the drop down)
  *
  * Currently just a static page.
- * Allows the ognaiser to edit or view their current provided information.
+ * Allows the organiser to edit or view their current provided information.
  * @author Jennifer, Griffin
- * @version 1.1
+ * @version 1.2
  * No returns and no parameters
  */
 public class ProfileFragment extends Fragment implements AdapterView.OnItemSelectedListener {
-
+    Uri imagePath;
 
     private OrganiserFragmentProfileBinding binding;
 
@@ -63,6 +89,39 @@ public class ProfileFragment extends Fragment implements AdapterView.OnItemSelec
     }
 
     /**
+     * Registers a photo picker activity launcher in single-select mode and sets the profile image to the new URI
+     * @author Jennifer
+     * @version 1.0
+     */
+    ActivityResultLauncher<PickVisualMediaRequest> pickMedia =
+            registerForActivityResult(new ActivityResultContracts.PickVisualMedia(), uri -> {
+                // Callback is invoked after the user selects a media item or closes the
+                // photo picker.
+                if (uri != null) {
+                    imagePath = uri;
+                    binding.OProfileImage.setImageURI(uri);
+                }
+            });
+
+    /**
+     * If a user hits the delete image button, this method will generate an avatar from the given link based upon the name field
+     * and set the image view to the URI
+     * @author Jennifer
+     * @param name the name the user has entered
+     * @return void
+     * @version 1.0
+     */
+    public void getAvatar (String name) throws URISyntaxException {
+        if (name.isEmpty()) name = "null";
+        String url = "https://api.multiavatar.com/";
+        imagePath = Uri.parse(url+name+"pot.png");
+
+        Picasso.get()
+                .load(imagePath)
+                .into(binding.OProfileImage);
+
+    }
+    /**
      * Creates the view
      * @author Jennifer
      * @param inflater not sure
@@ -76,6 +135,7 @@ public class ProfileFragment extends Fragment implements AdapterView.OnItemSelec
 
         binding = OrganiserFragmentProfileBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
+        de.hdodenhof.circleimageview.CircleImageView profileImage = root.findViewById(R.id.O_profile_image);
 
         Spinner role_dropdown = (Spinner) root.findViewById(R.id.organiser_E_P_role);
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(
@@ -85,14 +145,114 @@ public class ProfileFragment extends Fragment implements AdapterView.OnItemSelec
         );
 
         adapter.setDropDownViewResource(R.layout.e_p_role_dropdown);
-
         role_dropdown.setAdapter(adapter);
 
         // need to do this so the listener is connected
         role_dropdown.setOnItemSelectedListener(this);
 
+        ImageView editButton = root.findViewById(R.id.O_P_edit);
+        Button updateButton = root.findViewById(R.id.O_P_update);
+
+        // All the text fields
+        EditText name_f = root.findViewById(R.id.O_P_textName);
+        EditText pronoun_f = root.findViewById(R.id.O_P_textPronouns);
+        EditText phone_f = root.findViewById(R.id.O_P_textPhone);
+        EditText email_f = root.findViewById(R.id.O_P_textEmail);
+
+        // Decorator radio buttons
+        RadioButton dec_geo = root.findViewById(R.id.O_P_gps_dec);
+        RadioButton dec_notify = root.findViewById(R.id.O_P_notification_dec);
+
+        // Functional Radio Groups
+        RadioGroup notify_g = root.findViewById(R.id.O_P_notify_setting);
+        RadioGroup geolocation_g = root.findViewById(R.id.O_P_geo_setting);
+
+        // Image Buttons
+
+        Button uploadIm_btn = root.findViewById(R.id.O_P_uploadImage);
+        Button deleteIm_btn = root.findViewById(R.id.O_P_deleteImage);
+
+        /**
+         * Allows te page elements to be edited by the user if the edit button is clicked
+         * @author Jennifer
+         */
+        View.OnClickListener edit = new View.OnClickListener() {
+            /**
+             * Tell whichs elements to become focusable, to appear or disappear
+             * @author Jennifer
+             * @param view the fragment view
+             */
+            @Override
+            public void onClick(View view) {
+                name_f.setFocusable(true);
+                pronoun_f.setFocusable(true);
+                phone_f.setFocusable(true);
+                email_f.setFocusable(true);
+                name_f.setFocusableInTouchMode(true);
+                pronoun_f.setFocusableInTouchMode(true);
+                phone_f.setFocusableInTouchMode(true);
+                email_f.setFocusableInTouchMode(true);
+                updateButton.setVisibility(View.VISIBLE);
+                dec_notify.setVisibility(View.INVISIBLE);
+                dec_geo.setVisibility(View.INVISIBLE);
+                notify_g.setVisibility(View.VISIBLE);
+                geolocation_g.setVisibility(View.VISIBLE);
+                editButton.setVisibility(View.INVISIBLE);
+                uploadIm_btn.setVisibility(View.VISIBLE);
+                deleteIm_btn.setVisibility(View.VISIBLE);
+
+            }
+        };
+
+        /**
+         * Listener for the upload image button, it allows the user to select a photo from their photo gallery by launching the media picker
+         * @author Jennifer
+         */
+        View.OnClickListener upload = new View.OnClickListener() {
+            /**
+             * Tells the media picker to launch when the button listener is triggered
+             * @author Jennifer
+             * @param view the fragment view
+             */
+            @Override
+            public void onClick(View view) {
+
+                // Launch the photo picker and let the user choose only images.
+                pickMedia.launch(new PickVisualMediaRequest.Builder()
+                        .setMediaType(ActivityResultContracts.PickVisualMedia.ImageOnly.INSTANCE)
+                        .build());
+
+            }
+
+        };
+
+        /**
+         * On click Listener for the delete image button
+         * @author Jennifer
+         */
+        View.OnClickListener delete = new View.OnClickListener() {
+            /**
+             * Sends the users name to the method getAvatar
+             * @author Jennifer
+             * @param view the fragment view
+             */
+            @Override
+            public void onClick(View view) {
+                try {
+                    getAvatar(name_f.getText().toString());
+                } catch (URISyntaxException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        };
+
+
+        uploadIm_btn.setOnClickListener(upload);
+        deleteIm_btn.setOnClickListener(delete);
+        editButton.setOnClickListener(edit);
         return root;
     }
+
 
     /**
      * since this implements the OnTimeSelectedLister we need to override these two methods to get
@@ -125,4 +285,6 @@ public class ProfileFragment extends Fragment implements AdapterView.OnItemSelec
         super.onDestroyView();
         binding = null;
     }
+
+
 }

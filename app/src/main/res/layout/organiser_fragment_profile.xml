@@ -3,10 +3,9 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
+    android:layout_width="wrap_content"
     android:layout_height="match_parent"
-    tools:context=".user.ProfileFragment"
-    >
+    tools:context=".user.ProfileFragment">
 
 
     <Spinner
@@ -14,21 +13,21 @@
         style="@style/Widget.AppCompat.Spinner.DropDown.ActionBar"
         android:layout_width="125dp"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="28dp"
+        android:layout_marginBottom="600dp"
         android:background="@drawable/e_p_rounded_corners"
         android:backgroundTint="@color/dark_purple"
+        android:clickable="true"
+        android:focusable="true"
         android:fontFamily="@font/roboto_mono_medium"
         android:padding="2dp"
         android:popupBackground="@color/dark_purple"
         android:popupTheme="@color/light_purple"
         android:textColor="@color/light_purple"
         android:textSize="15dp"
-        app:layout_constraintBottom_toTopOf="@+id/profile_image"
+        app:layout_constraintBottom_toTopOf="@+id/O_P_form"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/E_P_header"
-        android:clickable="true"
-        android:focusable="true"/>
-
+        app:layout_constraintHorizontal_bias="0.422"
+        app:layout_constraintStart_toEndOf="@+id/O_P_header" />
 
     <ImageView
         android:layout_width="27dp"
@@ -43,203 +42,353 @@
         tools:srcCompat="@drawable/down_arrow" />
 
     <TextView
-        android:id="@+id/E_P_header"
+        android:id="@+id/O_P_header"
         android:layout_width="236dp"
         android:layout_height="46dp"
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
-        android:layout_marginBottom="24dp"
+        android:layout_marginBottom="4dp"
         android:fontFamily="@font/roboto_mono_bold"
         android:text="Organiser"
         android:textAlignment="textStart"
         android:textColor="@color/dark_purple"
         android:textSize="34sp"
         android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@+id/profile_image"
+        app:layout_constraintBottom_toTopOf="@+id/O_P_form"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.108"
+        app:layout_constraintHorizontal_bias="0.115"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.073" />
 
-    <de.hdodenhof.circleimageview.CircleImageView
-        android:id="@+id/profile_image"
-        android:layout_width="210dp"
-        android:layout_height="210dp"
-        android:src="@drawable/dog"
-        app:civ_border_color="#FF000000"
-        app:civ_border_width="0dp"
-        app:layout_constraintBottom_toTopOf="@+id/E_P_name"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/E_P_header"
-        app:layout_constraintVertical_bias="0.611" />
-
-    <EditText
-        android:id="@+id/E_P_textName"
-        android:layout_width="wrap_content"
-        android:layout_height="48dp"
-        android:ems="13"
-        android:focusable="false"
-        android:focusableInTouchMode="false"
-        android:fontFamily="@font/roboto_mono_medium"
-        android:hint="Moo Deng"
-        android:inputType="text"
-        android:textColor="@color/dark_purple"
-        app:layout_constraintBottom_toTopOf="@+id/E_P_pronouns"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.503"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/E_P_name" />
-
-    <ImageView
-        android:layout_width="54dp"
-        android:layout_height="54dp"
-        android:clickable="true"
-        android:focusable="true"
-        android:pointerIcon="wait"
-        app:layout_constraintBottom_toBottomOf="@+id/profile_image"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.579"
-        app:layout_constraintStart_toStartOf="@+id/profile_image"
-        app:layout_constraintTop_toTopOf="@+id/profile_image"
-        app:layout_constraintVertical_bias="0.942"
-        app:srcCompat="@drawable/e_p_ic_edit"
-        tools:srcCompat="@drawable/e_p_ic_edit" />
-
-    <RadioButton
-        android:id="@+id/E_P_allowGps"
-        android:layout_width="203dp"
-        android:layout_height="39dp"
-        android:checked="true"
-        android:fontFamily="@font/roboto_mono_medium"
-        android:text="Allow Geolocation"
-        android:textColor="@color/dark_purple"
+    <ScrollView
+        android:id="@+id/O_P_form"
+        android:layout_width="533dp"
+        android:layout_height="708dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.206"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/E_P_allowNotifications"
-        app:layout_constraintVertical_bias="0.0" />
+        app:layout_constraintTop_toBottomOf="@+id/organiser_E_P_role"
+        app:layout_constraintVertical_bias="1.0">
 
-    <TextView
-        android:id="@+id/E_P_pronouns"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
-        android:fontFamily="@font/roboto_mono_medium"
-        android:text="Pronouns:"
-        android:textSize="20sp"
-        android:textColor="@color/dark_purple"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.19"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/E_P_textName" />
 
-    <EditText
-        android:id="@+id/editTextPhone"
-        android:layout_width="wrap_content"
-        android:layout_height="48dp"
-        android:ems="13"
-        android:focusable="false"
-        android:focusableInTouchMode="false"
-        android:fontFamily="@font/roboto_mono_medium"
-        android:hint="123 456 7890"
-        android:inputType="phone"
-        android:textColor="@color/dark_purple"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.503"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/E_P_phone" />
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            tools:context=".user.ProfileFragment">
 
-    <EditText
-        android:id="@+id/E_P_textPronouns"
-        android:layout_width="wrap_content"
-        android:layout_height="48dp"
-        android:ems="13"
-        android:focusable="false"
-        android:focusableInTouchMode="false"
-        android:fontFamily="@font/roboto_mono_medium"
-        android:hint="she/they"
-        android:inputType="text"
-        android:textColor="@color/dark_purple"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.503"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/E_P_pronouns" />
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/O_profile_image"
+                android:layout_width="210dp"
+                android:layout_height="210dp"
+                android:src="@drawable/dog"
+                app:civ_border_color="#FF000000"
+                app:civ_border_width="0dp"
+                app:layout_constraintBottom_toTopOf="@id/O_P_name"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.501"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.284" />
 
-    <TextView
-        android:id="@+id/E_P_phone"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:fontFamily="@font/roboto_mono_medium"
-        android:text="Phone:"
-        android:textSize="20sp"
-        android:textColor="@color/dark_purple"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.17"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/E_P_textEmail" />
+            <ImageView
+                android:id="@+id/O_P_edit"
+                android:layout_width="54dp"
+                android:layout_height="54dp"
+                android:clickable="true"
+                android:focusable="true"
+                android:pointerIcon="wait"
+                app:layout_constraintBottom_toBottomOf="@+id/O_profile_image"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.492"
+                app:layout_constraintStart_toStartOf="@+id/O_profile_image"
+                app:layout_constraintTop_toTopOf="@+id/O_profile_image"
+                app:layout_constraintVertical_bias="0.942"
+                app:srcCompat="@drawable/e_p_ic_edit"
+                tools:srcCompat="@drawable/e_p_ic_edit" />
 
-    <TextView
-        android:id="@+id/E_P_name"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="6dp"
-        android:fontFamily="@font/roboto_mono_medium"
-        android:text="Name:"
-        android:textSize="20sp"
-        android:textColor="@color/dark_purple"
-        app:layout_constraintBottom_toTopOf="@+id/E_P_textName"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.17"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/profile_image" />
+            <Button
+                android:id="@+id/O_P_uploadImage"
+                android:layout_width="wrap_content"
+                android:layout_height="48dp"
+                android:layout_marginStart="132dp"
+                android:layout_marginTop="8dp"
+                android:backgroundTint="@color/dark_purple"
+                android:textColor="@color/light_purple"
+                android:text="Upload Image"
+                android:visibility="gone"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/O_profile_image" />
 
-    <RadioButton
-        android:id="@+id/E_P_allowNotifications"
-        android:layout_width="216dp"
-        android:layout_height="29dp"
-        android:layout_marginTop="12dp"
-        android:checked="true"
-        android:textColor="@color/dark_purple"
-        android:fontFamily="@font/roboto_mono_medium"
-        android:text="Allow Notifications"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.22"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editTextPhone" />
+            <Button
+                android:id="@+id/O_P_deleteImage"
+                android:layout_width="wrap_content"
+                android:layout_height="48dp"
+                android:layout_marginStart="12dp"
+                android:layout_marginTop="8dp"
+                android:text="Delete Image"
+                android:backgroundTint="@color/dark_purple"
+                android:textColor="@color/light_purple"
+                android:visibility="gone"
+                app:layout_constraintStart_toEndOf="@+id/O_P_uploadImage"
+                app:layout_constraintTop_toBottomOf="@+id/O_profile_image" />
 
-    <TextView
-        android:id="@+id/E_P_email"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
-        android:fontFamily="@font/roboto_mono_medium"
-        android:text="Email:"
-        android:textSize="20sp"
-        android:textColor="@color/dark_purple"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.17"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/E_P_textPronouns" />
+            <TextView
+                android:id="@+id/O_P_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:fontFamily="@font/roboto_mono_medium"
+                android:text="Name:"
+                android:textColor="@color/dark_purple"
+                android:textSize="20sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.255"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/O_P_uploadImage" />
 
-    <EditText
-        android:id="@+id/E_P_textEmail"
-        android:layout_width="wrap_content"
-        android:layout_height="48dp"
-        android:ems="13"
-        android:focusable="false"
-        android:focusableInTouchMode="false"
-        android:fontFamily="@font/roboto_mono_medium"
-        android:hint="moodeng@ualberta.ca"
+            <EditText
+                android:id="@+id/O_P_textName"
+                android:layout_width="wrap_content"
+                android:layout_height="48dp"
+                android:ems="13"
+                android:focusable="false"
+                android:focusableInTouchMode="false"
+                android:fontFamily="@font/roboto_mono_medium"
+                android:hint="Moo Deng"
+                android:inputType="text"
+                android:textColor="@color/dark_purple"
+                app:layout_constraintBottom_toTopOf="@+id/O_P_pronouns"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.503"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/O_P_name" />
 
-        android:inputType="textEmailAddress"
-        android:textColor="@color/dark_purple"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.503"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/E_P_email" />
+            <TextView
+                android:id="@+id/O_P_pronouns"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:fontFamily="@font/roboto_mono_medium"
+                android:text="Pronouns:"
+                android:textColor="@color/dark_purple"
+                android:textSize="20sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.275"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/O_P_textName" />
+
+            <EditText
+                android:id="@+id/O_P_textPronouns"
+                android:layout_width="wrap_content"
+                android:layout_height="48dp"
+                android:ems="13"
+                android:focusable="false"
+                android:focusableInTouchMode="false"
+                android:fontFamily="@font/roboto_mono_medium"
+                android:hint="she/they"
+                android:inputType="text"
+                android:textColor="@color/dark_purple"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.503"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/O_P_pronouns" />
+
+            <TextView
+                android:id="@+id/O_P_phone"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:fontFamily="@font/roboto_mono_medium"
+                android:text="Phone:"
+                android:textColor="@color/dark_purple"
+                android:textSize="20sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.255"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/O_P_textEmail" />
+
+            <EditText
+                android:id="@+id/O_P_textPhone"
+                android:layout_width="wrap_content"
+                android:layout_height="48dp"
+                android:ems="13"
+                android:focusable="false"
+                android:focusableInTouchMode="false"
+                android:fontFamily="@font/roboto_mono_medium"
+                android:hint="123 456 7890"
+                android:inputType="phone"
+                android:textColor="@color/dark_purple"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.503"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/O_P_phone" />
+
+            <TextView
+                android:id="@+id/O_P_email"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:fontFamily="@font/roboto_mono_medium"
+                android:text="Email:"
+                android:textColor="@color/dark_purple"
+                android:textSize="20sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.255"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/O_P_textPronouns" />
+
+            <EditText
+                android:id="@+id/O_P_textEmail"
+                android:layout_width="wrap_content"
+                android:layout_height="48dp"
+                android:ems="13"
+                android:focusable="false"
+                android:focusableInTouchMode="false"
+                android:fontFamily="@font/roboto_mono_medium"
+                android:hint="moodeng@ualberta.ca"
+                android:inputType="textEmailAddress"
+                android:textColor="@color/dark_purple"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.503"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/O_P_email" />
+
+            <RadioButton
+                android:id="@+id/O_P_gps_dec"
+                android:layout_width="203dp"
+                android:layout_height="48dp"
+                android:checked="true"
+                android:fontFamily="@font/roboto_mono_medium"
+                android:textColor="@color/dark_purple"
+                android:text="Allow Geolocation"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.342"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/O_P_notification_dec"
+                app:layout_constraintVertical_bias="0.0" />
+
+            <RadioButton
+                android:id="@+id/O_P_notification_dec"
+                android:layout_width="216dp"
+                android:layout_height="29dp"
+                android:layout_marginTop="8dp"
+                android:checked="true"
+                android:fontFamily="@font/roboto_mono_medium"
+                android:text="Allow Notifications"
+                android:textColor="@color/dark_purple"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.356"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/O_P_textPhone" />
+
+            <RadioGroup
+                android:id="@+id/O_P_notify_setting"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:visibility="gone"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.381"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/O_P_textPhone">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/roboto_mono_medium"
+                    android:text="Allow Notifications?:"
+                    android:textColor="@color/dark_purple"
+                    android:textSize="16sp" />
+
+                <RadioButton
+                    android:id="@+id/O_P_notifications_yes"
+                    android:layout_width="216dp"
+                    android:layout_height="29dp"
+                    android:layout_marginTop="8dp"
+                    android:checked="true"
+                    android:fontFamily="@font/roboto_mono_medium"
+                    android:text="Allow"
+                    android:textColor="@color/dark_purple"
+                    app:layout_constraintEnd_toStartOf="@id/O_P_notifications_no"
+                    app:layout_constraintStart_toStartOf="parent" />
+
+                <RadioButton
+                    android:id="@+id/O_P_notifications_no"
+                    android:layout_width="216dp"
+                    android:layout_height="29dp"
+                    android:layout_marginTop="8dp"
+                    android:checked="true"
+                    android:fontFamily="@font/roboto_mono_medium"
+                    android:text="Don't Allow"
+                    android:textColor="@color/dark_purple"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.356"
+                    app:layout_constraintStart_toEndOf="@+id/O_P_notifications_yes" />
+
+            </RadioGroup>
+
+            <RadioGroup
+                android:id="@+id/O_P_geo_setting"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:visibility="gone"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.381"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/O_P_notify_setting">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/roboto_mono_medium"
+                    android:text="Allow Geolocation?:"
+                    android:textColor="@color/dark_purple"
+                    android:textSize="16sp" />
+
+                <RadioButton
+                    android:id="@+id/O_P_geo_yes"
+                    android:layout_width="216dp"
+                    android:layout_height="29dp"
+                    android:layout_marginTop="8dp"
+                    android:checked="true"
+                    android:fontFamily="@font/roboto_mono_medium"
+                    android:text="Allow"
+                    android:textColor="@color/dark_purple"
+                    app:layout_constraintEnd_toStartOf="@id/O_P_notifications_no"
+                    app:layout_constraintStart_toStartOf="parent" />
+
+                <RadioButton
+                    android:id="@+id/O_P_geo_no"
+                    android:layout_width="216dp"
+                    android:layout_height="29dp"
+                    android:layout_marginTop="8dp"
+                    android:checked="true"
+                    android:fontFamily="@font/roboto_mono_medium"
+                    android:text="Don't Allow"
+                    android:textColor="@color/dark_purple"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.356"
+                    app:layout_constraintStart_toEndOf="@+id/O_P_notifications_yes" />
+
+            </RadioGroup>
+
+            <Button
+                android:id="@+id/O_P_update"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:backgroundTint="@color/dark_purple"
+                android:layout_marginTop="10dp"
+                android:text="Update"
+                android:textColor="@color/light_purple"
+                android:visibility="gone"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/O_P_geo_setting" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </ScrollView>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

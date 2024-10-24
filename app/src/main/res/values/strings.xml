@@ -10,5 +10,6 @@
         <item>Organizer</item>
         <item>Admin</item>
     </string-array>
+    <string name="profile_image"></string>
 
 </resources>
