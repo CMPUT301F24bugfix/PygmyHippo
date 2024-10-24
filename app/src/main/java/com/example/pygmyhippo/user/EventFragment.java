@@ -40,7 +40,7 @@ public class EventFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.user_fragment_myevent, container, false);
+        View view = inflater.inflate(R.layout.user_fragment_event, container, false);
 
         Button registerButton = view.findViewById(R.id.registerButton);
 
@@ -51,6 +51,7 @@ public class EventFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 // set text of register button to checkmark and disable the button
+                // TODO: add actual database stuff here, where user is added into the events list
                 registerButton.setText("✔");
                 registerButton.setEnabled(false);
             }
