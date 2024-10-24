@@ -203,7 +203,6 @@ public class ProfileFragment extends Fragment implements AdapterView.OnItemSelec
             }
         };
 
-
         /**
          * Exit edit mode the submit
          * TODO: this needs to call whatever method will submit to the database
