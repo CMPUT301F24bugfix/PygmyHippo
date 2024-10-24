@@ -6,16 +6,16 @@
     android:layout_height="match_parent">
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/allListRecycler"
+        android:id="@+id/a_alllist_recycler"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         app:layout_constrainedHeight="true"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/categorySpinner"
+        app:layout_constraintTop_toBottomOf="@+id/a_alllist_category_spinner"
         tools:layout_editor_absoluteX="0dp" />
 
     <TextView
-        android:id="@+id/allListTitleTextView"
+        android:id="@+id/a_alllist_title_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="TextView"
@@ -26,35 +26,35 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/filterByTextView"
+        android:id="@+id/a_alllist_filter_by_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="10dp"
         android:text="Filter By:"
         android:textSize="16sp"
-        app:layout_constraintEnd_toStartOf="@+id/categorySpinner"
+        app:layout_constraintEnd_toStartOf="@+id/a_alllist_category_spinner"
         app:layout_constraintHorizontal_chainStyle="spread"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/allListTitleTextView" />
+        app:layout_constraintTop_toBottomOf="@+id/a_alllist_title_text" />
 
     <Spinner
-        android:id="@+id/categorySpinner"
+        android:id="@+id/a_alllist_category_spinner"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="10dp"
         android:layout_marginEnd="10dp"
-        app:layout_constraintEnd_toStartOf="@+id/orderSpinner"
-        app:layout_constraintStart_toEndOf="@+id/filterByTextView"
-        app:layout_constraintTop_toBottomOf="@+id/allListTitleTextView" />
+        app:layout_constraintEnd_toStartOf="@+id/a_alllist_order_spinner"
+        app:layout_constraintStart_toEndOf="@+id/a_alllist_filter_by_text"
+        app:layout_constraintTop_toBottomOf="@+id/a_alllist_title_text" />
 
     <Spinner
-        android:id="@+id/orderSpinner"
+        android:id="@+id/a_alllist_order_spinner"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="10dp"
         android:layout_marginEnd="10dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/categorySpinner"
-        app:layout_constraintTop_toBottomOf="@+id/allListTitleTextView" />
+        app:layout_constraintStart_toEndOf="@+id/a_alllist_category_spinner"
+        app:layout_constraintTop_toBottomOf="@+id/a_alllist_title_text" />
 </androidx.constraintlayout.widget.ConstraintLayout>

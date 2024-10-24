@@ -24,6 +24,7 @@ public class Event {
     private String organizerID;
     private ArrayList<Entrant> entrants;
 
+    private String title;
     private String location;
     private String date;
     private String time;
@@ -43,6 +44,14 @@ public class Event {
         EventStatus(String value) {
             this.value = value;
         }
+    }
+
+    public Event(String title, String location, String date, String time, EventStatus eventStatus) {
+        this.title = title;
+        this.location = location;
+        this.date = date;
+        this.time = time;
+        this.eventStatus = eventStatus;
     }
 
     public String getEventID() {
@@ -125,6 +134,10 @@ public class Event {
 
     public void setEventStatus(EventStatus eventStatus) {
         this.eventStatus = eventStatus;
+    }
+
+    public String getTitle() {
+        return title;
     }
 }
 
