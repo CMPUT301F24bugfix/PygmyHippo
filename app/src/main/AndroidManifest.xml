@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
-    <uses-permission android:name="android.permission.INTERNET"/>
-    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -16,8 +15,7 @@
         <activity
             android:name=".MainActivity"
             android:exported="true"
-            android:label="@string/title_activity_main"
-            android:windowSoftInputMode="adjustPan">
+            android:label="@string/title_activity_main" >
 
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -32,17 +30,3 @@
     </application>
 
 </manifest>
-
-<!--
-Jennifer: Got one line of code to fix inputs being obscured by the keyboard
-Author: Aniruddh Parihar
-Code was posted on September 3, 2021 [ Accessed October 23, 2024 ]
-From https://stackoverflow.com/questions/24262414/android-keyboard-hides-edittext
--->
-
-<!--
-Jennifer: Got a line of code to fix an error about not having internet permission to preform http requests
-Author: Valeria
-Code was posted February 2, 2016 [ Accessed October 23, 2024 ]
-From https://stackoverflow.com/questions/17360924/securityexception-permission-denied-missing-internet-permission
--->

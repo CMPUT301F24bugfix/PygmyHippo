@@ -11,6 +11,8 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.Spinner;
 
 import androidx.activity.result.ActivityResultLauncher;
@@ -130,6 +132,7 @@ public class ProfileFragment extends Fragment implements AdapterView.OnItemSelec
         );
 
         adapter.setDropDownViewResource(R.layout.e_p_role_dropdown);
+
         role_dropdown.setAdapter(adapter);
 
         // need to do this so the listener is connected
@@ -313,6 +316,4 @@ public class ProfileFragment extends Fragment implements AdapterView.OnItemSelec
         super.onDestroyView();
         binding = null;
     }
-
-
 }
