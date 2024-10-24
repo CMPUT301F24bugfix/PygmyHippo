@@ -1,4 +1,4 @@
-package com.example.pygmyhippo;
+package com.example.pygmyhippo.admin;
 
 import android.os.Bundle;
 import android.util.Log;
@@ -11,10 +11,20 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
+import com.example.pygmyhippo.R;
+import com.example.pygmyhippo.common.RecyclerClickListener;
+import com.example.pygmyhippo.common.Account;
 import com.example.pygmyhippo.databinding.FragmentAllListBinding;
 
 import java.util.ArrayList;
 
+/**
+ * Admin fragment for displaying all users.
+ *
+ * Users are displayed in a list (RecyclerView). Users can be sorted by various attributes in
+ * different orders. When users are clicked, the fragment should navigate to that particular
+ * user's profile page with admin permissions.
+ */
 public class AllUsersFragment extends Fragment implements RecyclerClickListener {
 
     FragmentAllListBinding binding;

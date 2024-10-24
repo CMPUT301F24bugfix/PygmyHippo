@@ -1,4 +1,4 @@
-package com.example.pygmyhippo;
+package com.example.pygmyhippo.admin;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -7,8 +7,17 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 
+import com.example.pygmyhippo.common.BaseRecyclerAdapter;
+import com.example.pygmyhippo.common.BaseViewHolder;
+import com.example.pygmyhippo.R;
+import com.example.pygmyhippo.common.RecyclerClickListener;
+import com.example.pygmyhippo.common.Event;
+
 import java.util.ArrayList;
 
+/**
+ * Adapter for RecyclerView in AllEventsFragment.
+ */
 public class AllEventsAdapter extends BaseRecyclerAdapter<Event, AllEventsAdapter.EventViewHolder> {
     public static class EventViewHolder extends BaseViewHolder<Event> {
         TextView nameTextView, occurrenceTextView, locationTextView, waitlistStatusTextView;

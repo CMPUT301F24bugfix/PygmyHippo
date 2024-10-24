@@ -1,4 +1,4 @@
-package com.example.pygmyhippo;
+package com.example.pygmyhippo.admin;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -7,8 +7,17 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 
+import com.example.pygmyhippo.common.BaseRecyclerAdapter;
+import com.example.pygmyhippo.common.BaseViewHolder;
+import com.example.pygmyhippo.R;
+import com.example.pygmyhippo.common.RecyclerClickListener;
+import com.example.pygmyhippo.common.Account;
+
 import java.util.ArrayList;
 
+/**
+ * Adapter for RecyclerView in AllUsersFragment.
+ */
 public class AllUsersAdapter extends BaseRecyclerAdapter<Account, AllUsersAdapter.UserViewHolder> {
     public static class UserViewHolder extends BaseViewHolder<Account> {
         private final TextView usernameTextView, phoneTextView, emailTextView, locationTextView;

@@ -1,10 +1,23 @@
-package com.example.pygmyhippo;
+package com.example.pygmyhippo.common;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 
+/**
+ * Abstract base class for RecyclerView Adapters for displaying single dataclasses (e.g. Event,
+ * Account).
+ *
+ * In order to effectively to this adapter, you have to extend it and provide an accompanying
+ * ViewHolder. A custom click listener is optional but required if you need to process list item
+ * clicks.
+ *
+ * @see RecyclerClickListener
+ * @see com.example.pygmyhippo.admin.AllEventsAdapter
+ * @param <T> Dataclass being displayed.
+ * @param <VH> ViewHolder for the same dataclass.
+ */
 public abstract class BaseRecyclerAdapter<T, VH extends BaseViewHolder<T>> extends RecyclerView.Adapter<VH> {
     protected RecyclerClickListener listener;
     protected ArrayList<T> dataList;

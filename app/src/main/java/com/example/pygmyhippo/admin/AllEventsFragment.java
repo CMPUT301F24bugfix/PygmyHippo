@@ -1,4 +1,4 @@
-package com.example.pygmyhippo;
+package com.example.pygmyhippo.admin;
 
 import android.os.Bundle;
 import android.util.Log;
@@ -11,16 +11,27 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
+import com.example.pygmyhippo.R;
+import com.example.pygmyhippo.common.RecyclerClickListener;
+import com.example.pygmyhippo.common.Event;
 import com.example.pygmyhippo.databinding.FragmentAllListBinding;
 
 import java.util.ArrayList;
 
+/**
+ * Admin fragment for displaying all events.
+ *
+ * Events are displayed in a list (RecyclerView). Events can be sorted by various attributes in
+ * different orders. When events are clicked, the fragment should navigate to that particular
+ * event's profile page with admin permissions.
+ */
 public class AllEventsFragment extends Fragment implements RecyclerClickListener {
     FragmentAllListBinding binding;
     ArrayList<Event> allListData;
     AllEventsAdapter adapter;
 
     private void getData() {
+        // TODO: Add DB integration
         allListData = new ArrayList<>();
         allListData.add(new Event("LeetCode Meetup", "SUB", "Oct. 30th", "09:30", Event.EventStatus.ongoing));
         allListData.add(new Event("CheriCon", "VVC", "Nov. 1st", "23:30", Event.EventStatus.ongoing));
