@@ -1,0 +1,212 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:id="@+id/layout"
+    android:layout_height="match_parent">
+    <!-- https://www.tutorialspoint.com/how-can-i-make-my-layout-scroll-vertically-in-android -->
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:orientation="vertical"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            >
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="230dp"
+                android:layout_marginTop="28dp"
+                android:background="#c1c1c1"
+                android:src="@drawable/dog" />
+
+            <TextView
+                android:id="@+id/o_postevent_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Event Details"
+                android:layout_marginTop="15dp"
+                android:fontFamily="@font/roboto_mono_bold"
+                android:textSize="34sp"
+                android:textStyle="bold"
+                android:textColor="@color/title_text"/>
+
+            <TextView
+                android:id="@+id/o_postEvent_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Name"
+                android:layout_marginTop="12dp"
+                android:fontFamily="@font/roboto_mono_medium"
+                android:textSize="18sp"
+                android:textColor="@color/dark_purple"/>
+
+            <EditText
+                android:id="@+id/o_postEvent_name_edit"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:ems="10"
+                android:inputType="text"
+                android:textSize="18sp"
+                android:hint="Event Name"
+                android:textColor="@color/dark_purple"
+                android:fontFamily="@font/roboto_mono_medium"/>
+
+            <TextView
+                android:id="@+id/o_postEvent_dataTime"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Data &amp; Time"
+                android:layout_marginTop="12dp"
+                android:fontFamily="@font/roboto_mono_medium"
+                android:textSize="18sp"
+                android:textColor="@color/dark_purple"/>
+
+            <EditText
+                android:id="@+id/o_postEvent_dataTime_edit"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:ems="10"
+                android:textSize="18sp"
+                android:inputType="text"
+                android:hint="Event Data &amp; Time"
+                android:textColor="@color/dark_purple"
+                android:fontFamily="@font/roboto_mono_medium"/>
+
+            <TextView
+                android:id="@+id/o_postEvent_price"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Price (CAD)"
+                android:layout_marginTop="12dp"
+                android:fontFamily="@font/roboto_mono_medium"
+                android:textSize="18sp"
+                android:textColor="@color/dark_purple"/>
+
+            <EditText
+                android:id="@+id/o_postEvent_price_edit"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:ems="10"
+                android:textSize="18sp"
+                android:inputType="text"
+                android:hint="Event Price"
+                android:textColor="@color/dark_purple"
+                android:fontFamily="@font/roboto_mono_medium"/>
+
+            <TextView
+                android:id="@+id/o_postEvent_location"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Location"
+                android:layout_marginTop="12dp"
+                android:fontFamily="@font/roboto_mono_medium"
+                android:textSize="18sp"
+                android:textColor="@color/dark_purple"/>
+
+            <EditText
+                android:id="@+id/o_postEvent_location_edit"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:ems="10"
+                android:textSize="18sp"
+                android:inputType="text"
+                android:hint="Event Location"
+                android:textColor="@color/dark_purple"
+                android:fontFamily="@font/roboto_mono_medium"/>
+
+            <TextView
+                android:id="@+id/o_postEvent_description"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Description"
+                android:layout_marginTop="12dp"
+                android:fontFamily="@font/roboto_mono_medium"
+                android:textSize="18sp"
+                android:textColor="@color/dark_purple"/>
+
+            <EditText
+                android:id="@+id/o_postEvent_description_edit"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:ems="10"
+                android:textSize="18sp"
+                android:inputType="text"
+                android:hint="Event Description"
+                android:textColor="@color/dark_purple"
+                android:fontFamily="@font/roboto_mono_medium"/>
+
+            <TextView
+                android:id="@+id/o_postEvent_limit"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Entrant Limit (optional)"
+                android:layout_marginTop="12dp"
+                android:fontFamily="@font/roboto_mono_medium"
+                android:textSize="18sp"
+                android:textColor="@color/dark_purple"/>
+
+            <EditText
+                android:id="@+id/o_postEvent_limit_edit"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:ems="10"
+                android:textSize="18sp"
+                android:inputType="number"
+                android:hint="Event Limit"
+                android:textColor="@color/dark_purple"
+                android:fontFamily="@font/roboto_mono_medium"/>
+
+            <TextView
+                android:id="@+id/o_postEvent_winners"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Number of Winners"
+                android:layout_marginTop="12dp"
+                android:fontFamily="@font/roboto_mono_medium"
+                android:textSize="18sp"
+                android:textColor="@color/dark_purple"/>
+
+            <EditText
+                android:id="@+id/o_postEvent_winners_edit"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:ems="10"
+                android:textSize="18sp"
+                android:inputType="number"
+                android:hint="Event Number of Winners"
+                android:textColor="@color/dark_purple"
+                android:fontFamily="@font/roboto_mono_medium"/>
+
+            <CheckBox
+                android:id="@+id/o_postEvent_geolocation_check"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:layout_marginTop="12dp"
+                android:checked="false"
+                android:textColor="@color/dark_purple"
+                android:textSize="18sp"
+                android:fontFamily="@font/roboto_mono_medium"
+                android:text="Enable Geolocation" />
+
+            <Button
+                android:id="@+id/o_postEvent_post_button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:backgroundTint="@color/main_buton"
+                android:textColor="@color/main_button_text"
+                android:text="Create Event"
+                android:layout_marginTop="12dp"
+                android:layout_marginBottom="120dp"/>
+
+            <!-- this is only added for testing an serves no purpose other that a
+            reference to the bottom of the screen -->
+            <TextView
+                android:id="@+id/o_postEvent_bottom_scroll"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>

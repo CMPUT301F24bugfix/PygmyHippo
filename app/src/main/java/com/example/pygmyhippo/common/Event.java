@@ -13,15 +13,22 @@
  */
 
 
-package com.example.pygmyhippo;
+package com.example.pygmyhippo.common;
 
 import java.util.ArrayList;
 
-//
+/**
+ * Our event class
+ * TODO:
+ *  - Use a builder for initialization
+ *  - connect to the database
+ *  - add generation of hashdata and qr code
+ * @author James, Griffin
+ */
 public class Event {
 
     private String eventID;
-    private String organizerID;
+    private String organiserID;
     private ArrayList<Entrant> entrants;
 
     private String title;
@@ -32,6 +39,10 @@ public class Event {
     private String description;
     private String cost;
     private String eventPoster;
+
+    private int eventLimitCount;
+    private int eventWinnersCount;
+    private Boolean enableGeolocation;
 
     private EventStatus eventStatus;
 
@@ -62,12 +73,12 @@ public class Event {
         this.eventID = eventID;
     }
 
-    public String getOrganizerID() {
-        return organizerID;
+    public String getOrganiserID() {
+        return organiserID;
     }
 
-    public void setOrganizerID(String organizerID) {
-        this.organizerID = organizerID;
+    public void setOrganiserID(String organiserID) {
+        this.organiserID = organiserID;
     }
 
     public ArrayList<Entrant> getEntrants() {
@@ -127,6 +138,31 @@ public class Event {
         // FIXME: Need to think about how were going to upload images sicne they will be stored in Firestore
         this.eventPoster = eventPoster;
     }
+
+    public int getEventLimitCount() {
+        return eventLimitCount;
+    }
+
+    public void setEventLimitCount(int eventLimitCount) {
+        this.eventLimitCount = eventLimitCount;
+    }
+
+    public int getEventWinnersCount() {
+        return eventWinnersCount;
+    }
+
+    public void setEventWinnersCount(int eventWinnersCount) {
+        this.eventWinnersCount = eventWinnersCount;
+    }
+
+    public Boolean getGeolocation() {
+        return enableGeolocation;
+    }
+
+    public void setGeolocation(Boolean enableGeolocation) {
+        this.enableGeolocation = enableGeolocation;
+    }
+
 
     public EventStatus getEventStatus() {
         return eventStatus;

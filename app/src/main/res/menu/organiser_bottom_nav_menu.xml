@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/organiser_myEvents_page"
+        android:icon="@drawable/nav_ic_calendar"
+        android:title="@null"/>
+
+    <item
+        android:id="@+id/organiser_postEvent_page"
+        android:icon="@drawable/nav_add_event"
+        android:title="@null"/>
+
+    <item
+        android:id="@+id/organiser_profile_page"
+        android:icon="@drawable/nav_ic_user"
+        android:title="@null"/>
+
+</menu>
