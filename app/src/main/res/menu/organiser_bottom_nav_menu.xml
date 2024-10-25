@@ -7,7 +7,7 @@
         android:title="@null"/>
 
     <item
-        android:id="@+id/organiser_calander_page"
+        android:id="@+id/organiser_postEvent_page"
         android:icon="@drawable/nav_add_event"
         android:title="@null"/>
 

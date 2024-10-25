@@ -118,7 +118,7 @@ public class Account {
 
     public enum AccountRole {
         user("user"),
-        organizer("organizer"),
+        organiser("organiser"),
         admin("admin");
 
         public final String value;
