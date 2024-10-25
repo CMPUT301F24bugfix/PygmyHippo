@@ -25,7 +25,7 @@ import java.util.ArrayList;
  * @author James, Griffin
  */
 public class Event {
-
+    private String eventTitle;
     private String eventID;
     private String organizerID;
     private ArrayList<Entrant> entrants;
@@ -49,6 +49,14 @@ public class Event {
         EventStatus(String value) {
             this.value = value;
         }
+    }
+
+    public String getEventTitle() {
+        return eventTitle;
+    }
+
+    public void setEventTitle(String eventTitle) {
+        this.eventTitle = eventTitle;
     }
 
     public String getEventID() {
@@ -130,6 +138,23 @@ public class Event {
     }
 
     public void setEventStatus(EventStatus eventStatus) {
+        this.eventStatus = eventStatus;
+    }
+
+    // constructor to make event
+    public Event(String eventTitle, String eventID, String organizerID, ArrayList<Entrant> entrants, String location,
+                 String date, String time, String description, String cost, String eventPoster,
+                 EventStatus eventStatus) {
+        this.eventTitle = eventTitle;
+        this.eventID = eventID;
+        this.organizerID = organizerID;
+        this.entrants = entrants;
+        this.location = location;
+        this.date = date;
+        this.time = time;
+        this.description = description;
+        this.cost = cost;
+        this.eventPoster = eventPoster;
         this.eventStatus = eventStatus;
     }
 }
