@@ -46,7 +46,7 @@ public class ViewEntrantsFragment extends Fragment {
     private ArrayList<Entrant> entrantListData = new ArrayList<Entrant>();
     private ArrayAdapter<Entrant> entrantListAdapter;
     private ListView entrantListView;
-    private Spinner status_spinner;
+    private Spinner statusSpinner;
     private ImageButton backButton;
 
     /**
@@ -67,7 +67,7 @@ public class ViewEntrantsFragment extends Fragment {
         View view = inflater.inflate(R.layout.o_view_entrants, container, false);
 
         // Get the spinner view
-        status_spinner = view.findViewById(R.id.o_entrant_list_spinner);
+        statusSpinner = view.findViewById(R.id.o_entrant_list_spinner);
 
         // Make an adapter to connect to our spinner with our specified layouts
         ArrayAdapter<CharSequence> o_spinner_adapter = ArrayAdapter.createFromResource(
@@ -78,7 +78,7 @@ public class ViewEntrantsFragment extends Fragment {
 
         // Attatch the adapter to the spinner
         o_spinner_adapter.setDropDownViewResource(R.layout.e_p_role_dropdown);
-        status_spinner.setAdapter(o_spinner_adapter);
+        statusSpinner.setAdapter(o_spinner_adapter);
 
         //FIXME: A sample entrant/list used to look at this fragment
         Entrant entrant = new Entrant("id",

@@ -13,7 +13,7 @@ app:startDestination="@+id/organiser_myEvents_page">
     android:background="@color/dark_purple">
     <action
         android:id="@+id/action_organiser_myEvents_page_to_ViewEntrantsFragment"
-        app:destination="@id/ViewEntrantsFragment" />
+        app:destination="@id/view_entrants_fragment" />
 </fragment>
 
 <fragment
@@ -31,7 +31,7 @@ app:startDestination="@+id/organiser_myEvents_page">
     android:background="@color/dark_purple"/>
 
     <fragment
-        android:id="@+id/ViewEntrantsFragment"
+        android:id="@+id/view_entrants_fragment"
         android:name="com.example.pygmyhippo.organizer.ViewEntrantsFragment"
         android:label="view entrants"
         tools:layout="@layout/o_view_entrants"
