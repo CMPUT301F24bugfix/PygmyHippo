@@ -75,11 +75,8 @@ public class ProfileFragment extends Fragment implements AdapterView.OnItemSelec
         }
     }
 
-    /**
-     * Registers a photo picker activity launcher in single-select mode and sets the profile image to the new URI
-     * @author Jennifer
-     * @version 1.0
-     */
+
+     // Registers a photo picker activity launcher in single-select mode and sets the profile image to the new URI
     ActivityResultLauncher<PickVisualMediaRequest> pickMedia =
             registerForActivityResult(new ActivityResultContracts.PickVisualMedia(), uri -> {
                 // Callback is invoked after the user selects a media item or closes the
@@ -99,8 +96,6 @@ public class ProfileFragment extends Fragment implements AdapterView.OnItemSelec
      * and set the image view to the URI
      * @author Jennifer
      * @param name the name the user has entered
-     * @return void
-     * @version 1.0
      */
     public void getAvatar (String name) throws URISyntaxException {
         if (name.isEmpty()) name = "null";
@@ -126,7 +121,6 @@ public class ProfileFragment extends Fragment implements AdapterView.OnItemSelec
 
         binding = OrganiserFragmentProfileBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
-        de.hdodenhof.circleimageview.CircleImageView profileImage = root.findViewById(R.id.O_profile_image);
 
         Spinner role_dropdown = (Spinner) root.findViewById(R.id.organiser_E_P_role);
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(
@@ -158,13 +152,11 @@ public class ProfileFragment extends Fragment implements AdapterView.OnItemSelec
         Button deleteIm_btn = root.findViewById(R.id.O_P_deleteImage);
         Button facility_uploadIm_btn = root.findViewById(R.id.O_Profile_facilityUploadImage);
 
-        /**
-         * Allows te page elements to be edited by the user if the edit button is clicked
-         * @author Jennifer
-         */
+
+        // Allows te page elements to be edited by the user if the edit button is clicked
         View.OnClickListener edit = new View.OnClickListener() {
             /**
-             * Tell whichs elements to become focusable, to appear or disappear
+             * Tell which elements to become focusable, to appear or disappear
              * @author Jennifer
              * @param view the fragment view
              */
@@ -195,14 +187,9 @@ public class ProfileFragment extends Fragment implements AdapterView.OnItemSelec
             }
         };
 
-        /**
-         * Exit edit mode the submit
-         * TODO: this needs to call whatever method will submit to the database
-         * @author Jennifer
-         */
         View.OnClickListener update = new View.OnClickListener() {
             /**
-             * Tell whichs elements to become unfocusable, to appear or disappear
+             * Tell which elements to become unfocusable, to appear or disappear
              * @author Jennifer
              * @param view the fragment view
              */
@@ -234,10 +221,8 @@ public class ProfileFragment extends Fragment implements AdapterView.OnItemSelec
             }
         };
 
-        /**
-         * Listener for the uploadAvatar image button, it allows the user to select a photo from their photo gallery by launching the media picker
-         * @author Jennifer
-         */
+
+        // Listener for the uploadAvatar image button, it allows the user to select a photo from their photo gallery by launching the media picker
         View.OnClickListener uploadAvatar = new View.OnClickListener() {
             /**
              * Tells the media picker to launch when the button listener is triggered
@@ -270,10 +255,8 @@ public class ProfileFragment extends Fragment implements AdapterView.OnItemSelec
             }
         };
 
-        /**
-         * On click Listener for the delete image button
-         * @author Jennifer
-         */
+
+        // On click Listener for the delete image button
         View.OnClickListener delete = new View.OnClickListener() {
             /**
              * Sends the users name to the method getAvatar
