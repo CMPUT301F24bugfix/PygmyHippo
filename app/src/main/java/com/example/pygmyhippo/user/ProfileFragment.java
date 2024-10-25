@@ -83,7 +83,7 @@ public class ProfileFragment extends Fragment  implements AdapterView.OnItemSele
                 // photo picker.
                 if (uri != null) {
                     imagePath = uri;
-                    binding.ENewUserProfileImg.setImageURI(uri);
+                    binding.EProfileProfileImg.setImageURI(uri);
                 }
             });
 
@@ -102,7 +102,7 @@ public class ProfileFragment extends Fragment  implements AdapterView.OnItemSele
 
         Picasso.get()
                 .load(imagePath)
-                .into(binding.ENewUserProfileImg);
+                .into(binding.EProfileProfileImg);
 
     }
     /**
