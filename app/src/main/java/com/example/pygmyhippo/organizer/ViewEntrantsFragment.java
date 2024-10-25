@@ -30,6 +30,7 @@ import androidx.navigation.Navigation;
 import com.example.pygmyhippo.R;
 import com.example.pygmyhippo.common.Account;
 import com.example.pygmyhippo.common.Entrant;
+import com.example.pygmyhippo.common.TESTEntrant;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -41,10 +42,11 @@ import java.util.Arrays;
  *  - Set up to DB
  *  - Get list filtering working
  *  - Set up so not hardcoded examples
+ *  - Figure out Entrant final design and match with this fragment
  */
 public class ViewEntrantsFragment extends Fragment {
-    private ArrayList<Entrant> entrantListData = new ArrayList<Entrant>();
-    private ArrayAdapter<Entrant> entrantListAdapter;
+    private ArrayList<TESTEntrant> entrantListData = new ArrayList<TESTEntrant>();
+    private ArrayAdapter<TESTEntrant> entrantListAdapter;
     private ListView entrantListView;
     private Spinner statusSpinner;
     private ImageButton backButton;
@@ -80,22 +82,13 @@ public class ViewEntrantsFragment extends Fragment {
         o_spinner_adapter.setDropDownViewResource(R.layout.e_p_role_dropdown);
         statusSpinner.setAdapter(o_spinner_adapter);
 
-        //FIXME: A sample entrant/list used to look at this fragment
-        Entrant entrant = new Entrant("id",
-                "Cool Name",
-                "she/her",
-                "780 666 3333",
-                "user@gmail.com",
-                "DEVICEID",
-                "Enter image here",
-                "Edmonton AB",
-                true,
-                false,
-                new ArrayList<>(Arrays.asList(Account.AccountRole.user, Account.AccountRole.organiser)),  // roles
-                Account.AccountRole.user,  // currentRole
-                null  // facilityProfile
+        //FIXME: A sample TESTentrant/list used to look at this fragment
+        TESTEntrant entrant = new TESTEntrant("id",
+                "Moo Deng",
+                "moo@yahoo.ca",
+                "780-111-2222"
         );
-        entrant.setEntrantStatus(Entrant.EntrantStatus.waitlisted);
+        entrant.setEntrantStatus(TESTEntrant.EntrantStatus.waitlisted);
         entrantListData.add(entrant); // adding test entrant to list
 
         // Initialize our ListView

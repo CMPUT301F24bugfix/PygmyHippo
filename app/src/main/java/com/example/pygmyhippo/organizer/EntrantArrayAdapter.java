@@ -19,6 +19,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.example.pygmyhippo.common.Entrant;
+import com.example.pygmyhippo.common.TESTEntrant;
 
 import java.util.ArrayList;
 
@@ -27,10 +28,11 @@ import java.util.ArrayList;
  * @author Kori
  * TODO:
  *  - Make profile image change based on the user profile
+ *  - Change TESTEntrant to Entrant
  */
-public class EntrantArrayAdapter extends ArrayAdapter<Entrant> {
+public class EntrantArrayAdapter extends ArrayAdapter<TESTEntrant> {
 
-    public EntrantArrayAdapter(Context context, ArrayList<Entrant> entrantListData) {
+    public EntrantArrayAdapter(Context context, ArrayList<TESTEntrant> entrantListData) {
         super(context, 0, entrantListData);
     }
 
@@ -55,8 +57,8 @@ public class EntrantArrayAdapter extends ArrayAdapter<Entrant> {
             view = convertView;
         }
 
-        // Get the current Account we want to display
-        Entrant entrant = getItem(position);
+        // FIXME: Change when test entrant is deleted
+        TESTEntrant entrant = getItem(position);
 
         // Get all the views from the entrants_content in our xml file
         TextView accountName = view.findViewById(R.id.o_entrant_name_view);
