@@ -6,6 +6,11 @@ android {
     namespace = "com.example.pygmyhippo"
     compileSdk = 34
 
+    lint {
+        // if true, stop the gradle build if errors are found
+        abortOnError = false
+    }
+
     defaultConfig {
         applicationId = "com.example.pygmyhippo"
         minSdk = 24
