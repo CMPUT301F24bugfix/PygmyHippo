@@ -120,7 +120,7 @@ public class ProfileFragment extends Fragment  implements AdapterView.OnItemSele
         View root = binding.getRoot();
 
 
-        Spinner role_dropdown = (Spinner) root.findViewById(R.id.user_E_P_role);
+        Spinner role_dropdown = (Spinner) root.findViewById(R.id.user_spinner_role);
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(
                 root.getContext(),
                 R.array.role,
@@ -134,26 +134,26 @@ public class ProfileFragment extends Fragment  implements AdapterView.OnItemSele
         role_dropdown.setOnItemSelectedListener(this);
 
 
-        ImageView editButton = root.findViewById(R.id.E_P_edit);
-        Button updateButton = root.findViewById(R.id.E_newUser_create);
+        ImageView editButton = root.findViewById(R.id.E_profile_editBtn);
+        Button updateButton = root.findViewById(R.id.E_profile_create);
 
         // All the text fields
-        EditText nameField = root.findViewById(R.id.E_newUser_textName);
-        EditText pronounField = root.findViewById(R.id.E_newUser_textPronouns);
-        EditText phoneField = root.findViewById(R.id.E_newUser_textPhone);
-        EditText emailField = root.findViewById(R.id.E_newUser_textEmail);
+        EditText nameField = root.findViewById(R.id.E_profile_textName);
+        EditText pronounField = root.findViewById(R.id.E_profile_textPronouns);
+        EditText phoneField = root.findViewById(R.id.E_profile_textPhone);
+        EditText emailField = root.findViewById(R.id.E_profile_textEmail);
 
         // Decorator radio buttons
-        RadioButton decGeo = root.findViewById(R.id.E_P_gps_dec);
-        RadioButton decNotify = root.findViewById(R.id.E_P_notification_dec);
+        RadioButton decGeo = root.findViewById(R.id.E_profile_gps_dec);
+        RadioButton decNotify = root.findViewById(R.id.E_profile_notification_dec);
 
         // Functional Radio Groups
-        RadioGroup notifyRGroup = root.findViewById(R.id.E_newUser_notify_setting);
-        RadioGroup geolocationRGroup = root.findViewById(R.id.E_newUser_geo_setting);
+        RadioGroup notifyRGroup = root.findViewById(R.id.E_profile_notify_setting);
+        RadioGroup geolocationRGroup = root.findViewById(R.id.E_profile_geo_setting);
 
         // Image Buttons
-        Button uploadImgBtn = root.findViewById(R.id.E_newUser_uploadImage);
-        Button deleteImgBtn = root.findViewById(R.id.E_newUser_generateAvatar);
+        Button uploadImgBtn = root.findViewById(R.id.E_profile_uploadImageBtn);
+        Button deleteImgBtn = root.findViewById(R.id.E_profile_deleteAvatarbtn);
 
         /**
          * Allows te page elements to be edited by the user if the edit button is clicked

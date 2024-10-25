@@ -122,7 +122,7 @@ public class ProfileFragment extends Fragment implements AdapterView.OnItemSelec
         binding = OrganiserFragmentProfileBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
-        Spinner role_dropdown = (Spinner) root.findViewById(R.id.organiser_spinner);
+        Spinner role_dropdown = (Spinner) root.findViewById(R.id.organiser_spinner_role);
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(
                 root.getContext(),
                 R.array.role,
@@ -135,8 +135,8 @@ public class ProfileFragment extends Fragment implements AdapterView.OnItemSelec
         // need to do this so the listener is connected
         role_dropdown.setOnItemSelectedListener(this);
 
-        ImageView editButton = root.findViewById(R.id.O_profile_edit);
-        Button updateButton = root.findViewById(R.id.O_profile_update);
+        ImageView editButton = root.findViewById(R.id.O_profile_editBtn);
+        Button updateButton = root.findViewById(R.id.O_profile_updateBtn);
 
         // All the text fields
         EditText name_f = root.findViewById(R.id.O_profile_textName);
@@ -148,9 +148,9 @@ public class ProfileFragment extends Fragment implements AdapterView.OnItemSelec
 
 
         // Image Buttons
-        Button uploadIm_btn = root.findViewById(R.id.O_profile_uploadImage);
-        Button deleteIm_btn = root.findViewById(R.id.O_profile_deleteImage);
-        Button facility_uploadIm_btn = root.findViewById(R.id.O_Profile_facilityUploadImage);
+        Button uploadIm_btn = root.findViewById(R.id.O_profile_uploadImageBtn);
+        Button deleteIm_btn = root.findViewById(R.id.O_profile_deleteImageBtn);
+        Button facility_uploadIm_btn = root.findViewById(R.id.O_Profile_facilityUploadImagebtn);
 
 
         // Allows te page elements to be edited by the user if the edit button is clicked

@@ -10,7 +10,7 @@
 
 
     <Spinner
-        android:id="@+id/organiser_spinner"
+        android:id="@+id/organiser_spinner_role"
         style="@style/Widget.AppCompat.Spinner.DropDown.ActionBar"
         android:layout_width="125dp"
         android:layout_height="wrap_content"
@@ -34,11 +34,11 @@
     <ImageView
         android:layout_width="27dp"
         android:layout_height="21dp"
-        app:layout_constraintBottom_toBottomOf="@+id/organiser_spinner"
-        app:layout_constraintEnd_toEndOf="@+id/organiser_spinner"
+        app:layout_constraintBottom_toBottomOf="@+id/organiser_spinner_role"
+        app:layout_constraintEnd_toEndOf="@+id/organiser_spinner_role"
         app:layout_constraintHorizontal_bias="0.98"
-        app:layout_constraintStart_toStartOf="@+id/organiser_spinner"
-        app:layout_constraintTop_toTopOf="@+id/organiser_spinner"
+        app:layout_constraintStart_toStartOf="@+id/organiser_spinner_role"
+        app:layout_constraintTop_toTopOf="@+id/organiser_spinner_role"
         app:layout_constraintVertical_bias="0.64"
         app:srcCompat="@drawable/down_arrow"
         tools:srcCompat="@drawable/down_arrow" />
@@ -81,7 +81,7 @@
                 android:src="@drawable/dog"
                 app:civ_border_color="#FF000000"
                 app:civ_border_width="0dp"
-                app:layout_constraintBottom_toTopOf="@id/O_profile_name"
+                app:layout_constraintBottom_toTopOf="@id/O_profile_nameLabel"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.501"
                 app:layout_constraintStart_toStartOf="parent"
@@ -89,7 +89,7 @@
                 app:layout_constraintVertical_bias="0.0" />
 
             <ImageView
-                android:id="@+id/O_profile_edit"
+                android:id="@+id/O_profile_editBtn"
                 android:layout_width="54dp"
                 android:layout_height="54dp"
                 android:clickable="true"
@@ -106,7 +106,7 @@
                 tools:srcCompat="@drawable/e_p_ic_edit" />
 
             <Button
-                android:id="@+id/O_profile_uploadImage"
+                android:id="@+id/O_profile_uploadImageBtn"
                 android:layout_width="wrap_content"
                 android:layout_height="48dp"
                 android:layout_marginStart="132dp"
@@ -119,7 +119,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/O_profile_image" />
 
             <Button
-                android:id="@+id/O_profile_deleteImage"
+                android:id="@+id/O_profile_deleteImageBtn"
                 android:layout_width="wrap_content"
                 android:layout_height="48dp"
                 android:layout_marginStart="12dp"
@@ -128,11 +128,11 @@
                 android:text="Delete Image"
                 android:textColor="@color/light_purple"
                 android:visibility="gone"
-                app:layout_constraintStart_toEndOf="@+id/O_profile_uploadImage"
+                app:layout_constraintStart_toEndOf="@+id/O_profile_uploadImageBtn"
                 app:layout_constraintTop_toBottomOf="@+id/O_profile_image" />
 
             <TextView
-                android:id="@+id/O_profile_name"
+                android:id="@+id/O_profile_nameLabel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="12dp"
@@ -143,7 +143,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.255"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/O_profile_uploadImage" />
+                app:layout_constraintTop_toBottomOf="@+id/O_profile_uploadImageBtn" />
 
             <EditText
                 android:id="@+id/O_profile_textName"
@@ -156,14 +156,14 @@
                 android:hint="Moo Deng"
                 android:inputType="text"
                 android:textColor="@color/dark_purple"
-                app:layout_constraintBottom_toTopOf="@+id/O_profile_pronouns"
+                app:layout_constraintBottom_toTopOf="@+id/O_profile_pronounsLabel"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.503"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/O_profile_name" />
+                app:layout_constraintTop_toBottomOf="@+id/O_profile_nameLabel" />
 
             <TextView
-                android:id="@+id/O_profile_pronouns"
+                android:id="@+id/O_profile_pronounsLabel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
@@ -190,10 +190,10 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.503"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/O_profile_pronouns" />
+                app:layout_constraintTop_toBottomOf="@+id/O_profile_pronounsLabel" />
 
             <TextView
-                android:id="@+id/O_profile_phone"
+                android:id="@+id/O_profile_phoneLabel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="12dp"
@@ -220,10 +220,10 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.503"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/O_profile_phone" />
+                app:layout_constraintTop_toBottomOf="@+id/O_profile_phoneLabel" />
 
             <TextView
-                android:id="@+id/O_profile_email"
+                android:id="@+id/O_profile_emailLabel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="12dp"
@@ -250,7 +250,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.503"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/O_profile_email" />
+                app:layout_constraintTop_toBottomOf="@+id/O_profile_emailLabel" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -262,7 +262,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/O_profile_image" />
 
             <TextView
-                android:id="@+id/O_profile_facility"
+                android:id="@+id/O_profile_facilityheader"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="12dp"
@@ -283,12 +283,12 @@
                 android:layout_marginTop="8dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/O_profile_facility"
+                app:layout_constraintTop_toBottomOf="@+id/O_profile_facilityheader"
                 app:srcCompat="@drawable/rec_centre"
                 tools:srcCompat="@drawable/rec_centre" />
 
             <Button
-                android:id="@+id/O_Profile_facilityUploadImage"
+                android:id="@+id/O_Profile_facilityUploadImagebtn"
                 android:layout_width="wrap_content"
                 android:layout_height="48dp"
                 android:layout_marginTop="8dp"
@@ -301,7 +301,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/O_profile_facilityImg" />
 
             <TextView
-                android:id="@+id/O_Profile_facilityName"
+                android:id="@+id/O_Profile_facilityNameLabel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="12dp"
@@ -313,7 +313,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.325"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/O_Profile_facilityUploadImage" />
+                app:layout_constraintTop_toBottomOf="@+id/O_Profile_facilityUploadImagebtn" />
 
             <EditText
                 android:id="@+id/O_Profile_facilityNameText"
@@ -328,10 +328,10 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.503"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/O_Profile_facilityName" />
+                app:layout_constraintTop_toBottomOf="@+id/O_Profile_facilityNameLabel" />
 
             <TextView
-                android:id="@+id/O_Profile_facilityLocation"
+                android:id="@+id/O_Profile_facilityLocationLabel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="12dp"
@@ -357,11 +357,11 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.503"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/O_Profile_facilityLocation" />
+                app:layout_constraintTop_toBottomOf="@+id/O_Profile_facilityLocationLabel" />
 
 
             <Button
-                android:id="@+id/O_profile_update"
+                android:id="@+id/O_profile_updateBtn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:backgroundTint="@color/dark_purple"

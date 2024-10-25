@@ -7,7 +7,7 @@
     tools:context=".user.ProfileFragment">
 
     <Spinner
-        android:id="@+id/user_E_P_role"
+        android:id="@+id/user_spinner_role"
         style="@style/Widget.AppCompat.Spinner.DropDown.ActionBar"
         android:layout_width="125dp"
         android:layout_height="wrap_content"
@@ -22,22 +22,22 @@
         android:textSize="15dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.422"
-        app:layout_constraintStart_toEndOf="@+id/E_newUser_header" />
+        app:layout_constraintStart_toEndOf="@+id/E_profile_header" />
 
     <ImageView
         android:layout_width="27dp"
         android:layout_height="21dp"
-        app:layout_constraintBottom_toBottomOf="@+id/user_E_P_role"
-        app:layout_constraintEnd_toEndOf="@+id/user_E_P_role"
+        app:layout_constraintBottom_toBottomOf="@+id/user_spinner_role"
+        app:layout_constraintEnd_toEndOf="@+id/user_spinner_role"
         app:layout_constraintHorizontal_bias="0.98"
-        app:layout_constraintStart_toStartOf="@+id/user_E_P_role"
-        app:layout_constraintTop_toTopOf="@+id/user_E_P_role"
+        app:layout_constraintStart_toStartOf="@+id/user_spinner_role"
+        app:layout_constraintTop_toTopOf="@+id/user_spinner_role"
         app:layout_constraintVertical_bias="0.64"
         app:srcCompat="@drawable/down_arrow"
         tools:srcCompat="@drawable/down_arrow" />
 
     <TextView
-        android:id="@+id/E_newUser_header"
+        android:id="@+id/E_profile_header"
         android:layout_width="236dp"
         android:layout_height="46dp"
         android:layout_marginStart="8dp"
@@ -55,13 +55,13 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <ScrollView
-        android:id="@+id/E_newUser_form"
+        android:id="@+id/E_profile_form"
         android:layout_width="533dp"
         android:layout_height="708dp"
         android:layout_marginTop="16dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/E_newUser_header"
+        app:layout_constraintTop_toBottomOf="@+id/E_profile_header"
         app:layout_constraintVertical_bias="1.0">
 
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -70,13 +70,13 @@
             tools:context=".user.ProfileFragment">
 
             <de.hdodenhof.circleimageview.CircleImageView
-                android:id="@+id/E_newUser_profileImg"
+                android:id="@+id/E_profile_profileImg"
                 android:layout_width="210dp"
                 android:layout_height="210dp"
                 android:src="@drawable/dog"
                 app:civ_border_color="#FF000000"
                 app:civ_border_width="0dp"
-                app:layout_constraintBottom_toTopOf="@id/E_newUser_name"
+                app:layout_constraintBottom_toTopOf="@id/E_profile_nameLabel"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.501"
                 app:layout_constraintStart_toStartOf="parent"
@@ -84,24 +84,24 @@
                 app:layout_constraintVertical_bias="0.0" />
 
             <ImageView
-                android:id="@+id/E_P_edit"
+                android:id="@+id/E_profile_editBtn"
                 android:layout_width="54dp"
                 android:layout_height="54dp"
                 android:clickable="true"
                 android:contentDescription="Edit button"
                 android:focusable="true"
                 android:pointerIcon="wait"
-                app:layout_constraintBottom_toBottomOf="@+id/E_newUser_profileImg"
+                app:layout_constraintBottom_toBottomOf="@+id/E_profile_profileImg"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.492"
-                app:layout_constraintStart_toStartOf="@+id/E_newUser_profileImg"
-                app:layout_constraintTop_toTopOf="@+id/E_newUser_profileImg"
+                app:layout_constraintStart_toStartOf="@+id/E_profile_profileImg"
+                app:layout_constraintTop_toTopOf="@+id/E_profile_profileImg"
                 app:layout_constraintVertical_bias="0.942"
                 app:srcCompat="@drawable/e_p_ic_edit"
                 tools:srcCompat="@drawable/e_p_ic_edit" />
 
             <Button
-                android:id="@+id/E_newUser_uploadImage"
+                android:id="@+id/E_profile_uploadImageBtn"
                 android:layout_width="wrap_content"
                 android:layout_height="48dp"
                 android:layout_marginStart="132dp"
@@ -111,10 +111,10 @@
                 android:textColor="@color/light_purple"
                 android:visibility="gone"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/E_newUser_profileImg" />
+                app:layout_constraintTop_toBottomOf="@+id/E_profile_profileImg" />
 
             <Button
-                android:id="@+id/E_newUser_generateAvatar"
+                android:id="@+id/E_profile_deleteAvatarbtn"
                 android:layout_width="wrap_content"
                 android:layout_height="48dp"
                 android:layout_marginStart="12dp"
@@ -123,11 +123,11 @@
                 android:text="Delete Image"
                 android:textColor="@color/light_purple"
                 android:visibility="gone"
-                app:layout_constraintStart_toEndOf="@+id/E_newUser_uploadImage"
-                app:layout_constraintTop_toBottomOf="@+id/E_newUser_profileImg" />
+                app:layout_constraintStart_toEndOf="@+id/E_profile_uploadImageBtn"
+                app:layout_constraintTop_toBottomOf="@+id/E_profile_profileImg" />
 
             <TextView
-                android:id="@+id/E_newUser_name"
+                android:id="@+id/E_profile_nameLabel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="12dp"
@@ -138,10 +138,10 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.255"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/E_newUser_uploadImage" />
+                app:layout_constraintTop_toBottomOf="@+id/E_profile_uploadImageBtn" />
 
             <EditText
-                android:id="@+id/E_newUser_textName"
+                android:id="@+id/E_profile_textName"
                 android:layout_width="wrap_content"
                 android:layout_height="48dp"
                 android:ems="13"
@@ -151,14 +151,14 @@
                 android:hint="Moo Deng"
                 android:inputType="text"
                 android:textColor="@color/dark_purple"
-                app:layout_constraintBottom_toTopOf="@+id/E_newUser_pronouns"
+                app:layout_constraintBottom_toTopOf="@+id/E_profile_pronounsLabel"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.503"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/E_newUser_name" />
+                app:layout_constraintTop_toBottomOf="@+id/E_profile_nameLabel" />
 
             <TextView
-                android:id="@+id/E_newUser_pronouns"
+                android:id="@+id/E_profile_pronounsLabel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
@@ -169,10 +169,10 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.275"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/E_newUser_textName" />
+                app:layout_constraintTop_toBottomOf="@+id/E_profile_textName" />
 
             <EditText
-                android:id="@+id/E_newUser_textPronouns"
+                android:id="@+id/E_profile_textPronouns"
                 android:layout_width="wrap_content"
                 android:layout_height="48dp"
                 android:ems="13"
@@ -185,10 +185,10 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.503"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/E_newUser_pronouns" />
+                app:layout_constraintTop_toBottomOf="@+id/E_profile_pronounsLabel" />
 
             <TextView
-                android:id="@+id/E_newUser_phone"
+                android:id="@+id/E_profile_phoneLabel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="12dp"
@@ -199,10 +199,10 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.255"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/E_newUser_textEmail" />
+                app:layout_constraintTop_toBottomOf="@+id/E_profile_textEmail" />
 
             <EditText
-                android:id="@+id/E_newUser_textPhone"
+                android:id="@+id/E_profile_textPhone"
                 android:layout_width="wrap_content"
                 android:layout_height="48dp"
                 android:ems="13"
@@ -215,10 +215,10 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.503"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/E_newUser_phone" />
+                app:layout_constraintTop_toBottomOf="@+id/E_profile_phoneLabel" />
 
             <TextView
-                android:id="@+id/E_newUser_email"
+                android:id="@+id/E_profile_emailLabel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="12dp"
@@ -229,10 +229,10 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.255"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/E_newUser_textPronouns" />
+                app:layout_constraintTop_toBottomOf="@+id/E_profile_textPronouns" />
 
             <EditText
-                android:id="@+id/E_newUser_textEmail"
+                android:id="@+id/E_profile_textEmail"
                 android:layout_width="wrap_content"
                 android:layout_height="48dp"
                 android:ems="13"
@@ -245,10 +245,10 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.503"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/E_newUser_email" />
+                app:layout_constraintTop_toBottomOf="@+id/E_profile_emailLabel" />
 
             <RadioButton
-                android:id="@+id/E_P_gps_dec"
+                android:id="@+id/E_profile_gps_dec"
                 android:layout_width="203dp"
                 android:layout_height="48dp"
                 android:checked="true"
@@ -259,11 +259,11 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.342"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/E_P_notification_dec"
+                app:layout_constraintTop_toBottomOf="@+id/E_profile_notification_dec"
                 app:layout_constraintVertical_bias="0.0" />
 
             <RadioButton
-                android:id="@+id/E_P_notification_dec"
+                android:id="@+id/E_profile_notification_dec"
                 android:layout_width="216dp"
                 android:layout_height="29dp"
                 android:layout_marginTop="8dp"
@@ -274,10 +274,10 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.356"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/E_newUser_textPhone" />
+                app:layout_constraintTop_toBottomOf="@+id/E_profile_textPhone" />
 
             <RadioGroup
-                android:id="@+id/E_newUser_notify_setting"
+                android:id="@+id/E_profile_notify_setting"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="12dp"
@@ -285,7 +285,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.381"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/E_newUser_textPhone">
+                app:layout_constraintTop_toBottomOf="@+id/E_profile_textPhone">
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -296,7 +296,7 @@
                     android:textSize="16sp" />
 
                 <RadioButton
-                    android:id="@+id/E_newUser_notifications_yes"
+                    android:id="@+id/E_profile_notifications_yes"
                     android:layout_width="216dp"
                     android:layout_height="29dp"
                     android:layout_marginTop="8dp"
@@ -304,11 +304,11 @@
                     android:fontFamily="@font/roboto_mono_medium"
                     android:text="Allow"
                     android:textColor="@color/dark_purple"
-                    app:layout_constraintEnd_toStartOf="@id/E_newUser_notifications_no"
+                    app:layout_constraintEnd_toStartOf="@id/E_profile_notifications_no"
                     app:layout_constraintStart_toStartOf="parent" />
 
                 <RadioButton
-                    android:id="@+id/E_newUser_notifications_no"
+                    android:id="@+id/E_profile_notifications_no"
                     android:layout_width="216dp"
                     android:layout_height="29dp"
                     android:layout_marginTop="8dp"
@@ -318,12 +318,12 @@
                     android:textColor="@color/dark_purple"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.356"
-                    app:layout_constraintStart_toEndOf="@+id/E_newUser_notifications_yes" />
+                    app:layout_constraintStart_toEndOf="@+id/E_profile_notifications_yes" />
 
             </RadioGroup>
 
             <RadioGroup
-                android:id="@+id/E_newUser_geo_setting"
+                android:id="@+id/E_profile_geo_setting"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
@@ -331,7 +331,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.381"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/E_newUser_notify_setting">
+                app:layout_constraintTop_toBottomOf="@+id/E_profile_notify_setting">
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -342,7 +342,7 @@
                     android:textSize="16sp" />
 
                 <RadioButton
-                    android:id="@+id/E_newUser_geo_yes"
+                    android:id="@+id/E_profile_geo_yes"
                     android:layout_width="216dp"
                     android:layout_height="29dp"
                     android:layout_marginTop="8dp"
@@ -350,11 +350,11 @@
                     android:fontFamily="@font/roboto_mono_medium"
                     android:text="Allow"
                     android:textColor="@color/dark_purple"
-                    app:layout_constraintEnd_toStartOf="@id/E_newUser_notifications_no"
+                    app:layout_constraintEnd_toStartOf="@id/E_profile_notifications_no"
                     app:layout_constraintStart_toStartOf="parent" />
 
                 <RadioButton
-                    android:id="@+id/E_newUser_geo_no"
+                    android:id="@+id/E_profile_geo_no"
                     android:layout_width="216dp"
                     android:layout_height="29dp"
                     android:layout_marginTop="8dp"
@@ -369,7 +369,7 @@
             </RadioGroup>
 
             <Button
-                android:id="@+id/E_newUser_create"
+                android:id="@+id/E_profile_create"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
@@ -379,7 +379,7 @@
                 android:visibility="gone"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/E_newUser_geo_setting" />
+                app:layout_constraintTop_toBottomOf="@+id/E_profile_geo_setting" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -388,7 +388,7 @@
                 android:layout_marginEnd="228dp"
                 android:text="⭐ Entrant"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/E_newUser_profileImg" />
+                app:layout_constraintTop_toBottomOf="@+id/E_profile_profileImg" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>
