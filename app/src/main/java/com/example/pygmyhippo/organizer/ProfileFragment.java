@@ -121,7 +121,7 @@ public class ProfileFragment extends Fragment implements AdapterView.OnItemSelec
 
         binding = OrganiserFragmentProfileBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
-
+/*
         Spinner role_dropdown = (Spinner) root.findViewById(R.id.organiser_spinner_role);
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(
                 root.getContext(),
@@ -133,7 +133,7 @@ public class ProfileFragment extends Fragment implements AdapterView.OnItemSelec
         role_dropdown.setAdapter(adapter);
 
         // need to do this so the listener is connected
-        role_dropdown.setOnItemSelectedListener(this);
+        role_dropdown.setOnItemSelectedListener(this);*/
 
         ImageView editButton = root.findViewById(R.id.O_profile_editBtn);
         Button updateButton = root.findViewById(R.id.O_profile_updateBtn);

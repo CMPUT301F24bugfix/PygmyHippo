@@ -8,7 +8,7 @@
     android:layout_height="match_parent"
     tools:context=".organizer.ProfileFragment">
 
-
+<!--
     <Spinner
         android:id="@+id/organiser_spinner_role"
         style="@style/Widget.AppCompat.Spinner.DropDown.ActionBar"
@@ -26,8 +26,10 @@
         android:popupTheme="@color/light_purple"
         android:textColor="@color/light_purple"
         android:textSize="15dp"
+        android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toEndOf="@+id/O_profile_header"
         tools:layout_editor_absoluteY="23dp" />
 
@@ -41,7 +43,7 @@
         app:layout_constraintTop_toTopOf="@+id/organiser_spinner_role"
         app:layout_constraintVertical_bias="0.64"
         app:srcCompat="@drawable/down_arrow"
-        tools:srcCompat="@drawable/down_arrow" />
+        tools:srcCompat="@drawable/down_arrow" /> -->
 
     <TextView
         android:id="@+id/O_profile_header"

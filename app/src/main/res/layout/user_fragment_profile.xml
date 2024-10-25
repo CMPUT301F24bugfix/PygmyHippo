@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".user.ProfileFragment">
-
+<!--
     <Spinner
         android:id="@+id/user_spinner_role"
         style="@style/Widget.AppCompat.Spinner.DropDown.ActionBar"
@@ -20,7 +20,9 @@
         android:popupTheme="@color/light_purple"
         android:textColor="@color/light_purple"
         android:textSize="15dp"
+        android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintHorizontal_bias="0.422"
         app:layout_constraintStart_toEndOf="@+id/E_profile_header" />
 
@@ -34,7 +36,7 @@
         app:layout_constraintTop_toTopOf="@+id/user_spinner_role"
         app:layout_constraintVertical_bias="0.64"
         app:srcCompat="@drawable/down_arrow"
-        tools:srcCompat="@drawable/down_arrow" />
+        tools:srcCompat="@drawable/down_arrow" /> -->
 
     <TextView
         android:id="@+id/E_profile_header"
@@ -265,9 +267,11 @@
             <RadioButton
                 android:id="@+id/E_profile_notification_dec"
                 android:layout_width="216dp"
-                android:layout_height="29dp"
+                android:layout_height="48dp"
                 android:layout_marginTop="8dp"
                 android:checked="true"
+                android:focusableInTouchMode="false"
+                android:focusable="false"
                 android:fontFamily="@font/roboto_mono_medium"
                 android:text="Allow Notifications"
                 android:textColor="@color/dark_purple"

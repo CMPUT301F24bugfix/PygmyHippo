@@ -119,7 +119,7 @@ public class ProfileFragment extends Fragment  implements AdapterView.OnItemSele
         binding = UserFragmentProfileBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
-
+/*
         Spinner role_dropdown = (Spinner) root.findViewById(R.id.user_spinner_role);
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(
                 root.getContext(),
@@ -131,7 +131,7 @@ public class ProfileFragment extends Fragment  implements AdapterView.OnItemSele
         role_dropdown.setAdapter(adapter);
 
         // need to do this so the listener is connected
-        role_dropdown.setOnItemSelectedListener(this);
+        role_dropdown.setOnItemSelectedListener(this); */
 
 
         ImageView editButton = root.findViewById(R.id.E_profile_editBtn);
