@@ -39,7 +39,7 @@ public class EntrantArrayAdapter extends ArrayAdapter<Entrant> {
      * @param position The index of the current entrant
      * @param convertView not sure
      * @param parent
-     * @return view (The view of the list content
+     * @return view (The view of the list content)
      */
     @NonNull
     @Override

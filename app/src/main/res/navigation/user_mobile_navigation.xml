@@ -12,9 +12,6 @@
         android:label="@string/title_myevents"
         tools:layout="@layout/user_fragment_myevents"
         android:background="@color/dark_purple">
-        <action
-            android:id="@+id/action_navigation_home_to_ViewEntrantsFragment"
-            app:destination="@id/ViewEntrantsFragment" />
     </fragment>
 
     <fragment
@@ -32,14 +29,4 @@
         tools:layout="@layout/user_fragment_profile"
         android:background="@color/dark_purple"/>
 
-    <fragment
-        android:id="@+id/ViewEntrantsFragment"
-        android:name="com.example.pygmyhippo.organizer.ViewEntrantsFragment"
-        android:label="view entrants"
-        tools:layout="@layout/o_view_entrants"
-        android:background="@color/dark_purple">
-        <action
-            android:id="@+id/action_ViewEntrantsFragment_to_navigation_home"
-            app:destination="@id/navigation_home" />
-    </fragment>
 </navigation>

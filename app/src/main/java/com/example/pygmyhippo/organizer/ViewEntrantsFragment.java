@@ -7,7 +7,7 @@ Deals with user stories 02.06.01, 02.06.02, 02.06.03, and 02.02.01
 Author: Kori Kozicki
 
 Issues: Navigation to and from this activity
-      Do image handling
+      No Image handling
       Data is hardcoded, so should work on data passing from fragments
       Need to connect to db and actually get the list filter working
       Get Event ID somewhere for querying the users
@@ -59,7 +59,7 @@ public class ViewEntrantsFragment extends Fragment {
      * @param savedInstanceState If non-null, this fragment is being re-constructed
      * from a previous saved state as given here.
      * @author Kori
-     * @return
+     * @return view
      */
     @Nullable
     @Override
@@ -91,7 +91,7 @@ public class ViewEntrantsFragment extends Fragment {
                 "Edmonton AB",
                 true,
                 false,
-                new ArrayList<>(Arrays.asList(Account.AccountRole.user, Account.AccountRole.organizer)),  // roles
+                new ArrayList<>(Arrays.asList(Account.AccountRole.user, Account.AccountRole.organiser)),  // roles
                 Account.AccountRole.user,  // currentRole
                 null  // facilityProfile
         );
