@@ -85,6 +85,19 @@ public class Account {
         this.facilityProfile = facilityProfile;
     }
 
+    public Account(String accountID, String name, String pronouns, String phoneNumber, String emailAddress, String deviceID, String profilePicture, String location, boolean receiveNotifications, boolean enableGeolocation) {
+        this.accountID = accountID;
+        this.name = name;
+        this.pronouns = pronouns;
+        this.phoneNumber = phoneNumber;
+        this.emailAddress = emailAddress;
+        this.deviceID = deviceID;
+        this.profilePicture = profilePicture;
+        this.location = location;
+        this.receiveNotifications = receiveNotifications;
+        this.enableGeolocation = enableGeolocation;
+    }
+
     public static class Facility {
         private String facilityPicture;
         private String name;
@@ -118,7 +131,7 @@ public class Account {
 
     public enum AccountRole {
         user("user"),
-        organizer("organizer"),
+        organiser("organiser"),
         admin("admin");
 
         public final String value;
