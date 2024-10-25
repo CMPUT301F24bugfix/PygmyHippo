@@ -72,14 +72,18 @@ public class MainActivity extends AppCompatActivity implements OnRoleSelectedLis
                 break;
         }
 
-
+        /* This code is from the stack overflow to fix an error I was having when trying to commit to github.
+        It enables the app the app to prompt for user notifications... I don't know what was triggering the error.
+        Author: Babbo Natale
+        Posted: Feb 5, 2023 [ Accessed October 25, 2024 ]
+        https://stackoverflow.com/questions/73940694/android-13-not-asking-for-post-notifications-permission
+        */
         if (Build.VERSION.SDK_INT > 32) {
             if (!shouldShowRequestPermissionRationale("112")){
                 getNotificationPermission();
             }
         }
     }
-
 
     public void getNotificationPermission(){
         try {
@@ -108,7 +112,6 @@ public class MainActivity extends AppCompatActivity implements OnRoleSelectedLis
                     //deny
                 }
                 return;
-
         }
 
     }
