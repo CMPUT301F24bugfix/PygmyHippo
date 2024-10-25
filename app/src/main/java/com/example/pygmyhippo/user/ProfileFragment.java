@@ -83,7 +83,7 @@ public class ProfileFragment extends Fragment  implements AdapterView.OnItemSele
                 // photo picker.
                 if (uri != null) {
                     imagePath = uri;
-                    binding.EProfileImage.setImageURI(uri);
+                    binding.ENewUserProfileImg.setImageURI(uri);
                 }
             });
 
@@ -95,14 +95,14 @@ public class ProfileFragment extends Fragment  implements AdapterView.OnItemSele
      * @return void
      * @version 1.0
      */
-    public void getAvatar (String name) throws URISyntaxException {
+    public void generateAvatar (String name) throws URISyntaxException {
         if (name.isEmpty()) name = "null";
         String url = "https://api.multiavatar.com/";
         imagePath = Uri.parse(url+name+".png");
 
         Picasso.get()
                 .load(imagePath)
-                .into(binding.EProfileImage);
+                .into(binding.ENewUserProfileImg);
 
     }
     /**
@@ -135,31 +135,31 @@ public class ProfileFragment extends Fragment  implements AdapterView.OnItemSele
 
 
         ImageView editButton = root.findViewById(R.id.E_P_edit);
-        Button updateButton = root.findViewById(R.id.E_P_update);
+        Button updateButton = root.findViewById(R.id.E_newUser_create);
 
         // All the text fields
-        EditText name_f = root.findViewById(R.id.E_P_textName);
-        EditText pronoun_f = root.findViewById(R.id.E_P_textPronouns);
-        EditText phone_f = root.findViewById(R.id.E_P_textPhone);
-        EditText email_f = root.findViewById(R.id.E_P_textEmail);
+        EditText nameField = root.findViewById(R.id.E_newUser_textName);
+        EditText pronounField = root.findViewById(R.id.E_newUser_textPronouns);
+        EditText phoneField = root.findViewById(R.id.E_newUser_textPhone);
+        EditText emailField = root.findViewById(R.id.E_newUser_textEmail);
 
         // Decorator radio buttons
-        RadioButton dec_geo = root.findViewById(R.id.E_P_gps_dec);
-        RadioButton dec_notify = root.findViewById(R.id.E_P_notification_dec);
+        RadioButton decGeo = root.findViewById(R.id.E_P_gps_dec);
+        RadioButton decNotify = root.findViewById(R.id.E_P_notification_dec);
 
         // Functional Radio Groups
-        RadioGroup notify_g = root.findViewById(R.id.E_P_notify_setting);
-        RadioGroup geolocation_g = root.findViewById(R.id.E_P_geo_setting);
+        RadioGroup notifyRGroup = root.findViewById(R.id.E_newUser_notify_setting);
+        RadioGroup geolocationRGroup = root.findViewById(R.id.E_newUser_geo_setting);
 
         // Image Buttons
-        Button uploadIm_btn = root.findViewById(R.id.E_P_uploadImage);
-        Button deleteIm_btn = root.findViewById(R.id.E_P_deleteImage);
+        Button uploadImgBtn = root.findViewById(R.id.E_newUser_uploadImage);
+        Button deleteImgBtn = root.findViewById(R.id.E_newUser_generateAvatar);
 
         /**
          * Allows te page elements to be edited by the user if the edit button is clicked
          * @author Jennifer
          */
-        View.OnClickListener edit = new View.OnClickListener() {
+        View.OnClickListener editUser = new View.OnClickListener() {
             /**
              * Tell whichs elements to become focusable, to appear or disappear
              * @author Jennifer
@@ -167,22 +167,22 @@ public class ProfileFragment extends Fragment  implements AdapterView.OnItemSele
              */
             @Override
             public void onClick(View view) {
-                name_f.setFocusable(true);
-                pronoun_f.setFocusable(true);
-                phone_f.setFocusable(true);
-                email_f.setFocusable(true);
-                name_f.setFocusableInTouchMode(true);
-                pronoun_f.setFocusableInTouchMode(true);
-                phone_f.setFocusableInTouchMode(true);
-                email_f.setFocusableInTouchMode(true);
+                nameField.setFocusable(true);
+                pronounField.setFocusable(true);
+                phoneField.setFocusable(true);
+                emailField.setFocusable(true);
+                nameField.setFocusableInTouchMode(true);
+                pronounField.setFocusableInTouchMode(true);
+                phoneField.setFocusableInTouchMode(true);
+                emailField.setFocusableInTouchMode(true);
                 updateButton.setVisibility(View.VISIBLE);
-                dec_notify.setVisibility(View.GONE);
-                dec_geo.setVisibility(View.GONE);
-                notify_g.setVisibility(View.VISIBLE);
-                geolocation_g.setVisibility(View.VISIBLE);
+                decNotify.setVisibility(View.GONE);
+                decGeo.setVisibility(View.GONE);
+                notifyRGroup.setVisibility(View.VISIBLE);
+                geolocationRGroup.setVisibility(View.VISIBLE);
                 editButton.setVisibility(View.GONE);
-                uploadIm_btn.setVisibility(View.VISIBLE);
-                deleteIm_btn.setVisibility(View.VISIBLE);
+                uploadImgBtn.setVisibility(View.VISIBLE);
+                deleteImgBtn.setVisibility(View.VISIBLE);
 
             }
         };
@@ -192,7 +192,7 @@ public class ProfileFragment extends Fragment  implements AdapterView.OnItemSele
          * TODO: this needs to call whatever method will submit to the database
          * @author Jennifer
          */
-        View.OnClickListener update = new View.OnClickListener() {
+        View.OnClickListener updateUser = new View.OnClickListener() {
             /**
              * Tell whichs elements to become unfocusable, to appear or disappear
              * @author Jennifer
@@ -200,31 +200,31 @@ public class ProfileFragment extends Fragment  implements AdapterView.OnItemSele
              */
             @Override
             public void onClick(View view) {
-                name_f.setFocusable(false);
-                pronoun_f.setFocusable(false);
-                phone_f.setFocusable(false);
-                email_f.setFocusable(false);
-                name_f.setFocusableInTouchMode(false);
-                pronoun_f.setFocusableInTouchMode(false);
-                phone_f.setFocusableInTouchMode(false);
-                email_f.setFocusableInTouchMode(false);
+                nameField.setFocusable(false);
+                pronounField.setFocusable(false);
+                phoneField.setFocusable(false);
+                emailField.setFocusable(false);
+                nameField.setFocusableInTouchMode(false);
+                pronounField.setFocusableInTouchMode(false);
+                phoneField.setFocusableInTouchMode(false);
+                emailField.setFocusableInTouchMode(false);
                 updateButton.setVisibility(View.GONE);
-                dec_notify.setVisibility(View.VISIBLE);
-                dec_geo.setVisibility(View.VISIBLE);
-                notify_g.setVisibility(View.GONE);
-                geolocation_g.setVisibility(View.GONE);
+                decNotify.setVisibility(View.VISIBLE);
+                decGeo.setVisibility(View.VISIBLE);
+                notifyRGroup.setVisibility(View.GONE);
+                geolocationRGroup.setVisibility(View.GONE);
                 editButton.setVisibility(View.VISIBLE);
-                uploadIm_btn.setVisibility(View.GONE);
-                deleteIm_btn.setVisibility(View.GONE);
+                uploadImgBtn.setVisibility(View.GONE);
+                deleteImgBtn.setVisibility(View.GONE);
 
             }
         };
 
         /**
-         * Listener for the upload image button, it allows the user to select a photo from their photo gallery by launching the media picker
+         * Listener for the uploadImage image button, it allows the user to select a photo from their photo gallery by launching the media picker
          * @author Jennifer
          */
-        View.OnClickListener upload = new View.OnClickListener() {
+        View.OnClickListener uploadImage = new View.OnClickListener() {
             /**
              * Tells the media picker to launch when the button listener is triggered
              * @author Jennifer
@@ -243,10 +243,10 @@ public class ProfileFragment extends Fragment  implements AdapterView.OnItemSele
         };
 
         /**
-         * On click Listener for the delete image button
+         * On click Listener for the deleteImage image button
          * @author Jennifer
          */
-        View.OnClickListener delete = new View.OnClickListener() {
+        View.OnClickListener deleteImage = new View.OnClickListener() {
             /**
              * Sends the users name to the method getAvatar
              * @author Jennifer
@@ -255,17 +255,17 @@ public class ProfileFragment extends Fragment  implements AdapterView.OnItemSele
             @Override
             public void onClick(View view) {
                 try {
-                    getAvatar(name_f.getText().toString());
+                    generateAvatar(nameField.getText().toString());
                 } catch (URISyntaxException e) {
                     throw new RuntimeException(e);
                 }
             }
         };
 
-        uploadIm_btn.setOnClickListener(upload);
-        deleteIm_btn.setOnClickListener(delete);
-        editButton.setOnClickListener(edit);
-        updateButton.setOnClickListener(update);
+        uploadImgBtn.setOnClickListener(uploadImage);
+        deleteImgBtn.setOnClickListener(deleteImage);
+        editButton.setOnClickListener(editUser);
+        updateButton.setOnClickListener(updateUser);
 
         return root;
     }

@@ -97,7 +97,7 @@ public class ProfileFragment extends Fragment implements AdapterView.OnItemSelec
      * @author Jennifer
      * @param name the name the user has entered
      */
-    public void getAvatar (String name) throws URISyntaxException {
+    public void generateAvatar(String name) throws URISyntaxException {
         if (name.isEmpty()) name = "null";
         String url = "https://api.multiavatar.com/";
         imagePath = Uri.parse(url+name+"pot.png");
@@ -122,7 +122,7 @@ public class ProfileFragment extends Fragment implements AdapterView.OnItemSelec
         binding = OrganiserFragmentProfileBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
-        Spinner role_dropdown = (Spinner) root.findViewById(R.id.organiser_E_P_role);
+        Spinner role_dropdown = (Spinner) root.findViewById(R.id.organiser_spinner);
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(
                 root.getContext(),
                 R.array.role,
@@ -135,21 +135,21 @@ public class ProfileFragment extends Fragment implements AdapterView.OnItemSelec
         // need to do this so the listener is connected
         role_dropdown.setOnItemSelectedListener(this);
 
-        ImageView editButton = root.findViewById(R.id.O_P_edit);
-        Button updateButton = root.findViewById(R.id.O_P_update);
+        ImageView editButton = root.findViewById(R.id.O_profile_edit);
+        Button updateButton = root.findViewById(R.id.O_profile_update);
 
         // All the text fields
-        EditText name_f = root.findViewById(R.id.O_P_textName);
-        EditText pronoun_f = root.findViewById(R.id.O_P_textPronouns);
-        EditText phone_f = root.findViewById(R.id.O_P_textPhone);
-        EditText email_f = root.findViewById(R.id.O_P_textEmail);
+        EditText name_f = root.findViewById(R.id.O_profile_textName);
+        EditText pronoun_f = root.findViewById(R.id.O_profile_textPronouns);
+        EditText phone_f = root.findViewById(R.id.O_profile_textPhone);
+        EditText email_f = root.findViewById(R.id.O_profile_textEmail);
         EditText facilityName_f = root.findViewById(R.id.O_Profile_facilityNameText);
         EditText facilityLocation_f = root.findViewById(R.id.O_Profile_facilityLocationText);
 
 
         // Image Buttons
-        Button uploadIm_btn = root.findViewById(R.id.O_P_uploadImage);
-        Button deleteIm_btn = root.findViewById(R.id.O_P_deleteImage);
+        Button uploadIm_btn = root.findViewById(R.id.O_profile_uploadImage);
+        Button deleteIm_btn = root.findViewById(R.id.O_profile_deleteImage);
         Button facility_uploadIm_btn = root.findViewById(R.id.O_Profile_facilityUploadImage);
 
 
@@ -257,7 +257,7 @@ public class ProfileFragment extends Fragment implements AdapterView.OnItemSelec
 
 
         // On click Listener for the delete image button
-        View.OnClickListener delete = new View.OnClickListener() {
+        View.OnClickListener deleteAvatar = new View.OnClickListener() {
             /**
              * Sends the users name to the method getAvatar
              * @author Jennifer
@@ -266,7 +266,7 @@ public class ProfileFragment extends Fragment implements AdapterView.OnItemSelec
             @Override
             public void onClick(View view) {
                 try {
-                    getAvatar(name_f.getText().toString());
+                    generateAvatar(name_f.getText().toString());
                 } catch (URISyntaxException e) {
                     throw new RuntimeException(e);
                 }
@@ -275,7 +275,7 @@ public class ProfileFragment extends Fragment implements AdapterView.OnItemSelec
 
         facility_uploadIm_btn.setOnClickListener(uploadFacility);
         uploadIm_btn.setOnClickListener(uploadAvatar);
-        deleteIm_btn.setOnClickListener(delete);
+        deleteIm_btn.setOnClickListener(deleteAvatar);
         editButton.setOnClickListener(edit);
         updateButton.setOnClickListener(update);
         return root;
