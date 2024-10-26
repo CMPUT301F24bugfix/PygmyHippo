@@ -47,7 +47,7 @@ public class PostEventFragment extends Fragment {
     private EditText eventNameEdit, eventDateTimeEdit, eventPriceEdit, eventLocationEdit, eventDescriptionEdit, eventLimitEdit, eventWinnersEdit;
     private CheckBox eventGeolocation;
     private ImageButton eventImageBtn;
-    Uri imagePath = null;
+    private Uri imagePath = null;
 
 
     /**
