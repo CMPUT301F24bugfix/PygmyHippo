@@ -47,12 +47,12 @@ public class EventFragment extends Fragment {
 
     // populate single event page with event information
     // Method to set up a hardcoded example event
-    public void initializeEvent() {
+    public Event initializeEvent() {
         entrants = new ArrayList<>();
         // Add any entrants if needed, e.g., entrants.add(new Entrant("Student1", "Guest"));
 
         // Proper instantiation of the Event object using the constructor
-        event = new Event(
+        return event = new Event(
                 "Hippo Party",
                 "1",
                 "The Hippopotamus Society",
@@ -90,10 +90,12 @@ public class EventFragment extends Fragment {
         View eventRegisterButtonView = view.findViewById(R.id.u_registerButtonView);
 
         // set with hardcoded values, set the view in the same wy form the event recieved from the constructor
+        event = initializeEvent();
+
         eventNameView.setText(event.getEventTitle());
         eventDateView.setText(event.getDate());
         eventTimeView.setText(event.getTime());
-        eventOrganizerView.setText(event.getOrganizerID());
+        eventOrganizerView.setText(event.getOrganiserID());
         eventLocationView.setText(event.getLocation());
         eventCostView.setText(event.getCost());
         eventAboutDescriptionView.setText(event.getDescription());
@@ -105,6 +107,7 @@ public class EventFragment extends Fragment {
         View view = inflater.inflate(R.layout.user_fragment_event, container, false);
 
         Button registerButton = view.findViewById(R.id.u_registerButtonView);
+
 
         // with a check, check to see if event has been registered for, if so, register (set text
         // to checkmark, add to lists and stuff, if event has not been register for, set text back
