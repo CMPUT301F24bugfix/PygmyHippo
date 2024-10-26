@@ -126,7 +126,7 @@ public class PostEventFragment extends Fragment {
     }
 
     /**
-     * Allowes the user to select an image for the event
+     * Allows the user to select an image for the event
      * @author griffin
      */
     private final ActivityResultLauncher<PickVisualMediaRequest> pickMedia =
