@@ -15,7 +15,7 @@
     </fragment>
 
     <fragment
-        android:id="@+id/scanQRcodeFragment"
+        android:id="@+id/u_scanQRcodeFragment"
         android:name="com.example.pygmyhippo.user.QRFragment"
         android:label="@string/title_post_event"
         tools:layout="@layout/user_fragment_qr"
@@ -38,7 +38,7 @@
         tools:layout="@layout/user_fragment_event" >
         <action
             android:id="@+id/action_eventFragment_to_navigation_dashboard"
-            app:destination="@id/scanQRcodeFragment" />
+            app:destination="@id/u_scanQRcodeFragment" />
     </fragment>
 
 </navigation>

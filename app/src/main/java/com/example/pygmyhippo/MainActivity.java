@@ -111,7 +111,7 @@ public class MainActivity extends AppCompatActivity implements OnRoleSelectedLis
     private void setupNavControllerUser(BottomNavigationView navView) {
         AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(
                 // TODO: change the navigation names for user to be more descriptive
-                R.id.navigation_home, R.id.scanQRcodeFragment, R.id.navigation_notifications)
+                R.id.navigation_home, R.id.u_scanQRcodeFragment, R.id.navigation_notifications)
                 .build();
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_activity_main);
         NavigationUI.setupWithNavController(navView, navController);

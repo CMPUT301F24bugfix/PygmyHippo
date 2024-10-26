@@ -88,6 +88,13 @@ public class Event {
         this.entrants = entrants;
     }
 
+    public void addEntrant(Entrant entrant) {
+        if (this.entrants == null) {
+            this.entrants = new ArrayList<>();
+        }
+        this.entrants.add(entrant);
+    }
+
     public String getLocation() {
         return location;
     }
@@ -172,7 +179,7 @@ public class Event {
     }
 
     // constructor to make event
-    public Event() {}
+    public Event() {this.entrants = new ArrayList<>();}
     public Event(String eventTitle, String eventID, String organiserID, ArrayList<Entrant> entrants, String location,
                  String date, String time, String description, String cost, String eventPoster,
                  EventStatus eventStatus) {
