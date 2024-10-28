@@ -45,8 +45,7 @@ import java.net.URISyntaxException;
  * No returns and no parameters
  */
 public class ProfileFragment extends Fragment  implements AdapterView.OnItemSelectedListener{
-    Uri imagePath;
-
+    private Uri imagePath;
     private UserFragmentProfileBinding binding;
 
     // Listener interface to communicate with the main activity
@@ -155,9 +154,9 @@ public class ProfileFragment extends Fragment  implements AdapterView.OnItemSele
         Button uploadImgBtn = root.findViewById(R.id.E_profile_uploadImageBtn);
         Button deleteImgBtn = root.findViewById(R.id.E_profile_deleteAvatarbtn);
 
-        /**
+        /*
          * Allows te page elements to be edited by the user if the edit button is clicked
-         * @author Jennifer
+         * author Jennifer
          */
         View.OnClickListener editUser = new View.OnClickListener() {
             /**
@@ -187,10 +186,10 @@ public class ProfileFragment extends Fragment  implements AdapterView.OnItemSele
             }
         };
 
-        /**
+        /*
          * Exit edit mode the submit
-         * TODO: this needs to call whatever method will submit to the database
-         * @author Jennifer
+         * To Do: this needs to call whatever method will submit to the database
+         * author Jennifer
          */
         View.OnClickListener updateUser = new View.OnClickListener() {
             /**
@@ -220,7 +219,7 @@ public class ProfileFragment extends Fragment  implements AdapterView.OnItemSele
             }
         };
 
-        /**
+        /*
          * Listener for the uploadImage image button, it allows the user to select a photo from their photo gallery by launching the media picker
          * @author Jennifer
          */
@@ -242,7 +241,7 @@ public class ProfileFragment extends Fragment  implements AdapterView.OnItemSele
 
         };
 
-        /**
+        /*
          * On click Listener for the deleteImage image button
          * @author Jennifer
          */
