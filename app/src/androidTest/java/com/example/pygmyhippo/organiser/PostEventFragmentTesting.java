@@ -12,6 +12,9 @@ import static androidx.test.espresso.assertion.ViewAssertions.matches;
 
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 
+import android.net.Uri;
+
+import androidx.test.core.app.ApplicationProvider;
 import androidx.test.espresso.action.ViewActions;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
@@ -19,6 +22,7 @@ import androidx.test.filters.LargeTest;
 
 import com.example.pygmyhippo.MainActivity;
 
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -38,16 +42,19 @@ public class PostEventFragmentTesting {
     @Rule
     public ActivityScenarioRule<MainActivity> scenario = new ActivityScenarioRule<MainActivity>(MainActivity.class);
 
+    @Before
+    public void setUp() {
+        onView(withId(R.id.organiser_postEvent_page)).perform(click());
+    }
+
     @Test
     public void testNoData(){
-        onView(withId(R.id.organiser_postEvent_page)).perform(click());
         onView(withId(R.id.o_postEvent_bottom_scroll)).perform(scrollTo());
         onView(withId(R.id.o_postEvent_post_button)).perform(click());
     }
 
     @Test
     public void testWithData() {
-        onView(withId(R.id.organiser_postEvent_page)).perform(click());
         // tests entering name
         String eventName = "Hippo Party";
         onView(withId(R.id.o_postEvent_name_edit)).perform(ViewActions.typeText(eventName));
@@ -90,4 +97,13 @@ public class PostEventFragmentTesting {
 
         onView(withId(R.id.o_postEvent_post_button)).perform(click());
     }
+
+    // TODO: implement some kind of image testing
+    // I think its possible but it seems really complicated
+//    @Test
+//    public void imageUploadTest() {
+//        Uri imageUri = Uri.parse("android.resource://com.example.pygmyhippo/drawable/dog.jpg");
+//        onView(withId(R.id.o_postEvent_addImage)).perform(click());
+//
+//    }
 }

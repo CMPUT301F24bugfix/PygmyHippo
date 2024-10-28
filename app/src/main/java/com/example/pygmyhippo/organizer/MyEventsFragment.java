@@ -4,9 +4,14 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.TextView;
+
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.Navigation;
 
+import com.example.pygmyhippo.R;
 import com.example.pygmyhippo.databinding.OrganiserFragmentMyeventsBinding;
 
 /**
@@ -29,8 +34,19 @@ public class MyEventsFragment extends Fragment {
      */
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
+
+
         binding = OrganiserFragmentMyeventsBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
+
+        final TextView textView = binding.textHome;
+
+        //FIXME: add a button to navigate to entrant list to see the draft
+        Button button = binding.buttonViewEntrants;
+        button.setOnClickListener(view -> {
+            Navigation.findNavController(view).navigate(R.id.action_organiser_myEvents_page_to_ViewEntrantsFragment);
+        });
+
         return root;
     }
 
