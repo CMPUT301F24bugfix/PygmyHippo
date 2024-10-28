@@ -1,12 +1,20 @@
 package com.example.pygmyhippo;
 
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
+import android.Manifest;
+import android.os.StrictMode;
 
 import com.example.pygmyhippo.common.Account;
 import com.example.pygmyhippo.common.OnRoleSelectedListener;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
@@ -23,13 +31,14 @@ import java.util.Arrays;
  * @author Jennifer, Griffin
  */
 public class MainActivity extends AppCompatActivity implements OnRoleSelectedListener {
-
+    final int PERMISSION_REQUEST_CODE =112;
     private OrganiserMainActivityNagivationBinding organiserBinder;
     private UserMainActivityNagivationBinding userBinder;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
 
         Account currentAccount = new Account(
                 "1",  // accountID
@@ -60,9 +69,56 @@ public class MainActivity extends AppCompatActivity implements OnRoleSelectedLis
                 setupNavControllerOrganiser(organiserBinder.navView);
                 break;
             default:
+                // needs a case for admin
                 break;
         }
+
+        /* This code is from the stack overflow to fix an error I was having when trying to commit to github.
+        It enables the app the app to prompt for user notifications... I don't know what was triggering the error.
+        Author: Babbo Natale
+        Posted: Feb 5, 2023 [ Accessed October 25, 2024 ]
+        https://stackoverflow.com/questions/73940694/android-13-not-asking-for-post-notifications-permission
+        */
+        if (Build.VERSION.SDK_INT > 32) {
+            if (!shouldShowRequestPermissionRationale("112")){
+                getNotificationPermission();
+            }
+        }
     }
+
+    public void getNotificationPermission(){
+        try {
+            if (Build.VERSION.SDK_INT > 32) {
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.POST_NOTIFICATIONS},
+                        PERMISSION_REQUEST_CODE);
+            }
+        }catch (Exception e){
+
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        switch (requestCode) {
+            case PERMISSION_REQUEST_CODE:
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0 &&
+                        grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    // allow
+
+                }  else {
+                    //deny
+                }
+                return;
+        }
+
+    }
+
+
+
 
     /**
      * This is the call back function that listens for when the role is changed on the profile page.
