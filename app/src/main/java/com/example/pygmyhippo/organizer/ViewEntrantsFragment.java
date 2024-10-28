@@ -13,7 +13,10 @@ Issues: Navigation to and from this activity
       Get Event ID somewhere for querying the users
  */
 
+import static android.content.ContentValues.TAG;
+
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,12 +31,16 @@ import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 
 import com.example.pygmyhippo.R;
-import com.example.pygmyhippo.common.Account;
-import com.example.pygmyhippo.common.Entrant;
 import com.example.pygmyhippo.common.TESTEntrant;
+import com.example.pygmyhippo.database.DBConnector;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
+import java.lang.ref.Reference;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 /**
  * This fragment allows the Organizer to view the entrants who signed up for their event
@@ -50,6 +57,8 @@ public class ViewEntrantsFragment extends Fragment {
     private ListView entrantListView;
     private Spinner statusSpinner;
     private ImageButton backButton;
+    private DBConnector dbConnector = new DBConnector();
+    private CollectionReference entrantsRef;
 
     /**
      * OnCreateView sets up the interactables on viewEntrants page and deals with the list data
@@ -82,15 +91,6 @@ public class ViewEntrantsFragment extends Fragment {
         o_spinner_adapter.setDropDownViewResource(R.layout.e_p_role_dropdown);
         statusSpinner.setAdapter(o_spinner_adapter);
 
-        //FIXME: A sample TESTentrant/list used to look at this fragment
-        TESTEntrant entrant = new TESTEntrant("id",
-                "Moo Deng",
-                "moo@yahoo.ca",
-                "780-111-2222"
-        );
-        entrant.setEntrantStatus(TESTEntrant.EntrantStatus.waitlisted);
-        entrantListData.add(entrant); // adding test entrant to list
-
         // Initialize our ListView
         entrantListView = view.findViewById(R.id.o_entrant_listview);
 
@@ -105,6 +105,39 @@ public class ViewEntrantsFragment extends Fragment {
             Navigation.findNavController(view1).navigate(R.id.action_ViewEntrantsFragment_to_navigation_home);
         });
 
+        // Connect to the database and get a collection reference to TESTentrant
+        dbConnector.DBConnect();
+        entrantsRef = dbConnector.getDB().collection("Entrants");
+
+        // Get the entrants with id matching the selected event (and the listener)
+        // This code snippet is from https://firebase.google.com/docs/firestore/query-data/queries#collection-group-query
+        // Referenced on Oct 27, 2024
+        entrantsRef.whereEqualTo("accountID", "id")
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                // Convert the document data into an Entrant object
+                                TESTEntrant entrant = new TESTEntrant((String) document.get("accountID"), (String) document.get("name"), (String) document.get("emailAddress"), (String) document.get("phoneNumber"));
+                                entrant.setEntrantStatus(TESTEntrant.EntrantStatus.valueOf((String) document.get("entrantStatus")));
+                                // Add that entrant to the list we want to display
+                                entrantListData.add(entrant);
+
+                                Log.d(TAG, document.getId() + " => " + document.getData());
+                            }
+                            // Notify array of changes
+                            entrantListAdapter.notifyDataSetChanged();
+                        } else {
+                            Log.d(TAG, "Error getting documents: ", task.getException());
+                        }
+                    }
+                });
+
         return view;
+    }
+
+    public void getEntrantList(ArrayList<TESTEntrant> entrantListData) {
     }
 }
