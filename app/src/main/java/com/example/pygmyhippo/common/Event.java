@@ -23,7 +23,7 @@ import java.util.ArrayList;
  *  - Use a builder for initialization
  *  - connect to the database
  *  - add generation of hashdata and qr code
- * @author James, Griffin
+ * @author James, Griffin, Katharine
  */
 public class Event {
     private String eventTitle;
