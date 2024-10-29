@@ -10,7 +10,7 @@
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/nav_view"
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="55dp"
         android:background="@color/dark_purple"
         app:itemIconTint="@drawable/nav_select"
