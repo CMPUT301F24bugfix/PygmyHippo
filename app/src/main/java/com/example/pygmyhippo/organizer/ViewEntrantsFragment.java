@@ -8,9 +8,7 @@ Author: Kori Kozicki
 
 Issues: Navigation to and from this activity
       No Image handling
-      Data is hardcoded, so should work on data passing from fragments
-      Need to connect to db and actually get the list filter working
-      Get Event ID somewhere for querying the users
+      Entrant ID is hardcoded, need to make the fragment that leads to this one
  */
 
 import static android.content.ContentValues.TAG;
@@ -20,6 +18,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
 import android.widget.ListView;
@@ -39,16 +38,14 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
-import java.lang.ref.Reference;
 import java.util.ArrayList;
 
 /**
  * This fragment allows the Organizer to view the entrants who signed up for their event
  * @author Kori
  * TODO:
- *  - Set up to DB
- *  - Get list filtering working
- *  - Set up so not hardcoded examples
+ *  - Add image handling from database
+ *  - Set up so not hardcoded event ID
  *  - Figure out Entrant final design and match with this fragment
  */
 public class ViewEntrantsFragment extends Fragment {
@@ -76,6 +73,10 @@ public class ViewEntrantsFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.o_view_entrants, container, false);
+
+        // FIXME: This is a test eventID for now. Later the event will be passed to this fragment
+        //      And the list will be updated from the event object
+        String eventID = "event1";
 
         // Get the spinner view
         statusSpinner = view.findViewById(R.id.o_entrant_list_spinner);
@@ -105,22 +106,63 @@ public class ViewEntrantsFragment extends Fragment {
             Navigation.findNavController(view1).navigate(R.id.action_ViewEntrantsFragment_to_navigation_home);
         });
 
-        // Connect to the database and get a collection reference to TESTentrant
+        // Connect to the database and get a collection reference to Entrants
         dbConnector.DBConnect();
         entrantsRef = dbConnector.getDB().collection("Entrants");
 
-        // Get the entrants with id matching the selected event (and the listener)
-        // This code snippet is from https://firebase.google.com/docs/firestore/query-data/queries#collection-group-query
-        // Referenced on Oct 27, 2024
-        entrantsRef.whereEqualTo("accountID", "id")
+        // Update the list from the database initially
+        setEntrantWaitList(entrantListData, eventID);
+
+        // Set up on click listeners for the spinner to filter the list
+        statusSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
+                if (position == 0) {
+                    // Waitlist was selected
+                    setEntrantWaitList(entrantListData, eventID);
+                } else if (position == 1) {
+                    // Invited was selected
+                    setEntrantInvited(entrantListData, eventID);
+                } else if (position == 2) {
+                    // Cancelled was selected
+                    setEntrantCancelled(entrantListData, eventID);
+                } else if (position == 3) {
+                    // Accepted was selected
+                    setEntrantAccepted(entrantListData, eventID);
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+                // Do nothing
+            }
+        });
+
+        return view;
+    }
+
+    /**
+     * This method will take our list and update it with waitlisted entrants
+     * @author Kori
+     * @param entrantListData Or data list we want to update
+     * @param eventID The id of the event the entrants belong to
+     */
+    public void setEntrantWaitList(ArrayList<TESTEntrant> entrantListData, String eventID) {
+        // Learned how to make these queries from https://firebase.google.com/docs/firestore/query-data/queries
+        // Accessed on Oct 27th, 2024
+        entrantsRef.whereEqualTo("eventID", eventID).whereEqualTo("entrantStatus", "waitlisted")
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.isSuccessful()) {
+                            // Clear the list first
+                            entrantListData.clear();
+
+                            // Go through each matching document
                             for (QueryDocumentSnapshot document : task.getResult()) {
                                 // Convert the document data into an Entrant object
-                                TESTEntrant entrant = new TESTEntrant((String) document.get("accountID"), (String) document.get("name"), (String) document.get("emailAddress"), (String) document.get("phoneNumber"));
+                                TESTEntrant entrant = new TESTEntrant((String) document.get("eventID"), (String) document.get("accountID"), (String) document.get("name"), (String) document.get("emailAddress"), (String) document.get("phoneNumber"));
                                 entrant.setEntrantStatus(TESTEntrant.EntrantStatus.valueOf((String) document.get("entrantStatus")));
                                 // Add that entrant to the list we want to display
                                 entrantListData.add(entrant);
@@ -134,10 +176,110 @@ public class ViewEntrantsFragment extends Fragment {
                         }
                     }
                 });
-
-        return view;
     }
 
-    public void getEntrantList(ArrayList<TESTEntrant> entrantListData) {
+    /**
+     * This method will take our list and update it with invited entrants
+     * @author Kori
+     * @param entrantListData Or data list we want to update
+     * @param eventID The id of the event the entrants belong to
+     */
+    public void setEntrantInvited(ArrayList<TESTEntrant> entrantListData, String eventID) {
+        entrantsRef.whereEqualTo("eventID", eventID).whereEqualTo("entrantStatus", "invited")
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            // Clear the list first
+                            entrantListData.clear();
+
+                            // Go through each matching document
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                // Convert the document data into an Entrant object
+                                TESTEntrant entrant = new TESTEntrant((String) document.get("eventID"), (String) document.get("accountID"), (String) document.get("name"), (String) document.get("emailAddress"), (String) document.get("phoneNumber"));
+                                entrant.setEntrantStatus(TESTEntrant.EntrantStatus.valueOf((String) document.get("entrantStatus")));
+                                // Add that entrant to the list we want to display
+                                entrantListData.add(entrant);
+
+                                Log.d(TAG, document.getId() + " => " + document.getData());
+                            }
+                            // Notify array of changes
+                            entrantListAdapter.notifyDataSetChanged();
+                        } else {
+                            Log.d(TAG, "Error getting documents: ", task.getException());
+                        }
+                    }
+                });
+    }
+
+    /**
+     * This method will take our list and update it with cancelled entrants
+     * @author Kori
+     * @param entrantListData Or data list we want to update
+     * @param eventID The id of the event the entrants belong to
+     */
+    public void setEntrantCancelled(ArrayList<TESTEntrant> entrantListData, String eventID) {
+        entrantsRef.whereEqualTo("eventID", eventID).whereEqualTo("entrantStatus", "cancelled")
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            // Clear the list first
+                            entrantListData.clear();
+
+                            // Go through each matching document
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                // Convert the document data into an Entrant object
+                                TESTEntrant entrant = new TESTEntrant((String) document.get("eventID"), (String) document.get("accountID"), (String) document.get("name"), (String) document.get("emailAddress"), (String) document.get("phoneNumber"));
+                                entrant.setEntrantStatus(TESTEntrant.EntrantStatus.valueOf((String) document.get("entrantStatus")));
+                                // Add that entrant to the list we want to display
+                                entrantListData.add(entrant);
+
+                                Log.d(TAG, document.getId() + " => " + document.getData());
+                            }
+                            // Notify array of changes
+                            entrantListAdapter.notifyDataSetChanged();
+                        } else {
+                            Log.d(TAG, "Error getting documents: ", task.getException());
+                        }
+                    }
+                });
+    }
+
+    /**
+     * This method will take our list and update it with accepted entrants
+     * @author Kori
+     * @param entrantListData Or data list we want to update
+     * @param eventID The id of the event the entrants belong to
+     */
+    public void setEntrantAccepted(ArrayList<TESTEntrant> entrantListData, String eventID) {
+        entrantsRef.whereEqualTo("eventID", eventID).whereEqualTo("entrantStatus", "accepted")
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            // Clear the list first
+                            entrantListData.clear();
+
+                            // Go through each matching document
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                // Convert the document data into an Entrant object
+                                TESTEntrant entrant = new TESTEntrant((String) document.get("eventID"), (String) document.get("accountID"), (String) document.get("name"), (String) document.get("emailAddress"), (String) document.get("phoneNumber"));
+                                entrant.setEntrantStatus(TESTEntrant.EntrantStatus.valueOf((String) document.get("entrantStatus")));
+                                // Add that entrant to the list we want to display
+                                entrantListData.add(entrant);
+
+                                Log.d(TAG, document.getId() + " => " + document.getData());
+                            }
+                            // Notify array of changes
+                            entrantListAdapter.notifyDataSetChanged();
+                        } else {
+                            Log.d(TAG, "Error getting documents: ", task.getException());
+                        }
+                    }
+                });
     }
 }

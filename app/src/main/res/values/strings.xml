@@ -13,7 +13,7 @@
     <string-array name="entrant_status">
         <item>WaitList</item>
         <item>Invited</item>
-        <item>Canceled</item>
+        <item>Cancelled</item>
         <item>Accepted</item>
     </string-array>
 

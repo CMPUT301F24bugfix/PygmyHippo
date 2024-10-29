@@ -10,10 +10,12 @@ package com.example.pygmyhippo.common;
  */
 public class TESTEntrant {
 
+    private String eventID;
     private String accountID;
     private String name;
     private String emailAddress;
     private String phoneNumber;
+    private String profilePicture;
     private EntrantStatus entrantStatus;
 
 
@@ -30,7 +32,8 @@ public class TESTEntrant {
         }
     };
 
-    public TESTEntrant(String accountID, String name, String emailAddress, String phoneNumber) {
+    public TESTEntrant(String eventID, String accountID, String name, String emailAddress, String phoneNumber) {
+        this.eventID = eventID;
         this.accountID = accountID;
         this.name = name;
         this.emailAddress = emailAddress;
@@ -75,5 +78,13 @@ public class TESTEntrant {
 
     public void setPhoneNumber(String phoneNumber) {
         this.phoneNumber = phoneNumber;
+    }
+
+    public String getEventID() {
+        return eventID;
+    }
+
+    public void setEventID(String eventID) {
+        this.eventID = eventID;
     }
 }
