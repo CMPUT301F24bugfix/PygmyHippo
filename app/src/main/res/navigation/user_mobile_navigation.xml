@@ -25,14 +25,16 @@
         android:name="com.example.pygmyhippo.user.MyEventsFragment"
         android:label="@string/title_myevents"
         tools:layout="@layout/user_fragment_myevents"
-        android:background="@color/dark_purple"/>
+        android:background="@color/dark_purple">
+    </fragment>
 
     <fragment
         android:id="@+id/navigation_dashboard"
         android:name="com.example.pygmyhippo.user.QRFragment"
         android:label="@string/title_post_event"
         tools:layout="@layout/user_fragment_qr"
-        android:background="@color/dark_purple"/>
+        android:background="@color/dark_purple">
+    </fragment>
 
     <fragment
         android:id="@+id/navigation_notifications"
@@ -40,4 +42,5 @@
         android:label="@string/title_profile"
         tools:layout="@layout/user_fragment_profile"
         android:background="@color/dark_purple"/>
+
 </navigation>
