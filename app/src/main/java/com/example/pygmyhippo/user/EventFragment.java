@@ -88,7 +88,7 @@ public class EventFragment extends Fragment {
         TextView eventCostView = view.findViewById(R.id.u_eventCostView);
         TextView eventAboutTitleView = view.findViewById(R.id.u_aboutEventTitleView);
         TextView eventAboutDescriptionView = view.findViewById(R.id.u_aboutEventDescriptionView);
-        View eventRegisterButtonView = view.findViewById(R.id.u_registerButtonView);
+        View eventRegisterButtonView = view.findViewById(R.id.u_registerButton);
 
         // set with hardcoded values, set the view in the same wy form the event recieved from the constructor
         event = hardcodeEvent();
@@ -107,7 +107,7 @@ public class EventFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.user_fragment_event, container, false);
 
-        Button registerButton = view.findViewById(R.id.u_registerButtonView);
+        Button registerButton = view.findViewById(R.id.u_registerButton);
 
         // with a check, check to see if event has been registered for, if so, register (set text
         // to checkmark, add to lists and stuff, if event has not been register for, set text back

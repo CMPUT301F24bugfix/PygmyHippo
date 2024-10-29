@@ -190,7 +190,7 @@
         android:padding="16dp">
 
         <Button
-            android:id="@+id/u_registerButtonView"
+            android:id="@+id/u_registerButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:backgroundTint="@color/green"

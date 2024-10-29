@@ -19,10 +19,6 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
 /**
  * Test single event page
  * @author Katharine
@@ -40,7 +36,7 @@ public class SingleEventTest {
     // navigate to event page
     @Test
     public void testNavigateToEventPage() {
-        onView(withId(R.id.u_scanQRButtonView)).perform(click());
+        onView(withId(R.id.u_scanQRButton)).perform(click());
         onView(withId(R.id.u_eventNameView)).check(matches(isDisplayed()));
     }
 
@@ -52,10 +48,10 @@ public class SingleEventTest {
                 "123",
                 Entrant.EntrantStatus.invited
         );
-        onView(withId(R.id.u_scanQRButtonView)).perform(click());
+        onView(withId(R.id.u_scanQRButton)).perform(click());
         // check to see that there is nothing in the entrants list
         assertEquals(0, event.getEntrants().size());
-        onView(withId(R.id.u_registerButtonView)).perform(click());
+        onView(withId(R.id.u_registerButton)).perform(click());
         // check to see if checkmark changes
         onView(withText("✔")).check(matches(isDisplayed()));
         // check to see if entrant is in event entrants list

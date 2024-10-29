@@ -45,7 +45,7 @@ public class QRFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        Button scanQRButton = view.findViewById(R.id.u_scanQRButtonView);
+        Button scanQRButton = view.findViewById(R.id.u_scanQRButton);
         scanQRButton.setOnClickListener(view1 -> {
             Navigation.findNavController(view1).navigate(R.id.action_scanQRcodeFragment_to_eventFragment);
         });
