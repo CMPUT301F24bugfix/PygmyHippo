@@ -15,7 +15,11 @@ package com.example.pygmyhippo.common;
 public class Entrant {
 
     private String accountID;
-
+    private String eventID;
+    private String name;
+    private String emailAddress;
+    private String phoneNumber;
+    private String profilePicture;
     private EntrantStatus entrantStatus;
 
     public enum EntrantStatus {
@@ -30,6 +34,20 @@ public class Entrant {
             this.value = value;
         }
     };
+    public Entrant() {}
+
+    public Entrant(String accountID, EntrantStatus entrantStatus) {
+        this.accountID = accountID;
+        this.entrantStatus = entrantStatus;
+    }
+
+    public Entrant(String eventID, String accountID, String name, String emailAddress, String phoneNumber) {
+        this.eventID = eventID;
+        this.accountID = accountID;
+        this.name = name;
+        this.emailAddress = emailAddress;
+        this.phoneNumber = phoneNumber;
+    }
 
     public String getAccountID() {
         return accountID;
@@ -45,5 +63,45 @@ public class Entrant {
 
     public void setEntrantStatus(EntrantStatus entrantStatus) {
         this.entrantStatus = entrantStatus;
+    }
+
+    public String getEventID() {
+        return eventID;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getEmailAddress() {
+        return emailAddress;
+    }
+
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public String getProfilePicture() {
+        return profilePicture;
+    }
+
+    public void setEventID(String eventID) {
+        this.eventID = eventID;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setEmailAddress(String emailAddress) {
+        this.emailAddress = emailAddress;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
+
+    public void setProfilePicture(String profilePicture) {
+        this.profilePicture = profilePicture;
     }
 }

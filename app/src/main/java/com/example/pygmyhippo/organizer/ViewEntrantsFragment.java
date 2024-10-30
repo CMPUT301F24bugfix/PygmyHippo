@@ -30,7 +30,7 @@ import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 
 import com.example.pygmyhippo.R;
-import com.example.pygmyhippo.common.TESTEntrant;
+import com.example.pygmyhippo.common.Entrant;
 import com.example.pygmyhippo.database.DBConnector;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -46,11 +46,11 @@ import java.util.ArrayList;
  * TODO:
  *  - Add image handling from database
  *  - Set up so not hardcoded event ID
- *  - Figure out Entrant final design and match with this fragment
+ *  - Maybe consider using entrant list from event instead
  */
 public class ViewEntrantsFragment extends Fragment {
-    private ArrayList<TESTEntrant> entrantListData = new ArrayList<TESTEntrant>();
-    private ArrayAdapter<TESTEntrant> entrantListAdapter;
+    private ArrayList<Entrant> entrantListData = new ArrayList<Entrant>();
+    private ArrayAdapter<Entrant> entrantListAdapter;
     private ListView entrantListView;
     private Spinner statusSpinner;
     private ImageButton backButton;
@@ -147,7 +147,7 @@ public class ViewEntrantsFragment extends Fragment {
      * @param entrantListData Or data list we want to update
      * @param eventID The id of the event the entrants belong to
      */
-    public void setEntrantWaitList(ArrayList<TESTEntrant> entrantListData, String eventID) {
+    public void setEntrantWaitList(ArrayList<Entrant> entrantListData, String eventID) {
         // Learned how to make these queries from https://firebase.google.com/docs/firestore/query-data/queries
         // Accessed on Oct 27th, 2024
         entrantsRef.whereEqualTo("eventID", eventID).whereEqualTo("entrantStatus", "waitlisted")
@@ -162,8 +162,8 @@ public class ViewEntrantsFragment extends Fragment {
                             // Go through each matching document
                             for (QueryDocumentSnapshot document : task.getResult()) {
                                 // Convert the document data into an Entrant object
-                                TESTEntrant entrant = new TESTEntrant((String) document.get("eventID"), (String) document.get("accountID"), (String) document.get("name"), (String) document.get("emailAddress"), (String) document.get("phoneNumber"));
-                                entrant.setEntrantStatus(TESTEntrant.EntrantStatus.valueOf((String) document.get("entrantStatus")));
+                                Entrant entrant = new Entrant((String) document.get("eventID"), (String) document.get("accountID"), (String) document.get("name"), (String) document.get("emailAddress"), (String) document.get("phoneNumber"));
+                                entrant.setEntrantStatus(Entrant.EntrantStatus.valueOf((String) document.get("entrantStatus")));
                                 // Add that entrant to the list we want to display
                                 entrantListData.add(entrant);
 
@@ -184,7 +184,7 @@ public class ViewEntrantsFragment extends Fragment {
      * @param entrantListData Or data list we want to update
      * @param eventID The id of the event the entrants belong to
      */
-    public void setEntrantInvited(ArrayList<TESTEntrant> entrantListData, String eventID) {
+    public void setEntrantInvited(ArrayList<Entrant> entrantListData, String eventID) {
         entrantsRef.whereEqualTo("eventID", eventID).whereEqualTo("entrantStatus", "invited")
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -197,8 +197,8 @@ public class ViewEntrantsFragment extends Fragment {
                             // Go through each matching document
                             for (QueryDocumentSnapshot document : task.getResult()) {
                                 // Convert the document data into an Entrant object
-                                TESTEntrant entrant = new TESTEntrant((String) document.get("eventID"), (String) document.get("accountID"), (String) document.get("name"), (String) document.get("emailAddress"), (String) document.get("phoneNumber"));
-                                entrant.setEntrantStatus(TESTEntrant.EntrantStatus.valueOf((String) document.get("entrantStatus")));
+                                Entrant entrant = new Entrant((String) document.get("eventID"), (String) document.get("accountID"), (String) document.get("name"), (String) document.get("emailAddress"), (String) document.get("phoneNumber"));
+                                entrant.setEntrantStatus(Entrant.EntrantStatus.valueOf((String) document.get("entrantStatus")));
                                 // Add that entrant to the list we want to display
                                 entrantListData.add(entrant);
 
@@ -219,7 +219,7 @@ public class ViewEntrantsFragment extends Fragment {
      * @param entrantListData Or data list we want to update
      * @param eventID The id of the event the entrants belong to
      */
-    public void setEntrantCancelled(ArrayList<TESTEntrant> entrantListData, String eventID) {
+    public void setEntrantCancelled(ArrayList<Entrant> entrantListData, String eventID) {
         entrantsRef.whereEqualTo("eventID", eventID).whereEqualTo("entrantStatus", "cancelled")
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -232,8 +232,8 @@ public class ViewEntrantsFragment extends Fragment {
                             // Go through each matching document
                             for (QueryDocumentSnapshot document : task.getResult()) {
                                 // Convert the document data into an Entrant object
-                                TESTEntrant entrant = new TESTEntrant((String) document.get("eventID"), (String) document.get("accountID"), (String) document.get("name"), (String) document.get("emailAddress"), (String) document.get("phoneNumber"));
-                                entrant.setEntrantStatus(TESTEntrant.EntrantStatus.valueOf((String) document.get("entrantStatus")));
+                                Entrant entrant = new Entrant((String) document.get("eventID"), (String) document.get("accountID"), (String) document.get("name"), (String) document.get("emailAddress"), (String) document.get("phoneNumber"));
+                                entrant.setEntrantStatus(Entrant.EntrantStatus.valueOf((String) document.get("entrantStatus")));
                                 // Add that entrant to the list we want to display
                                 entrantListData.add(entrant);
 
@@ -254,7 +254,7 @@ public class ViewEntrantsFragment extends Fragment {
      * @param entrantListData Or data list we want to update
      * @param eventID The id of the event the entrants belong to
      */
-    public void setEntrantAccepted(ArrayList<TESTEntrant> entrantListData, String eventID) {
+    public void setEntrantAccepted(ArrayList<Entrant> entrantListData, String eventID) {
         entrantsRef.whereEqualTo("eventID", eventID).whereEqualTo("entrantStatus", "accepted")
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -267,8 +267,8 @@ public class ViewEntrantsFragment extends Fragment {
                             // Go through each matching document
                             for (QueryDocumentSnapshot document : task.getResult()) {
                                 // Convert the document data into an Entrant object
-                                TESTEntrant entrant = new TESTEntrant((String) document.get("eventID"), (String) document.get("accountID"), (String) document.get("name"), (String) document.get("emailAddress"), (String) document.get("phoneNumber"));
-                                entrant.setEntrantStatus(TESTEntrant.EntrantStatus.valueOf((String) document.get("entrantStatus")));
+                                Entrant entrant = new Entrant((String) document.get("eventID"), (String) document.get("accountID"), (String) document.get("name"), (String) document.get("emailAddress"), (String) document.get("phoneNumber"));
+                                entrant.setEntrantStatus(Entrant.EntrantStatus.valueOf((String) document.get("entrantStatus")));
                                 // Add that entrant to the list we want to display
                                 entrantListData.add(entrant);
 
