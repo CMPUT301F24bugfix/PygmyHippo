@@ -27,6 +27,10 @@
         android:name="com.example.pygmyhippo.user.ProfileFragment"
         android:label="@string/title_profile"
         tools:layout="@layout/user_fragment_profile"
-        android:background="@color/dark_purple"/>
+        android:background="@color/dark_purple">
+        <argument
+            android:name="account"
+            app:argType="com.example.pygmyhippo.common.Account" />
+    </fragment>
 
 </navigation>

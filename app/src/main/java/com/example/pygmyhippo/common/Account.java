@@ -1,39 +1,29 @@
-/*
- * TODO: Decide how images are gonna be stored and set the appropriate datatype for profilePicture.
- * TODO: Decide how images are gonna be stored and set the appropriate datatype for facilityPicture.
- *
- * Account Dataclass
- * The structure of this class should be similar to the schema used for Account Documents on
- * firebase. This contains all the info for any user on the app, this includes: admins, organizers,
- * and users. Accounts can have multiple roles, they can switch between them on the profile page of
- * the app. Different roles have different permissions and views associated with them.
- *
- * AccountRole Enum
- * There are only three roles an account on this app can have, one account can have between 1-3
- * AccountRoles assigned to it. Only one role may be active at one time. Roles influence the views
- * and permissions the account has.
- *
- * Facility Dataclass
- * Organizers can have a facility profile attached to their accounts which they may modify. This
- * facility can be viewed by users when they view an event. Organizers do not have to have a
- * facility to create an event, but only account with organizer role can have facilities.
- */
-
 package com.example.pygmyhippo.common;
 
+import android.os.Build;
+import android.os.Parcel;
+import android.os.Parcelable;
+
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import java.util.ArrayList;
 
 
 /**
- * Our account class
+ * TODO: Decide how images are gonna be stored and set the appropriate datatype for profilePicture.
  * TODO:
  *  - Use a builder for initialization
  *  - connect to the database
+ * Account Dataclass
+ * The structure of this class should be similar to the schema used for Account Documents on
+ * firebase. This contains all the info for any user on the app, this includes: admins, organizers,
+ * and users. Accounts can have multiple roles, they can switch between them on the profile page of
+ * the app. Different roles have different permissions and views associated with them.
+
  * @author James, Griffin
  */
-public class Account {
+public class Account implements Parcelable {
 
     private String accountID;
     private String name;
@@ -98,37 +88,70 @@ public class Account {
         this.enableGeolocation = enableGeolocation;
     }
 
-    public static class Facility {
-        private String facilityPicture;
-        private String name;
-
-        public String getLocation() {
-            return location;
-        }
-
-        public void setLocation(String location) {
-            this.location = location;
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public void setName(String name) {
-            this.name = name;
-        }
-
-        public String getFacilityPicture() {
-            return facilityPicture;
-        }
-
-        public void setFacilityPicture(String facilityPicture) {
-            this.facilityPicture = facilityPicture;
-        }
-
-        private String location;
+    protected Account(Parcel in) {
+        accountID = in.readString();
+        name = in.readString();
+        pronouns = in.readString();
+        phoneNumber = in.readString();
+        emailAddress = in.readString();
+        deviceID = in.readString();
+        profilePicture = in.readString();
+        location = in.readString();
+        receiveNotifications = in.readByte() != 0;
+        enableGeolocation = in.readByte() != 0;
+        facilityProfile = in.readParcelable(Facility.class.getClassLoader());
     }
 
+    public static final Creator<Account> CREATOR = new Creator<Account>() {
+        @Override
+        public Account createFromParcel(Parcel in) {
+            return new Account(in);
+        }
+
+        @Override
+        public Account[] newArray(int size) {
+            return new Account[size];
+        }
+    };
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(@NonNull Parcel dest, int flags) {
+        dest.writeString(accountID);
+        dest.writeString(name);
+        dest.writeString(pronouns);
+        dest.writeString(phoneNumber);
+        dest.writeString(emailAddress);
+        dest.writeString(deviceID);
+        dest.writeString(profilePicture);
+        dest.writeString(location);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            dest.writeBoolean(receiveNotifications);
+        }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            dest.writeBoolean(enableGeolocation);
+        }
+
+        ArrayList<String> roleStrings = new ArrayList<>();
+        for (AccountRole role : this.roles) {
+            roleStrings.add(role.value);
+        }
+        dest.writeStringList(roleStrings);
+        dest.writeParcelable(facilityProfile, 0);
+    }
+
+    /*
+     * AccountRole Enum
+     * There are only three roles an account on this app can have, one account can have between 1-3
+     * AccountRoles assigned to it. Only one role may be active at one time. Roles influence the views
+     * and permissions the account has.
+     */
     public enum AccountRole {
         user("user"),
         organiser("organiser"),
@@ -147,7 +170,6 @@ public class Account {
     public void setName(String name) {
         this.name = name;
     }
-
 
     public String getAccountID() {
         return accountID;

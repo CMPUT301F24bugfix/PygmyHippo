@@ -3,7 +3,7 @@
 xmlns:app="http://schemas.android.com/apk/res-auto"
 xmlns:tools="http://schemas.android.com/tools"
 android:id="@+id/organiser_mobile_navigation"
-app:startDestination="@+id/organiser_myEvents_page">
+app:startDestination="@+id/organiser_postEvent_page">
 
 <fragment
     android:id="@+id/organiser_myEvents_page"
@@ -28,7 +28,11 @@ app:startDestination="@+id/organiser_myEvents_page">
     android:name="com.example.pygmyhippo.organizer.ProfileFragment"
     android:label="@string/title_profile"
     tools:layout="@layout/organiser_fragment_profile"
-    android:background="@color/dark_purple"/>
+    android:background="@color/dark_purple">
+    <argument
+        android:name="account"
+        app:argType="com.example.pygmyhippo.common.Account" />
+</fragment>
 
     <fragment
         android:id="@+id/view_entrants_fragment"

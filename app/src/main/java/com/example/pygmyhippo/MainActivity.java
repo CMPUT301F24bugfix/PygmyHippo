@@ -1,27 +1,23 @@
 package com.example.pygmyhippo;
 
+import android.Manifest;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
-import android.Manifest;
-import android.os.StrictMode;
-
-import com.example.pygmyhippo.common.Account;
-import com.example.pygmyhippo.common.OnRoleSelectedListener;
-import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
-import com.example.pygmyhippo.databinding.UserMainActivityNagivationBinding;
+import com.example.pygmyhippo.common.Account;
+import com.example.pygmyhippo.common.OnRoleSelectedListener;
 import com.example.pygmyhippo.databinding.OrganiserMainActivityNagivationBinding;
+import com.example.pygmyhippo.databinding.UserMainActivityNagivationBinding;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -56,17 +52,20 @@ public class MainActivity extends AppCompatActivity implements OnRoleSelectedLis
                 null  // facilityProfile
         );
 
+        Bundle bundle = new Bundle();
+        bundle.putParcelable("account", currentAccount);
+
         // Use a switch to determine the nagivation based on the current role
         switch (currentAccount.getCurrentRole()) {
             case user:
                 userBinder = UserMainActivityNagivationBinding.inflate(getLayoutInflater());
                 setContentView(userBinder.getRoot());
-                setupNavControllerUser(userBinder.navView);
+                setupNavControllerUser(userBinder.navView, bundle);
                 break;
             case organiser:
                 organiserBinder = OrganiserMainActivityNagivationBinding.inflate(getLayoutInflater());
                 setContentView(organiserBinder.getRoot());
-                setupNavControllerOrganiser(organiserBinder.navView);
+                setupNavControllerOrganiser(organiserBinder.navView, bundle);
                 break;
             default:
                 // needs a case for admin
@@ -84,6 +83,8 @@ public class MainActivity extends AppCompatActivity implements OnRoleSelectedLis
                 getNotificationPermission();
             }
         }
+
+
     }
 
     public void getNotificationPermission(){
@@ -163,13 +164,15 @@ public class MainActivity extends AppCompatActivity implements OnRoleSelectedLis
      * This function does the initialization on the BottomNavigationView object passed
      * @author Griffin
      * @param navView: not sure
+     * @param bundle: Arguments to pass to first fragment.
      */
-    private void setupNavControllerUser(BottomNavigationView navView) {
+    private void setupNavControllerUser(BottomNavigationView navView, Bundle bundle) {
         AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(
                 // TODO: change the navigation names for user to be more descriptive
                 R.id.navigation_home, R.id.navigation_dashboard, R.id.navigation_notifications)
                 .build();
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_activity_main);
+        navController.setGraph(R.navigation.user_mobile_navigation, bundle);
         NavigationUI.setupWithNavController(navView, navController);
     }
 
@@ -177,12 +180,14 @@ public class MainActivity extends AppCompatActivity implements OnRoleSelectedLis
      * This function does the initialization on the BottomNavigationView object passed
      * @author Griffin
      * @param navView: not sure
+     * @param bundle: Arguments to pass to first fragment.
      */
-    private void setupNavControllerOrganiser(BottomNavigationView navView) {
+    private void setupNavControllerOrganiser(BottomNavigationView navView, Bundle bundle) {
         AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(
                 R.id.organiser_myEvents_page, R.id.organiser_postEvent_page, R.id.organiser_profile_page)
                 .build();
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_activity_main);
+        navController.setGraph(R.navigation.organiser_mobile_navigation, bundle);
         NavigationUI.setupWithNavController(navView, navController);
     }
 }
