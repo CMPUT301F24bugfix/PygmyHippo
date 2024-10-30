@@ -37,12 +37,6 @@ public class Entrant {
             this.value = value;
         }
     };
-    public Entrant() {}
-
-    public Entrant(String accountID, EntrantStatus entrantStatus) {
-        this.accountID = accountID;
-        this.entrantStatus = entrantStatus;
-    }
 
     public Entrant(String eventID, String accountID, String name, String emailAddress, String phoneNumber) {
         this.eventID = eventID;
@@ -65,6 +59,13 @@ public class Entrant {
     }
 
     public void setEntrantStatus(EntrantStatus entrantStatus) {
+        this.entrantStatus = entrantStatus;
+    }
+
+    public Entrant() {}
+
+    public Entrant(String accountID, EntrantStatus entrantStatus) {
+        this.accountID = accountID;
         this.entrantStatus = entrantStatus;
     }
 
