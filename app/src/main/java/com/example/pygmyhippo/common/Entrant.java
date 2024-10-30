@@ -1,6 +1,9 @@
 
 package com.example.pygmyhippo.common;
 
+import java.util.ArrayList;
+import java.util.Collections;
+
 /**
  * Entrant is a dataclass which contains relevant information for relating an User account to an
  * Event. Entrant follows a similar schema to how they are stored in firebase. Multiple Entrants
@@ -10,7 +13,7 @@ package com.example.pygmyhippo.common;
  * TODO:
  *  - Use a builder for initialization
  *  - connect to the database
- * @author James Fu, Griffin
+ * @author James Fu, Griffin, Katharine
  */
 public class Entrant {
 

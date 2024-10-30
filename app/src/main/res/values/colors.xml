@@ -3,7 +3,9 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="mid_purple">#7E82A3</color>
+    <color  name="mid_light_purple">#A4A8C3</color>
     <color name="light_purple">#CCCEE3</color>
+    <color name="lightest_purple">#E6E7F1</color>
     <color name="dark_purple">#666985</color>
     <color name="title_text">#3A5983</color>
     <color name="main_buton">#babeee</color>
