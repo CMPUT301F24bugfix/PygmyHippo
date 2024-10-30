@@ -1,6 +1,7 @@
 package com.example.pygmyhippo.organiser;
 import com.example.pygmyhippo.R;
 import static androidx.test.espresso.Espresso.onView;
+import static androidx.test.espresso.action.ViewActions.typeTextIntoFocusedView;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.action.ViewActions.scrollTo;
 import static androidx.test.espresso.matcher.ViewMatchers.isChecked;
@@ -14,11 +15,22 @@ import static androidx.test.espresso.matcher.ViewMatchers.withText;
 
 import android.net.Uri;
 
+import android.Manifest;
+import androidx.test.rule.GrantPermissionRule;
+
 import androidx.test.core.app.ApplicationProvider;
 import androidx.test.espresso.action.ViewActions;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.filters.LargeTest;
+
+import androidx.test.uiautomator.By;
+import androidx.test.uiautomator.UiDevice;
+import androidx.test.uiautomator.UiObject;
+import androidx.test.uiautomator.UiObjectNotFoundException;
+import androidx.test.uiautomator.UiSelector;
+import androidx.test.platform.app.InstrumentationRegistry;
+import androidx.test.uiautomator.Until;
 
 import com.example.pygmyhippo.MainActivity;
 
@@ -39,12 +51,19 @@ import org.junit.runner.RunWith;
 @RunWith(AndroidJUnit4.class)
 @LargeTest
 public class PostEventFragmentTesting {
+
+    private UiDevice device;
+
+    @Rule
+    public GrantPermissionRule mRuntimePermissionRule = GrantPermissionRule.grant(Manifest.permission.POST_NOTIFICATIONS);
+
     @Rule
     public ActivityScenarioRule<MainActivity> scenario = new ActivityScenarioRule<MainActivity>(MainActivity.class);
 
     @Before
     public void setUp() {
         onView(withId(R.id.organiser_postEvent_page)).perform(click());
+        device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation());
     }
 
     @Test
@@ -54,7 +73,13 @@ public class PostEventFragmentTesting {
     }
 
     @Test
+    // TODO: before running this test ensure that an image is taken on the devices camera
+    // also ensure that you are running in organiser mode
     public void testWithData() {
+        //test adding image
+        // I cannot figure out how to pick images for testing
+        // TODO add picking images for testing
+
         // tests entering name
         String eventName = "Hippo Party";
         onView(withId(R.id.o_postEvent_name_edit)).perform(ViewActions.typeText(eventName));
@@ -98,12 +123,9 @@ public class PostEventFragmentTesting {
         onView(withId(R.id.o_postEvent_post_button)).perform(click());
     }
 
-    // TODO: implement some kind of image testing
-    // I think its possible but it seems really complicated
-//    @Test
-//    public void imageUploadTest() {
-//        Uri imageUri = Uri.parse("android.resource://com.example.pygmyhippo/drawable/dog.jpg");
-//        onView(withId(R.id.o_postEvent_addImage)).perform(click());
-//
-//    }
+    @Test
+    public void testNavigationToQR() {
+
+    }
+
 }

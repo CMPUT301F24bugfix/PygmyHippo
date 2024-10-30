@@ -52,7 +52,7 @@ public class MainActivity extends AppCompatActivity implements OnRoleSelectedLis
                 true,  // receiveNotifications
                 true,  // enableGeolocation
                 new ArrayList<>(Arrays.asList(Account.AccountRole.user, Account.AccountRole.organiser)),  // roles
-                Account.AccountRole.user,  // CHANGE EITHER ORANIZER OR USER FOR ROLE currentRole (TODO: Change this if you want to test with user)
+                Account.AccountRole.organiser,  // CHANGE EITHER ORANIZER OR USER FOR ROLE currentRole (TODO: Change this if you want to test with user)
                 null  // facilityProfile
         );
 

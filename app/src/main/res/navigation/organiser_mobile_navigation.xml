@@ -33,9 +33,6 @@ app:startDestination="@+id/organiser_myEvents_page">
         android:label="view QR"
         tools:layout="@layout/o_event_qrcode_view"
         android:background="@color/dark_purple">
-        <action
-            android:id="@+id/action_view_eventqr_fragment_to_organiser_postEvent_page"
-            app:destination="@id/organiser_postEvent_page" />
     </fragment>
 
     <fragment
