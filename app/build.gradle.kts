@@ -35,7 +35,8 @@ android {
     }
 }
 
-dependencies {
+dependencies{
+    implementation("com.github.kenglxn.QRGen:android:3.0.1") // QR generation
     implementation("com.squareup.picasso:picasso:2.8")
     implementation("de.hdodenhof:circleimageview:3.1.0")
     implementation(libs.appcompat)

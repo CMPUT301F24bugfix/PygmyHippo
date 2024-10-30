@@ -2,6 +2,7 @@ package com.example.pygmyhippo.organizer;
 
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,6 +18,8 @@ import androidx.activity.result.PickVisualMediaRequest;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.Navigation;
+
 import com.example.pygmyhippo.R;
 import com.example.pygmyhippo.common.Event;
 import com.example.pygmyhippo.databinding.OrganiserPostEventBinding;
@@ -32,6 +35,7 @@ import java.util.ArrayList;
  *  - hide the navigation when a keyboard pops up
  *  - add image uploading to database
  *  - set a standard size for post images
+ *  - request that the database generated an id for the event
  *  Thinking about:
  *   - should the current progress of the event reset if the organiser switches screen
  *   - a button called "Clear Fields" at the top to clear event feild
@@ -79,6 +83,7 @@ public class PostEventFragment extends Fragment {
         eventGeolocation = view.findViewById(R.id.o_postEvent_geolocation_check);
         Button postEventButton = view.findViewById(R.id.o_postEvent_post_button);
         Event myEvent = new Event();
+
         postEventButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -90,8 +95,16 @@ public class PostEventFragment extends Fragment {
                 String eventLimit = eventLimitEdit.getText().toString();
                 String eventWinners = eventWinnersEdit.getText().toString();
                 Boolean eventGeolocaion = eventGeolocation.isChecked();
-                if (eventName.isEmpty() || eventDateTime.isEmpty() || eventPrice.isEmpty() ||
-                    eventLocation.isEmpty() || eventDescription.isEmpty() || eventWinners.isEmpty()) {
+                if (
+                        imagePath == null || // check if image is added
+                        eventName.isEmpty() ||
+                        eventDateTime.isEmpty() ||
+                        eventPrice.isEmpty() ||
+                        eventLocation.isEmpty() ||
+                        eventDescription.isEmpty() ||
+                        eventWinners.isEmpty())
+                {
+                    // Toast alerts organiser that event is missing feilds
                     Toast.makeText(getContext(), "Required fields missing!", Toast.LENGTH_SHORT).show();
                 } else {
                     myEvent.setOrganiserID("currentUserID"); // TODO: get the current organiser
@@ -105,9 +118,18 @@ public class PostEventFragment extends Fragment {
                     myEvent.setEntrants(new ArrayList<>()); // no entrants of a newly created event
                     myEvent.setGeolocation(eventGeolocaion);
                     myEvent.setEventStatus(Event.EventStatus.ongoing); // default is ongoing
-                    // TODO: connect to database
+
+                    // TODO: connect to database and generate an event ID
                     Toast.makeText(getContext(), "Event Created", Toast.LENGTH_SHORT).show();
-                    clearEvent(); // this would be a navigation to a new view qr code
+
+                    // create a bundle to send an event to the qr code widget
+                    // the bundle must have a id for the qr code to generate
+                    // event should be added to data base then it should be
+                    myEvent.setEventID("12345");
+                    Bundle eventBundle = new Bundle();
+                    eventBundle.putString("my_event_id", myEvent.getEventID());
+                    Navigation.findNavController(view).navigate(R.id.action_organiser_postEvent_page_to_view_eventqr_fragment, eventBundle);
+                    clearEvent(); // TODo: this could be removed or improved in the future
                 }
             }
         });

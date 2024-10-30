@@ -21,15 +21,29 @@ app:startDestination="@+id/organiser_myEvents_page">
     android:name="com.example.pygmyhippo.organizer.PostEventFragment"
     android:label="@string/title_post_event"
     tools:layout="@layout/organiser_post_event"
-    android:background="@color/dark_purple"/>
+    android:background="@color/dark_purple">
+    <action
+        android:id="@+id/action_organiser_postEvent_page_to_view_eventqr_fragment"
+        app:destination="@id/view_eventqr_fragment" />
+</fragment>
 
-<fragment
+    <fragment
+        android:id="@+id/view_eventqr_fragment"
+        android:name="com.example.pygmyhippo.organizer.EventQRViewerFragment"
+        android:label="view QR"
+        tools:layout="@layout/o_event_qrcode_view"
+        android:background="@color/dark_purple">
+        <action
+            android:id="@+id/action_view_eventqr_fragment_to_organiser_postEvent_page"
+            app:destination="@id/organiser_postEvent_page" />
+    </fragment>
+
+    <fragment
     android:id="@+id/organiser_profile_page"
     android:name="com.example.pygmyhippo.organizer.ProfileFragment"
     android:label="@string/title_profile"
     tools:layout="@layout/organiser_fragment_profile"
     android:background="@color/dark_purple"/>
-
     <fragment
         android:id="@+id/view_entrants_fragment"
         android:name="com.example.pygmyhippo.organizer.ViewEntrantsFragment"
