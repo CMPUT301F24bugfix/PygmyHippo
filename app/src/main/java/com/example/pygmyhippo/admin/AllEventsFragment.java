@@ -12,9 +12,9 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.example.pygmyhippo.R;
-import com.example.pygmyhippo.common.RecyclerClickListener;
 import com.example.pygmyhippo.common.Event;
-import com.example.pygmyhippo.databinding.FragmentAllListBinding;
+import com.example.pygmyhippo.common.RecyclerClickListener;
+import com.example.pygmyhippo.databinding.AdminFragmentAllListBinding;
 
 import java.util.ArrayList;
 
@@ -26,7 +26,7 @@ import java.util.ArrayList;
  * event's profile page with admin permissions.
  */
 public class AllEventsFragment extends Fragment implements RecyclerClickListener {
-    FragmentAllListBinding binding;
+    AdminFragmentAllListBinding binding;
     ArrayList<Event> allListData;
     AllEventsAdapter adapter;
 
@@ -42,7 +42,7 @@ public class AllEventsFragment extends Fragment implements RecyclerClickListener
                              ViewGroup container, Bundle savedInstanceState) {
         getData();
 
-        binding = FragmentAllListBinding.inflate(inflater, container, false);
+        binding = AdminFragmentAllListBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
         adapter = new AllEventsAdapter(allListData, this);

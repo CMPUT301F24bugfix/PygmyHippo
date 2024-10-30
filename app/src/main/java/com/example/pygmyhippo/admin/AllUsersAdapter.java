@@ -46,7 +46,7 @@ public class AllUsersAdapter extends BaseRecyclerAdapter<Account, AllUsersAdapte
     @Override
     public UserViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.all_list_user_item, parent, false);
+                .inflate(R.layout.admin_all_list_user_item, parent, false);
         UserViewHolder viewHolder = new UserViewHolder(view);
 
         view.setOnClickListener(v -> {

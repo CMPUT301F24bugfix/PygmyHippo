@@ -48,7 +48,7 @@ public class AllEventsAdapter extends BaseRecyclerAdapter<Event, AllEventsAdapte
     @Override
     public EventViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.all_list_event_item, parent, false);
+                .inflate(R.layout.admin_all_list_event_item, parent, false);
         AllEventsAdapter.EventViewHolder viewHolder = new EventViewHolder(view);
 
         view.setOnClickListener(v -> {

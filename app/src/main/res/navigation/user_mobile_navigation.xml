@@ -10,14 +10,14 @@
         android:id="@+id/navigation_all_events"
         android:name="com.example.pygmyhippo.admin.AllEventsFragment"
         android:label="All List"
-        tools:layout="@layout/fragment_all_list"
+        tools:layout="@layout/admin_fragment_all_list"
         android:background="@color/dark_purple"/>
 
     <fragment
         android:id="@+id/navigation_all_users"
         android:name="com.example.pygmyhippo.admin.AllUsersFragment"
         android:label="All List"
-        tools:layout="@layout/fragment_all_list"
+        tools:layout="@layout/admin_fragment_all_list"
         android:background="@color/dark_purple"/>
 
     <fragment
