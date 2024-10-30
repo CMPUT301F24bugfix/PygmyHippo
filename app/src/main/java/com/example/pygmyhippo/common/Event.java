@@ -57,6 +57,8 @@ public class Event {
         }
     }
 
+    public Event() {}
+
     public Event(String title, String location, String date, String time, EventStatus eventStatus) {
         this.title = title;
         this.location = location;

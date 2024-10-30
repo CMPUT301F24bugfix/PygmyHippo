@@ -1,27 +1,23 @@
 package com.example.pygmyhippo;
 
+import android.Manifest;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
-import android.Manifest;
-import android.os.StrictMode;
-
-import com.example.pygmyhippo.common.Account;
-import com.example.pygmyhippo.common.OnRoleSelectedListener;
-import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
-import com.example.pygmyhippo.databinding.UserMainActivityNagivationBinding;
+import com.example.pygmyhippo.common.Account;
+import com.example.pygmyhippo.common.OnRoleSelectedListener;
 import com.example.pygmyhippo.databinding.OrganiserMainActivityNagivationBinding;
+import com.example.pygmyhippo.databinding.UserMainActivityNagivationBinding;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -52,7 +48,7 @@ public class MainActivity extends AppCompatActivity implements OnRoleSelectedLis
                 true,  // receiveNotifications
                 true,  // enableGeolocation
                 new ArrayList<>(Arrays.asList(Account.AccountRole.user, Account.AccountRole.organiser)),  // roles
-                Account.AccountRole.organiser,  // currentRole (TODO: Change this if you want to test with user)
+                Account.AccountRole.user,  // currentRole (TODO: Change this if you want to test with user)
                 null  // facilityProfile
         );
 
