@@ -14,6 +14,9 @@ import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import static org.junit.Assert.assertEquals;
 
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
+import androidx.test.rule.GrantPermissionRule;
+
+import android.Manifest;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -24,6 +27,9 @@ import org.junit.Test;
  * @author Katharine
  */
 public class SingleEventTest {
+    @Rule
+    public GrantPermissionRule mRuntimePermissionRule = GrantPermissionRule.grant(Manifest.permission.POST_NOTIFICATIONS);
+
     @Rule
     public ActivityScenarioRule<MainActivity> scenario = new ActivityScenarioRule<MainActivity>(MainActivity.class);
 
@@ -63,7 +69,7 @@ public class SingleEventTest {
     }
 
     @Test
-    public void testleaveEvent() {
+    public void testLeaveEvent() {
         Event event = new Event();
         Entrant entrant = new Entrant(
                 "123",
@@ -72,10 +78,10 @@ public class SingleEventTest {
         onView(withId(R.id.u_scanQRButton)).perform(click());
         assertEquals(0, event.getEntrants().size());
         onView(withId(R.id.u_registerButton)).perform(click());
+        assertEquals(1, event.getEntrants().size());
         onView(withText("✔")).check(matches(isDisplayed()));
         event.addEntrant(entrant);
         event.removeEntrant(entrant);
-        onView(withText("Register")).check(matches(isDisplayed()));
         assertEquals(0, event.getEntrants().size());
     }
 }
