@@ -23,10 +23,10 @@ import java.util.ArrayList;
  *  - Use a builder for initialization
  *  - connect to the database
  *  - add generation of hashdata and qr code
- * @author James, Griffin
+ * @author James, Griffin, Katharine
  */
 public class Event {
-
+    private String eventTitle;
     private String eventID;
     private String organiserID;
     private ArrayList<Entrant> entrants;
@@ -57,14 +57,40 @@ public class Event {
         }
     }
 
-    public Event() {}
-
     public Event(String title, String location, String date, String time, EventStatus eventStatus) {
         this.title = title;
         this.location = location;
         this.date = date;
         this.time = time;
         this.eventStatus = eventStatus;
+    }
+
+
+    // constructor to make event
+    public Event() {this.entrants = new ArrayList<>();}
+
+    public Event(String eventTitle, String eventID, String organiserID, ArrayList<Entrant> entrants, String location,
+                 String date, String time, String description, String cost, String eventPoster,
+                 EventStatus eventStatus) {
+        this.eventTitle = eventTitle;
+        this.eventID = eventID;
+        this.organiserID = organiserID;
+        this.entrants = entrants;
+        this.location = location;
+        this.date = date;
+        this.time = time;
+        this.description = description;
+        this.cost = cost;
+        this.eventPoster = eventPoster;
+        this.eventStatus = eventStatus;
+    }
+
+    public String getEventTitle() {
+        return eventTitle;
+    }
+
+    public void setEventTitle(String eventTitle) {
+        this.eventTitle = eventTitle;
     }
 
     public String getEventID() {
@@ -89,6 +115,13 @@ public class Event {
 
     public void setEntrants(ArrayList<Entrant> entrants) {
         this.entrants = entrants;
+    }
+
+    public void addEntrant(Entrant entrant) {
+        if (this.entrants == null) {
+            this.entrants = new ArrayList<>();
+        }
+        this.entrants.add(entrant);
     }
 
     public String getLocation() {
@@ -177,5 +210,6 @@ public class Event {
     public String getTitle() {
         return title;
     }
+
 }
 

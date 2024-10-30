@@ -29,11 +29,14 @@
     </fragment>
 
     <fragment
-        android:id="@+id/navigation_dashboard"
+        android:id="@+id/u_scanQRcodeFragment"
         android:name="com.example.pygmyhippo.user.QRFragment"
         android:label="@string/title_post_event"
         tools:layout="@layout/user_fragment_qr"
         android:background="@color/dark_purple">
+        <action
+            android:id="@+id/action_scanQRcodeFragment_to_eventFragment"
+            app:destination="@id/eventFragment" />
     </fragment>
 
     <fragment
@@ -42,5 +45,14 @@
         android:label="@string/title_profile"
         tools:layout="@layout/user_fragment_profile"
         android:background="@color/dark_purple"/>
+    <fragment
+        android:id="@+id/eventFragment"
+        android:name="com.example.pygmyhippo.user.EventFragment"
+        android:label="user_fragment_event"
+        tools:layout="@layout/user_fragment_event" >
+        <action
+            android:id="@+id/action_eventFragment_to_navigation_dashboard"
+            app:destination="@id/u_scanQRcodeFragment" />
+    </fragment>
 
 </navigation>

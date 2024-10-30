@@ -1,6 +1,9 @@
 
 package com.example.pygmyhippo.common;
 
+import java.util.ArrayList;
+import java.util.Collections;
+
 /**
  * Entrant is a dataclass which contains relevant information for relating an User account to an
  * Event. Entrant follows a similar schema to how they are stored in firebase. Multiple Entrants
@@ -10,12 +13,16 @@ package com.example.pygmyhippo.common;
  * TODO:
  *  - Use a builder for initialization
  *  - connect to the database
- * @author James Fu, Griffin
+ * @author James Fu, Griffin, Katharine
  */
 public class Entrant {
 
     private String accountID;
-
+    private String eventID;
+    private String name;
+    private String emailAddress;
+    private String phoneNumber;
+    private String profilePicture;
     private EntrantStatus entrantStatus;
 
     public enum EntrantStatus {
@@ -31,6 +38,14 @@ public class Entrant {
         }
     };
 
+    public Entrant(String eventID, String accountID, String name, String emailAddress, String phoneNumber) {
+        this.eventID = eventID;
+        this.accountID = accountID;
+        this.name = name;
+        this.emailAddress = emailAddress;
+        this.phoneNumber = phoneNumber;
+    }
+
     public String getAccountID() {
         return accountID;
     }
@@ -45,5 +60,52 @@ public class Entrant {
 
     public void setEntrantStatus(EntrantStatus entrantStatus) {
         this.entrantStatus = entrantStatus;
+    }
+
+    public Entrant() {}
+
+    public Entrant(String accountID, EntrantStatus entrantStatus) {
+        this.accountID = accountID;
+        this.entrantStatus = entrantStatus;
+    }
+
+    public String getEventID() {
+        return eventID;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getEmailAddress() {
+        return emailAddress;
+    }
+
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public String getProfilePicture() {
+        return profilePicture;
+    }
+
+    public void setEventID(String eventID) {
+        this.eventID = eventID;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setEmailAddress(String emailAddress) {
+        this.emailAddress = emailAddress;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
+
+    public void setProfilePicture(String profilePicture) {
+        this.profilePicture = profilePicture;
     }
 }
