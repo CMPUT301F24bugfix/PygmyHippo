@@ -31,7 +31,7 @@ app:startDestination="@+id/organiser_myEvents_page">
         android:id="@+id/view_eventqr_fragment"
         android:name="com.example.pygmyhippo.organizer.EventQRViewerFragment"
         android:label="view QR"
-        tools:layout="@layout/o_event_qrcode_view"
+        tools:layout="@layout/organiser_event_qrcode_view"
         android:background="@color/dark_purple">
     </fragment>
 

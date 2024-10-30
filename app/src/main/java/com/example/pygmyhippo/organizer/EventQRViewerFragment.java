@@ -46,7 +46,7 @@ public class EventQRViewerFragment extends Fragment {
      */
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.o_event_qrcode_view, container, false);
+        View view = inflater.inflate(R.layout.organiser_event_qrcode_view, container, false);
 
         // code for button was copies from Koris work in viewEntantsFragments
         backButton = view.findViewById(R.id.o_eventqr_backBtn);
