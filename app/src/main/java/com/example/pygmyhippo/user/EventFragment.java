@@ -31,13 +31,6 @@ public class EventFragment extends Fragment {
     private Entrant entrant;
     private ArrayList<Entrant> entrants;
 
-    public EventFragment() {
-    }
-
-    // TODO: to be used for setting text fields in layout
-    public EventFragment(Event event) {
-        this.event = event;
-    }
 
     // need user information somehow when trying to join this event, user information to be added as an entrant onto the event info list
     public EventFragment(Event event, Entrant entrant) {
@@ -123,6 +116,11 @@ public class EventFragment extends Fragment {
                         Entrant.EntrantStatus.invited
                 );
                 event.addEntrant(entrant);
+
+                /**
+                 *  ADD DATABASE CODE FOR ADDING ENTRANT INTO AN EVENT HERE
+                 *
+                 * */
 
                 // set text of register button to checkmark
                 registerButton.setText("✔");
