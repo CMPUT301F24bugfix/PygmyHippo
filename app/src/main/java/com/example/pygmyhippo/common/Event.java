@@ -84,6 +84,13 @@ public class Event {
         return entrants;
     }
 
+    public Boolean hasEntrant(Entrant entrant) {
+        if (this.entrants != null) {
+            return this.entrants.contains(entrant);
+        }
+        return false;
+    }
+
     public void setEntrants(ArrayList<Entrant> entrants) {
         this.entrants = entrants;
     }
@@ -93,6 +100,10 @@ public class Event {
             this.entrants = new ArrayList<>();
         }
         this.entrants.add(entrant);
+    }
+
+    public void removeEntrant(Entrant entrant) {
+        this.entrants.remove(entrant);
     }
 
     public String getLocation() {

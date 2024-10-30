@@ -102,28 +102,33 @@ public class EventFragment extends Fragment {
 
         Button registerButton = view.findViewById(R.id.u_registerButton);
 
+        // TODO: add actual database stuff here, where user is added into the events list
+        // for now, this is hardcoding to figure out structure of entrant
+        // this part, the entrant information would be passed to the event but hardcode
+        entrant = new Entrant(
+                "123",
+                Entrant.EntrantStatus.invited
+        );
+
         // with a check, check to see if event has been registered for, if so, register (set text
         // to checkmark, add to lists and stuff, if event has not been register for, set text back
         // to register and remove from lists and stuff
         registerButton.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view) {
-                // TODO: add actual database stuff here, where user is added into the events list
-                // for now, this is hardcoding to figure out structure of entrant
-                // this part, the entrant information would be passed to the event but hardcode
-                entrant = new Entrant(
-                        "123",
-                        Entrant.EntrantStatus.invited
-                );
-                event.addEntrant(entrant);
+
+                if (event.hasEntrant(entrant)) {
+                    event.removeEntrant(entrant);
+                    registerButton.setText("Register");
+                } else {
+                    event.addEntrant(entrant);
+                    registerButton.setText("✔");
+                }
 
                 /**
                  *  ADD DATABASE CODE FOR ADDING ENTRANT INTO AN EVENT HERE
                  *
                  * */
-
-                // set text of register button to checkmark
-                registerButton.setText("✔");
             }
         });
         return view;
