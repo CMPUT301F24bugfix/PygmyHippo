@@ -48,6 +48,7 @@ public class PostEventFragment extends Fragment {
     private CheckBox eventGeolocation;
     private ImageButton eventImageBtn;
     private Uri imagePath = null;
+    private PostEventDB dbHandler;
 
 
     /**
@@ -62,6 +63,8 @@ public class PostEventFragment extends Fragment {
 
         binding = OrganiserPostEventBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
+
+        dbHandler = new PostEventDB();
 
         return root;
     }
@@ -99,13 +102,19 @@ public class PostEventFragment extends Fragment {
                     myEvent.setDate(eventDateTime);
                     myEvent.setDescription(eventDescription);
                     myEvent.setCost(eventPrice);
-                    myEvent.setEventPoster(imagePath.toString()); // TODO: this needs to added to the database
+
+                    if (imagePath != null) {
+                        myEvent.setEventPoster(imagePath.toString()); // TODO: this needs to added to the database
+                    }
+
                     myEvent.setEventLimitCount(eventLimit.isEmpty() ? -1 : Integer.valueOf(eventLimit));
                     myEvent.setEventWinnersCount(Integer.valueOf(eventWinners));
                     myEvent.setEntrants(new ArrayList<>()); // no entrants of a newly created event
                     myEvent.setGeolocation(eventGeolocaion);
                     myEvent.setEventStatus(Event.EventStatus.ongoing); // default is ongoing
-                    // TODO: connect to database
+
+                    dbHandler.addEvent(myEvent, null); // TODO: Get organiser ID and pass it to addEvent.
+
                     Toast.makeText(getContext(), "Event Created", Toast.LENGTH_SHORT).show();
                     clearEvent(); // this would be a navigation to a new view qr code
                 }

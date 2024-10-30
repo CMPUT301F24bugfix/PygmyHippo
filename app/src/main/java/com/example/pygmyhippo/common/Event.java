@@ -16,6 +16,8 @@
 package com.example.pygmyhippo.common;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Our event class
@@ -161,6 +163,24 @@ public class Event {
 
     public void setEventStatus(EventStatus eventStatus) {
         this.eventStatus = eventStatus;
+    }
+
+    public Map<String, Object> toMap() {
+        Map<String, Object> eventMap = new HashMap<>();
+        eventMap.put("eventID", eventID);
+        eventMap.put("organiserID", organiserID);
+        eventMap.put("entrants", entrants);
+        eventMap.put("location", location);
+        eventMap.put("date", date);
+        eventMap.put("time", time);
+        eventMap.put("description", description);
+        eventMap.put("cost", cost);
+        eventMap.put("eventPoster", eventPoster);
+        eventMap.put("eventLimitCount", eventLimitCount);
+        eventMap.put("eventWinnersCount", eventWinnersCount);
+        eventMap.put("enableGeolocation", enableGeolocation);
+        eventMap.put("eventStatus", eventStatus.value);
+        return eventMap;
     }
 }
 
