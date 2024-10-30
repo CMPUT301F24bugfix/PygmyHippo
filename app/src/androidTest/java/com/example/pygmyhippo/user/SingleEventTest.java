@@ -14,6 +14,9 @@ import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import static org.junit.Assert.assertEquals;
 
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
+import androidx.test.rule.GrantPermissionRule;
+
+import android.Manifest;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -24,6 +27,9 @@ import org.junit.Test;
  * @author Katharine
  */
 public class SingleEventTest {
+    @Rule
+    public GrantPermissionRule mRuntimePermissionRule = GrantPermissionRule.grant(Manifest.permission.POST_NOTIFICATIONS);
+
     @Rule
     public ActivityScenarioRule<MainActivity> scenario = new ActivityScenarioRule<MainActivity>(MainActivity.class);
 
@@ -60,5 +66,22 @@ public class SingleEventTest {
         // this means the method with hardcoding the entrant into eventfragment should work
         // it just can't be tested right now due to the nature of creating an instance instead a test
         // changes made to the fragment won't affect test instance (can only test for functionality)
+    }
+
+    @Test
+    public void testLeaveEvent() {
+        Event event = new Event();
+        Entrant entrant = new Entrant(
+                "123",
+                Entrant.EntrantStatus.invited
+        );
+        onView(withId(R.id.u_scanQRButton)).perform(click());
+        assertEquals(0, event.getEntrants().size());
+        onView(withId(R.id.u_registerButton)).perform(click());
+        assertEquals(1, event.getEntrants().size());
+        onView(withText("✔")).check(matches(isDisplayed()));
+        event.addEntrant(entrant);
+        event.removeEntrant(entrant);
+        assertEquals(0, event.getEntrants().size());
     }
 }
