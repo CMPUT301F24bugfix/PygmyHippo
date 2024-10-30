@@ -4,19 +4,22 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.Navigation;
 
+import com.example.pygmyhippo.R;
 import com.example.pygmyhippo.databinding.UserFragmentQrBinding;
 /**
  * This fragment will hold the QR scanner
- * @author none
- * @version none
+ * @author Katharine
+ * @version 1.0
  * No returns and no parameters
  */
 public class QRFragment extends Fragment {
-    /* The future fragment for the QR Code Scanner */
 
     private UserFragmentQrBinding binding;
 
@@ -35,6 +38,17 @@ public class QRFragment extends Fragment {
         View root = binding.getRoot();
 
         return root;
+    }
+
+    // qr code scanner to event button
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        Button scanQRButton = view.findViewById(R.id.u_scanQRButton);
+        scanQRButton.setOnClickListener(view1 -> {
+            Navigation.findNavController(view1).navigate(R.id.action_scanQRcodeFragment_to_eventFragment);
+        });
     }
 
     @Override

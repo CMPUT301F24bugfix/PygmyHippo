@@ -23,10 +23,10 @@ import java.util.ArrayList;
  *  - Use a builder for initialization
  *  - connect to the database
  *  - add generation of hashdata and qr code
- * @author James, Griffin
+ * @author James, Griffin, Katharine
  */
 public class Event {
-
+    private String eventTitle;
     private String eventID;
     private String organiserID;
     private ArrayList<Entrant> entrants;
@@ -56,6 +56,14 @@ public class Event {
         }
     }
 
+    public String getEventTitle() {
+        return eventTitle;
+    }
+
+    public void setEventTitle(String eventTitle) {
+        this.eventTitle = eventTitle;
+    }
+
     public String getEventID() {
         return eventID;
     }
@@ -78,6 +86,13 @@ public class Event {
 
     public void setEntrants(ArrayList<Entrant> entrants) {
         this.entrants = entrants;
+    }
+
+    public void addEntrant(Entrant entrant) {
+        if (this.entrants == null) {
+            this.entrants = new ArrayList<>();
+        }
+        this.entrants.add(entrant);
     }
 
     public String getLocation() {
@@ -160,6 +175,24 @@ public class Event {
     }
 
     public void setEventStatus(EventStatus eventStatus) {
+        this.eventStatus = eventStatus;
+    }
+
+    // constructor to make event
+    public Event() {this.entrants = new ArrayList<>();}
+    public Event(String eventTitle, String eventID, String organiserID, ArrayList<Entrant> entrants, String location,
+                 String date, String time, String description, String cost, String eventPoster,
+                 EventStatus eventStatus) {
+        this.eventTitle = eventTitle;
+        this.eventID = eventID;
+        this.organiserID = organiserID;
+        this.entrants = entrants;
+        this.location = location;
+        this.date = date;
+        this.time = time;
+        this.description = description;
+        this.cost = cost;
+        this.eventPoster = eventPoster;
         this.eventStatus = eventStatus;
     }
 }
