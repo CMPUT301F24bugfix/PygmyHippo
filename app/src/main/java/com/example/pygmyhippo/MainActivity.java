@@ -48,7 +48,7 @@ public class MainActivity extends AppCompatActivity implements OnRoleSelectedLis
                 true,  // receiveNotifications
                 true,  // enableGeolocation
                 new ArrayList<>(Arrays.asList(Account.AccountRole.user, Account.AccountRole.organiser)),  // roles
-                Account.AccountRole.organiser,  // currentRole (TODO: Change this if you want to test with user)
+                Account.AccountRole.user,  // CHANGE EITHER ORANIZER OR USER FOR ROLE currentRole (TODO: Change this if you want to test with user)
                 null  // facilityProfile
         );
 
@@ -169,7 +169,7 @@ public class MainActivity extends AppCompatActivity implements OnRoleSelectedLis
     private void setupNavControllerUser(BottomNavigationView navView, Bundle bundle) {
         AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(
                 // TODO: change the navigation names for user to be more descriptive
-                R.id.navigation_home, R.id.navigation_dashboard, R.id.navigation_notifications)
+                R.id.navigation_home, R.id.u_scanQRcodeFragment, R.id.navigation_notifications)
                 .build();
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_activity_main);
         navController.setGraph(R.navigation.user_mobile_navigation, bundle);
