@@ -37,6 +37,7 @@ public class EventQRViewerFragment extends Fragment {
 
     /**
      * Creates the view
+     * A bundle of a string with the event id with key: "my_event_id"
      * @author Griffin
      * @param inflater not sure
      * @param container not sure
@@ -54,11 +55,11 @@ public class EventQRViewerFragment extends Fragment {
         });
 
         // set up for the details button
-//        detailsButton = view.findViewById(R.id.o_eventqr_detailsBtn);
-//        backButton.setOnClickListener(view1 -> {
-//            // TODO: connect to navigating to single event
-//            //Navigation.findNavController(view1).navigate(R.id.action_view_eventqr_fragment_to_organiser_postEvent_page);
-//        });
+        //detailsButton = view.findViewById(R.id.o_eventqr_detailsBtn);
+        //backButton.setOnClickListener(view1 -> {
+            // TODO: connect to navigating to single event
+            //Navigation.findNavController(view1).navigate(R.id.action_view_eventqr_fragment_to_organiser_postEvent_page);
+        //});
 
         super.onCreate(savedInstanceState);
         Bundle bundle = this.getArguments();
