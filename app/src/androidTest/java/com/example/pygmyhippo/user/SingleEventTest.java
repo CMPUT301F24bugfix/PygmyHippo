@@ -61,4 +61,21 @@ public class SingleEventTest {
         // it just can't be tested right now due to the nature of creating an instance instead a test
         // changes made to the fragment won't affect test instance (can only test for functionality)
     }
+
+    @Test
+    public void testleaveEvent() {
+        Event event = new Event();
+        Entrant entrant = new Entrant(
+                "123",
+                Entrant.EntrantStatus.invited
+        );
+        onView(withId(R.id.u_scanQRButton)).perform(click());
+        assertEquals(0, event.getEntrants().size());
+        onView(withId(R.id.u_registerButton)).perform(click());
+        onView(withText("✔")).check(matches(isDisplayed()));
+        event.addEntrant(entrant);
+        event.removeEntrant(entrant);
+        onView(withText("Register")).check(matches(isDisplayed()));
+        assertEquals(0, event.getEntrants().size());
+    }
 }
