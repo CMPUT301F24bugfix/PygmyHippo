@@ -47,6 +47,7 @@ dependencies {
     implementation(libs.lifecycle.viewmodel.ktx)
     implementation(libs.navigation.fragment)
     implementation(libs.navigation.ui)
+    implementation(libs.firebase.storage)
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
@@ -55,6 +56,8 @@ dependencies {
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
     // Added for database
-    implementation(platform("com.google.firebase:firebase-bom:32.7.1"))
+    // Added for database
+    implementation(platform("com.google.firebase:firebase-bom:33.5.1"))
     implementation("com.google.firebase:firebase-firestore")
+    implementation("com.google.firebase:firebase-installations:18.0.0")
 }
