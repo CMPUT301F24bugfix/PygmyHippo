@@ -14,9 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.example.pygmyhippo.MainActivity;
 import com.example.pygmyhippo.R;
 import com.example.pygmyhippo.common.Entrant;
 import com.example.pygmyhippo.common.Event;
@@ -33,19 +31,17 @@ import java.util.ArrayList;
 public class EventFragment extends Fragment {
 
     private Event event;
+
     // this is the current user who is trying to join the event
     private Entrant entrant;
     private ArrayList<Entrant> entrants;
 
-    // pass entrant and even information using bundle...
+    // TODO: pass entrant and even information using bundle...
 
-    // populate single event page with event information
-    // Method to set up a hardcoded example event
+    // populate single event page with hardcoded event information
     public Event hardcodeEvent() {
         entrants = new ArrayList<>();
-        // Add any entrants if needed, e.g., entrants.add(new Entrant("Student1", "Guest"));
 
-        // Proper instantiation of the Event object using the constructor
         return event = new Event(
                 "Hippo Party",
                 "1",
@@ -79,11 +75,10 @@ public class EventFragment extends Fragment {
         TextView eventOrganizerView = view.findViewById(R.id.u_organizerNameView);
         TextView eventLocationView = view.findViewById(R.id.u_eventLocationView);
         TextView eventCostView = view.findViewById(R.id.u_eventCostView);
-        TextView eventAboutTitleView = view.findViewById(R.id.u_aboutEventTitleView);
         TextView eventAboutDescriptionView = view.findViewById(R.id.u_aboutEventDescriptionView);
-        View eventRegisterButtonView = view.findViewById(R.id.u_registerButton);
 
-        // set with hardcoded values, set the view in the same wy form the event recieved from the constructor
+        // set with hardcoded values, set the view in the same wy form the event received from the constructor
+        // TODO: database event info to be done here
         event = hardcodeEvent();
 
         eventNameView.setText(event.getEventTitle());
@@ -104,24 +99,22 @@ public class EventFragment extends Fragment {
 
         // TODO: add actual database stuff here, where user is added into the events list
         // for now, this is hardcoding to figure out structure of entrant
-        // this part, the entrant information would be passed to the event but hardcode
         entrant = new Entrant(
                 "123",
                 Entrant.EntrantStatus.invited
         );
 
-        // with a check, check to see if event has been registered for, if so, register (set text
-        // to checkmark, add to lists and stuff, if event has not been register for, set text back
-        // to register and remove from lists and stuff
         registerButton.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view) {
 
+                // if the even already has the user, remove the user upon clicking
                 if (event.hasEntrant(entrant)) {
                     registerButton.setBackgroundColor(0xFF35B35D);
                     event.removeEntrant(entrant);
                     registerButton.setText("Register");
                 } else {
+                // otherwise, check for enabled geolocation and add entrant accordingly
                     if (event.getGeolocation()) {
 
                         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
@@ -145,11 +138,6 @@ public class EventFragment extends Fragment {
                         registerButton.setText("✔");
                     }
                 }
-
-                /**
-                 *  ADD DATABASE CODE FOR ADDING ENTRANT INTO AN EVENT HERE
-                 *
-                 * */
             }
         });
 
