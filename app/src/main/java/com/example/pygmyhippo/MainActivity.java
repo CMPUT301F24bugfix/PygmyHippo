@@ -1,6 +1,7 @@
 package com.example.pygmyhippo;
 
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.Manifest;
@@ -38,6 +39,8 @@ public class MainActivity extends AppCompatActivity implements OnRoleSelectedLis
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        String url = "https://api.multiavatar.com/";
+        Uri imagePath = Uri.parse(url +"user.png");
 
 
         Account currentAccount = new Account(
@@ -47,7 +50,7 @@ public class MainActivity extends AppCompatActivity implements OnRoleSelectedLis
                 "7801234567",  // phoneNumber
                 "MooDeng@ualberta.ca",  // emailAddress
                 "1",  // deviceID
-                "profilePic.png",  // profilePicture
+                imagePath,  // profilePicture
                 "Edmonton, Alberta",  // location
                 true,  // receiveNotifications
                 true,  // enableGeolocation

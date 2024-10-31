@@ -21,9 +21,29 @@
 
 package com.example.pygmyhippo.common;
 
+import android.net.Uri;
+
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.example.pygmyhippo.MainActivity;
+import com.google.android.gms.auth.api.signin.internal.Storage;
+import com.google.android.gms.tasks.Continuation;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.FirebaseApp;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
+
+import java.sql.Ref;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 
 /**
@@ -31,7 +51,8 @@ import java.util.ArrayList;
  * TODO:
  *  - Use a builder for initialization
  *  - connect to the database
- * @author James, Griffin
+ * @author James, Griffin, Jennifer
+ * @version 1.1
  */
 public class Account {
 
@@ -41,13 +62,19 @@ public class Account {
     private String phoneNumber;
     private String emailAddress;
     private String deviceID;
-    private String profilePicture;
+    private Uri profilePicture;
     private String location; // TODO: revaluate once we have a location API
     private boolean receiveNotifications;
     private boolean enableGeolocation;
-
     private ArrayList<AccountRole> roles;
     private AccountRole currentRole;
+
+    // Firebase Instances
+    FirebaseFirestore db = FirebaseFirestore.getInstance();
+    FirebaseStorage photoStore = FirebaseStorage.getInstance();
+    //Firebase Collection References
+    CollectionReference AccountRef = db.collection("All Accounts");
+    StorageReference storageRef= photoStore.getReference();
 
     @Nullable
     private Facility facilityProfile;
@@ -63,7 +90,7 @@ public class Account {
             String phoneNumber,
             String emailAddress,
             String deviceID,
-            String profilePicture,
+            Uri profilePicture,
             String location,
             boolean receiveNotifications,
             boolean enableGeolocation,
@@ -85,7 +112,8 @@ public class Account {
         this.facilityProfile = facilityProfile;
     }
 
-    public Account(String accountID, String name, String pronouns, String phoneNumber, String emailAddress, String deviceID, String profilePicture, String location, boolean receiveNotifications, boolean enableGeolocation) {
+    public Account(String accountID, String name, String pronouns, String phoneNumber, String emailAddress, String deviceID, Uri profilePicture, String location, boolean receiveNotifications, boolean enableGeolocation) {
+
         this.accountID = accountID;
         this.name = name;
         this.pronouns = pronouns;
@@ -96,6 +124,53 @@ public class Account {
         this.location = location;
         this.receiveNotifications = receiveNotifications;
         this.enableGeolocation = enableGeolocation;
+
+        StorageReference avatarRef = storageRef.child("/"+deviceID+"/avatar/"+profilePicture.getLastPathSegment());
+        UploadTask uploadAvatar =  avatarRef.putFile(profilePicture);
+
+        Task<Uri> urlTask = uploadAvatar.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
+            @Override
+            public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
+                if (!task.isSuccessful()) {
+                    throw task.getException();
+                }
+                // Continue with the task to get the download URL
+                return avatarRef.getDownloadUrl();
+            }
+        }).addOnCompleteListener(new OnCompleteListener<Uri>() {
+            @Override
+            public void onComplete(@NonNull Task<Uri> task) {
+                if (task.isSuccessful()) {
+                    Uri downloadUri = task.getResult();
+                    // direct link for a profile photo
+                    String imageLink = "gs://pygmyhippo-b7892.appspot.com/" + deviceID + "/avatar/" + profilePicture.getLastPathSegment();
+                    // user roles
+                    ArrayList<String> userRoles = new ArrayList<>();
+                    userRoles.add("entrant");
+
+                    // Add the user to the Firestore collection
+                    HashMap<String, Object> newUser = new HashMap<>();
+                    newUser.put("name", name);
+                    newUser.put("pronouns", pronouns);
+                    newUser.put("phone_number", phoneNumber);
+                    newUser.put("email_address", emailAddress);
+                    newUser.put("device_id", deviceID);
+                    newUser.put("location", location);
+                    newUser.put("receive_notifications", receiveNotifications);
+                    newUser.put("enable_geolocation", enableGeolocation);
+                    newUser.put("profile_photo", downloadUri); // for displaying photo
+                    newUser.put("profile_photo_storage_link", imageLink); // for performing db queries on photo
+                    newUser.put("current_role", "entrant");
+                    newUser.put("roles", userRoles);
+                    AccountRef.document(deviceID).set(newUser);
+
+                } else {
+                    // Handle failures
+                    // ...
+                }
+            }
+        });
+
     }
 
     public static class Facility {
@@ -189,12 +264,12 @@ public class Account {
         this.deviceID = deviceID;
     }
 
-    public String getProfilePicture() {
+    public Uri getProfilePicture() {
         // FIXME: how are we going to handle images since this would have to return a link to image on firestore
         return profilePicture;
     }
 
-    public void setProfilePicture(String profilePicture) {
+    public void setProfilePicture(Uri profilePicture) {
         // FIXME: How are we going to handle images, for now this can be a link to a image in firestore
         this.profilePicture = profilePicture;
     }
