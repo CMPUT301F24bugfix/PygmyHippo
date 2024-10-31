@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.pygmyhippo.R;
 import com.example.pygmyhippo.common.Entrant;
@@ -54,7 +55,8 @@ public class EventFragment extends Fragment {
                 "Love hippos and a party? Love a party! Join a party!",
                 "$150.00",
                 "hippoparty.png",
-                Event.EventStatus.ongoing
+                Event.EventStatus.ongoing,
+                true
         );
     }
 
@@ -117,6 +119,10 @@ public class EventFragment extends Fragment {
                     event.removeEntrant(entrant);
                     registerButton.setText("Register");
                 } else {
+                    if (event.getGeolocation()) {
+                        Toast warnGeolocation = Toast.makeText(getActivity(), "WARNING: Geolocation Required", Toast.LENGTH_SHORT);
+                        warnGeolocation.show();
+                    }
                     registerButton.setBackgroundColor(0xFF808080);
                     event.addEntrant(entrant);
                     registerButton.setText("✔");
