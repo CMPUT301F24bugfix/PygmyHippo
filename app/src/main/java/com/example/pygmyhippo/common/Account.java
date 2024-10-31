@@ -43,7 +43,21 @@ public class Account implements Parcelable {
     private Facility facilityProfile;
 
     public Account(){
+        this.accountID = null;
+        this.name = "";
+        this.pronouns = "";
+        this.phoneNumber = "";
+        this.emailAddress = "";
+        this.deviceID = null;
+        this.profilePicture = "";
+        this.location = "";
+        this.receiveNotifications = false;
+        this.enableGeolocation = false;
 
+        this.roles = new ArrayList<>();
+        this.roles.add(AccountRole.user);
+
+        this.facilityProfile = null;
     }
 
     public Account(
@@ -269,4 +283,6 @@ public class Account implements Parcelable {
     public void setFacilityProfile(@Nullable Facility facilityProfile) {
         this.facilityProfile = facilityProfile;
     }
+
+
 }

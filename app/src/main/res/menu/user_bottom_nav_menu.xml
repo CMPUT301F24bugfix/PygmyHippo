@@ -2,19 +2,19 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-        android:id="@+id/navigation_home"
+        android:id="@+id/u_my_events_menu_item"
         android:icon="@drawable/nav_ic_calendar"
-        android:title="@null"/>
+        android:title="@string/user_nav_item_my_events"/>
 
 
     <item
-        android:id="@+id/u_scanQRcodeFragment"
+        android:id="@+id/u_scanQR_menu_item"
         android:icon="@drawable/nav_ic_barcode"
-        android:title="@null"/>
+        android:title="@string/user_nav_item_qr_code"/>
 
     <item
-        android:id="@+id/navigation_notifications"
+        android:id="@+id/u_profile_menu_item"
         android:icon="@drawable/nav_ic_user"
-        android:title="@null"/>
+        android:title="@string/user_nav_item_profile"/>
 
 </menu>
