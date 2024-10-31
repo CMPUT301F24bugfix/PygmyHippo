@@ -1,5 +1,7 @@
 package com.example.pygmyhippo.user;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -14,6 +16,7 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.pygmyhippo.MainActivity;
 import com.example.pygmyhippo.R;
 import com.example.pygmyhippo.common.Entrant;
 import com.example.pygmyhippo.common.Event;
@@ -120,12 +123,27 @@ public class EventFragment extends Fragment {
                     registerButton.setText("Register");
                 } else {
                     if (event.getGeolocation()) {
-                        Toast warnGeolocation = Toast.makeText(getActivity(), "WARNING: Geolocation Required", Toast.LENGTH_SHORT);
-                        warnGeolocation.show();
+
+                        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                        builder.setTitle("Geolocation required!");
+                        builder.setMessage("Continue registering?");
+                        builder.setCancelable(true);
+                        builder.setPositiveButton("Yes", (DialogInterface.OnClickListener) (dialog, which) -> {
+                            registerButton.setBackgroundColor(0xFF808080);
+                            event.addEntrant(entrant);
+                            registerButton.setText("✔");
+                        });
+                        builder.setNegativeButton("No", (DialogInterface.OnClickListener) (dialog, which) -> {
+                            dialog.cancel();
+                        });
+                        AlertDialog geolocationWarning = builder.create();
+                        geolocationWarning.show();
+
+                    } else {
+                        registerButton.setBackgroundColor(0xFF808080);
+                        event.addEntrant(entrant);
+                        registerButton.setText("✔");
                     }
-                    registerButton.setBackgroundColor(0xFF808080);
-                    event.addEntrant(entrant);
-                    registerButton.setText("✔");
                 }
 
                 /**
