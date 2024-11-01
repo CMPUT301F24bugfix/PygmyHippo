@@ -5,6 +5,8 @@
     <string name="title_qr">QR Scanner</string>
     <string name="title_post_event">Post Event</string>
     <string name="title_profile">Profile</string>
+    <string name="all_events_title">All Events</string>
+    <string name="all_users_title">All Users</string>
     <string-array name="role">
         <item>User</item>
         <item>Organiser</item>
@@ -26,8 +28,26 @@
     <string-array name="entrant_status">
         <item>WaitList</item>
         <item>Invited</item>
-        <item>Canceled</item>
+        <item>Cancelled</item>
         <item>Accepted</item>
     </string-array>
 
+    <string-array name="all_users_category_spinner">
+        <item>Full name</item>
+        <item>Phone Number</item>
+        <item>Email</item>
+        <item>Location</item>
+    </string-array>
+
+    <string-array name="all_events_category_spinner">
+        <item>Event name</item>
+        <item>Location</item>
+        <item>Waitlist Status</item>
+        <item>Time</item>
+    </string-array>
+
+    <string-array name="order_spinner">
+        <item>Ascending</item>
+        <item>Descending</item>
+    </string-array>
 </resources>

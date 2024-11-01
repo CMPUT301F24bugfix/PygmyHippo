@@ -7,6 +7,20 @@
     app:startDestination="@+id/u_my_events_menu_item">
 
     <fragment
+        android:id="@+id/navigation_all_events"
+        android:name="com.example.pygmyhippo.admin.AllEventsFragment"
+        android:label="All List"
+        tools:layout="@layout/admin_fragment_all_list"
+        android:background="@color/dark_purple"/>
+
+    <fragment
+        android:id="@+id/navigation_all_users"
+        android:name="com.example.pygmyhippo.admin.AllUsersFragment"
+        android:label="All List"
+        tools:layout="@layout/admin_fragment_all_list"
+        android:background="@color/dark_purple"/>
+
+    <fragment
         android:id="@+id/u_my_events_menu_item"
         android:name="com.example.pygmyhippo.user.MyEventsFragment"
         android:label="@string/title_myevents"
@@ -47,7 +61,7 @@
         android:label="user_fragment_event"
         tools:layout="@layout/user_fragment_event" >
         <action
-            android:id="@+id/action_eventFragment_to_navigation_dashboard"
+            android:id="@+id/action_eventFragment_to_scanQRcodeFragment"
             app:destination="@id/u_scanQR_menu_item" />
     </fragment>
 

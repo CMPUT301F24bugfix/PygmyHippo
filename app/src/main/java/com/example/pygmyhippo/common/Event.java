@@ -33,6 +33,7 @@ public class Event {
     private String organiserID;
     private ArrayList<Entrant> entrants;
 
+    private String title;
     private String location;
     private String date;
     private String time;
@@ -56,6 +57,34 @@ public class Event {
         EventStatus(String value) {
             this.value = value;
         }
+    }
+
+    public Event(String title, String location, String date, String time, EventStatus eventStatus) {
+        this.title = title;
+        this.location = location;
+        this.date = date;
+        this.time = time;
+        this.eventStatus = eventStatus;
+    }
+
+
+    // constructor to make event
+    public Event() {this.entrants = new ArrayList<>();}
+
+    public Event(String eventTitle, String eventID, String organiserID, ArrayList<Entrant> entrants, String location,
+                 String date, String time, String description, String cost, String eventPoster,
+                 EventStatus eventStatus) {
+        this.eventTitle = eventTitle;
+        this.eventID = eventID;
+        this.organiserID = organiserID;
+        this.entrants = entrants;
+        this.location = location;
+        this.date = date;
+        this.time = time;
+        this.description = description;
+        this.cost = cost;
+        this.eventPoster = eventPoster;
+        this.eventStatus = eventStatus;
     }
 
     public String getEventTitle() {
@@ -86,6 +115,13 @@ public class Event {
         return entrants;
     }
 
+    public Boolean hasEntrant(Entrant entrant) {
+        if (this.entrants != null) {
+            return this.entrants.contains(entrant);
+        }
+        return false;
+    }
+
     public void setEntrants(ArrayList<Entrant> entrants) {
         this.entrants = entrants;
     }
@@ -95,6 +131,10 @@ public class Event {
             this.entrants = new ArrayList<>();
         }
         this.entrants.add(entrant);
+    }
+
+    public void removeEntrant(Entrant entrant) {
+        this.entrants.remove(entrant);
     }
 
     public String getLocation() {
@@ -180,22 +220,9 @@ public class Event {
         this.eventStatus = eventStatus;
     }
 
-    // constructor to make event
-    public Event() {this.entrants = new ArrayList<>();}
-    public Event(String eventTitle, String eventID, String organiserID, ArrayList<Entrant> entrants, String location,
-                 String date, String time, String description, String cost, String eventPoster,
-                 EventStatus eventStatus) {
-        this.eventTitle = eventTitle;
-        this.eventID = eventID;
-        this.organiserID = organiserID;
-        this.entrants = entrants;
-        this.location = location;
-        this.date = date;
-        this.time = time;
-        this.description = description;
-        this.cost = cost;
-        this.eventPoster = eventPoster;
-        this.eventStatus = eventStatus;
+    public String getTitle() {
+        return title;
     }
+
 }
 
