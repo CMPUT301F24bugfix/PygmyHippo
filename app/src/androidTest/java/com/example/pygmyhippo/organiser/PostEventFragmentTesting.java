@@ -45,6 +45,7 @@ import org.junit.runner.RunWith;
  *  - More verbose testing
  *  - Test if added to database
  *  - could read the toast (although using the toast should only be a temporary solution)
+ *  - once database is connected check that qr code links
  * @author Griffin
  * @version 1.0
  */
@@ -73,13 +74,8 @@ public class PostEventFragmentTesting {
     }
 
     @Test
-    // TODO: before running this test ensure that an image is taken on the devices camera
-    // also ensure that you are running in organiser mode
+    // ensure that you are running in organiser mode
     public void testWithData() {
-        //test adding image
-        // I cannot figure out how to pick images for testing
-        // TODO add picking images for testing
-
         // tests entering name
         String eventName = "Hippo Party";
         onView(withId(R.id.o_postEvent_name_edit)).perform(ViewActions.typeText(eventName));
@@ -121,5 +117,8 @@ public class PostEventFragmentTesting {
         onView(withId(R.id.o_postEvent_geolocation_check)).check(matches(isChecked()));
 
         onView(withId(R.id.o_postEvent_post_button)).perform(click());
+
+        // checks that qr code is visible
+        onView(withId(R.id.o_eventqr_view)).check(matches(isDisplayed()));
     }
 }
