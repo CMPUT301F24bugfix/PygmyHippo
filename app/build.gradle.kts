@@ -62,5 +62,7 @@ dependencies {
     // Added for database
     implementation(platform("com.google.firebase:firebase-bom:32.7.1"))
     implementation("com.google.firebase:firebase-firestore")
-    testImplementation("org.hamcrest:hamcrest:3.0")
+    testImplementation("org.hamcrest:hamcrest-library:3.0")
+    debugImplementation("androidx.fragment:fragment-testing-manifest:1.8.5")
+    androidTestImplementation("androidx.fragment:fragment-testing:1.8.5")
 }

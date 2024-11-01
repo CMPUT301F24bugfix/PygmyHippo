@@ -1,7 +1,6 @@
 package com.example.pygmyhippo.organiser;
 import com.example.pygmyhippo.R;
 import static androidx.test.espresso.Espresso.onView;
-import static androidx.test.espresso.action.ViewActions.typeTextIntoFocusedView;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.action.ViewActions.scrollTo;
 import static androidx.test.espresso.matcher.ViewMatchers.isChecked;
@@ -13,26 +12,22 @@ import static androidx.test.espresso.assertion.ViewAssertions.matches;
 
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 
-import android.net.Uri;
 
 import android.Manifest;
+
+import androidx.fragment.app.testing.FragmentScenario;
+import androidx.test.core.app.ActivityScenario;
+import androidx.test.rule.ActivityTestRule;
 import androidx.test.rule.GrantPermissionRule;
 
-import androidx.test.core.app.ApplicationProvider;
 import androidx.test.espresso.action.ViewActions;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.filters.LargeTest;
 
-import androidx.test.uiautomator.By;
-import androidx.test.uiautomator.UiDevice;
-import androidx.test.uiautomator.UiObject;
-import androidx.test.uiautomator.UiObjectNotFoundException;
-import androidx.test.uiautomator.UiSelector;
-import androidx.test.platform.app.InstrumentationRegistry;
-import androidx.test.uiautomator.Until;
 
 import com.example.pygmyhippo.MainActivity;
+import com.example.pygmyhippo.organizer.PostEventFragment;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -47,13 +42,11 @@ import org.junit.runner.RunWith;
  *  - could read the toast (although using the toast should only be a temporary solution)
  *  - once database is connected check that qr code links
  * @author Griffin
- * @version 1.0
+ * @version 1.1
  */
 @RunWith(AndroidJUnit4.class)
 @LargeTest
 public class PostEventFragmentTesting {
-
-    private UiDevice device;
 
     @Rule
     public GrantPermissionRule mRuntimePermissionRule = GrantPermissionRule.grant(Manifest.permission.POST_NOTIFICATIONS);
@@ -64,7 +57,6 @@ public class PostEventFragmentTesting {
     @Before
     public void setUp() {
         onView(withId(R.id.organiser_postEvent_page)).perform(click());
-        device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation());
     }
 
     @Test
