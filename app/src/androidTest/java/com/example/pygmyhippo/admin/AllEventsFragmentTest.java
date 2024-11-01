@@ -13,17 +13,17 @@ import static org.hamcrest.Matchers.is;
 import android.Manifest;
 import android.content.Context;
 
+import androidx.fragment.app.testing.FragmentScenario;
 import androidx.test.espresso.assertion.ViewAssertions;
 import androidx.test.espresso.contrib.RecyclerViewActions;
-import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.filters.LargeTest;
 import androidx.test.platform.app.InstrumentationRegistry;
 import androidx.test.rule.GrantPermissionRule;
 
-import com.example.pygmyhippo.MainActivity;
 import com.example.pygmyhippo.R;
 
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -36,15 +36,21 @@ import org.junit.runner.RunWith;
 @RunWith(AndroidJUnit4.class)
 @LargeTest
 public class AllEventsFragmentTest {
+    private FragmentScenario<AllEventsFragment> scenario;
 
     @Rule
     public GrantPermissionRule mRuntimePermissionRule = GrantPermissionRule.grant(Manifest.permission.POST_NOTIFICATIONS);
 
-    @Rule
-    public ActivityScenarioRule<MainActivity> scenario = new ActivityScenarioRule<>(MainActivity.class);
+
+    @Before
+    public void setup() {
+        scenario = FragmentScenario.launchInContainer(AllEventsFragment.class);
+    }
 
     @Test
     public void testEventCategorySpinner() {
+
+
         final Context context = InstrumentationRegistry.getInstrumentation().getTargetContext();
         final String[] userCategories = context.getResources().getStringArray(R.array.all_events_category_spinner);
 

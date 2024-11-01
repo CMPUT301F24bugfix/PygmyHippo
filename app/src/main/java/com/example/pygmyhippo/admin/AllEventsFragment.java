@@ -37,6 +37,13 @@ public class AllEventsFragment extends Fragment implements RecyclerClickListener
         allListData.add(new Event("CheriCon", "VVC", "Nov. 1st", "23:30", Event.EventStatus.ongoing));
     }
 
+
+    @Override
+    public void onItemClick(int position) {
+        // TODO: Add navigation.
+        Log.i("User", String.format("Admin clicked item at position %d", position));
+    }
+
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -78,11 +85,5 @@ public class AllEventsFragment extends Fragment implements RecyclerClickListener
     public void onDestroyView() {
         super.onDestroyView();
         binding = null;
-    }
-
-    @Override
-    public void onItemClick(int position) {
-        // TODO: Add navigation.
-        Log.i("User", String.format("Admin clicked item at position %d", position));
     }
 }
