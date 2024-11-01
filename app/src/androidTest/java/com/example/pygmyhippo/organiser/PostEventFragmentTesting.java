@@ -122,10 +122,4 @@ public class PostEventFragmentTesting {
 
         onView(withId(R.id.o_postEvent_post_button)).perform(click());
     }
-
-    @Test
-    public void testNavigationToQR() {
-
-    }
-
 }

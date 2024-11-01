@@ -5,6 +5,7 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.Navigation;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,6 +16,7 @@ import android.widget.TextView;
 import com.example.pygmyhippo.R;
 import com.example.pygmyhippo.common.Entrant;
 import com.example.pygmyhippo.common.Event;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
 
@@ -31,12 +33,7 @@ public class EventFragment extends Fragment {
     private Entrant entrant;
     private ArrayList<Entrant> entrants;
 
-
-    // need user information somehow when trying to join this event, user information to be added as an entrant onto the event info list
-    public EventFragment(Event event, Entrant entrant) {
-        this.event = event;
-        this.entrant = entrant;
-    }
+    // pass entrant and even information using bundle...
 
     // populate single event page with event information
     // Method to set up a hardcoded example event
@@ -61,18 +58,16 @@ public class EventFragment extends Fragment {
         );
     }
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-    }
-
     // populates the view with information
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        View eventBackButtonView = view.findViewById(R.id.u_backButtonToQRView);
+        FloatingActionButton backButton = view.findViewById(R.id.u_backButtonToQRView);
+        backButton.setOnClickListener(view1 -> {
+            Navigation.findNavController(view1).navigate(R.id.action_eventFragment_to_scanQRcodeFragment);
+        });
+
         TextView eventNameView = view.findViewById(R.id.u_eventNameView);
         TextView eventDateView = view.findViewById(R.id.u_eventDateView);
         TextView eventTimeView = view.findViewById(R.id.u_eventTimeView);
@@ -102,30 +97,38 @@ public class EventFragment extends Fragment {
 
         Button registerButton = view.findViewById(R.id.u_registerButton);
 
+        // TODO: add actual database stuff here, where user is added into the events list
+        // for now, this is hardcoding to figure out structure of entrant
+        // this part, the entrant information would be passed to the event but hardcode
+        entrant = new Entrant(
+                "123",
+                Entrant.EntrantStatus.invited
+        );
+
         // with a check, check to see if event has been registered for, if so, register (set text
         // to checkmark, add to lists and stuff, if event has not been register for, set text back
         // to register and remove from lists and stuff
         registerButton.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view) {
-                // TODO: add actual database stuff here, where user is added into the events list
-                // for now, this is hardcoding to figure out structure of entrant
-                // this part, the entrant information would be passed to the event but hardcode
-                entrant = new Entrant(
-                        "123",
-                        Entrant.EntrantStatus.invited
-                );
-                event.addEntrant(entrant);
+
+                if (event.hasEntrant(entrant)) {
+                    registerButton.setBackgroundColor(0xFF35B35D);
+                    event.removeEntrant(entrant);
+                    registerButton.setText("Register");
+                } else {
+                    registerButton.setBackgroundColor(0xFF808080);
+                    event.addEntrant(entrant);
+                    registerButton.setText("✔");
+                }
 
                 /**
                  *  ADD DATABASE CODE FOR ADDING ENTRANT INTO AN EVENT HERE
                  *
                  * */
-
-                // set text of register button to checkmark
-                registerButton.setText("✔");
             }
         });
+
         return view;
     }
 }

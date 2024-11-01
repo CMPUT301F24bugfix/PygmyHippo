@@ -52,9 +52,7 @@ public class Account {
     @Nullable
     private Facility facilityProfile;
 
-    public Account(){
-
-    }
+    public Account(){}
 
     public Account(
             String accountID,
@@ -83,6 +81,14 @@ public class Account {
         this.roles = roles;
         this.currentRole = currentRole;
         this.facilityProfile = facilityProfile;
+    }
+
+    public Account(String accountID, String name, String phoneNumber, String emailAddress, String location) {
+        this.accountID = accountID;
+        this.name = name;
+        this.phoneNumber = phoneNumber;
+        this.emailAddress = emailAddress;
+        this.location = location;
     }
 
     public Account(String accountID, String name, String pronouns, String phoneNumber, String emailAddress, String deviceID, String profilePicture, String location, boolean receiveNotifications, boolean enableGeolocation) {

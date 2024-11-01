@@ -96,7 +96,6 @@ public class PostEventFragment extends Fragment {
                 String eventWinners = eventWinnersEdit.getText().toString();
                 Boolean eventGeolocaion = eventGeolocation.isChecked();
                 if (
-                        imagePath == null || // check if image is added
                         eventName.isEmpty() ||
                         eventDateTime.isEmpty() ||
                         eventPrice.isEmpty() ||
@@ -112,7 +111,7 @@ public class PostEventFragment extends Fragment {
                     myEvent.setDate(eventDateTime);
                     myEvent.setDescription(eventDescription);
                     myEvent.setCost(eventPrice);
-                    myEvent.setEventPoster(imagePath.toString()); // TODO: this needs to added to the database
+                    myEvent.setEventPoster(imagePath == null? "" : imagePath.toString());
                     myEvent.setEventLimitCount(eventLimit.isEmpty() ? -1 : Integer.valueOf(eventLimit));
                     myEvent.setEventWinnersCount(Integer.valueOf(eventWinners));
                     myEvent.setEntrants(new ArrayList<>()); // no entrants of a newly created event
