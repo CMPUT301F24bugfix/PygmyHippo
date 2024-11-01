@@ -33,7 +33,7 @@ public class EventQRViewerFragment extends Fragment {
     private ImageButton backButton;
     private Button detailsButton;
     private ImageView QRCodeImage;
-    private String myEventString;
+    private String myEventIDString;
 
     /**
      * Creates the view
@@ -63,12 +63,12 @@ public class EventQRViewerFragment extends Fragment {
 
         super.onCreate(savedInstanceState);
         Bundle bundle = this.getArguments();
-        myEventString = bundle.getString("my_event_id");
+        myEventIDString = bundle.getString("my_event_id");
 
-        if (getArguments() != null && !myEventString.isEmpty()) {
+        if (getArguments() != null && !myEventIDString.isEmpty()) {
             //TODO: connect to the database and update the status
             QRCodeImage = view.findViewById(R.id.o_eventqr_view);
-            Bitmap bitmap = QRCode.from(myEventString)
+            Bitmap bitmap = QRCode.from(myEventIDString)
                     .withSize(500, 500)
                     .withHint(EncodeHintType.MARGIN, "1")
                     .bitmap();
