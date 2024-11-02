@@ -3,23 +3,26 @@ package com.example.pygmyhippo.common.UserProcessing;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
-import android.util.Log;
+import android.widget.ImageView;
 
-import org.chromium.net.CronetEngine;
-import org.chromium.net.CronetException;
-import org.chromium.net.UrlRequest;
-import org.chromium.net.UrlResponseInfo;
+import androidx.annotation.NonNull;
+
+import com.example.pygmyhippo.common.Account;
+import com.google.android.gms.tasks.Continuation;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
+import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
+
 
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.net.URISyntaxException;
-import java.nio.ByteBuffer;
-import java.nio.channels.Channels;
-import java.nio.channels.WritableByteChannel;
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
+import java.io.FileNotFoundException;
+
 /**
  * Allows Download of avatar from online generator
  * Source Code from Googles Cronet Docs
@@ -34,138 +37,170 @@ import java.util.concurrent.Executors;
  TODO: make this run async
  */
 public class UserProcessing {
-    private String imagePath2 = "https://avatar.iran.liara.run/username?username=Jennifer";
-    private Uri imagePath;
+    private String imageUrl = "https://avatar.iran.liara.run/username?username=";
+    private String imageUrl2 = "https://api.multiavatar.com/";
+    private String avatarPath;
+    private ImageView imageView;
     Context context;
-    byte[] bodyBytes;
+    byte[] avatarBytes;
 
-    class CronetCallback2 extends UrlRequest.Callback {
-        private ByteArrayOutputStream bytesReceived = new ByteArrayOutputStream();
-        private WritableByteChannel receiveChannel = Channels.newChannel(bytesReceived);
-        @Override
-        public void onRedirectReceived(UrlRequest request,
-                                       UrlResponseInfo responseInfo, String newLocationUrl) {
-            System.out.println("Redirect");
-            request.cancel();
-        }
+    // User info
+    String userName;
+    String userEmail;
+    String userPronouns;
+    String userPhone;
+    String userLocation;
+    String accountId;
+    String deviceID;
+    Boolean userNotify;
+    Boolean userGeolocation;
 
-        @Override
-        public void onResponseStarted(UrlRequest request,
-                                      UrlResponseInfo responseInfo) {
-            try {
-                // Now we have response headers!
-                int httpStatusCode = responseInfo.getHttpStatusCode();
-                System.out.println("Response Info: " + responseInfo.getHttpStatusCode() + " " + responseInfo.getHttpStatusText());
-                System.out.println("Content-Type: " + responseInfo.getAllHeaders().get("Content-Type"));
 
-                System.out.println("ONRS");
-                if (httpStatusCode == 200) {
-                    // Success! Let's tell Cronet to read the response body.
-                    request.read(ByteBuffer.allocateDirect(102400));
-                    System.out.println("Code 200");
-                } else if (httpStatusCode == 503) {
-                    System.out.println("Code 503");
-                    // Do something. Note that 4XX and 5XX are not considered
-                    // errors from Cronet's perspective since the response is
-                    // successfully read.
-                } else {
-                    System.out.print(httpStatusCode);
-                }
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
-
-            //  mResponseHeaders = responseInfo.getAllHeaders();
-        }
-
-        @Override
-        public void onReadCompleted(UrlRequest request,
-                                    UrlResponseInfo responseInfo, ByteBuffer byteBuffer) throws IOException {
-            // Response body is available.
-            byteBuffer.flip();
-            receiveChannel.write(byteBuffer);
-            // Let's tell Cronet to continue reading the response body or
-            // inform us that the response is complete!
-            System.out.println("On Read Running");
-            byteBuffer.clear();
-            request.read(byteBuffer);
-        }
-
-        @Override
-        public void onSucceeded(UrlRequest request,
-                                UrlResponseInfo responseInfo) {
-
-            // Request has completed successfully!
-          /*  bodyBytes = bytesReceived.toByteArray();
-            System.out.println("Success!!!!");
-            byteArrayToBitmap(); */
-
-            if (bytesReceived.size() > 0) {
-                bodyBytes = bytesReceived.toByteArray();
-                System.out.println("Success!!!!");
-                byteArrayToBitmap();
-            } else {
-                System.err.println("Received empty byte array.");
-            }
-        }
-
-        @Override
-        public void onFailed(UrlRequest request,
-                             UrlResponseInfo responseInfo, CronetException error) {
-            // Request has failed. responseInfo might be null.
-            Log.e("MyCallback", "Request failed. " + error.getMessage());
-            System.out.println("Request failed. " + error.getMessage());
-            // Maybe handle error here. Typical errors include hostname
-            // not resolved, connection to server refused, etc.
-        }
-    }
-
-    public void startUp (Activity activity) {
-        System.out.println("Running");
+    public void processData(
+            Activity activity,
+            ImageView imageView,
+            String name,
+            String phone,
+            String email,
+            String pronouns,
+            String deviceId,
+            String location,
+            String accountId,
+            Boolean allowGeo,
+            Boolean allowNotifications,
+            String imagePath
+    ) throws FileNotFoundException {
+        this.userName = name;
+        this.userEmail = email;
+        this.userPhone = phone;
+        this.userPronouns = pronouns;
+        this.userLocation = location;
+        this.deviceID = deviceId;
+        this.accountId = accountId;
+        this.userGeolocation = allowGeo;
+        this.userNotify = allowNotifications;
         this.context = activity.getApplicationContext();
-        CronetEngine.Builder engineBuilder = new CronetEngine.Builder(context);
-        CronetEngine engine = engineBuilder.build();
-        Executor executor = Executors.newSingleThreadExecutor();
-        CronetCallback2 crCallback;
-        crCallback = new CronetCallback2();
+        this.imageView = new ImageView(context);
 
-        UrlRequest.Builder requestBuilder = engine.newUrlRequestBuilder(
-                imagePath2, crCallback, executor);
-        UrlRequest request = requestBuilder.build();
-        try {
-
-            request.start();
-
-        } catch (Exception e) {
-            Log.e("Cronet", "Error starting request: " + e.getMessage());
-            System.out.println(e.getMessage());
-        }
-
-
+        if (imagePath == null) {
+            this.avatarPath = imageUrl + userName;
+            loadAndUpload();
+            System.out.println("generate avatar..");
+        } else {
+            System.out.println("Creating...");
+            Account newUser = new Account(
+                    userEmail + deviceID,
+                    userName,
+                    userPronouns,
+                    userPhone,
+                    userEmail,
+                    deviceID,
+                    imagePath,
+                    null,
+                    userLocation,
+                    userNotify,
+                    userGeolocation
+            );}
     }
 
-    public  void byteArrayToBitmap (){
-        // Decode the byte array into a Bitmap
-        Bitmap pic = BitmapFactory.decodeByteArray(bodyBytes, 0, bodyBytes.length);
-        System.out.println(pic != null ? "The bitmap is viable." : "The bitmap is not viable.");
+    /** Code is from Chatgpt for uploading from Picasso's cache to firebase
+     * Prompts: Access the files stored in cache by picasso, I need (it) to be from from cache because firebase cannot load from a url
+     * Accessed November 2, 2024
+     * @Author: Chatgpt, implemented and Edited by Jennifer
+     *
+     * */
+    public void loadAndUpload() {
+        // Create a Target to handle the bitmap,
+        Target target = new Target() {
+            @Override
+            public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+                // Upload the bitmap to Firebase
+                try {
+                    uploadAvatar(bitmap);
+                    System.out.println("Setting avatar");
+                } catch (FileNotFoundException e) {
+                    throw new RuntimeException(e);
+                }
+            }
 
+            @Override
+            public void onBitmapFailed(Exception e, Drawable errorDrawable) {
+                // Handle loading error
+                System.out.println("Bitmap failed" + e);
+            }
+
+            @Override
+            public void onPrepareLoad(Drawable placeHolderDrawable) {
+                // Optional: Prepare for loading
+            }
+        };
+
+        // Load the image into the Target
+        Picasso.get()
+                .load(avatarPath)
+                .into(target);
     }
 
+    private void uploadAvatar(Bitmap bitmap) throws FileNotFoundException {
+        // Convert bitmap to byte array for upload
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
+        this.avatarBytes = stream.toByteArray();
 
-    /**
-     * generates an Avatar if the user doesn't upload one
-     * @author Jennifer
-     * @param name the name the user has entered
-     * @return the Uri of the image in memory
-     * @version 1.0
-     */
-    public Uri generateAvatar (Context context, String name) throws URISyntaxException {
-        String imageName = "avatar.png";
-        this.context = context;
-        if (name.isEmpty()) name = "null";
-        String url = "https://api.multiavatar.com/";
-        this.imagePath = Uri.parse(url+name+".png");
-        return this.imagePath;
+        // Upload byteArray to Firebase Storage
+        FirebaseStorage storage = FirebaseStorage.getInstance();
+        StorageReference avatarRef = storage.getReference().child("/"+deviceID+"/avatar/"+"avatar");
+        UploadTask uploadAvatar = avatarRef.putBytes(this.avatarBytes);
+
+        System.out.println("Set avatar bytes");
+        // do not move logic to Account or this will break
+        Task<Uri> urlTask = uploadAvatar.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
+            @Override
+            public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
+                if (!task.isSuccessful()) {
+                    throw task.getException();
+                }
+                // Continue with the task to get the download URL
+                return avatarRef.getDownloadUrl();
+            }
+        }).addOnCompleteListener(new OnCompleteListener<Uri>() {
+            @Override
+            public void onComplete(@NonNull Task<Uri> task) {
+                if (task.isSuccessful()) {
+                    Uri downloadUri = task.getResult();
+                    System.out.println("Creating...");
+                    try {
+                        Account newUser = new Account(
+                                userEmail + deviceID,
+                                userName,
+                                userPronouns,
+                                userPhone,
+                                userEmail,
+                                deviceID,
+                                null,
+                                downloadUri,
+                                userLocation,
+                                userNotify,
+                                userGeolocation
+                        );
+                    } catch (FileNotFoundException e) {
+                        throw new RuntimeException(e);
+                    }
+                } else {
+                    // Handle failures
+                    // ...
+
+                }
+            }
+        });
+
+
+
+
+
+
     }
 
 }
+
+

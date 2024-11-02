@@ -37,8 +37,9 @@ android {
 }
 
 dependencies {
-    implementation("com.squareup.picasso:picasso:2.8")
-    implementation("de.hdodenhof:circleimageview:3.1.0")
+    implementation("com.google.android.gms:play-services-cronet:18.0.1") // HTTP requests
+    implementation("com.squareup.picasso:picasso:2.8") // Placing images into views
+    implementation("de.hdodenhof:circleimageview:3.1.0") // for placing pictures into circular frames
     implementation(libs.appcompat)
     implementation(libs.material)
     implementation(libs.activity)
@@ -47,6 +48,8 @@ dependencies {
     implementation(libs.lifecycle.viewmodel.ktx)
     implementation(libs.navigation.fragment)
     implementation(libs.navigation.ui)
+    implementation(libs.firebase.storage)
+    implementation(libs.firebase.installations)
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
@@ -56,7 +59,7 @@ dependencies {
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
     androidTestImplementation("androidx.test.espresso:espresso-contrib:3.5.1")
     androidTestImplementation("androidx.test:rules:1.6.0")
-    // Added for database
-    implementation(platform("com.google.firebase:firebase-bom:32.7.1"))
+    // for DB
+    implementation(platform("com.google.firebase:firebase-bom:33.5.1"))
     implementation("com.google.firebase:firebase-firestore")
 }

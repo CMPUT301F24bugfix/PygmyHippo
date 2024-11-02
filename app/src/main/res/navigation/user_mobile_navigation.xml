@@ -41,7 +41,7 @@
 
     <fragment
         android:id="@+id/navigation_notifications"
-        android:name="com.example.pygmyhippo.user.ProfileFragment"
+        android:name="com.example.pygmyhippo.user.NewUserFragment"
         android:label="@string/title_profile"
         tools:layout="@layout/user_fragment_profile"
         android:background="@color/dark_purple"/>
