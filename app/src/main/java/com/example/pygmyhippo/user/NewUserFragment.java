@@ -46,7 +46,6 @@ import java.net.URISyntaxException;
  */
 public class NewUserFragment extends Fragment {
     String imagePath = null;
-    MainActivity activity = new MainActivity(); // to enable access to the internal file directory
     private UserFragmentNewUserBinding binding;
 
     /**
@@ -58,8 +57,6 @@ public class NewUserFragment extends Fragment {
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
     }
-
-
 
 
     /**
