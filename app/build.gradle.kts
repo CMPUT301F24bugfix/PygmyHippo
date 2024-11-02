@@ -37,8 +37,7 @@ android {
 }
 
 dependencies {
-    implementation("com.google.android.gms:play-services-cronet:18.0.1") // HTTP requests
-    implementation("com.squareup.picasso:picasso:2.8") // Placing images into views
+    implementation("com.squareup.picasso:picasso:2.8") // Placing images into views and caching images
     implementation("de.hdodenhof:circleimageview:3.1.0") // for placing pictures into circular frames
     implementation(libs.appcompat)
     implementation(libs.material)

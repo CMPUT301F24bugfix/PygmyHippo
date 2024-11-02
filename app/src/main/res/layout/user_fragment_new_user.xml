@@ -42,7 +42,7 @@
                 android:id="@+id/E_newUser_profileImg"
                 android:layout_width="210dp"
                 android:layout_height="210dp"
-                android:src="@drawable/dog"
+                android:src="@drawable/hippo"
                 app:civ_border_color="#FF000000"
                 app:civ_border_width="0dp"
                 app:layout_constraintBottom_toTopOf="@id/E_newUser_name"

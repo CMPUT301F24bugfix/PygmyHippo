@@ -37,7 +37,7 @@ import java.io.FileNotFoundException;
  TODO: make this run async
  */
 public class UserProcessing {
-    private String imageUrl = "https://avatar.iran.liara.run/username?username=";
+    private String imageUrl = "https://avatar.iran.liara.run/username?username="; // urls can be used interchangeably
     private String imageUrl2 = "https://api.multiavatar.com/";
     private String avatarPath;
     private ImageView imageView;
@@ -141,6 +141,12 @@ public class UserProcessing {
                 .into(target);
     }
 
+    /** Code is to upload generated avatar to firebase, first two lines are final bit of code from chatgpt, the rest is from the fisebase docs on uploading files
+     * https://firebase.google.com/docs/storage/android/upload-files
+     * Accessed November 2, 2024
+     * @Author: Jennifer and Firebase documentation
+     * @version 1.0
+     * */
     private void uploadAvatar(Bitmap bitmap) throws FileNotFoundException {
         // Convert bitmap to byte array for upload
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
