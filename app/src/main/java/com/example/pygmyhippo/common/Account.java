@@ -242,6 +242,10 @@ public class Account {
         private String location;
     }
 
+    public void getAccount () {
+
+    }
+
     public enum AccountRole {
         user("user"),
         organiser("organiser"),
