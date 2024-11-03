@@ -12,12 +12,13 @@ import com.example.pygmyhippo.common.BaseRecyclerAdapter;
 import com.example.pygmyhippo.common.BaseViewHolder;
 import com.example.pygmyhippo.common.Image;
 import com.example.pygmyhippo.common.RecyclerClickListener;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
 public class AllImagesAdapter extends BaseRecyclerAdapter<Image, AllImagesAdapter.ImageViewHolder> {
     public static class ImageViewHolder extends BaseViewHolder<Image> {
-        private ImageView imageView;
+        private final ImageView imageView;
 
         public ImageViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -26,7 +27,9 @@ public class AllImagesAdapter extends BaseRecyclerAdapter<Image, AllImagesAdapte
 
         @Override
         public void setViews(Image dataclass) {
-            // TODO: Get image from firebase storage.
+            Picasso.get()
+                    .load(dataclass.getUrl())
+                    .into(imageView);
         }
     }
 
