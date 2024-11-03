@@ -16,6 +16,8 @@
 package com.example.pygmyhippo.common;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Our event class

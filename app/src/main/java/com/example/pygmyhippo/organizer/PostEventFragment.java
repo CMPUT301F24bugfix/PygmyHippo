@@ -52,6 +52,7 @@ public class PostEventFragment extends Fragment {
     private CheckBox eventGeolocation;
     private ImageButton eventImageBtn;
     private Uri imagePath = null;
+    private PostEventDB dbHandler;
 
 
     /**
@@ -66,6 +67,8 @@ public class PostEventFragment extends Fragment {
 
         binding = OrganiserPostEventBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
+
+        dbHandler = new PostEventDB();
 
         return root;
     }
@@ -118,7 +121,8 @@ public class PostEventFragment extends Fragment {
                     myEvent.setGeolocation(eventGeolocaion);
                     myEvent.setEventStatus(Event.EventStatus.ongoing); // default is ongoing
 
-                    // TODO: connect to database and generate an event ID
+                    dbHandler.addEvent(myEvent, null); // TODO: Get organiser ID and pass it to addEvent.
+
                     Toast.makeText(getContext(), "Event Created", Toast.LENGTH_SHORT).show();
 
                     // create a bundle to send an event to the qr code widget

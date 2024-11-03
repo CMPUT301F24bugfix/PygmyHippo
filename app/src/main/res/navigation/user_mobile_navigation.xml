@@ -4,7 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/mobile_navigation"
-    app:startDestination="@+id/navigation_all_events">
+    app:startDestination="@+id/u_my_events_menu_item">
 
     <fragment
         android:id="@+id/navigation_all_events"
@@ -21,15 +21,18 @@
         android:background="@color/dark_purple"/>
 
     <fragment
-        android:id="@+id/navigation_home"
+        android:id="@+id/u_my_events_menu_item"
         android:name="com.example.pygmyhippo.user.MyEventsFragment"
         android:label="@string/title_myevents"
         tools:layout="@layout/user_fragment_myevents"
         android:background="@color/dark_purple">
+        <action
+            android:id="@+id/action_navigation_home_to_navigation_notifications"
+            app:destination="@id/u_profile_menu_item" />
     </fragment>
 
     <fragment
-        android:id="@+id/u_scanQRcodeFragment"
+        android:id="@+id/u_scanQR_menu_item"
         android:name="com.example.pygmyhippo.user.QRFragment"
         android:label="@string/title_post_event"
         tools:layout="@layout/user_fragment_qr"
@@ -37,14 +40,21 @@
         <action
             android:id="@+id/action_scanQRcodeFragment_to_eventFragment"
             app:destination="@id/eventFragment" />
+        <action
+            android:id="@+id/action_u_scanQRcodeFragment_to_navigation_notifications"
+            app:destination="@id/u_profile_menu_item" />
     </fragment>
 
     <fragment
-        android:id="@+id/navigation_notifications"
+        android:id="@+id/u_profile_menu_item"
         android:name="com.example.pygmyhippo.user.ProfileFragment"
         android:label="@string/title_profile"
         tools:layout="@layout/user_fragment_profile"
-        android:background="@color/dark_purple"/>
+        android:background="@color/dark_purple">
+        <argument
+            android:name="account"
+            app:argType="com.example.pygmyhippo.common.Account" />
+    </fragment>
     <fragment
         android:id="@+id/eventFragment"
         android:name="com.example.pygmyhippo.user.EventFragment"
@@ -52,7 +62,7 @@
         tools:layout="@layout/user_fragment_event" >
         <action
             android:id="@+id/action_eventFragment_to_scanQRcodeFragment"
-            app:destination="@id/u_scanQRcodeFragment" />
+            app:destination="@id/u_scanQR_menu_item" />
     </fragment>
 
 </navigation>
