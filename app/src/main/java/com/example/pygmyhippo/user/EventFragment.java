@@ -118,8 +118,8 @@ public class EventFragment extends Fragment {
                     if (event.getGeolocation()) {
 
                         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                        builder.setTitle("Geolocation required!");
-                        builder.setMessage("Continue registering?");
+                        builder.setTitle("WARNING!");
+                        builder.setMessage("This event requires geolocation. Continue registering?");
                         builder.setCancelable(true);
                         builder.setPositiveButton("Yes", (DialogInterface.OnClickListener) (dialog, which) -> {
                             registerButton.setBackgroundColor(0xFF808080);
