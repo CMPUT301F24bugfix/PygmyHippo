@@ -73,7 +73,7 @@ public class Event {
 
     public Event(String eventTitle, String eventID, String organiserID, ArrayList<Entrant> entrants, String location,
                  String date, String time, String description, String cost, String eventPoster,
-                 EventStatus eventStatus) {
+                 EventStatus eventStatus, Boolean enableGeolocation) {
         this.eventTitle = eventTitle;
         this.eventID = eventID;
         this.organiserID = organiserID;
@@ -85,6 +85,7 @@ public class Event {
         this.cost = cost;
         this.eventPoster = eventPoster;
         this.eventStatus = eventStatus;
+        this.enableGeolocation = enableGeolocation;
     }
 
     public String getEventTitle() {

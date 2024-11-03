@@ -22,6 +22,8 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 
+import java.util.ArrayList;
+
 /**
  * Test single event page
  * @author Katharine
@@ -83,5 +85,36 @@ public class SingleEventTest {
         event.addEntrant(entrant);
         event.removeEntrant(entrant);
         assertEquals(0, event.getEntrants().size());
+    }
+
+    @Test
+    public void testEnabledGeolocation() {
+        ArrayList<Entrant> entrants = new ArrayList<>();
+        Event event = new Event(
+                "Hippo Party",
+                "1",
+                "The Hippopotamus Society",
+                entrants,
+                "The Swamp",
+                "2024-10-31",
+                // TODO: there is a bit of an issue with aligning the time when it is shorter on the xml
+                "4:00 PM MST - 4:00 AM MST",
+                "Love hippos and a party? Love a party! Join a party!",
+                "$150.00",
+                "hippoparty.png",
+                Event.EventStatus.ongoing,
+                true
+        );
+        Entrant entrant = new Entrant(
+                "123",
+                Entrant.EntrantStatus.invited
+        );
+
+        onView(withId(R.id.u_scanQRButton)).perform(click());
+        onView(withId(R.id.u_registerButton)).perform(click());
+        // TODO: double check to see if this actually works (hamcrest/matchers error)
+        onView(withText("event requires geolocation")).check(matches(isDisplayed()));
+        onView(withId(android.R.id.button1)).perform(click());
+        onView(withText("✔")).check(matches(isDisplayed()));
     }
 }
