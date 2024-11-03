@@ -12,15 +12,22 @@ import static androidx.test.espresso.assertion.ViewAssertions.matches;
 
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 
-import android.net.Uri;
 
-import androidx.test.core.app.ApplicationProvider;
+import android.Manifest;
+
+import androidx.fragment.app.testing.FragmentScenario;
+import androidx.test.core.app.ActivityScenario;
+import androidx.test.rule.ActivityTestRule;
+import androidx.test.rule.GrantPermissionRule;
+
 import androidx.test.espresso.action.ViewActions;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.filters.LargeTest;
 
+
 import com.example.pygmyhippo.MainActivity;
+import com.example.pygmyhippo.organizer.PostEventFragment;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -33,12 +40,17 @@ import org.junit.runner.RunWith;
  *  - More verbose testing
  *  - Test if added to database
  *  - could read the toast (although using the toast should only be a temporary solution)
+ *  - once database is connected check that qr code links
  * @author Griffin
- * @version 1.0
+ * @version 1.1
  */
 @RunWith(AndroidJUnit4.class)
 @LargeTest
 public class PostEventFragmentTesting {
+
+    @Rule
+    public GrantPermissionRule mRuntimePermissionRule = GrantPermissionRule.grant(Manifest.permission.POST_NOTIFICATIONS);
+
     @Rule
     public ActivityScenarioRule<MainActivity> scenario = new ActivityScenarioRule<MainActivity>(MainActivity.class);
 
@@ -54,6 +66,7 @@ public class PostEventFragmentTesting {
     }
 
     @Test
+    // ensure that you are running in organiser mode
     public void testWithData() {
         // tests entering name
         String eventName = "Hippo Party";
@@ -96,14 +109,8 @@ public class PostEventFragmentTesting {
         onView(withId(R.id.o_postEvent_geolocation_check)).check(matches(isChecked()));
 
         onView(withId(R.id.o_postEvent_post_button)).perform(click());
-    }
 
-    // TODO: implement some kind of image testing
-    // I think its possible but it seems really complicated
-//    @Test
-//    public void imageUploadTest() {
-//        Uri imageUri = Uri.parse("android.resource://com.example.pygmyhippo/drawable/dog.jpg");
-//        onView(withId(R.id.o_postEvent_addImage)).perform(click());
-//
-//    }
+        // checks that qr code is visible
+        onView(withId(R.id.o_eventqr_view)).check(matches(isDisplayed()));
+    }
 }
