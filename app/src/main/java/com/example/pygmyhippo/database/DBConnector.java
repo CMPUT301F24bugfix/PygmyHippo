@@ -8,7 +8,6 @@ import com.google.firebase.firestore.FirebaseFirestore;
 public class DBConnector {
     private FirebaseFirestore db;
 
-
     /*
    Function initializes the current instance of the DB
    */

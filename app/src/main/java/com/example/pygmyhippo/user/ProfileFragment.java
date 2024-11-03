@@ -7,13 +7,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
-import android.widget.Spinner;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.PickVisualMediaRequest;
@@ -22,8 +20,9 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
 import com.example.pygmyhippo.R;
-import com.example.pygmyhippo.databinding.UserFragmentProfileBinding;
+import com.example.pygmyhippo.common.Account;
 import com.example.pygmyhippo.common.OnRoleSelectedListener;
+import com.example.pygmyhippo.databinding.UserFragmentProfileBinding;
 import com.squareup.picasso.Picasso;
 
 import java.net.URISyntaxException;
@@ -47,6 +46,14 @@ import java.net.URISyntaxException;
 public class ProfileFragment extends Fragment  implements AdapterView.OnItemSelectedListener{
     private Uri imagePath;
     private UserFragmentProfileBinding binding;
+    private Account signedInAccount;
+
+    private EditText nameField, pronounField, phoneField, emailField;
+    private RadioButton decGeo, decNotify;
+    private RadioGroup notifyRGroup, geolocationRGroup;
+    private Button uploadImgBtn, deleteImgBtn;
+    private ImageView editButton;
+    private Button updateButton;
 
     // Listener interface to communicate with the main activity
     private OnRoleSelectedListener roleSelectedListener;
@@ -118,6 +125,29 @@ public class ProfileFragment extends Fragment  implements AdapterView.OnItemSele
         binding = UserFragmentProfileBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
+        editButton = root.findViewById(R.id.E_profile_editBtn);
+        updateButton = root.findViewById(R.id.E_profile_create);
+
+        // All the text fields
+        nameField = root.findViewById(R.id.E_profile_textName);
+        pronounField = root.findViewById(R.id.E_profile_textPronouns);
+        phoneField = root.findViewById(R.id.E_profile_textPhone);
+        emailField = root.findViewById(R.id.E_profile_textEmail);
+
+        // Decorator radio buttons
+        decGeo = root.findViewById(R.id.E_profile_gps_dec);
+        decNotify = root.findViewById(R.id.E_profile_notification_dec);
+
+        // Functional Radio Groups
+        notifyRGroup = root.findViewById(R.id.E_profile_notify_setting);
+        geolocationRGroup = root.findViewById(R.id.E_profile_geo_setting);
+
+        // Image Buttons
+        uploadImgBtn = root.findViewById(R.id.E_profile_uploadImageBtn);
+        deleteImgBtn = root.findViewById(R.id.E_profile_deleteAvatarbtn);
+
+        signedInAccount = ProfileFragmentArgs.fromBundle(getArguments()).getAccount();
+        setProfile();
 /*
         Spinner role_dropdown = (Spinner) root.findViewById(R.id.user_spinner_role);
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(
@@ -131,28 +161,6 @@ public class ProfileFragment extends Fragment  implements AdapterView.OnItemSele
 
         // need to do this so the listener is connected
         role_dropdown.setOnItemSelectedListener(this); */
-
-
-        ImageView editButton = root.findViewById(R.id.E_profile_editBtn);
-        Button updateButton = root.findViewById(R.id.E_profile_create);
-
-        // All the text fields
-        EditText nameField = root.findViewById(R.id.E_profile_textName);
-        EditText pronounField = root.findViewById(R.id.E_profile_textPronouns);
-        EditText phoneField = root.findViewById(R.id.E_profile_textPhone);
-        EditText emailField = root.findViewById(R.id.E_profile_textEmail);
-
-        // Decorator radio buttons
-        RadioButton decGeo = root.findViewById(R.id.E_profile_gps_dec);
-        RadioButton decNotify = root.findViewById(R.id.E_profile_notification_dec);
-
-        // Functional Radio Groups
-        RadioGroup notifyRGroup = root.findViewById(R.id.E_profile_notify_setting);
-        RadioGroup geolocationRGroup = root.findViewById(R.id.E_profile_geo_setting);
-
-        // Image Buttons
-        Button uploadImgBtn = root.findViewById(R.id.E_profile_uploadImageBtn);
-        Button deleteImgBtn = root.findViewById(R.id.E_profile_deleteAvatarbtn);
 
         /*
          * Allows te page elements to be edited by the user if the edit button is clicked
@@ -267,6 +275,15 @@ public class ProfileFragment extends Fragment  implements AdapterView.OnItemSele
         updateButton.setOnClickListener(updateUser);
 
         return root;
+    }
+
+    private void setProfile() {
+        nameField.setText(signedInAccount.getName());
+        pronounField.setText(signedInAccount.getPronouns());
+        phoneField.setText(signedInAccount.getPhoneNumber());
+        emailField.setText(signedInAccount.getEmailAddress());
+        decGeo.setActivated(signedInAccount.isEnableGeolocation());
+        decNotify.setActivated(signedInAccount.isReceiveNotifications());
     }
 
     /**

@@ -36,7 +36,7 @@ public class SingleEventTest {
     // click onto the qr code from home
     @Before
     public void setUp() {
-        onView(withId(R.id.u_scanQRcodeFragment)).perform(click());
+        onView(withId(R.id.u_scanQR_menu_item)).perform(click());
     }
 
     // navigate to event page
