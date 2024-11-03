@@ -37,6 +37,7 @@ android {
 }
 
 dependencies {
+    implementation("com.github.kenglxn.QRGen:android:3.0.1") // QR generation
     implementation("com.squareup.picasso:picasso:2.8") // Placing images into views and caching images
     implementation("de.hdodenhof:circleimageview:3.1.0") // for placing pictures into circular frames
     implementation(libs.appcompat)
@@ -47,6 +48,7 @@ dependencies {
     implementation(libs.lifecycle.viewmodel.ktx)
     implementation(libs.navigation.fragment)
     implementation(libs.navigation.ui)
+    implementation(libs.rules)
     implementation(libs.firebase.storage)
     implementation(libs.firebase.installations)
     testImplementation(libs.junit)
@@ -58,7 +60,11 @@ dependencies {
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
     androidTestImplementation("androidx.test.espresso:espresso-contrib:3.5.1")
     androidTestImplementation("androidx.test:rules:1.6.0")
+    androidTestImplementation("androidx.test.uiautomator:uiautomator:2.2.0") // this is for clicking in an arbitrary location
     // for DB
     implementation(platform("com.google.firebase:firebase-bom:33.5.1"))
     implementation("com.google.firebase:firebase-firestore")
+    testImplementation("org.hamcrest:hamcrest-library:3.0")
+    debugImplementation("androidx.fragment:fragment-testing-manifest:1.8.5")
+    androidTestImplementation("androidx.fragment:fragment-testing:1.8.5")
 }
