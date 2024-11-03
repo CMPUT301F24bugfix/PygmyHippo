@@ -22,6 +22,7 @@
 package com.example.pygmyhippo.common;
 
 import android.net.Uri;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -30,7 +31,11 @@ import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
@@ -129,86 +134,6 @@ public class Account {
         this.location = location;
         this.receiveNotifications = receiveNotifications;
         this.enableGeolocation = enableGeolocation;
-
-        if (profilePicture == null) {
-            String imageLink = "gs://pygmyhippo-b7892.appspot.com/" + deviceID + "/avatar/" + pictureUri.getLastPathSegment();
-            // user roles
-            ArrayList<String> userRoles = new ArrayList<>();
-            userRoles.add("entrant");
-
-            // Add the user to the Firestore collection
-            HashMap<String, Object> newUser = new HashMap<>();
-            newUser.put("name", name);
-            newUser.put("pronouns", pronouns);
-            newUser.put("phone_number", phoneNumber);
-            newUser.put("email_address", emailAddress);
-            newUser.put("device_id", deviceID);
-            newUser.put("location", location);
-            newUser.put("receive_notifications", receiveNotifications);
-            newUser.put("enable_geolocation", enableGeolocation);
-            newUser.put("profile_photo", pictureUri); // for displaying photo
-            newUser.put("profile_photo_storage_link", imageLink); // for performing db queries on photo
-            newUser.put("current_role", "entrant");
-            newUser.put("roles", userRoles);
-            AccountRef.document(deviceID).set(newUser);
-
-            System.out.println("User Created!");
-
-        } else {
-            Uri profilePicUri = Uri.parse(profilePicture);
-            StorageReference avatarRef = storageRef.child("/" + deviceID + "/avatar/" + profilePicUri.getLastPathSegment());
-            UploadTask uploadAvatar;
-            uploadAvatar = avatarRef.putFile(profilePicUri);
-
-
-        Task<Uri> urlTask = uploadAvatar.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
-            @Override
-            public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
-                if (!task.isSuccessful()) {
-                    throw task.getException();
-                }
-                // Continue with the task to get the download URL
-                return avatarRef.getDownloadUrl();
-            }
-        }).addOnCompleteListener(new OnCompleteListener<Uri>() {
-            @Override
-            public void onComplete(@NonNull Task<Uri> task) {
-                if (task.isSuccessful()) {
-                    Uri downloadUri = task.getResult();
-                    // direct link for a profile photo
-                    String imageLink = "gs://pygmyhippo-b7892.appspot.com/" + deviceID + "/avatar/" + profilePicUri.getLastPathSegment();
-                    // user roles
-                    ArrayList<String> userRoles = new ArrayList<>();
-                    userRoles.add("entrant");
-
-                    // Add the user to the Firestore collection
-                    HashMap<String, Object> newUser = new HashMap<>();
-                    newUser.put("name", name);
-                    newUser.put("pronouns", pronouns);
-                    newUser.put("phone_number", phoneNumber);
-                    newUser.put("email_address", emailAddress);
-                    newUser.put("device_id", deviceID);
-                    newUser.put("location", location);
-                    newUser.put("receive_notifications", receiveNotifications);
-                    newUser.put("enable_geolocation", enableGeolocation);
-                    newUser.put("profile_photo", downloadUri); // for displaying photo
-                    newUser.put("profile_photo_storage_link", imageLink); // for performing db queries on photo
-                    newUser.put("current_role", "entrant");
-                    newUser.put("roles", userRoles);
-                    AccountRef.document(deviceID).set(newUser);
-
-                    System.out.println("User Created!");
-
-                } else {
-                    // Handle failures
-                    // ...
-
-
-                }
-            }
-        });
-
-    }
     }
 
     public static class Facility {
@@ -263,7 +188,7 @@ public class Account {
 
 
     public String getAccountID() {
-        return accountID;
+       return accountID;
     }
 
     public void setAccountID(String accountID) {
@@ -327,6 +252,10 @@ public class Account {
         this.receiveNotifications = receiveNotifications;
     }
 
+    public Uri getPictureUri () {
+        return this.pictureUri;
+    }
+
     public boolean isEnableGeolocation() {
         return enableGeolocation;
     }
@@ -342,6 +271,7 @@ public class Account {
     public void setRoles(ArrayList<AccountRole> roles) {
         this.roles = roles;
     }
+
 
     public AccountRole getCurrentRole() {
         return currentRole;

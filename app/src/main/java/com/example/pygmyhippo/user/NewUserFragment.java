@@ -147,7 +147,7 @@ public class NewUserFragment extends Fragment {
                 Boolean userNotify = notifyRadio.isChecked();
                 Boolean userGeolocation = geolocationRadio.isChecked();
 
-                if (userName.isEmpty() || userPhone.isEmpty() || userEmail.isEmpty() || userPronouns.isEmpty()) {
+                if (userName.isEmpty() || userEmail.isEmpty() || userPronouns.isEmpty()) {
 
                 } else {
                     UserProcessing user = new UserProcessing();
@@ -166,6 +166,8 @@ public class NewUserFragment extends Fragment {
                                 userGeolocation,
                                 imagePath);
                     } catch (FileNotFoundException e) {
+                        throw new RuntimeException(e);
+                    } catch (Exception e) {
                         throw new RuntimeException(e);
                     }
                 }

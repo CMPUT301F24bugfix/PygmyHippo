@@ -69,7 +69,7 @@ public class UserProcessing {
             Boolean allowGeo,
             Boolean allowNotifications,
             String imagePath
-    ) throws FileNotFoundException {
+    ) throws Exception {
         this.userName = name;
         this.userEmail = email;
         this.userPhone = phone;
@@ -88,7 +88,7 @@ public class UserProcessing {
             System.out.println("generate avatar..");
         } else {
             System.out.println("Creating...");
-            Account newUser = new Account(
+            Account newAccount = new Account(
                     userEmail + deviceID,
                     userName,
                     userPronouns,
@@ -100,7 +100,11 @@ public class UserProcessing {
                     userLocation,
                     userNotify,
                     userGeolocation
-            );}
+            );
+            CreateUser newUser= new CreateUser();
+            newUser.setInfoAndCreate(newAccount);
+
+        }
     }
 
     /** Code is from Chatgpt for uploading from Picasso's cache to firebase
@@ -176,7 +180,7 @@ public class UserProcessing {
                     Uri downloadUri = task.getResult();
                     System.out.println("Creating...");
                     try {
-                        Account newUser = new Account(
+                        Account newAccount = new Account(
                                 userEmail + deviceID,
                                 userName,
                                 userPronouns,
@@ -189,7 +193,12 @@ public class UserProcessing {
                                 userNotify,
                                 userGeolocation
                         );
+
+                       CreateUser newUser= new CreateUser();
+                        newUser.setInfoAndCreate(newAccount);
                     } catch (FileNotFoundException e) {
+                        throw new RuntimeException(e);
+                    } catch (Exception e) {
                         throw new RuntimeException(e);
                     }
                 } else {
