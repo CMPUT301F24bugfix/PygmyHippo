@@ -18,6 +18,11 @@ import com.example.pygmyhippo.common.Callback.MyCallback;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+/**
+ * Creates a user in the DB
+ * @author Jennifer
+ * @version 1.0
+ */
 public class CreateUser {
     private String accountID;
     private String name;
@@ -59,7 +64,11 @@ public class CreateUser {
         createWorker.onEvent();
     }
 
-
+    /**
+     * the Callback after populating the class with user info
+     * @author Jennifer
+     * @version 1.0
+     */
     public class Create implements MyCallback {
         @Override
         public void callbackCall() throws Exception {
