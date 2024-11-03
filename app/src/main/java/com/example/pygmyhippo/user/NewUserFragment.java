@@ -1,10 +1,8 @@
 package com.example.pygmyhippo.user;
 
 
-import static android.Manifest.permission.READ_MEDIA_IMAGES;
-import static android.Manifest.permission.READ_MEDIA_VISUAL_USER_SELECTED;
-
 import android.content.Context;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 
@@ -22,17 +20,15 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
-import com.example.pygmyhippo.MainActivity;
 import com.example.pygmyhippo.R;
-import com.example.pygmyhippo.common.Account;
 import com.example.pygmyhippo.common.UserProcessing.UserProcessing;
 import com.example.pygmyhippo.databinding.UserFragmentNewUserBinding;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.installations.FirebaseInstallations;
 
 import java.io.FileNotFoundException;
-import java.net.URISyntaxException;
 
 
 /**
@@ -96,7 +92,7 @@ public class NewUserFragment extends Fragment {
     public void onViewCreated(View view, Bundle savedInstanceState){
         super.onViewCreated(view, savedInstanceState);
         final String[] deviceID = new String[1];
-        // Gets teh FID on the user (Firebase Installation id)
+        // Gets the FID on the user (Firebase Installation id)
         FirebaseInstallations.getInstance().getId()
                 .addOnCompleteListener(new OnCompleteListener<String>() {
                     @Override
@@ -147,11 +143,27 @@ public class NewUserFragment extends Fragment {
                 Boolean userNotify = notifyRadio.isChecked();
                 Boolean userGeolocation = geolocationRadio.isChecked();
 
-                if (userName.isEmpty() || userEmail.isEmpty() || userPronouns.isEmpty()) {
+                /* Got the color parse function from Dhruv Raval at stackOverflow
+                * Posted November 21, 2014 [Accessed November 3, 2024
+                * https://stackoverflow.com/questions/6926644/android-color-to-int-conversion */
+                if (userName.isEmpty()) {
+                    CharSequence nameWarning = "Please fill out your name.";
+                    int duration = Snackbar.LENGTH_SHORT;
+                    Snackbar namePopup = Snackbar.make(view, nameWarning, duration);
+                    namePopup.setBackgroundTint(Color.parseColor("#8c032c"));
+                    namePopup.show();
+
+                } else if (userEmail.isEmpty()) {
+                    CharSequence emailWarning = "Please fill out your email.";
+                    int duration = Snackbar.LENGTH_SHORT;
+                    Snackbar namePopup = Snackbar.make(view, emailWarning, duration);
+                    namePopup.setBackgroundTint(Color.parseColor("#8c032c"));
+                    namePopup.show();
 
                 } else {
                     UserProcessing user = new UserProcessing();
                     try {
+
                         user.processData(
                                 getActivity(),
                                 binding.ENewUserProfileImg,
@@ -165,6 +177,13 @@ public class NewUserFragment extends Fragment {
                                 userNotify,
                                 userGeolocation,
                                 imagePath);
+                        CharSequence success = "User created!.";
+                        int duration = Snackbar.LENGTH_SHORT;
+                        Snackbar namePopup = Snackbar.make(view, success, duration);
+                        namePopup.setBackgroundTint(Color.parseColor("#036e35"));
+                        namePopup.show();
+
+
                     } catch (FileNotFoundException e) {
                         throw new RuntimeException(e);
                     } catch (Exception e) {
