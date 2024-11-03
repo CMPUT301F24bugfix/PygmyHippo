@@ -39,6 +39,7 @@ android {
 
 
 dependencies {
+    implementation("com.github.kenglxn.QRGen:android:3.0.1") // QR generation
     implementation("com.squareup.picasso:picasso:2.8")
     implementation("de.hdodenhof:circleimageview:3.1.0")
     implementation(libs.appcompat)
@@ -50,6 +51,7 @@ dependencies {
     implementation(libs.navigation.fragment)
     implementation(libs.navigation.ui)
     implementation(libs.firebase.firestore)
+    implementation(libs.rules)
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
@@ -57,15 +59,17 @@ dependencies {
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
-    debugImplementation("androidx.fragment:fragment-testing-manifest:1.6.0")
-    androidTestImplementation("androidx.fragment:fragment-testing:1.6.0")
 
     androidTestImplementation("androidx.test.espresso:espresso-contrib:3.5.1") {
         exclude(group = "com.google.protobuf", module = "protobuf-lite")
     }
     androidTestImplementation("androidx.test:rules:1.6.0")
+    androidTestImplementation("androidx.test.uiautomator:uiautomator:2.2.0") // this is for clicking in an arbitrary location
     // Added for database
     implementation(platform("com.google.firebase:firebase-bom:32.7.1"))
     implementation("com.google.firebase:firebase-firestore")
     implementation("com.google.firebase:firebase-storage")
+    testImplementation("org.hamcrest:hamcrest-library:3.0")
+    debugImplementation("androidx.fragment:fragment-testing-manifest:1.8.5")
+    androidTestImplementation("androidx.fragment:fragment-testing:1.8.5")
 }

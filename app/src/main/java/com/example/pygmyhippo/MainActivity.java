@@ -25,6 +25,7 @@ import com.example.pygmyhippo.databinding.UserMainActivityNagivationBinding;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  * Main Activity for our android app
@@ -40,8 +41,31 @@ public class MainActivity extends AppCompatActivity implements OnRoleSelectedLis
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        dbHandler = new MainActivityDB();
-        dbHandler.getDeviceAccount(getDeviceID(), this);
+
+        boolean useDB = true; // Change to enable/disable DB use.
+
+        if (useDB) {
+            dbHandler = new MainActivityDB();
+            dbHandler.getDeviceAccount(getDeviceID(), this);
+        } else {
+            signedInAccount = new Account(
+                    "1",  // accountID
+                    "Moo Deng",  // name
+                    "She/Her",  // pronouns
+                    "7801234567",  // phoneNumber
+                    "MooDeng@ualberta.ca",  // emailAddress
+                    "1",  // deviceID
+                    "profilePic.png",  // profilePicture
+                    "Edmonton, Alberta",  // location
+                    true,  // receiveNotifications
+                    true,  // enableGeolocation
+                    new ArrayList<>(Arrays.asList(Account.AccountRole.user, Account.AccountRole.organiser)),  // roles
+                    Account.AccountRole.organiser,  // CHANGE EITHER ORANIZER OR USER FOR ROLE currentRole (TODO: Change this if you want to test with user)
+                    null  // facilityProfile
+            );
+
+            setNavigation(signedInAccount);
+        }
 
         /* This code is from the stack overflow to fix an error I was having when trying to commit to github.
         It enables the app the app to prompt for user notifications... I don't know what was triggering the error.
