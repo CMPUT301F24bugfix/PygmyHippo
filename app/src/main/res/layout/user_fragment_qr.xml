@@ -6,6 +6,7 @@
     android:layout_height="match_parent"
     tools:context=".user.QRFragment">
     <!--TODO: ID should be changed since its not descriptive -->
+<!--    TODO: NOT SURE WHAT THIS IS FOR -->
     <TextView
         android:id="@+id/text_dashboard"
         android:layout_width="match_parent"
@@ -19,6 +20,11 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <com.journeyapps.barcodescanner.DecoratedBarcodeView
+        android:id="@+id/u_barcodeScanner"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
 
     <Button
         android:id="@+id/u_scanQRButton"
