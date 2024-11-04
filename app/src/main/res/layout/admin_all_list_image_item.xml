@@ -3,16 +3,15 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="wrap_content"
+    android:layout_gravity="center">
 
     <ImageView
         android:id="@+id/a_alllist_image"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:maxWidth="128dp"
-        android:maxHeight="128dp"
-        android:minWidth="96dp"
-        android:minHeight="96dp"
+        android:layout_width="@dimen/all_image_item_side_length"
+        android:layout_height="@dimen/all_image_item_side_length"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:srcCompat="@tools:sample/avatars" />

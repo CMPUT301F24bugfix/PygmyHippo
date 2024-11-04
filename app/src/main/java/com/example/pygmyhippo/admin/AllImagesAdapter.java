@@ -1,5 +1,6 @@
 package com.example.pygmyhippo.admin;
 
+import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,24 +13,41 @@ import com.example.pygmyhippo.common.BaseRecyclerAdapter;
 import com.example.pygmyhippo.common.BaseViewHolder;
 import com.example.pygmyhippo.common.Image;
 import com.example.pygmyhippo.common.RecyclerClickListener;
+import com.example.pygmyhippo.database.DBOnCompleteFlags;
+import com.example.pygmyhippo.database.DBOnCompleteListener;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
 public class AllImagesAdapter extends BaseRecyclerAdapter<Image, AllImagesAdapter.ImageViewHolder> {
-    public static class ImageViewHolder extends BaseViewHolder<Image> {
+    public static class ImageViewHolder extends BaseViewHolder<Image> implements DBOnCompleteListener<Uri> {
         private final ImageView imageView;
+        private final AllImageDB handler;
 
         public ImageViewHolder(@NonNull View itemView) {
             super(itemView);
             imageView = itemView.findViewById(R.id.a_alllist_image);
+            handler = new AllImageDB();
         }
 
         @Override
         public void setViews(Image dataclass) {
-            Picasso.get()
-                    .load(dataclass.getUrl())
-                    .into(imageView);
+            handler.getImageDownloadUrl(dataclass, this);
+        }
+
+        @Override
+        public void OnComplete(@NonNull ArrayList<Uri> docs, int queryID, int flags) {
+            if (queryID == 0) {
+                if (flags == DBOnCompleteFlags.SUCCESS.value) {
+                    Uri downloadUri = docs.get(0);
+                    int imageSideLength = imageView.getWidth() / 2;
+                    Picasso.get()
+                            .load(downloadUri)
+                            .resize(imageSideLength, imageSideLength)
+                            .centerCrop()
+                            .into(imageView);
+                }
+            }
         }
     }
 

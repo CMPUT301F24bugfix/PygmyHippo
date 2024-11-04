@@ -20,6 +20,7 @@ import com.example.pygmyhippo.common.Account;
 import com.example.pygmyhippo.common.OnRoleSelectedListener;
 import com.example.pygmyhippo.database.DBOnCompleteFlags;
 import com.example.pygmyhippo.database.DBOnCompleteListener;
+import com.example.pygmyhippo.databinding.AdminMainActivityNavigationBinding;
 import com.example.pygmyhippo.databinding.OrganiserMainActivityNagivationBinding;
 import com.example.pygmyhippo.databinding.UserMainActivityNagivationBinding;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -35,6 +36,7 @@ public class MainActivity extends AppCompatActivity implements OnRoleSelectedLis
     final int PERMISSION_REQUEST_CODE =112;
     private OrganiserMainActivityNagivationBinding organiserBinder;
     private UserMainActivityNagivationBinding userBinder;
+    private AdminMainActivityNavigationBinding adminBinding;
     private MainActivityDB dbHandler;
     private Account signedInAccount;
 
@@ -198,6 +200,16 @@ public class MainActivity extends AppCompatActivity implements OnRoleSelectedLis
         NavigationUI.setupWithNavController(navView, navController);
     }
 
+
+    private void setupNavControllerAdmin(BottomNavigationView navView, Bundle bundle) {
+        AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(
+                R.id.admin_all_events, R.id.admin_all_images, R.id.admin_all_profiles)
+                .build();
+        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_activity_main);
+        navController.setGraph(R.navigation.admin_mobile_navigation, bundle);
+        NavigationUI.setupWithNavController(navView, navController);
+    }
+
     /**
      * Callback called when DB queries complete.
      * @param docs - Documents retrieved from DB (if it was a get query).
@@ -280,9 +292,14 @@ public class MainActivity extends AppCompatActivity implements OnRoleSelectedLis
                 setContentView(organiserBinder.getRoot());
                 setupNavControllerOrganiser(organiserBinder.navView, bundle);
                 break;
+            case admin:
+                Log.d("MainActivity", "Setting navigation for admin.");
+                adminBinding = AdminMainActivityNavigationBinding.inflate(getLayoutInflater());
+                setContentView(adminBinding.getRoot());
+                setupNavControllerAdmin(adminBinding.navView, bundle);
+                break;
             default:
                 Log.d("MainActivity", String.format("Unknown role (%s)", account.getCurrentRole().value));
-                // needs a case for admin
                 break;
         }
     }
