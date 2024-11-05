@@ -31,12 +31,12 @@ import java.util.ArrayList;
 public class AllImagesAdapter extends BaseRecyclerAdapter<Image, AllImagesAdapter.ImageViewHolder> {
     public static class ImageViewHolder extends BaseViewHolder<Image> implements DBOnCompleteListener<Uri> {
         private final ImageView imageView;
-        private final AllImageDB handler;
+        private final AllImagesDB handler;
 
         public ImageViewHolder(@NonNull View itemView) {
             super(itemView);
             imageView = itemView.findViewById(R.id.a_alllist_image);
-            handler = new AllImageDB();
+            handler = new AllImagesDB();
         }
 
         @Override

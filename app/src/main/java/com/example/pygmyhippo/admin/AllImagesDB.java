@@ -28,7 +28,7 @@ import java.util.ArrayList;
  *
  * TODO: Need redesign for better compatibility with RecyclerView pagination in AllImagesFragment for getting accounts and events.
  */
-public class AllImageDB extends DBHandler {
+public class AllImagesDB extends DBHandler {
     /**
      * Gets a long-live download uris for Picasso to get image from Firebase Storage.
      * @param image Image class with gs:// link to Firebase Storage image.

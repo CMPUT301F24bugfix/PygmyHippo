@@ -40,7 +40,7 @@ public class AllImagesFragment extends Fragment implements RecyclerClickListener
     AdminFragmentAllListBinding binding;
     AllImagesAdapter adapter;
     ArrayList<Image> imageList;
-    AllImageDB handler;
+    AllImagesDB handler;
 
     @Override
     public void onItemClick(int position) {
@@ -52,7 +52,7 @@ public class AllImagesFragment extends Fragment implements RecyclerClickListener
                              ViewGroup container, Bundle savedInstanceState) {
         binding =  AdminFragmentAllListBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
-        handler = new AllImageDB();
+        handler = new AllImagesDB();
         
         binding.aAlllistTitleText.setText(R.string.all_images_title);
         binding.aAlllistFilterByText.setVisibility(View.INVISIBLE);
