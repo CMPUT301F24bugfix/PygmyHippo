@@ -4,11 +4,10 @@ package com.example.pygmyhippo.organizer;
 This Fragment is meant for the Organizer to view the users who entered the waitlist on an event the Organizer made.
 Will contain the functionality to filter the given list depending on the status of the entrant
 Deals with user stories 02.06.01, 02.06.02, 02.06.03, and 02.02.01
-Author: Kori Kozicki
+Author: Kori
 
-Issues: Navigation to and from this activity
+Issues:
       No Image handling
-      Entrant ID is hardcoded, need to make the fragment that leads to this one
  */
 
 import static android.content.ContentValues.TAG;
@@ -23,6 +22,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -30,8 +30,12 @@ import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 
 import com.example.pygmyhippo.R;
+import com.example.pygmyhippo.common.Account;
 import com.example.pygmyhippo.common.Entrant;
+import com.example.pygmyhippo.common.Event;
 import com.example.pygmyhippo.database.DBConnector;
+import com.example.pygmyhippo.database.DBOnCompleteFlags;
+import com.example.pygmyhippo.database.DBOnCompleteListener;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
@@ -45,17 +49,16 @@ import java.util.ArrayList;
  * @author Kori
  * TODO:
  *  - Add image handling from database
- *  - Set up so not hardcoded event ID
- *  - Consider using entrant list from event instead. Right now this is a rough draft
  */
-public class ViewEntrantsFragment extends Fragment {
+public class ViewEntrantsFragment extends Fragment implements DBOnCompleteListener<Event> {
     private ArrayList<Entrant> entrantListData = new ArrayList<Entrant>();
     private ArrayAdapter<Entrant> entrantListAdapter;
     private ListView entrantListView;
     private Spinner statusSpinner;
     private ImageButton backButton;
-    private DBConnector dbConnector = new DBConnector();
-    private CollectionReference entrantsRef;
+    private String eventID;
+    private Event event = new Event();
+    private ViewEntrantDB dbHandler;
 
     /**
      * OnCreateView sets up the interactables on viewEntrants page and deals with the list data
@@ -74,9 +77,12 @@ public class ViewEntrantsFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.o_view_entrants, container, false);
 
-        // FIXME: This is a test eventID for now. Later the event will be passed to this fragment
-        //      And the list will be updated from the event object
-        String eventID = "event1";
+        // Get the event ID that was passed from the last fragment
+        eventID = getArguments().getString("eventID");
+
+        // Get the event from the database
+        dbHandler = new ViewEntrantDB();
+        dbHandler.getEvent(eventID, this);
 
         // Get the spinner view
         statusSpinner = view.findViewById(R.id.o_entrant_list_spinner);
@@ -92,26 +98,31 @@ public class ViewEntrantsFragment extends Fragment {
         o_spinner_adapter.setDropDownViewResource(R.layout.e_p_role_dropdown);
         statusSpinner.setAdapter(o_spinner_adapter);
 
+        return view;
+    }
+
+    /**
+     * on View created we want to set up most of our click listeners (especially for the spinner)
+     * @param view The View returned by {@link #onCreateView(LayoutInflater, ViewGroup, Bundle)}.
+     * @param savedInstanceState If non-null, this fragment is being re-constructed
+     * from a previous saved state as given here.
+     */
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
         // Initialize our ListView
         entrantListView = view.findViewById(R.id.o_entrant_listview);
 
         // Set up our array adapter and connect it to our listView
-        entrantListAdapter = new com.example.pygmyhippo.EntrantArrayAdapter(view.getContext(), entrantListData);
+        entrantListAdapter = new com.example.pygmyhippo.organizer.EntrantArrayAdapter(view.getContext(), entrantListData);
         entrantListView.setAdapter(entrantListAdapter);
 
         // Get and set up navigation for the back button
         backButton = view.findViewById(R.id.o_entrant_view_back_button);
         backButton.setOnClickListener(view1 -> {
-            //FIXME: Navigate back for now, but eventually should navigate to an event view
             Navigation.findNavController(view1).navigate(R.id.action_view_entrants_fragment_to_event_fragment);
         });
-
-        // Connect to the database and get a collection reference to Entrants
-        dbConnector.DBConnect();
-        entrantsRef = dbConnector.getDB().collection("Entrants");
-
-        // Update the list from the database initially
-        setEntrantWaitList(entrantListData, eventID);
 
         // Set up on click listeners for the spinner to filter the list
         statusSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -119,16 +130,36 @@ public class ViewEntrantsFragment extends Fragment {
             public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
                 if (position == 0) {
                     // Waitlist was selected
-                    setEntrantWaitList(entrantListData, eventID);
+                    ArrayList<Entrant> filterList = setEntrantWaitList(event.getEntrants());
+
+                    // Set the new data and notify the adapter
+                    entrantListAdapter.clear();
+                    entrantListAdapter.addAll(filterList);
+                    entrantListAdapter.notifyDataSetChanged();
                 } else if (position == 1) {
                     // Invited was selected
-                    setEntrantInvited(entrantListData, eventID);
+                    ArrayList<Entrant> filterList = setEntrantInvited(event.getEntrants());
+
+                    // Set the new data and notify the adapter
+                    entrantListAdapter.clear();
+                    entrantListAdapter.addAll(filterList);
+                    entrantListAdapter.notifyDataSetChanged();
                 } else if (position == 2) {
                     // Cancelled was selected
-                    setEntrantCancelled(entrantListData, eventID);
+                    ArrayList<Entrant> filterList = setEntrantCancelled(event.getEntrants());
+
+                    // Set the new data and notify the adapter
+                    entrantListAdapter.clear();
+                    entrantListAdapter.addAll(filterList);
+                    entrantListAdapter.notifyDataSetChanged();
                 } else if (position == 3) {
                     // Accepted was selected
-                    setEntrantAccepted(entrantListData, eventID);
+                    ArrayList<Entrant> filterList = setEntrantAccepted(event.getEntrants());
+
+                    // Set the new data and notify the adapter
+                    entrantListAdapter.clear();
+                    entrantListAdapter.addAll(filterList);
+                    entrantListAdapter.notifyDataSetChanged();
                 }
             }
 
@@ -137,149 +168,145 @@ public class ViewEntrantsFragment extends Fragment {
                 // Do nothing
             }
         });
-
-        return view;
     }
 
     /**
-     * This method will take our list and update it with waitlisted entrants
-     * @author Kori
-     * @param entrantListData Or data list we want to update
-     * @param eventID The id of the event the entrants belong to
+     * Callback called when view entrant DB queries complete.
+     * @param docs - Documents retrieved from DB (if it was a get query).
+     * @param queryID - ID of query completed.
+     * @param flags - Flags to indicate query status/set how to process query result.
      */
-    public void setEntrantWaitList(ArrayList<Entrant> entrantListData, String eventID) {
-        // Learned how to make these queries from https://firebase.google.com/docs/firestore/query-data/queries
-        // Accessed on Oct 27th, 2024
-        entrantsRef.whereEqualTo("eventID", eventID).whereEqualTo("entrantStatus", "waitlisted")
-                .get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if (task.isSuccessful()) {
-                            // Clear the list first
-                            entrantListData.clear();
+    @Override
+    public void OnComplete(@NonNull ArrayList<Event> docs, int queryID, int flags) {
+        switch (queryID) {
+            case 0: // getEvent()
+                if (flags == DBOnCompleteFlags.SINGLE_DOCUMENT.value) {
+                    // Get the event for this list of entrants and initialize the list
+                    event = docs.get(0);
+                    entrantListData = event.getEntrants();
 
-                            // Go through each matching document
-                            for (QueryDocumentSnapshot document : task.getResult()) {
-                                // Convert the document data into an Entrant object
-                                Entrant entrant = new Entrant((String) document.get("eventID"), (String) document.get("accountID"), (String) document.get("name"), (String) document.get("emailAddress"), (String) document.get("phoneNumber"));
-                                entrant.setEntrantStatus(Entrant.EntrantStatus.valueOf((String) document.get("entrantStatus")));
-                                // Add that entrant to the list we want to display
-                                entrantListData.add(entrant);
+                    // Initially set the filter to waitlist
+                    ArrayList<Entrant> filterList = setEntrantWaitList(entrantListData);
 
-                                Log.d(TAG, document.getId() + " => " + document.getData());
-                            }
-                            // Notify array of changes
-                            entrantListAdapter.notifyDataSetChanged();
-                        } else {
-                            Log.d(TAG, "Error getting documents: ", task.getException());
-                        }
-                    }
-                });
+                    // Set the new data and notify the adapter
+                    entrantListAdapter.clear();
+                    entrantListAdapter.addAll(filterList);
+                    entrantListAdapter.notifyDataSetChanged();
+                } else {
+                    // Should only ever expect 1 document, otherwise there must be an error
+                    handleDBError();
+                }
+                break;
+            default:
+                Log.i("DB", String.format("Unknown query ID (%d)", queryID));
+                handleDBError();
+        }
+    }
+
+    private void handleDBError() {
+        Toast toast = Toast.makeText(getContext(), "DB Error!", Toast.LENGTH_SHORT);
+        toast.show();
     }
 
     /**
-     * This method will take our list and update it with invited entrants
+     * This method takes the entrant list and returns the data list to contain only those with waitlist status
      * @author Kori
-     * @param entrantListData Or data list we want to update
-     * @param eventID The id of the event the entrants belong to
+     * @param allEntrants
+     *          The complete unfiltered list of entrants
+     * @return filterList
      */
-    public void setEntrantInvited(ArrayList<Entrant> entrantListData, String eventID) {
-        entrantsRef.whereEqualTo("eventID", eventID).whereEqualTo("entrantStatus", "invited")
-                .get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if (task.isSuccessful()) {
-                            // Clear the list first
-                            entrantListData.clear();
+    public ArrayList<Entrant> setEntrantWaitList(ArrayList<Entrant> allEntrants) {
+        Integer index = 0;
 
-                            // Go through each matching document
-                            for (QueryDocumentSnapshot document : task.getResult()) {
-                                // Convert the document data into an Entrant object
-                                Entrant entrant = new Entrant((String) document.get("eventID"), (String) document.get("accountID"), (String) document.get("name"), (String) document.get("emailAddress"), (String) document.get("phoneNumber"));
-                                entrant.setEntrantStatus(Entrant.EntrantStatus.valueOf((String) document.get("entrantStatus")));
-                                // Add that entrant to the list we want to display
-                                entrantListData.add(entrant);
+        // Make a new list that will hold our results
+        ArrayList<Entrant> filterList = new ArrayList<>();
 
-                                Log.d(TAG, document.getId() + " => " + document.getData());
-                            }
-                            // Notify array of changes
-                            entrantListAdapter.notifyDataSetChanged();
-                        } else {
-                            Log.d(TAG, "Error getting documents: ", task.getException());
-                        }
-                    }
-                });
+        while (index < allEntrants.size()) {
+            // Check if the current entrant status is waitlisted
+            if (allEntrants.get(index).getEntrantStatus().value.equals("waitlisted")) {
+                // Add them to the list to display
+                filterList.add(allEntrants.get(index));
+            }
+
+            index++;
+        }
+
+        // Return the filter list
+        return filterList;
     }
 
     /**
-     * This method will take our list and update it with cancelled entrants
+     * This method takes the entrant list and returns the data list to contain only those with invited status
      * @author Kori
-     * @param entrantListData Or data list we want to update
-     * @param eventID The id of the event the entrants belong to
+     * @param allEntrants
+     * @return filterList
      */
-    public void setEntrantCancelled(ArrayList<Entrant> entrantListData, String eventID) {
-        entrantsRef.whereEqualTo("eventID", eventID).whereEqualTo("entrantStatus", "cancelled")
-                .get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if (task.isSuccessful()) {
-                            // Clear the list first
-                            entrantListData.clear();
+    public ArrayList<Entrant> setEntrantInvited(ArrayList<Entrant> allEntrants) {
+        Integer index = 0;
 
-                            // Go through each matching document
-                            for (QueryDocumentSnapshot document : task.getResult()) {
-                                // Convert the document data into an Entrant object
-                                Entrant entrant = new Entrant((String) document.get("eventID"), (String) document.get("accountID"), (String) document.get("name"), (String) document.get("emailAddress"), (String) document.get("phoneNumber"));
-                                entrant.setEntrantStatus(Entrant.EntrantStatus.valueOf((String) document.get("entrantStatus")));
-                                // Add that entrant to the list we want to display
-                                entrantListData.add(entrant);
+        // Make a new list that will hold our results
+        ArrayList<Entrant> filterList = new ArrayList<>();
 
-                                Log.d(TAG, document.getId() + " => " + document.getData());
-                            }
-                            // Notify array of changes
-                            entrantListAdapter.notifyDataSetChanged();
-                        } else {
-                            Log.d(TAG, "Error getting documents: ", task.getException());
-                        }
-                    }
-                });
+        while (index < allEntrants.size()) {
+            // Check if the current entrant status is waitlisted
+            if (allEntrants.get(index).getEntrantStatus().value.equals("invited")) {
+                // Add them to the list to display
+                filterList.add(allEntrants.get(index));
+            }
+
+            index++;
+        }
+
+        return filterList;
     }
 
     /**
-     * This method will take our list and update it with accepted entrants
+     * This method takes the entrant list and returns the data list to contain only those with cancelled status
      * @author Kori
-     * @param entrantListData Or data list we want to update
-     * @param eventID The id of the event the entrants belong to
+     * @param allEntrants
+     * @return filterList
      */
-    public void setEntrantAccepted(ArrayList<Entrant> entrantListData, String eventID) {
-        entrantsRef.whereEqualTo("eventID", eventID).whereEqualTo("entrantStatus", "accepted")
-                .get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if (task.isSuccessful()) {
-                            // Clear the list first
-                            entrantListData.clear();
+    public ArrayList<Entrant> setEntrantCancelled(ArrayList<Entrant> allEntrants) {
+        Integer index = 0;
 
-                            // Go through each matching document
-                            for (QueryDocumentSnapshot document : task.getResult()) {
-                                // Convert the document data into an Entrant object
-                                Entrant entrant = new Entrant((String) document.get("eventID"), (String) document.get("accountID"), (String) document.get("name"), (String) document.get("emailAddress"), (String) document.get("phoneNumber"));
-                                entrant.setEntrantStatus(Entrant.EntrantStatus.valueOf((String) document.get("entrantStatus")));
-                                // Add that entrant to the list we want to display
-                                entrantListData.add(entrant);
+        // Make a new list that will hold our results
+        ArrayList<Entrant> filterList = new ArrayList<>();
 
-                                Log.d(TAG, document.getId() + " => " + document.getData());
-                            }
-                            // Notify array of changes
-                            entrantListAdapter.notifyDataSetChanged();
-                        } else {
-                            Log.d(TAG, "Error getting documents: ", task.getException());
-                        }
-                    }
-                });
+        while (index < allEntrants.size()) {
+            // Check if the current entrant status is waitlisted
+            if (allEntrants.get(index).getEntrantStatus().value.equals("cancelled")) {
+                // Add them to the list to display
+                filterList.add(allEntrants.get(index));
+            }
+
+            index++;
+        }
+
+        return filterList;
+    }
+
+    /**
+     * This method takes the entrant list and returns the data list to contain only those with accepted status
+     * @author Kori
+     * @param allEntrants
+     * @return filterList
+     */
+    public ArrayList<Entrant> setEntrantAccepted(ArrayList<Entrant> allEntrants) {
+        Integer index = 0;
+
+        // Make a new list that will hold our results
+        ArrayList<Entrant> filterList = new ArrayList<>();
+
+        while (index < allEntrants.size()) {
+            // Check if the current entrant status is waitlisted
+            if (allEntrants.get(index).getEntrantStatus().value.equals("accepted")) {
+                // Add them to the list to display
+                filterList.add(allEntrants.get(index));
+            }
+
+            index++;
+        }
+
+        return filterList;
     }
 }

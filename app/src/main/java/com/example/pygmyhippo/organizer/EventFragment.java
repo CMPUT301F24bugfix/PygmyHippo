@@ -8,6 +8,7 @@ Purpose is to: Allow the organiser to update their event
 Contributors: Katherine, Kori
 Issues: Doesn't have updatable fields yet
         - Isn't connected to database yet
+        - No Image handling
  */
 
 import static android.content.ContentValues.TAG;
@@ -100,12 +101,6 @@ public class EventFragment extends Fragment {
             Navigation.findNavController(view1).navigate(R.id.action_event_fragment_to_organiser_myEvents_page);
         });
 
-        // Set up the listener for viewing entrants button
-        Button viewEntrantsButton = view.findViewById(R.id.button_view_entrants);
-        viewEntrantsButton.setOnClickListener(view1 -> {
-            Navigation.findNavController(view1).navigate(R.id.action_event_fragment_to_view_entrants_fragment);
-        });
-
         TextView eventNameView = view.findViewById(R.id.u_eventNameView);
         TextView eventDateView = view.findViewById(R.id.u_eventDateView);
         TextView eventTimeView = view.findViewById(R.id.u_eventTimeView);
@@ -127,6 +122,14 @@ public class EventFragment extends Fragment {
         eventLocationView.setText(event.getLocation());
         eventCostView.setText(event.getCost());
         eventAboutDescriptionView.setText(event.getDescription());
+
+        // Set up the listener for viewing entrants button
+        Bundle eventBundle = new Bundle();
+        eventBundle.putString("eventID", event.getEventID());
+        Button viewEntrantsButton = view.findViewById(R.id.button_view_entrants);
+        viewEntrantsButton.setOnClickListener(view1 -> {
+            Navigation.findNavController(view1).navigate(R.id.action_event_fragment_to_view_entrants_fragment, eventBundle);
+        });
 
         // If the event is closed, then change the style of the draw button
         if (event.getEventStatus().value.equals("cancelled")) {
