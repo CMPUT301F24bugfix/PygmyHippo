@@ -13,16 +13,20 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.pygmyhippo.R;
+import com.example.pygmyhippo.common.Account;
+import com.example.pygmyhippo.common.Event;
 import com.example.pygmyhippo.common.Image;
 import com.example.pygmyhippo.common.RecyclerClickListener;
+import com.example.pygmyhippo.database.DBOnCompleteListener;
 import com.example.pygmyhippo.databinding.AdminFragmentAllListBinding;
 
 import java.util.ArrayList;
 
-public class AllImagesFragment extends Fragment implements RecyclerClickListener {
+public class AllImagesFragment extends Fragment implements RecyclerClickListener, DBOnCompleteListener<Object> {
     AdminFragmentAllListBinding binding;
     AllImagesAdapter adapter;
     ArrayList<Image> imageList;
+    AllImageDB handler;
 
     @Override
     public void onItemClick(int position) {
@@ -34,6 +38,7 @@ public class AllImagesFragment extends Fragment implements RecyclerClickListener
                              ViewGroup container, Bundle savedInstanceState) {
         binding =  AdminFragmentAllListBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
+        handler = new AllImageDB();
         
         binding.aAlllistTitleText.setText(R.string.all_images_title);
         binding.aAlllistFilterByText.setVisibility(View.INVISIBLE);
@@ -41,10 +46,11 @@ public class AllImagesFragment extends Fragment implements RecyclerClickListener
         binding.aAlllistOrderSpinner.setVisibility(View.INVISIBLE);
 
         imageList = new ArrayList<>();
-        imageList.add(new Image("gs://pygmyhippo-b7892.appspot.com/moodengpfp.jpg", "100", Image.ImageType.Account));
-        imageList.add(new Image("gs://pygmyhippo-b7892.appspot.com/ea0wkspMQlK0Z_5tIwxomw/avatar/1000000020", "200", Image.ImageType.Account));
-        imageList.add(new Image("gs://pygmyhippo-b7892.appspot.com/ea0wkspMQlK0Z_5tIwxomw/avatar/1000000049", "300", Image.ImageType.Account));
         adapter = new AllImagesAdapter(imageList, this);
+
+        // FIXME: Change how accounts and events are grabbed from DB so it works better with RecyclerView pagination.
+        handler.getAccounts(1000, this);
+        handler.getEvents(1000, this);
 
         binding.aAlllistRecycler.setAdapter(adapter);
         binding.aAlllistRecycler.setLayoutManager(new GridLayoutManager(getContext(), 2));
@@ -68,5 +74,29 @@ public class AllImagesFragment extends Fragment implements RecyclerClickListener
     public void onDestroyView() {
         super.onDestroyView();
         binding = null;
+    }
+
+    @Override
+    public void OnComplete(@NonNull ArrayList<Object> docs, int queryID, int flags) {
+        switch (queryID) {
+            case 1:
+                docs.forEach(obj -> {
+                    Account account = (Account) obj;
+                    Image image = new Image(account.getProfilePicture(), account.getAccountID(), Image.ImageType.Account);
+                    imageList.add(image);
+                    adapter.notifyItemInserted(imageList.size() - 1);
+                });
+                break;
+            case 2:
+                docs.forEach(obj -> {
+                    Event event = (Event) obj;
+                    Image image = new Image(event.getEventPoster(), event.getEventID(), Image.ImageType.Event);
+                    imageList.add(image);
+                    adapter.notifyItemInserted(imageList.size() - 1);
+                });
+                break;
+            default:
+                Log.d("AllImagesFragment", String.format("Received OnComplete call from unknown queryID %d", queryID));
+        }
     }
 }
