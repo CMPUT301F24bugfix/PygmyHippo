@@ -53,7 +53,6 @@ public class QRFragment extends Fragment {
         return root;
     }
 
-    // qr code scanner to event button
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -70,46 +69,23 @@ public class QRFragment extends Fragment {
                     new String[]{Manifest.permission.CAMERA},
                     CAMERA_PERMISSION_REQUEST_CODE);
         }
-
-        // TODO: implement this type of navigation when qr scanning is successful
-        Button scanQRButton = view.findViewById(R.id.u_scanQRButton);
-        scanQRButton.setOnClickListener(view1 -> {
-            Navigation.findNavController(view1).navigate(R.id.action_scanQRcodeFragment_to_eventFragment);
-        });
     }
 
     private void startSingleScan() {
         barcodeView.decodeSingle(callback);
     }
 
-    private final BarcodeCallback callback = new BarcodeCallback() {
-        @Override
-        public void barcodeResult(BarcodeResult result) {
-            if (result != null && result.getText() != null) {
-                String eventID = result.getText();
-                Toast testShowBarcode = Toast.makeText(getActivity(), eventID, Toast.LENGTH_LONG);
-                testShowBarcode.show();
+    private final BarcodeCallback callback = result -> {
+        if (result != null && result.getText() != null) {
+            String eventID = result.getText();
+            Toast testShowBarcode = Toast.makeText(getActivity(), eventID, Toast.LENGTH_LONG);
+            testShowBarcode.show();
 
-                // TODO: if evenID doesnt correpond to anything in database, restart using startSingleScan()
+            // TODO: if evenID doesnt correpond to anything in database, restart using startSingleScan()
 
-                Navigation.findNavController(requireView()).navigate(R.id.action_scanQRcodeFragment_to_eventFragment);
-            }
+            Navigation.findNavController(requireView()).navigate(R.id.action_scanQRcodeFragment_to_eventFragment);
         }
     };
-
-    private final ActivityResultLauncher<String> requestPermissionLauncher =
-            registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
-                if (isGranted) {
-                    barcodeView.decodeSingle(callback);
-                } else {
-                    // TODO: i'm not sure if this actually works
-                    // TODO: permissions should be checked from the website or set for the first time
-                    // either a toast or some kind of screen
-                    Toast cameraPermissionsWarning = Toast.makeText(getActivity(), "Camera permission is required to scan QR codes.", Toast.LENGTH_LONG);
-                    cameraPermissionsWarning.show();
-                }
-            });
-
 
     @Override
     public void onResume() {
