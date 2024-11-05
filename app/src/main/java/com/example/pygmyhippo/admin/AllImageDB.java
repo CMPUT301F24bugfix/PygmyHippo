@@ -1,3 +1,10 @@
+/**
+ * AllImageDB
+ *
+ * DBHandler for AllImagesFragment and ImageViewHolder.
+ */
+
+
 package com.example.pygmyhippo.admin;
 
 import android.net.Uri;
@@ -14,7 +21,19 @@ import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
 
+/**
+ * DBHandler for AllImagesFragment.
+ *
+ * Handles getting images from firebase storage, getting accounts and events from firestore.
+ *
+ * TODO: Need redesign for better compatibility with RecyclerView pagination in AllImagesFragment for getting accounts and events.
+ */
 public class AllImageDB extends DBHandler {
+    /**
+     * Gets a long-live download uris for Picasso to get image from Firebase Storage.
+     * @param image Image class with gs:// link to Firebase Storage image.
+     * @param listener DBOnCompleteListener to call when query completes.
+     */
     public void getImageDownloadUrl(Image image, DBOnCompleteListener<Uri> listener) {
         Log.d("DB", String.format("Getting storage reference for image url %s", image.getUrl()));
         try {
@@ -36,6 +55,11 @@ public class AllImageDB extends DBHandler {
         }
     }
 
+    /**
+     * Gets accounts from Firestore with non-empty string in profilePicture field.
+     * @param limit Limit on number of accounts to get in query.
+     * @param listener DBOnCompleteListener to call when query completes.
+     */
     public void getAccounts(int limit, DBOnCompleteListener<Object> listener) {
         db.collection("Accounts")
             .whereNotEqualTo("profilePicture", "")
@@ -55,6 +79,11 @@ public class AllImageDB extends DBHandler {
             });
     }
 
+    /**
+     * Gets accounts from Firestore with non-empty string in eventPoster field.
+     * @param limit Limit on number of events to get in query.
+     * @param listener DBOnCompleteListener to call when query completes.
+     */
     public void getEvents(int limit, DBOnCompleteListener<Object> listener) {
         db.collection("Events")
             .whereNotEqualTo("eventPoster", "")
@@ -63,7 +92,7 @@ public class AllImageDB extends DBHandler {
             .addOnCompleteListener(task -> {
                 if (task.isSuccessful()) {
                     QuerySnapshot queryResult = task.getResult();
-                    Log.d("DB", String.format("%d Events with non-empty profilePicture are fetched.", queryResult.size()));
+                    Log.d("DB", String.format("%d Events with non-empty eventPoster are fetched.", queryResult.size()));
                     ArrayList<Event> eventList = new ArrayList<>();
                     queryResult.forEach(doc -> eventList.add(doc.toObject(Event.class)));
                     listener.OnComplete(new ArrayList<>(eventList), 2, DBOnCompleteFlags.SUCCESS.value);

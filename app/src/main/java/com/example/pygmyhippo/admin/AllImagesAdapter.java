@@ -1,3 +1,9 @@
+/**
+ * AllImagesAdapter
+ *
+ * RecyclerView adapter for RecyclerView in AllImagesFragment.
+ */
+
 package com.example.pygmyhippo.admin;
 
 import android.net.Uri;
@@ -19,6 +25,9 @@ import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
+/**
+ * Adapter for RecyclerView in AllImagesFragment.
+ */
 public class AllImagesAdapter extends BaseRecyclerAdapter<Image, AllImagesAdapter.ImageViewHolder> {
     public static class ImageViewHolder extends BaseViewHolder<Image> implements DBOnCompleteListener<Uri> {
         private final ImageView imageView;

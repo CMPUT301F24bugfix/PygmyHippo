@@ -1,3 +1,14 @@
+/**
+ * AllImagesFragment
+ *
+ * Displays all available in the system for admins to see. Displays users' profile pictures, events'
+ * posters, and facilities' pictures. Clicking on an image should navigate the admin to the relevant
+ * page with admin permissions so they may or may not delete the image.
+ *
+ * TODO: Add images for facilities
+ * TODO: Add navigation to profile, events, and (eventually) facilties.
+ */
+
 package com.example.pygmyhippo.admin;
 
 import android.graphics.Rect;
@@ -22,6 +33,9 @@ import com.example.pygmyhippo.databinding.AdminFragmentAllListBinding;
 
 import java.util.ArrayList;
 
+/**
+ * Fragment for displaying all images for admins.
+ */
 public class AllImagesFragment extends Fragment implements RecyclerClickListener, DBOnCompleteListener<Object> {
     AdminFragmentAllListBinding binding;
     AllImagesAdapter adapter;
@@ -48,7 +62,6 @@ public class AllImagesFragment extends Fragment implements RecyclerClickListener
         imageList = new ArrayList<>();
         adapter = new AllImagesAdapter(imageList, this);
 
-        // FIXME: Change how accounts and events are grabbed from DB so it works better with RecyclerView pagination.
         handler.getAccounts(1000, this);
         handler.getEvents(1000, this);
 

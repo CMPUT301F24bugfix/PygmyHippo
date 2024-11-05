@@ -30,6 +30,8 @@ import java.util.Arrays;
 
 /**
  * Main Activity for our android app
+ *
+ * FIXME: Double account creation when a new device tries to open the app.
  * @author Jennifer, Griffin
  */
 public class MainActivity extends AppCompatActivity implements OnRoleSelectedListener, DBOnCompleteListener<Account> {
