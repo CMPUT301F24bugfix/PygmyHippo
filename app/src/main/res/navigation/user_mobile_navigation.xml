@@ -38,7 +38,7 @@
         tools:layout="@layout/user_fragment_profile"
         android:background="@color/dark_purple">
         <argument
-            android:name="account"
+            android:name="signedInAccount"
             app:argType="com.example.pygmyhippo.common.Account" />
     </fragment>
     <fragment

@@ -9,11 +9,16 @@ import android.widget.ArrayAdapter;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.example.pygmyhippo.R;
+import com.example.pygmyhippo.common.Account;
 import com.example.pygmyhippo.common.Event;
 import com.example.pygmyhippo.common.RecyclerClickListener;
+import com.example.pygmyhippo.database.DBOnCompleteFlags;
+import com.example.pygmyhippo.database.DBOnCompleteListener;
 import com.example.pygmyhippo.databinding.AdminFragmentAllListBinding;
 
 import java.util.ArrayList;
@@ -25,34 +30,38 @@ import java.util.ArrayList;
  * different orders. When events are clicked, the fragment should navigate to that particular
  * event's profile page with admin permissions.
  */
-public class AllEventsFragment extends Fragment implements RecyclerClickListener {
+public class AllEventsFragment extends Fragment implements RecyclerClickListener, DBOnCompleteListener<Event> {
     AdminFragmentAllListBinding binding;
-    ArrayList<Event> allListData;
+    ArrayList<Event> allEvents;
     AllEventsAdapter adapter;
-
-    private void getData() {
-        // TODO: Add DB integration
-        allListData = new ArrayList<>();
-        allListData.add(new Event("LeetCode Meetup", "SUB", "Oct. 30th", "09:30", Event.EventStatus.ongoing));
-        allListData.add(new Event("CheriCon", "VVC", "Nov. 1st", "23:30", Event.EventStatus.ongoing));
-    }
-
+    AllEventsDB handler;
+    Account signedInAccount;
 
     @Override
     public void onItemClick(int position) {
-        // TODO: Add navigation.
         Log.i("User", String.format("Admin clicked item at position %d", position));
+        assert getActivity() != null;
+        NavController navController = Navigation.findNavController(getActivity(), R.id.nav_host_fragment_activity_main);
+
+        Bundle navArgs = new Bundle();
+        navArgs.putParcelable("signedInAccount", signedInAccount);
+        navArgs.putString("eventID", allEvents.get(position).getEventID());
+        navController.navigate(R.id.action_admin_navigation_all_events_to_admin_navigation_event_page, navArgs);
     }
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        getData();
-
         binding = AdminFragmentAllListBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
-        adapter = new AllEventsAdapter(allListData, this);
+        signedInAccount = AllEventsFragmentArgs.fromBundle(getArguments()).getSignedInAccount();
+        allEvents = new ArrayList<>();
+
+        handler = new AllEventsDB();
+        handler.getEvents(1000, this);
+
+        adapter = new AllEventsAdapter(allEvents, this);
         binding.aAlllistRecycler.setLayoutManager(new LinearLayoutManager(getContext()));
         binding.aAlllistRecycler.setAdapter(adapter);
 
@@ -85,5 +94,17 @@ public class AllEventsFragment extends Fragment implements RecyclerClickListener
     public void onDestroyView() {
         super.onDestroyView();
         binding = null;
+    }
+
+    @Override
+    public void OnComplete(@NonNull ArrayList<Event> docs, int queryID, int flags) {
+        if (queryID == 0) {
+            if (flags == DBOnCompleteFlags.SUCCESS.value) {
+                docs.forEach(doc -> {
+                    allEvents.add(doc);
+                    adapter.notifyItemInserted(allEvents.size() - 1);
+                });
+            }
+        }
     }
 }
