@@ -8,6 +8,7 @@ Purpose is to: Allow the organiser to update their event
 Contributors: Katharine, Kori
 Issues: Doesn't have updatable fields yet
         - Isn't connected to database yet
+        - No Image handling
  */
 
 import static android.content.ContentValues.TAG;
@@ -53,6 +54,9 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.example.pygmyhippo.R;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+
 import java.util.Random;
 
 /**
@@ -69,9 +73,14 @@ public class EventFragment extends Fragment {
 
     // TODO: pass entrant and even information using bundle...
 
-    // populate single event page with hardcoded event information
+    // populate single event page with hardcoded event information (Note this Event is in the database, just still hardcoded)
     public Event hardcodeEvent() {
         entrants = new ArrayList<>();
+        // Add hardcoded entrants
+        entrants.add(new Entrant("5LCoIC4Ix46vPavSV1KX", Entrant.EntrantStatus.waitlisted));
+        entrants.add(new Entrant("8Bd5McHSzrYcjH99yv8Y", Entrant.EntrantStatus.invited));
+        entrants.add(new Entrant("SfSzvATHz9m9fj7vmWbp", Entrant.EntrantStatus.accepted));
+        entrants.add(new Entrant("hupsArkwU6yvvSD1tKIe", Entrant.EntrantStatus.cancelled));
 
         return event = new Event(
                 "Hippo Party",
@@ -100,12 +109,6 @@ public class EventFragment extends Fragment {
             Navigation.findNavController(view1).navigate(R.id.action_event_fragment_to_organiser_myEvents_page);
         });
 
-        // Set up the listener for viewing entrants button
-        Button viewEntrantsButton = view.findViewById(R.id.button_view_entrants);
-        viewEntrantsButton.setOnClickListener(view1 -> {
-            Navigation.findNavController(view1).navigate(R.id.action_event_fragment_to_view_entrants_fragment);
-        });
-
         TextView eventNameView = view.findViewById(R.id.u_eventNameView);
         TextView eventDateView = view.findViewById(R.id.u_eventDateView);
         TextView eventTimeView = view.findViewById(R.id.u_eventTimeView);
@@ -127,6 +130,14 @@ public class EventFragment extends Fragment {
         eventLocationView.setText(event.getLocation());
         eventCostView.setText(event.getCost());
         eventAboutDescriptionView.setText(event.getDescription());
+
+        // Set up the listener for viewing entrants button
+        Bundle eventBundle = new Bundle();
+        eventBundle.putString("eventID", event.getEventID());
+        Button viewEntrantsButton = view.findViewById(R.id.button_view_entrants);
+        viewEntrantsButton.setOnClickListener(view1 -> {
+            Navigation.findNavController(view1).navigate(R.id.action_event_fragment_to_view_entrants_fragment, eventBundle);
+        });
 
         // If the event is closed, then change the style of the draw button
         if (event.getEventStatus().value.equals("cancelled")) {

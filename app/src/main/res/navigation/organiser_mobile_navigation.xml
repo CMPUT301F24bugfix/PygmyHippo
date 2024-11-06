@@ -55,6 +55,9 @@ app:startDestination="@+id/organiser_postEvent_page">
         <action
             android:id="@+id/action_view_entrants_fragment_to_event_fragment"
             app:destination="@id/event_fragment" />
+        <argument
+            android:name="eventID"
+            app:argType="string" />
     </fragment>
 
     <fragment
