@@ -23,6 +23,7 @@ import com.example.pygmyhippo.database.DBOnCompleteListener;
 import com.example.pygmyhippo.databinding.OrganiserMainActivityNagivationBinding;
 import com.example.pygmyhippo.databinding.UserMainActivityNagivationBinding;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.example.pygmyhippo.common.LotteryNotificationHelper;
 
 import java.util.ArrayList;
 import java.util.Arrays;
