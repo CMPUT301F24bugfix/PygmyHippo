@@ -66,9 +66,9 @@ public class LotteryNotificationHelper {
      */
     private void showNotification(String entrantName, String eventName, String status) {
         // Create a message to display in the notification
-        String message = "accepted".equals(status) ?
-                entrantName + " has been selected for " + eventName :
-                entrantName + " was not selected for " + eventName;
+        String message = "invited".equals(status) ?
+                "Congratulations" + entrantName + " has been selected for " + eventName :
+                "Unfortunately" + entrantName + " was not selected for " + eventName;
 
         // Show a toast message (only visible if the app is open)
         Toast.makeText(context, message, Toast.LENGTH_LONG).show();
