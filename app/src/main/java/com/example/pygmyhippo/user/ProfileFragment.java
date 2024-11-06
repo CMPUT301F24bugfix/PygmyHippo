@@ -146,7 +146,7 @@ public class ProfileFragment extends Fragment  implements AdapterView.OnItemSele
         uploadImgBtn = root.findViewById(R.id.E_profile_uploadImageBtn);
         deleteImgBtn = root.findViewById(R.id.E_profile_deleteAvatarbtn);
 
-        signedInAccount = ProfileFragmentArgs.fromBundle(getArguments()).getAccount();
+        signedInAccount = ProfileFragmentArgs.fromBundle(getArguments()).getSignedInAccount();
         setProfile();
 /*
         Spinner role_dropdown = (Spinner) root.findViewById(R.id.user_spinner_role);
