@@ -1,3 +1,7 @@
+/**
+ * DBHandler for ProfileFragment
+ */
+
 package com.example.pygmyhippo.user;
 
 import android.util.Log;
@@ -10,6 +14,12 @@ import com.google.firebase.firestore.DocumentSnapshot;
 
 import java.util.ArrayList;
 
+/**
+ * DBHandler for ProfileFragment
+ *
+ * Queries for account based off of document ID.
+ * Can delete account based off of document ID.
+ */
 public class ProfileDB extends DBHandler {
     public void getAccountByID(String accountID, DBOnCompleteListener<Account> listener) {
         db.collection("Accounts")

@@ -1,3 +1,9 @@
+/**
+ * DBHandler for AllUsersFragment
+ *
+ * Queries for users from Firestore to be displayed.
+ */
+
 package com.example.pygmyhippo.admin;
 
 import android.util.Log;
@@ -10,6 +16,11 @@ import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 
+/**
+ * DBHandler for AllUsersFragment
+ *
+ * Queries for users from Firestore to be displayed.
+ */
 public class AllUsersDB extends DBHandler {
     public void getUsers(int limit, DBOnCompleteListener<Account> listener) {
         db.collection("Accounts")
