@@ -40,6 +40,9 @@
         <action
             android:id="@+id/action_admin_navigation_all_users_to_admin_navigation_all_images"
             app:destination="@id/admin_navigation_all_images" />
+        <action
+            android:id="@+id/action_admin_navigation_all_users_to_admin_navigation_profile_page"
+            app:destination="@id/admin_navigation_profile_page" />
     </fragment>
 
     <fragment
@@ -72,6 +75,22 @@
         <argument
             android:name="signedInAccount"
             app:argType="com.example.pygmyhippo.common.Account" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/admin_navigation_profile_page"
+        android:name="com.example.pygmyhippo.user.ProfileFragment"
+        android:label="(Admin) Profile Page"
+        tools:layout="@layout/user_fragment_profile"
+        android:background="@color/dark_purple">
+
+        <argument
+            android:name="signedInAccount"
+            app:argType="com.example.pygmyhippo.common.Account" />
+        <argument
+            android:name="adminViewAccountID"
+            app:argType="string"
+            app:nullable="true" />
     </fragment>
 
 </navigation>
