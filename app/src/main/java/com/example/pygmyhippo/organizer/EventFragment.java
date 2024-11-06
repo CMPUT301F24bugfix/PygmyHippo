@@ -7,8 +7,8 @@ Purpose is to: Allow the organiser to update their event
                 - Let the organiser draw the lottery for that event
 Contributors: Katherine, Kori
 Issues: Doesn't have updatable fields yet
-        - Isn't connected to database yet
         - No Image handling
+        - Hardcoded event ID, need to set up proper navigation to this event
  */
 
 import static android.content.ContentValues.TAG;
@@ -30,6 +30,8 @@ import androidx.navigation.Navigation;
 
 import com.example.pygmyhippo.common.Entrant;
 import com.example.pygmyhippo.common.Event;
+import com.example.pygmyhippo.database.DBOnCompleteFlags;
+import com.example.pygmyhippo.database.DBOnCompleteListener;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
@@ -60,19 +62,25 @@ import java.util.Random;
  * This fragment will hold a single events
  * @author Katharine
  *          Kori added on to this for organiser
- * @version 1.0
+ * @version 2.0
  * No returns and no parameters
+ * TODO: Set up proper navigation to this fragment and add image handling
  */
 public class EventFragment extends Fragment {
 
     private Event event;
     private ArrayList<Entrant> entrants;
-
-    // TODO: pass entrant and even information using bundle...
+    private ViewEntrantDB dbHandler;
+    private String eventID;
+    private Bundle eventBundle = new Bundle();
 
     // populate single event page with hardcoded event information
     public Event hardcodeEvent() {
         entrants = new ArrayList<>();
+        entrants.add(new Entrant("5LCoIC4Ix46vPavSV1KX", Entrant.EntrantStatus.waitlisted));
+        entrants.add(new Entrant("8Bd5McHSzrYcjH99yv8Y", Entrant.EntrantStatus.waitlisted));
+        entrants.add(new Entrant("SfSzvATHz9m9fj7vmWbp", Entrant.EntrantStatus.waitlisted));
+        entrants.add(new Entrant("hupsArkwU6yvvSD1tKIe", Entrant.EntrantStatus.waitlisted));
 
         return event = new Event(
                 "Hippo Party",
@@ -101,6 +109,9 @@ public class EventFragment extends Fragment {
             Navigation.findNavController(view1).navigate(R.id.action_event_fragment_to_organiser_myEvents_page);
         });
 
+        // Initialize the handler
+        dbHandler = new ViewEntrantDB();
+
         TextView eventNameView = view.findViewById(R.id.u_eventNameView);
         TextView eventDateView = view.findViewById(R.id.u_eventDateView);
         TextView eventTimeView = view.findViewById(R.id.u_eventTimeView);
@@ -110,34 +121,54 @@ public class EventFragment extends Fragment {
         TextView eventAboutDescriptionView = view.findViewById(R.id.u_aboutEventDescriptionView);
         Button closeEventButton = view.findViewById(R.id.close_event_button);
 
-        // set with hardcoded values, set the view in the same wy form the event received from the constructor
-        // TODO: database event info to be done here
-        event = hardcodeEvent();
-        event.setEventWinnersCount(5);
+        // Get the eventID and query for the related event
+        // TODO: Remove the hardcoded event when finished this fragment (get eventID from last fragment)
+        eventID = "IaMdwyQpHDh6GdZF025k";
 
-        eventNameView.setText(event.getEventTitle());
-        eventDateView.setText(event.getDate());
-        eventTimeView.setText(event.getTime());
-        eventOrganizerView.setText(event.getOrganiserID());
-        eventLocationView.setText(event.getLocation());
-        eventCostView.setText(event.getCost());
-        eventAboutDescriptionView.setText(event.getDescription());
+        dbHandler.getEvent(eventID, new DBOnCompleteListener<Event>() {
+            @Override
+            public void OnComplete(@NonNull ArrayList<Event> docs, int queryID, int flags) {
+                if (flags == DBOnCompleteFlags.SINGLE_DOCUMENT.value) {
+                    // Get the event to display for this fragment
+                    event = docs.get(0);
+
+                    // Set the text fields
+                    eventNameView.setText(event.getEventTitle());
+                    eventDateView.setText(event.getDate());
+                    eventTimeView.setText(event.getTime());
+                    eventOrganizerView.setText(event.getOrganiserID());
+                    eventLocationView.setText(event.getLocation());
+                    eventCostView.setText(event.getCost());
+                    eventAboutDescriptionView.setText(event.getDescription());
+
+                    // Set up the bundle here when we get the event object
+                    eventBundle.putString("eventID", event.getEventID());
+
+                    // If the event is closed, then change the style of the draw button
+                    if (event.getEventStatus().value.equals("cancelled")) {
+                        closeEventButton.setBackgroundColor(0xFFA4A8C3);
+                        closeEventButton.setText("Lottery closed");
+                        closeEventButton.setTextColor(0xFF3A5983);
+                        closeEventButton.setTextSize(20);
+                    }
+                } else {
+                    // Should only ever expect 1 document, otherwise there must be an error
+                    handleDBError();
+
+                    // TODO: Remove this in final product
+                    // Or the sample event got deleted in the database. So default to the hardcoded event for testing
+                    event = hardcodeEvent();
+                    event.setEventWinnersCount(2);
+                }
+            }
+        });
 
         // Set up the listener for viewing entrants button
-        Bundle eventBundle = new Bundle();
-        eventBundle.putString("eventID", event.getEventID());
         Button viewEntrantsButton = view.findViewById(R.id.button_view_entrants);
         viewEntrantsButton.setOnClickListener(view1 -> {
             Navigation.findNavController(view1).navigate(R.id.action_event_fragment_to_view_entrants_fragment, eventBundle);
         });
 
-        // If the event is closed, then change the style of the draw button
-        if (event.getEventStatus().value.equals("cancelled")) {
-            closeEventButton.setBackgroundColor(0xFFA4A8C3);
-            closeEventButton.setText("Lottery closed");
-            closeEventButton.setTextColor(0xFF3A5983);
-            closeEventButton.setTextSize(20);
-        }
     }
 
     @Override
@@ -163,6 +194,20 @@ public class EventFragment extends Fragment {
 
                     // Draw the lottery winners and change their statuses
                     drawWinners(event);
+
+                    // After the draw, update the event in the database
+                    dbHandler.updateEvent(event, new DBOnCompleteListener<Event>() {
+                        @Override
+                        public void OnComplete(@NonNull ArrayList<Event> docs, int queryID, int flags) {
+                            // Log when the data is updated or catch if there was an error
+                            if (flags == DBOnCompleteFlags.SUCCESS.value) {
+                                Log.d("DB", String.format("Successfully finished updating event with ID (%s).", event.getEventID()));
+                            } else {
+                                // If not the success flag, then there was an error
+                                handleDBError();
+                            }
+                        }
+                    });
                 } else if (event.getEventStatus().value.equals("ongoing") && event.getEntrants().isEmpty()) {
                     // There are no entrants so the lottery should not be drawn
                     Toast.makeText(getContext(), "No entrants to run the lottery on!", Toast.LENGTH_SHORT).show();
@@ -175,6 +220,7 @@ public class EventFragment extends Fragment {
 
     /**
      * This method will go through the event's entrants and randomly select a specific amount to be invited
+     * It will change the statuses of the entrants in the event
      * @param event
      * @author Kori
      * TODO: Update the event in the database when entrant status gets changed
@@ -185,32 +231,36 @@ public class EventFragment extends Fragment {
 
         Random rand = new Random();
         int winnerNumber = 0;
-        ArrayList<Entrant> entrants = event.getEntrants();
 
         // If the entrant list is smaller than the winner size, then just set them all as winners
-        if (entrants.size() <= event.getEventWinnersCount()) {
+        if (event.getEntrants().size() <= event.getEventWinnersCount()) {
             // Use the winner number as an index
-            while (winnerNumber < entrants.size()) {
+            while (winnerNumber < event.getEntrants().size()) {
                 // Update all the entrants statuses
                 //TODO: Notifications would probably be sent from here
-                entrants.get(winnerNumber).setEntrantStatus(Entrant.EntrantStatus.invited);
+                event.getEntrants().get(winnerNumber).setEntrantStatus(Entrant.EntrantStatus.invited);
                 winnerNumber++;
             }
         } else {
             // Loop for how many winners this event wants (using winner count to keep check on it)
             while (winnerNumber < event.getEventWinnersCount()) {
                 // Draw a random index number between 0 and the size of the list
-                int drawIndex = rand.nextInt(entrants.size());
+                int drawIndex = rand.nextInt(event.getEntrants().size());
 
-                if (entrants.get(drawIndex).getEntrantStatus().value.equals("invited")) {
+                if (event.getEntrants().get(drawIndex).getEntrantStatus().value.equals("invited")) {
                     // This entrant was already invited by the rng, so restart iteration
                     continue;
                 }
 
                 // If we get here, then the entrant hasn't already been invited
-                entrants.get(drawIndex).setEntrantStatus(Entrant.EntrantStatus.invited);
+                event.getEntrants().get(drawIndex).setEntrantStatus(Entrant.EntrantStatus.invited);
                 winnerNumber++;
             }
         }
+    }
+
+    private void handleDBError() {
+        Toast toast = Toast.makeText(getContext(), "DB Error!", Toast.LENGTH_SHORT);
+        toast.show();
     }
 }
