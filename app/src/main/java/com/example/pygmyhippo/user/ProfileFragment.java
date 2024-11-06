@@ -12,20 +12,29 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.PickVisualMediaRequest;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
 
 import com.example.pygmyhippo.R;
 import com.example.pygmyhippo.common.Account;
 import com.example.pygmyhippo.common.OnRoleSelectedListener;
+import com.example.pygmyhippo.database.DBOnCompleteFlags;
+import com.example.pygmyhippo.database.DBOnCompleteListener;
 import com.example.pygmyhippo.databinding.UserFragmentProfileBinding;
 import com.squareup.picasso.Picasso;
 
 import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.Objects;
 
 /**
  * This fragment holds most of the information about a user which is returned from a call to the database
@@ -43,17 +52,22 @@ import java.net.URISyntaxException;
  * @version 1.1
  * No returns and no parameters
  */
-public class ProfileFragment extends Fragment  implements AdapterView.OnItemSelectedListener{
+public class ProfileFragment extends Fragment  implements AdapterView.OnItemSelectedListener, DBOnCompleteListener<Account> {
     private Uri imagePath;
     private UserFragmentProfileBinding binding;
+    private NavController navController;
+    private ProfileDB handler;
+
     private Account signedInAccount;
+    private String adminViewAccountID;
 
     private EditText nameField, pronounField, phoneField, emailField;
     private RadioButton decGeo, decNotify;
     private RadioGroup notifyRGroup, geolocationRGroup;
     private Button uploadImgBtn, deleteImgBtn;
     private ImageView editButton;
-    private Button updateButton;
+    private Button updateButton, deleteUserButton;
+    private ConstraintLayout adminConstraintLayout;
 
     // Listener interface to communicate with the main activity
     private OnRoleSelectedListener roleSelectedListener;
@@ -111,6 +125,15 @@ public class ProfileFragment extends Fragment  implements AdapterView.OnItemSele
                 .into(binding.EProfileProfileImg);
 
     }
+
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        navController = Navigation.findNavController(view);
+    }
+
+
     /**
      * Creates the view
      * @author Jennifer
@@ -125,8 +148,11 @@ public class ProfileFragment extends Fragment  implements AdapterView.OnItemSele
         binding = UserFragmentProfileBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
+        handler = new ProfileDB();
+
         editButton = root.findViewById(R.id.E_profile_editBtn);
         updateButton = root.findViewById(R.id.E_profile_create);
+        deleteUserButton = binding.aDeleteUserButton;
 
         // All the text fields
         nameField = root.findViewById(R.id.E_profile_textName);
@@ -146,7 +172,13 @@ public class ProfileFragment extends Fragment  implements AdapterView.OnItemSele
         uploadImgBtn = root.findViewById(R.id.E_profile_uploadImageBtn);
         deleteImgBtn = root.findViewById(R.id.E_profile_deleteAvatarbtn);
 
+        // Constraint Layout
+        adminConstraintLayout = binding.aDeleteUserConstraint;
+
+        // Navigation arguments
         signedInAccount = ProfileFragmentArgs.fromBundle(getArguments()).getSignedInAccount();
+        adminViewAccountID = ProfileFragmentArgs.fromBundle(getArguments()).getAdminViewAccountID();
+
         setProfile();
 /*
         Spinner role_dropdown = (Spinner) root.findViewById(R.id.user_spinner_role);
@@ -273,17 +305,29 @@ public class ProfileFragment extends Fragment  implements AdapterView.OnItemSele
         deleteImgBtn.setOnClickListener(deleteImage);
         editButton.setOnClickListener(editUser);
         updateButton.setOnClickListener(updateUser);
+        deleteUserButton.setOnClickListener(view -> {
+            handler.deleteAccountByID(adminViewAccountID, this);
+        });
 
         return root;
     }
 
+    private void populateTextViews(Account account) {
+        nameField.setText(account.getName());
+        pronounField.setText(account.getPronouns());
+        phoneField.setText(account.getPhoneNumber());
+        emailField.setText(account.getEmailAddress());
+        decGeo.setActivated(account.isEnableGeolocation());
+        decNotify.setActivated(account.isReceiveNotifications());
+    }
+
     private void setProfile() {
-        nameField.setText(signedInAccount.getName());
-        pronounField.setText(signedInAccount.getPronouns());
-        phoneField.setText(signedInAccount.getPhoneNumber());
-        emailField.setText(signedInAccount.getEmailAddress());
-        decGeo.setActivated(signedInAccount.isEnableGeolocation());
-        decNotify.setActivated(signedInAccount.isReceiveNotifications());
+        if (signedInAccount.getCurrentRole() == Account.AccountRole.admin && !Objects.equals(adminViewAccountID, signedInAccount.getAccountID())) {
+            handler.getAccountByID(adminViewAccountID, this);
+            adminConstraintLayout.setVisibility(View.VISIBLE);
+        } else {
+            populateTextViews(signedInAccount);
+        }
     }
 
     /**
@@ -316,5 +360,25 @@ public class ProfileFragment extends Fragment  implements AdapterView.OnItemSele
     public void onDestroyView() {
         super.onDestroyView();
         binding = null;
+    }
+
+    @Override
+    public void OnComplete(@NonNull ArrayList<Account> docs, int queryID, int flags) {
+        if (queryID == 0) {
+            if (flags == DBOnCompleteFlags.SUCCESS.value) {
+                Account retrievedAccount= docs.get(0);
+                populateTextViews(retrievedAccount);
+            } else {
+                Toast.makeText(getContext(), "Could not get account from Firestore.", Toast.LENGTH_LONG).show();
+            }
+        } else if (queryID == 1) {
+            if (flags == DBOnCompleteFlags.SUCCESS.value) {
+                Bundle navArgs = new Bundle();
+                navArgs.putParcelable("signedInAccount", signedInAccount);
+                navController.navigate(R.id.admin_navigation_all_users, navArgs);
+            } else {
+                Toast.makeText(getContext(), "Error when deleting account from Firestore.", Toast.LENGTH_LONG).show();
+            }
+        }
     }
 }
