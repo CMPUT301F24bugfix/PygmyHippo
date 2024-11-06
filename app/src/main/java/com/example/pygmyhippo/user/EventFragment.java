@@ -1,12 +1,12 @@
 package com.example.pygmyhippo.user;
 
 /*
-This Fragment will display one of the events that a User can see after scanning it's QR code
+This Fragment will display one of the events that a User can see after scanning its QR code
 Purposes:
         - Let the User view the details of the event
         - Let the User join the event if they wish
         - If they navigate back to this event, allow them the option to leave the event
-Contributors: Katherine
+Contributors: Katharine
 Issues:
         - Isn't connected to database yet (sample data is hardcoded)
  */

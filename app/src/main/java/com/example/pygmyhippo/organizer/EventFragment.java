@@ -5,7 +5,7 @@ This Fragment will display one of the organiser's event they wish to view and gi
 Purpose is to: Allow the organiser to update their event
                 - Let the organiser see the entrants for that event
                 - Let the organiser draw the lottery for that event
-Contributors: Katherine, Kori
+Contributors: Katharine, Kori
 Issues: Doesn't have updatable fields yet
         - Isn't connected to database yet
  */
