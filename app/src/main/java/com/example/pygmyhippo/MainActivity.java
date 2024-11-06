@@ -37,6 +37,7 @@ public class MainActivity extends AppCompatActivity implements OnRoleSelectedLis
     private UserMainActivityNagivationBinding userBinder;
     private MainActivityDB dbHandler;
     private Account signedInAccount;
+    private LotteryNotificationHelper notificationHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,6 +79,9 @@ public class MainActivity extends AppCompatActivity implements OnRoleSelectedLis
                 getNotificationPermission();
             }
         }
+        // Initialize the LotteryNotificationHelper to listen for Firebase database changes
+        notificationHelper = new LotteryNotificationHelper(this);
+        notificationHelper.listenForEntrantUpdates();
     }
 
 
@@ -90,7 +94,7 @@ public class MainActivity extends AppCompatActivity implements OnRoleSelectedLis
                         PERMISSION_REQUEST_CODE);
             }
         }catch (Exception e){
-
+            Log.e("MainActivity", "Permission request failed", e);
         }
     }
 
