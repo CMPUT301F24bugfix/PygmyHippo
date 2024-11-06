@@ -20,6 +20,7 @@ import com.example.pygmyhippo.common.Account;
 import com.example.pygmyhippo.common.OnRoleSelectedListener;
 import com.example.pygmyhippo.database.DBOnCompleteFlags;
 import com.example.pygmyhippo.database.DBOnCompleteListener;
+import com.example.pygmyhippo.databinding.AdminMainActivityNavigationBinding;
 import com.example.pygmyhippo.databinding.OrganiserMainActivityNagivationBinding;
 import com.example.pygmyhippo.databinding.UserMainActivityNagivationBinding;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -29,12 +30,15 @@ import java.util.Arrays;
 
 /**
  * Main Activity for our android app
+ *
+ * FIXME: Double account creation when a new device tries to open the app.
  * @author Jennifer, Griffin
  */
 public class MainActivity extends AppCompatActivity implements OnRoleSelectedListener, DBOnCompleteListener<Account> {
     final int PERMISSION_REQUEST_CODE =112;
     private OrganiserMainActivityNagivationBinding organiserBinder;
     private UserMainActivityNagivationBinding userBinder;
+    private AdminMainActivityNavigationBinding adminBinding;
     private MainActivityDB dbHandler;
     private Account signedInAccount;
 
@@ -170,7 +174,6 @@ public class MainActivity extends AppCompatActivity implements OnRoleSelectedLis
         navController.setGraph(R.navigation.user_mobile_navigation, bundle);
         NavigationUI.setupWithNavController(navView, navController);
         userBinder.navView.setOnItemSelectedListener(item -> {
-            Log.d("Menu", String.format("Menu item (%s) selected", item.getTitle()));
             if (item.getItemId() == R.id.u_profile_menu_item) {
                 Log.d("Menu", "Sending account to profile");
                 navController.navigate(R.id.u_profile_menu_item, bundle);
@@ -196,6 +199,27 @@ public class MainActivity extends AppCompatActivity implements OnRoleSelectedLis
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_activity_main);
         navController.setGraph(R.navigation.organiser_mobile_navigation, bundle);
         NavigationUI.setupWithNavController(navView, navController);
+    }
+
+
+    private void setupNavControllerAdmin(BottomNavigationView navView, Bundle bundle) {
+        AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(
+                R.id.admin_all_events_menu_item, R.id.admin_all_images_menu_item, R.id.admin_all_profiles_menu_item)
+                .build();
+        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_activity_main);
+        navController.setGraph(R.navigation.admin_mobile_navigation, bundle);
+        NavigationUI.setupWithNavController(navView, navController);
+        adminBinding.navView.setOnItemSelectedListener(item -> {
+            if (item.getItemId() == R.id.admin_all_events_menu_item) {
+                Log.d("Menu", "Sending account to profile");
+                navController.navigate(R.id.admin_navigation_all_events, bundle);
+            } else if (item.getItemId() == R.id.admin_all_images_menu_item) {
+                navController.navigate(R.id.admin_navigation_all_images, bundle);
+            } else if (item.getItemId() == R.id.admin_all_profiles_menu_item) {
+                navController.navigate(R.id.admin_navigation_all_users, bundle);
+            }
+            return true;
+        });
     }
 
     /**
@@ -264,7 +288,7 @@ public class MainActivity extends AppCompatActivity implements OnRoleSelectedLis
      */
     private void setNavigation(Account account) {
         Bundle bundle = new Bundle();
-        bundle.putParcelable("account", account);
+        bundle.putParcelable("signedInAccount", account);
 
         // Use a switch to determine the nagivation based on the current role
         switch (account.getCurrentRole()) {
@@ -280,9 +304,14 @@ public class MainActivity extends AppCompatActivity implements OnRoleSelectedLis
                 setContentView(organiserBinder.getRoot());
                 setupNavControllerOrganiser(organiserBinder.navView, bundle);
                 break;
+            case admin:
+                Log.d("MainActivity", "Setting navigation for admin.");
+                adminBinding = AdminMainActivityNavigationBinding.inflate(getLayoutInflater());
+                setContentView(adminBinding.getRoot());
+                setupNavControllerAdmin(adminBinding.navView, bundle);
+                break;
             default:
                 Log.d("MainActivity", String.format("Unknown role (%s)", account.getCurrentRole().value));
-                // needs a case for admin
                 break;
         }
     }

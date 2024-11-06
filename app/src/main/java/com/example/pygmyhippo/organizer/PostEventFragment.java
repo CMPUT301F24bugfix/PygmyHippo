@@ -1,8 +1,9 @@
 package com.example.pygmyhippo.organizer;
 
+import static androidx.navigation.Navigation.findNavController;
+
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,10 +19,12 @@ import androidx.activity.result.PickVisualMediaRequest;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
-import androidx.navigation.Navigation;
+import androidx.navigation.NavController;
 
 import com.example.pygmyhippo.R;
 import com.example.pygmyhippo.common.Event;
+import com.example.pygmyhippo.database.DBOnCompleteFlags;
+import com.example.pygmyhippo.database.DBOnCompleteListener;
 import com.example.pygmyhippo.databinding.OrganiserPostEventBinding;
 
 import java.util.ArrayList;
@@ -44,15 +47,16 @@ import java.util.ArrayList;
  * @version 1.1
  * No returns and no parameters
  */
-public class PostEventFragment extends Fragment {
+public class PostEventFragment extends Fragment implements DBOnCompleteListener<Event> {
 
     private OrganiserPostEventBinding binding;
+    private NavController navController;
 
     private EditText eventNameEdit, eventDateTimeEdit, eventPriceEdit, eventLocationEdit, eventDescriptionEdit, eventLimitEdit, eventWinnersEdit;
     private CheckBox eventGeolocation;
     private ImageButton eventImageBtn;
     private Uri imagePath = null;
-    private PostEventDB dbHandler;
+    private PostEventDB handler;
 
 
     /**
@@ -68,7 +72,7 @@ public class PostEventFragment extends Fragment {
         binding = OrganiserPostEventBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
-        dbHandler = new PostEventDB();
+        handler = new PostEventDB();
 
         return root;
     }
@@ -76,6 +80,8 @@ public class PostEventFragment extends Fragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        navController = findNavController(view);
+
         eventNameEdit = view.findViewById(R.id.o_postEvent_name_edit);
         eventDateTimeEdit = view.findViewById(R.id.o_postEvent_dataTime_edit);
         eventPriceEdit = view.findViewById(R.id.o_postEvent_price_edit);
@@ -87,53 +93,39 @@ public class PostEventFragment extends Fragment {
         Button postEventButton = view.findViewById(R.id.o_postEvent_post_button);
         Event myEvent = new Event();
 
-        postEventButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String eventName = eventNameEdit.getText().toString();
-                String eventDateTime = eventDateTimeEdit.getText().toString();
-                String eventPrice = eventPriceEdit.getText().toString();
-                String eventLocation = eventLocationEdit.getText().toString();
-                String eventDescription = eventDescriptionEdit.getText().toString();
-                String eventLimit = eventLimitEdit.getText().toString();
-                String eventWinners = eventWinnersEdit.getText().toString();
-                Boolean eventGeolocaion = eventGeolocation.isChecked();
-                if (
-                        eventName.isEmpty() ||
-                        eventDateTime.isEmpty() ||
-                        eventPrice.isEmpty() ||
-                        eventLocation.isEmpty() ||
-                        eventDescription.isEmpty() ||
-                        eventWinners.isEmpty())
-                {
-                    // Toast alerts organiser that event is missing feilds
-                    Toast.makeText(getContext(), "Required fields missing!", Toast.LENGTH_SHORT).show();
-                } else {
-                    myEvent.setOrganiserID("currentUserID"); // TODO: get the current organiser
-                    myEvent.setLocation(eventLocation);
-                    myEvent.setDate(eventDateTime);
-                    myEvent.setDescription(eventDescription);
-                    myEvent.setCost(eventPrice);
-                    myEvent.setEventPoster(imagePath == null? "" : imagePath.toString());
-                    myEvent.setEventLimitCount(eventLimit.isEmpty() ? -1 : Integer.valueOf(eventLimit));
-                    myEvent.setEventWinnersCount(Integer.valueOf(eventWinners));
-                    myEvent.setEntrants(new ArrayList<>()); // no entrants of a newly created event
-                    myEvent.setGeolocation(eventGeolocaion);
-                    myEvent.setEventStatus(Event.EventStatus.ongoing); // default is ongoing
-
-                    dbHandler.addEvent(myEvent, null); // TODO: Get organiser ID and pass it to addEvent.
-
-                    Toast.makeText(getContext(), "Event Created", Toast.LENGTH_SHORT).show();
-
-                    // create a bundle to send an event to the qr code widget
-                    // the bundle must have a id for the qr code to generate
-                    // event should be added to data base then it should be
-                    myEvent.setEventID("12345");
-                    Bundle eventBundle = new Bundle();
-                    eventBundle.putString("my_event_id", myEvent.getEventID());
-                    Navigation.findNavController(view).navigate(R.id.action_organiser_postEvent_page_to_view_eventqr_fragment, eventBundle);
-                    clearEvent(); // TODo: this could be removed or improved in the future
-                }
+        postEventButton.setOnClickListener(v -> {
+            String eventName = eventNameEdit.getText().toString();
+            String eventDateTime = eventDateTimeEdit.getText().toString();
+            String eventPrice = eventPriceEdit.getText().toString();
+            String eventLocation = eventLocationEdit.getText().toString();
+            String eventDescription = eventDescriptionEdit.getText().toString();
+            String eventLimit = eventLimitEdit.getText().toString();
+            String eventWinners = eventWinnersEdit.getText().toString();
+            Boolean eventGeolocaion = eventGeolocation.isChecked();
+            if (
+                    eventName.isEmpty() ||
+                    eventDateTime.isEmpty() ||
+                    eventPrice.isEmpty() ||
+                    eventLocation.isEmpty() ||
+                    eventDescription.isEmpty() ||
+                    eventWinners.isEmpty())
+            {
+                // Toast alerts organiser that event is missing feilds
+                Toast.makeText(getContext(), "Required fields missing!", Toast.LENGTH_SHORT).show();
+            } else {
+                myEvent.setEventTitle(eventName);
+                myEvent.setOrganiserID("currentUserID"); // TODO: get the current organiser
+                myEvent.setLocation(eventLocation);
+                myEvent.setDate(eventDateTime);
+                myEvent.setDescription(eventDescription);
+                myEvent.setCost(eventPrice);
+                myEvent.setEventPoster(imagePath == null? "" : imagePath.toString());
+                myEvent.setEventLimitCount(eventLimit.isEmpty() ? -1 : Integer.valueOf(eventLimit));
+                myEvent.setEventWinnersCount(Integer.valueOf(eventWinners));
+                myEvent.setEntrants(new ArrayList<>()); // no entrants of a newly created event
+                myEvent.setGeolocation(eventGeolocaion);
+                myEvent.setEventStatus(Event.EventStatus.ongoing); // default is ongoing
+                handler.addEvent(myEvent, this); // TODO: Get organiser ID and pass it to addEvent.
             }
         });
 
@@ -169,7 +161,7 @@ public class PostEventFragment extends Fragment {
      * Clears the event in the poster
      * @author griffin
      */
-    public void clearEvent(){
+    public void clearEditTextFields(){
         eventNameEdit.setText("");
         eventDateTimeEdit.setText("");
         eventPriceEdit.setText("");
@@ -184,5 +176,23 @@ public class PostEventFragment extends Fragment {
     public void onDestroyView() {
         super.onDestroyView();
         binding = null;
+    }
+
+    @Override
+    public void OnComplete(@NonNull ArrayList<Event> docs, int queryID, int flags) {
+        if (queryID == 0) {
+            if (flags == DBOnCompleteFlags.SUCCESS.value) {
+                clearEditTextFields();
+                Event newEvent = docs.get(0);
+                // create a bundle to send an event to the qr code widget
+                // the bundle must have a id for the qr code to generate
+                // event should be added to data base then it should be
+                Bundle eventBundle = new Bundle();
+                eventBundle.putString("my_event_id", newEvent.getEventID());
+                navController.navigate(R.id.action_organiser_postEvent_page_to_view_eventqr_fragment, eventBundle);
+            } else {
+                Toast.makeText(getContext(), "Event Failed to Create", Toast.LENGTH_LONG).show();
+            }
+        }
     }
 }
