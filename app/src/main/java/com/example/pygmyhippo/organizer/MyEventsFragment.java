@@ -42,9 +42,9 @@ public class MyEventsFragment extends Fragment {
         final TextView textView = binding.textHome;
 
         //FIXME: add a button to navigate to entrant list to see the draft
-        Button button = binding.buttonViewEntrants;
+        Button button = binding.buttonSampleEvent;
         button.setOnClickListener(view -> {
-            Navigation.findNavController(view).navigate(R.id.action_organiser_myEvents_page_to_ViewEntrantsFragment);
+            Navigation.findNavController(view).navigate(R.id.action_organiser_myEvents_page_to_event_fragment);
         });
 
         return root;

@@ -21,10 +21,10 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button
-        android:id="@+id/button_view_entrants"
+        android:id="@+id/button_sample_event"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="See entrants"
+        android:text="See example event"
         app:layout_constraintBottom_toTopOf="@+id/text_home"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

@@ -6,15 +6,17 @@ import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 
-import static java.util.regex.Pattern.matches;
 
+import android.Manifest;
+
+import androidx.fragment.app.testing.FragmentScenario;
 import androidx.test.espresso.assertion.ViewAssertions;
-import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.filters.LargeTest;
+import androidx.test.rule.GrantPermissionRule;
 
-import com.example.pygmyhippo.MainActivity;
 import com.example.pygmyhippo.R;
+import com.example.pygmyhippo.organizer.ViewEntrantsFragment;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -31,12 +33,14 @@ import org.junit.runner.RunWith;
 @RunWith(AndroidJUnit4.class)
 @LargeTest
 public class ViewEntrantsTest {
+    private FragmentScenario<ViewEntrantsFragment> scenario;
+
     @Rule
-    public ActivityScenarioRule<MainActivity> scenario = new ActivityScenarioRule<MainActivity>(MainActivity.class);
+    public GrantPermissionRule mRuntimePermissionRule = GrantPermissionRule.grant(Manifest.permission.POST_NOTIFICATIONS);
 
     @Before
-    public void setUp() {
-        onView(withId(R.id.organiser_postEvent_page)).perform(click());
+    public void setup() {
+        scenario = FragmentScenario.launchInContainer(ViewEntrantsFragment.class);
     }
 
     @Test
