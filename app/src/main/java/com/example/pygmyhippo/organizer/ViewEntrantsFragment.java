@@ -46,7 +46,7 @@ import java.util.ArrayList;
  * TODO:
  *  - Add image handling from database
  *  - Set up so not hardcoded event ID
- *  - Maybe consider using entrant list from event instead
+ *  - Consider using entrant list from event instead. Right now this is a rough draft
  */
 public class ViewEntrantsFragment extends Fragment {
     private ArrayList<Entrant> entrantListData = new ArrayList<Entrant>();
@@ -103,7 +103,7 @@ public class ViewEntrantsFragment extends Fragment {
         backButton = view.findViewById(R.id.o_entrant_view_back_button);
         backButton.setOnClickListener(view1 -> {
             //FIXME: Navigate back for now, but eventually should navigate to an event view
-            Navigation.findNavController(view1).navigate(R.id.action_ViewEntrantsFragment_to_navigation_home);
+            Navigation.findNavController(view1).navigate(R.id.action_view_entrants_fragment_to_event_fragment);
         });
 
         // Connect to the database and get a collection reference to Entrants
