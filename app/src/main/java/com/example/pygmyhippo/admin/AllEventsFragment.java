@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
@@ -32,21 +33,27 @@ import java.util.ArrayList;
  */
 public class AllEventsFragment extends Fragment implements RecyclerClickListener, DBOnCompleteListener<Event> {
     AdminFragmentAllListBinding binding;
+    NavController navController;
+
     ArrayList<Event> allEvents;
     AllEventsAdapter adapter;
     AllEventsDB handler;
     Account signedInAccount;
 
+
     @Override
     public void onItemClick(int position) {
         Log.i("User", String.format("Admin clicked item at position %d", position));
-        assert getActivity() != null;
-        NavController navController = Navigation.findNavController(getActivity(), R.id.nav_host_fragment_activity_main);
-
         Bundle navArgs = new Bundle();
         navArgs.putParcelable("signedInAccount", signedInAccount);
         navArgs.putString("eventID", allEvents.get(position).getEventID());
         navController.navigate(R.id.action_admin_navigation_all_events_to_admin_navigation_event_page, navArgs);
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        navController = Navigation.findNavController(view);
     }
 
     @Override

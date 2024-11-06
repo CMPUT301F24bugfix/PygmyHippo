@@ -37,14 +37,16 @@ import java.util.ArrayList;
 public class EventFragment extends Fragment implements DBOnCompleteListener<Event> {
 
     private UserFragmentEventBinding binding;
+    private NavController navController;
+
     private Event event;
 
     // this is the current user who is trying to join the event
     private Entrant entrant;
     private ArrayList<Entrant> entrants;
+    private Account signedInAccount;
 
     private EventDB handler;
-    private Account signedInAccount;
 
     private TextView eventNameView, eventDateView, eventTimeView, eventOrganizerView,
             eventLocationView, eventCostView, eventAboutDescriptionView;
@@ -78,6 +80,7 @@ public class EventFragment extends Fragment implements DBOnCompleteListener<Even
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        navController = Navigation.findNavController(view);
     }
 
     @Override
@@ -149,9 +152,6 @@ public class EventFragment extends Fragment implements DBOnCompleteListener<Even
         } else if (queryID == 1) {
             if (flags == DBOnCompleteFlags.SUCCESS.value) {
                 Log.d("EventFragment", "Successfully deleted event. Navigating back to all events");
-                assert getActivity() != null;
-                NavController navController = Navigation.findNavController(getActivity(), R.id.nav_host_fragment_activity_main);
-
                 Bundle navArgs = new Bundle();
                 navArgs.putParcelable("signedInAccount", signedInAccount);
                 navController.navigate(R.id.admin_navigation_all_events, navArgs);
