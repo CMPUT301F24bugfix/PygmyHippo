@@ -38,8 +38,12 @@
         tools:layout="@layout/user_fragment_profile"
         android:background="@color/dark_purple">
         <argument
-            android:name="account"
+            android:name="signedInAccount"
             app:argType="com.example.pygmyhippo.common.Account" />
+        <argument
+            android:name="adminViewAccountID"
+            app:argType="string"
+            app:nullable="true" />
     </fragment>
     <fragment
         android:id="@+id/eventFragment"
