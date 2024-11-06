@@ -161,6 +161,12 @@ public class EventFragment extends Fragment implements DBOnCompleteListener<Even
         }
     }
 
+    /**
+     * Tries to query for event by eventID.
+     *
+     * If there is no event ID then mock data is loaded in.
+     * @param eventID ID of the event to query for.
+     */
     private void getEvent(@Nullable String eventID) {
         if (eventID == null) {
             Log.d("EventFragment", "No Event ID was passed via navigation to EventFragment, using mock data...");
@@ -172,6 +178,9 @@ public class EventFragment extends Fragment implements DBOnCompleteListener<Even
         }
     }
 
+    /**
+     * Updates text views in the fragment to reflect the same info in event.
+     */
     private void populateTextFields() {
         eventNameView.setText(event.getEventTitle());
         eventDateView.setText(event.getDate());
@@ -182,6 +191,11 @@ public class EventFragment extends Fragment implements DBOnCompleteListener<Even
         eventAboutDescriptionView.setText(event.getDescription());
     }
 
+    /**
+     * Register user as an entrant for the current event.
+     *
+     * Button is only visible when the signedInAccount is a user.
+     */
     private void registerUser() {
         // if the even already has the user, remove the user upon clicking
         if (event.hasEntrant(entrant)) {
@@ -215,6 +229,9 @@ public class EventFragment extends Fragment implements DBOnCompleteListener<Even
         }
     }
 
+    /**
+     * Toggles visibility of certain buttons depending on role of signedInAccount.
+     */
     private void setPermissions() {
         if (signedInAccount.getCurrentRole() == Account.AccountRole.admin) {
             Log.d("EventFragment", "Admin user detected. Setting Admin permissions");

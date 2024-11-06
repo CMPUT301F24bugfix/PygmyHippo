@@ -32,7 +32,7 @@ public class AllEventsAdapter extends BaseRecyclerAdapter<Event, AllEventsAdapte
 
         @Override
         public void setViews(Event event) {
-            nameTextView.setText(event.getTitle());
+            nameTextView.setText(event.getEventTitle());
             occurrenceTextView.setText(""); // TODO: figure out how occurrence is stored then add it here.
             locationTextView.setText(event.getLocation());
             waitlistStatusTextView.setText(event.getEventStatus() == Event.EventStatus.ongoing ? "Waitlist Open" : "Waitlist Closed");

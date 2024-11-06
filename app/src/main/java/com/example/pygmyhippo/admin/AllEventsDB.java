@@ -1,3 +1,7 @@
+/**
+ * DBHandler for AllEventsFragment
+ */
+
 package com.example.pygmyhippo.admin;
 
 import android.util.Log;
@@ -10,6 +14,12 @@ import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 
+
+/**
+ * DBHandler for AllEventsFragment
+ *
+ * Handles getting events from Firestore.
+ */
 public class AllEventsDB extends DBHandler {
     public void getEvents(int limit, DBOnCompleteListener<Event> listener) {
         db.collection("Events")

@@ -1,3 +1,9 @@
+/**
+ * DBHandler for EventFragment
+ *
+ * Gets and deletes Events by their EventID.
+ */
+
 package com.example.pygmyhippo.user;
 
 import android.util.Log;
@@ -10,6 +16,11 @@ import com.google.firebase.firestore.DocumentSnapshot;
 
 import java.util.ArrayList;
 
+/**
+ * DBHandler for EventFragment
+ *
+ * Gets and deletes Events by their EventID.
+ */
 public class EventDB extends DBHandler {
     public void getEventByID(String eventID, DBOnCompleteListener<Event> listener) {
         db.collection("Events")
