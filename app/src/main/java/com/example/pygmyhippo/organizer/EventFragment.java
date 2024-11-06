@@ -76,7 +76,7 @@ public class EventFragment extends Fragment {
 
         return event = new Event(
                 "Hippo Party",
-                "event1",
+                "IaMdwyQpHDh6GdZF025k",
                 "The Hippopotamus Society",
                 entrants,
                 "The Swamp",

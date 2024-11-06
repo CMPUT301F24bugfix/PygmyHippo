@@ -13,11 +13,17 @@ Issues:
 
 import android.util.Log;
 
+import androidx.annotation.NonNull;
+
 import com.example.pygmyhippo.common.Account;
+import com.example.pygmyhippo.common.Entrant;
 import com.example.pygmyhippo.common.Event;
 import com.example.pygmyhippo.database.DBHandler;
 import com.example.pygmyhippo.database.DBOnCompleteFlags;
 import com.example.pygmyhippo.database.DBOnCompleteListener;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.QuerySnapshot;
 
@@ -90,9 +96,28 @@ public class ViewEntrantDB extends DBHandler {
                 });
     }
 
-    public void updateEntrantStatus(String eventID, String accountID, String status, DBOnCompleteListener<Event> listener) {
+    /**
+     * This method will set the currently existing event to the new one with updated values
+     * @author Kori
+     * @param event The event we want to update
+     * @param listener The listener that initiates when the data is done updating
+     */
+    public void updateEvent(Event event, DBOnCompleteListener<Event> listener) {
         // first remove the old entrant entry
         db.collection("Events")
-
+                .document(event.getEventID())
+                .set(event)
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if (task.isSuccessful()) {
+                            Log.d("DB", String.format("Successfully updated event with ID (%s).", event.getEventID()));
+                            listener.OnComplete(new ArrayList<>(), 2, DBOnCompleteFlags.SUCCESS.value);
+                        } else {
+                            Log.d("DB", String.format("Error: Could not update event with ID (%s).", event.getEventID()));
+                            listener.OnComplete(new ArrayList<>(), 2, DBOnCompleteFlags.ERROR.value);
+                        }
+                    }
+                });
     }
 }
