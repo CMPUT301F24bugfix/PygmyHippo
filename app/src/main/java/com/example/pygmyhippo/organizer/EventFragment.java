@@ -54,6 +54,9 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.example.pygmyhippo.R;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+
 import java.util.Random;
 
 /**
@@ -70,9 +73,14 @@ public class EventFragment extends Fragment {
 
     // TODO: pass entrant and even information using bundle...
 
-    // populate single event page with hardcoded event information
+    // populate single event page with hardcoded event information (Note this Event is in the database, just still hardcoded)
     public Event hardcodeEvent() {
         entrants = new ArrayList<>();
+        // Add hardcoded entrants
+        entrants.add(new Entrant("5LCoIC4Ix46vPavSV1KX", Entrant.EntrantStatus.waitlisted));
+        entrants.add(new Entrant("8Bd5McHSzrYcjH99yv8Y", Entrant.EntrantStatus.invited));
+        entrants.add(new Entrant("SfSzvATHz9m9fj7vmWbp", Entrant.EntrantStatus.accepted));
+        entrants.add(new Entrant("hupsArkwU6yvvSD1tKIe", Entrant.EntrantStatus.cancelled));
 
         return event = new Event(
                 "Hippo Party",
