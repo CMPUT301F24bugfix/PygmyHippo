@@ -18,6 +18,7 @@ import com.example.pygmyhippo.common.Event;
 import com.example.pygmyhippo.database.DBHandler;
 import com.example.pygmyhippo.database.DBOnCompleteFlags;
 import com.example.pygmyhippo.database.DBOnCompleteListener;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
@@ -87,5 +88,11 @@ public class ViewEntrantDB extends DBHandler {
                         listener.OnComplete(new ArrayList<>(), 1, DBOnCompleteFlags.ERROR.value);
                     }
                 });
+    }
+
+    public void updateEntrantStatus(String eventID, String accountID, String status, DBOnCompleteListener<Event> listener) {
+        // first remove the old entrant entry
+        db.collection("Events")
+
     }
 }

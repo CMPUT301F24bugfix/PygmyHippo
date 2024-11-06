@@ -124,6 +124,22 @@ public class ViewEntrantsFragment extends Fragment implements DBOnCompleteListen
             Navigation.findNavController(view1).navigate(R.id.action_view_entrants_fragment_to_event_fragment);
         });
 
+        // Set up a listener for when an entrant is clicked
+        entrantListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                // Create a bundle to pass the Account id and entrant status
+                Log.d("Navigation", String.format("User selected entrant with account (%s)", entrantListAdapter.getItem(i).getAccountID()));
+                Bundle navArgs = new Bundle();
+                navArgs.putString("accountID", entrantListAdapter.getItem(i).getAccountID());
+                navArgs.putString("status", entrantListAdapter.getItem(i).getEntrantStatus().value);
+                navArgs.putString("eventID", eventID);
+
+                // Navigate to the entrant profile fragment
+                Navigation.findNavController(view).navigate(R.id.action_view_entrants_fragment_to_single_entrant_fragment, navArgs);
+            }
+        });
+
         // Set up on click listeners for the spinner to filter the list
         statusSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override

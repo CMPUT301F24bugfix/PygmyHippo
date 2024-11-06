@@ -11,8 +11,8 @@
         android:layout_width="46dp"
         android:layout_height="46dp"
         android:layout_margin="10dp"
-        android:background="@color/gray"
         android:padding="3dp"
+        android:background="@drawable/rounded_corners"
         android:scaleType="centerCrop"
         android:src="@drawable/back_arrow"
         app:cornerRadius="8dp"
@@ -23,7 +23,7 @@
     </ImageButton>
 
     <TextView
-        android:id="@+id/E_profile_header"
+        android:id="@+id/e_username"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:fontFamily="@font/roboto_mono_bold"
@@ -43,7 +43,7 @@
         android:layout_marginTop="16dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/E_profile_header"
+        app:layout_constraintTop_toBottomOf="@+id/e_username"
         app:layout_constraintVertical_bias="1.0">
 
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -58,7 +58,7 @@
                 android:src="@drawable/dog"
                 app:civ_border_color="#FF000000"
                 app:civ_border_width="0dp"
-                app:layout_constraintBottom_toTopOf="@id/E_profile_nameLabel"
+                app:layout_constraintBottom_toTopOf="@id/e_username"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.501"
                 app:layout_constraintStart_toStartOf="parent"
@@ -80,7 +80,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/E_profile_role" />
 
             <TextView
-                android:id="@+id/E_profile_textPronouns"
+                android:id="@+id/entrant_prounouns"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/roboto_mono_medium"
@@ -104,10 +104,10 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.255"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/E_profile_textEmail" />
+                app:layout_constraintTop_toBottomOf="@+id/entrant_email" />
 
             <TextView
-                android:id="@+id/E_profile_textPhone"
+                android:id="@+id/entrant_phone"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/roboto_mono_medium"
@@ -131,10 +131,10 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.255"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/E_profile_textPronouns" />
+                app:layout_constraintTop_toBottomOf="@+id/entrant_prounouns" />
 
             <TextView
-                android:id="@+id/E_profile_textEmail"
+                android:id="@+id/entrant_email"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/roboto_mono_medium"
@@ -167,13 +167,12 @@
         android:orientation="vertical"
         android:padding="16dp"
         android:paddingTop="0dp"
-        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">
 
         <TextView
-            android:id="@+id/E_status"
+            android:id="@+id/entrant_status"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -187,10 +186,12 @@
         </TextView>
 
         <Button
-            android:id="@+id/close_event_button"
+            android:id="@+id/e_status_button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:backgroundTint="@color/red"
+            android:visibility="gone"
+            android:clickable="false"
             android:text="Cancel" />
 
     </LinearLayout>
