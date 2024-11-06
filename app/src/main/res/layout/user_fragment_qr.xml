@@ -22,7 +22,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <com.journeyapps.barcodescanner.DecoratedBarcodeView
-        android:id="@+id/u_barcodeScanner"
+        android:id="@+id/u_QRScanner"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>
