@@ -58,6 +58,9 @@ app:startDestination="@+id/organiser_postEvent_page">
         <argument
             android:name="eventID"
             app:argType="string" />
+        <action
+            android:id="@+id/action_view_entrants_fragment_to_single_entrant_fragment"
+            app:destination="@id/single_entrant_fragment" />
     </fragment>
 
     <fragment
@@ -72,5 +75,24 @@ app:startDestination="@+id/organiser_postEvent_page">
         <action
             android:id="@+id/action_event_fragment_to_organiser_myEvents_page"
             app:destination="@id/organiser_myEvents_page" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/single_entrant_fragment"
+        android:name="com.example.pygmyhippo.organizer.ViewSingleEntrantFragment"
+        android:label="view entrant"
+        tools:layout="@layout/organiser_view_single_entrant"
+        android:background="@color/dark_purple">
+        <action
+            android:id="@+id/action_single_entrant_fragment_to_view_entrants_fragment"
+            app:destination="@id/view_entrants_fragment" />
+        <argument android:name="accountID"
+            app:argType="string"/>
+        <argument
+            android:name="status"
+            app:argType="string" />
+        <argument
+            android:name="eventID"
+            app:argType="string" />
     </fragment>
 </navigation>
