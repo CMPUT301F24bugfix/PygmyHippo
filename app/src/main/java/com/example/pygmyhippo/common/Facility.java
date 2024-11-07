@@ -16,6 +16,8 @@ public class Facility implements Parcelable {
     private String name;
     private String location;
 
+    public Facility() {}
+
     protected Facility(Parcel in) {
         facilityPicture = in.readString();
         name = in.readString();

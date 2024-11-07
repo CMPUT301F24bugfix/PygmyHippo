@@ -53,4 +53,24 @@ public class ProfileDB extends DBHandler {
                 }
             });
     }
+
+    public void changeCurrentRole(String accountID, Account.AccountRole newRole, DBOnCompleteListener<Account> listener) {
+        db.collection("Accounts")
+                .document(accountID)
+                .update("currentRole", newRole)
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        Log.d("DB", String.format("Successfully updated current role to %s for account %s", newRole, accountID));
+                        ArrayList<Account> accountList = new ArrayList<>();
+                        Account newAccount = new Account();
+                        newAccount.setAccountID(accountID);
+                        newAccount.setCurrentRole(newRole);
+                        accountList.add(newAccount);
+                        listener.OnComplete(accountList, 2, DBOnCompleteFlags.SUCCESS.value);
+                    } else {
+                        Log.d("DB", String.format("Could not update current role for account %s", accountID));
+                        listener.OnComplete(new ArrayList<>(), 2, DBOnCompleteFlags.SUCCESS.value);
+                    }
+                });
+    }
 }

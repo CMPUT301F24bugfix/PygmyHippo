@@ -22,6 +22,7 @@ import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 
 import com.example.pygmyhippo.R;
+import com.example.pygmyhippo.common.Account;
 import com.example.pygmyhippo.common.Event;
 import com.example.pygmyhippo.database.DBOnCompleteFlags;
 import com.example.pygmyhippo.database.DBOnCompleteListener;
@@ -58,6 +59,8 @@ public class PostEventFragment extends Fragment implements DBOnCompleteListener<
     private Uri imagePath = null;
     private PostEventDB handler;
 
+    private Account signedInAccount;
+
 
     /**
      * Creates the view
@@ -73,6 +76,10 @@ public class PostEventFragment extends Fragment implements DBOnCompleteListener<
         View root = binding.getRoot();
 
         handler = new PostEventDB();
+
+        if (getArguments() != null) {
+            signedInAccount = PostEventFragmentArgs.fromBundle(getArguments()).getSignedInAccount();
+        }
 
         return root;
     }
@@ -187,9 +194,10 @@ public class PostEventFragment extends Fragment implements DBOnCompleteListener<
                 // create a bundle to send an event to the qr code widget
                 // the bundle must have a id for the qr code to generate
                 // event should be added to data base then it should be
-                Bundle eventBundle = new Bundle();
-                eventBundle.putString("my_event_id", newEvent.getEventID());
-                navController.navigate(R.id.action_organiser_postEvent_page_to_view_eventqr_fragment, eventBundle);
+                Bundle navArgs = new Bundle();
+                navArgs.putString("eventID", newEvent.getEventID());
+                navArgs.putParcelable("signedInAccount", signedInAccount);
+                navController.navigate(R.id.organiser_eventFragment, navArgs);
             } else {
                 Toast.makeText(getContext(), "Event Failed to Create", Toast.LENGTH_LONG).show();
             }

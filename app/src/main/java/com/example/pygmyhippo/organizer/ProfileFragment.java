@@ -1,8 +1,8 @@
 package com.example.pygmyhippo.organizer;
 
-import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,18 +11,19 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.RadioButton;
-import android.widget.RadioGroup;
 import android.widget.Spinner;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.PickVisualMediaRequest;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
 
 import com.example.pygmyhippo.R;
-import com.example.pygmyhippo.common.OnRoleSelectedListener;
+import com.example.pygmyhippo.common.Account;
 import com.example.pygmyhippo.databinding.OrganiserFragmentProfileBinding;
 import com.squareup.picasso.Picasso;
 
@@ -49,33 +50,12 @@ import java.util.Objects;
  * No returns and no parameters
  */
 public class ProfileFragment extends Fragment implements AdapterView.OnItemSelectedListener {
-    Uri imagePath;
-    String uploadType = "avatar";
+    private Uri imagePath;
+    private String uploadType = "avatar";
+    private Account signedInAccount;
 
     private OrganiserFragmentProfileBinding binding;
-
-    // Listener interface to communicate with the main activity
-    private OnRoleSelectedListener roleSelectedListener;
-
-    // initialized the listener
-    public void setOnRoleSelectedListener(OnRoleSelectedListener listener) {
-        this.roleSelectedListener = listener;
-    }
-
-    /**
-     * This is called when the fragment is created, this ensure a connection the onrole listener to the parent
-     * @author Griffin
-     * @param context not sure
-     */
-    @Override
-    public void onAttach(@NonNull Context context) {
-        super.onAttach(context);
-        try {
-            roleSelectedListener = (OnRoleSelectedListener) context;
-        } catch (ClassCastException e) {
-            throw new ClassCastException(context.toString() + " must implement OnRoleSelectedListener");
-        }
-    }
+    private NavController navController;
 
 
      // Registers a photo picker activity launcher in single-select mode and sets the profile image to the new URI
@@ -109,6 +89,13 @@ public class ProfileFragment extends Fragment implements AdapterView.OnItemSelec
                 .into(binding.OProfileImage);
 
     }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        navController = Navigation.findNavController(view);
+    }
+
     /**
      * Creates the view
      * @author Jennifer
@@ -123,8 +110,10 @@ public class ProfileFragment extends Fragment implements AdapterView.OnItemSelec
 
         binding = OrganiserFragmentProfileBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
-/*
-        Spinner role_dropdown = (Spinner) root.findViewById(R.id.organiser_spinner_role);
+
+        signedInAccount = ProfileFragmentArgs.fromBundle(getArguments()).getSignedInAccount();
+
+        Spinner role_dropdown = binding.oRoleSpinner;
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(
                 root.getContext(),
                 R.array.role,
@@ -132,11 +121,12 @@ public class ProfileFragment extends Fragment implements AdapterView.OnItemSelec
         );
 
         adapter.setDropDownViewResource(R.layout.e_p_role_dropdown);
+        role_dropdown.setSelection(adapter.getPosition("organiser"));
 
         role_dropdown.setAdapter(adapter);
 
         // need to do this so the listener is connected
-        role_dropdown.setOnItemSelectedListener(this);*/
+        role_dropdown.setOnItemSelectedListener(this);
 
         ImageView editButton = root.findViewById(R.id.O_profile_editBtn);
         Button updateButton = root.findViewById(R.id.O_profile_updateBtn);
@@ -296,9 +286,23 @@ public class ProfileFragment extends Fragment implements AdapterView.OnItemSelec
      */
     @Override
     public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-        String selectedRole = adapterView.getItemAtPosition(i).toString();
-        if (roleSelectedListener != null) {
-            roleSelectedListener.onRoleSelected(selectedRole);
+        String selectedRole = adapterView.getItemAtPosition(i).toString().toLowerCase();
+        Log.d("ProfileFragment", String.format("Role Spinner selected %s", selectedRole));
+
+        // TODO: Verify signedInAccount has selected role in roles before navigating to new Main Activity.
+        // ACCOUNT MUST ALWAYS HAVE USER ROLE!!!
+        Bundle navArgs = new Bundle();
+        navArgs.putParcelable("signedInAccount", signedInAccount);
+        if (selectedRole.equals("user")) {
+            navArgs.putString("currentRole", "user");
+            navController.navigate(R.id.u_mainActivity, navArgs);
+        } else if (selectedRole.equals("organiser")) {
+            Log.d("ProfileFragment", "User was selected, not doign anything :)");
+        } else if (selectedRole.equals("admin")) {
+            navArgs.putString("currentRole", "admin");
+            navController.navigate(R.id.a_mainActivity, navArgs);
+        } else {
+            Log.d("ProfileFragment", String.format("Unknown role selected %s", selectedRole));
         }
     }
 

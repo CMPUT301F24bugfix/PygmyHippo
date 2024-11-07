@@ -4,17 +4,17 @@
     <item
         android:id="@+id/u_my_events_menu_item"
         android:icon="@drawable/nav_ic_calendar"
-        android:title="@string/user_nav_item_my_events"/>
+        android:title=""/>
 
 
     <item
         android:id="@+id/u_scanQR_menu_item"
         android:icon="@drawable/nav_ic_barcode"
-        android:title="@string/user_nav_item_qr_code"/>
+        android:title=""/>
 
     <item
         android:id="@+id/u_profile_menu_item"
         android:icon="@drawable/nav_ic_user"
-        android:title="@string/user_nav_item_profile"/>
+        android:title=""/>
 
 </menu>

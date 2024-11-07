@@ -5,13 +5,15 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
 import com.example.pygmyhippo.R;
+import com.example.pygmyhippo.common.Account;
 import com.example.pygmyhippo.databinding.OrganiserFragmentMyeventsBinding;
 
 /**
@@ -23,6 +25,16 @@ import com.example.pygmyhippo.databinding.OrganiserFragmentMyeventsBinding;
 public class MyEventsFragment extends Fragment {
 
     private OrganiserFragmentMyeventsBinding binding;
+    private NavController navController;
+    private Account signedInAccount;
+
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        navController = Navigation.findNavController(view);
+    }
+
 
     /**
      * Creates the view
@@ -34,17 +46,20 @@ public class MyEventsFragment extends Fragment {
      */
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-
-
         binding = OrganiserFragmentMyeventsBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
-        final TextView textView = binding.textHome;
+        if (getArguments() != null) {
+            signedInAccount = MyEventsFragmentArgs.fromBundle(getArguments()).getSignedInAccount();
+        }
 
         //FIXME: add a button to navigate to entrant list to see the draft
         Button button = binding.buttonSampleEvent;
         button.setOnClickListener(view -> {
-            Navigation.findNavController(view).navigate(R.id.action_organiser_myEvents_page_to_event_fragment);
+            Bundle navArgs = new Bundle();
+            navArgs.putParcelable("signedInAccount", signedInAccount);
+            navArgs.putString("eventID", "37Pm3bM0Z0xBjwWLGTqD"); // TODO remove hardcoded eventID.
+            navController.navigate(R.id.organiser_eventFragment, navArgs);
         });
 
         return root;

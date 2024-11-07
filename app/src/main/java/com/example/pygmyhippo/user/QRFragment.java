@@ -13,9 +13,11 @@ import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
 import com.example.pygmyhippo.R;
+import com.example.pygmyhippo.common.Account;
 import com.example.pygmyhippo.databinding.UserFragmentQrBinding;
 import com.journeyapps.barcodescanner.BarcodeCallback;
 import com.journeyapps.barcodescanner.DecoratedBarcodeView;
@@ -29,8 +31,11 @@ import com.journeyapps.barcodescanner.DecoratedBarcodeView;
 public class QRFragment extends Fragment {
 
     private UserFragmentQrBinding binding;
+    private NavController navController;
     private DecoratedBarcodeView QRScannerView;
     private static final int CAMERA_PERMISSION_REQUEST_CODE = 0;
+
+    private Account signedInAccount;
 
     /**
      * Creates the view
@@ -46,12 +51,15 @@ public class QRFragment extends Fragment {
         binding = UserFragmentQrBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
+        signedInAccount = QRFragmentArgs.fromBundle(getArguments()).getSignedInAccount();
+
         return root;
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        navController = Navigation.findNavController(view);
 
         QRScannerView = view.findViewById(R.id.u_QRScanner);
         if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.CAMERA)
@@ -78,8 +86,10 @@ public class QRFragment extends Fragment {
             testShowBarcode.show();
 
             // TODO: if evenID doesnt correpond to anything in database, restart using startSingleScan()
-
-            Navigation.findNavController(requireView()).navigate(R.id.action_scanQRcodeFragment_to_eventFragment);
+            Bundle navArgs = new Bundle();
+            navArgs.putParcelable("signedInAccount", signedInAccount);
+            navController.navigate(R.id.u_eventFragment, navArgs);
+//            Navigation.findNavController(requireView()).navigate(R.id.action_scanQRcodeFragment_to_eventFragment);
         }
     };
 

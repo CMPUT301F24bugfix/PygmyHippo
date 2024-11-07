@@ -29,9 +29,9 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
-import com.example.pygmyhippo.R;
 import com.example.pygmyhippo.common.Account;
 import com.example.pygmyhippo.common.Entrant;
 import com.example.pygmyhippo.common.Event;
@@ -52,6 +52,13 @@ public class ViewSingleEntrantFragment extends Fragment {
     private String status;
     private String eventID;
     private ViewEntrantDB dbHandler;
+    private NavController navController;
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        navController = Navigation.findNavController(view);
+    }
 
     /**
      * In on create View, the text fields are updated and on click listeners are set
@@ -152,12 +159,7 @@ public class ViewSingleEntrantFragment extends Fragment {
         // Set up an onclick listener to go back to the list
         Bundle navArgs = new Bundle();
         navArgs.putString("eventID", eventID);
-        backButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Navigation.findNavController(view).navigate(R.id.action_single_entrant_fragment_to_view_entrants_fragment, navArgs);
-            }
-        });
+        backButton.setOnClickListener(view -> navController.popBackStack());
 
         return root;
     }
