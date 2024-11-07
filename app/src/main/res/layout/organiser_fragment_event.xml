@@ -10,7 +10,8 @@
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:paddingBottom="70dp">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -160,6 +161,19 @@
                 app:layout_constraintTop_toBottomOf="@+id/u_aboutEventTitleView"
                 app:layout_constraintVertical_bias="0.05" />
 
+            <Button
+                android:id="@+id/button_view_entrants"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/main_button_text"
+                android:layout_marginTop="15dp"
+                android:paddingStart="40dp"
+                android:paddingEnd="40dp"
+                android:backgroundTint="@color/main_buton"
+                android:text="View Entrants"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/u_aboutEventDescriptionView" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -190,43 +204,11 @@
         android:padding="16dp">
 
         <Button
-            android:id="@+id/u_registerButton"
+            android:id="@+id/close_event_button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:backgroundTint="@color/green"
-            android:text="Register" />
-
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/a_actionsConstraint"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:visibility="gone">
-
-            <Button
-                android:id="@+id/a_deleteQRCodeButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:backgroundTint="#747DBF"
-                android:text="Delete QR Code"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.5"
-                app:layout_constraintStart_toEndOf="@+id/a_deleteEventButton"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <Button
-                android:id="@+id/a_deleteEventButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:backgroundTint="#B91212"
-                android:text="Delete Event"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/a_deleteQRCodeButton"
-                app:layout_constraintHorizontal_bias="0.5"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
+            android:backgroundTint="@color/red"
+            android:text="Draw Lottery" />
 
     </LinearLayout>
 </FrameLayout>

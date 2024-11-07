@@ -7,20 +7,6 @@
     app:startDestination="@+id/u_my_events_menu_item">
 
     <fragment
-        android:id="@+id/navigation_all_events"
-        android:name="com.example.pygmyhippo.admin.AllEventsFragment"
-        android:label="All List"
-        tools:layout="@layout/admin_fragment_all_list"
-        android:background="@color/dark_purple"/>
-
-    <fragment
-        android:id="@+id/navigation_all_users"
-        android:name="com.example.pygmyhippo.admin.AllUsersFragment"
-        android:label="All List"
-        tools:layout="@layout/admin_fragment_all_list"
-        android:background="@color/dark_purple"/>
-
-    <fragment
         android:id="@+id/u_my_events_menu_item"
         android:name="com.example.pygmyhippo.user.MyEventsFragment"
         android:label="@string/title_myevents"
@@ -52,8 +38,13 @@
         tools:layout="@layout/user_fragment_profile"
         android:background="@color/dark_purple">
         <argument
-            android:name="account"
+            android:name="signedInAccount"
             app:argType="com.example.pygmyhippo.common.Account" />
+        <argument
+            android:name="adminViewAccountID"
+            app:argType="string"
+            app:nullable="true"
+            android:defaultValue="null" />
     </fragment>
     <fragment
         android:id="@+id/eventFragment"
