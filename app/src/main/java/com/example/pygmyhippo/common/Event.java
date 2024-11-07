@@ -152,7 +152,13 @@ public class Event {
      */
     public Boolean hasEntrant(Entrant entrant) {
         if (this.entrants != null) {
-            return this.entrants.contains(entrant);
+            // Go through the whole list of entrants until you find one with matching attributes
+            for (int index = 0; index < entrants.size(); index++) {
+                if (entrant.getAccountID().equals(entrants.get(index).getAccountID()) && entrants.get(index).getEntrantStatus().value.equals(entrant.getEntrantStatus().value)) {
+                    // If the attributes are equal, then the list has the entrant
+                    return true;
+                }
+            }
         }
         return false;
     }
@@ -181,7 +187,15 @@ public class Event {
      * @param entrant The entrant to remove
      */
     public void removeEntrant(Entrant entrant) {
-        this.entrants.remove(entrant);
+        if (entrants != null) {
+            // Go through the list of entrants to find a one with matching attributes
+            for (int index = 0; index < entrants.size(); index++) {
+                if (entrant.getAccountID().equals(entrants.get(index).getAccountID()) && entrants.get(index).getEntrantStatus().value.equals(entrant.getEntrantStatus().value)) {
+                    // If the attributes are equal, then the list has the entrant, so remove it
+                    this.entrants.remove(index);
+                }
+            }
+        }
     }
 
     /**
@@ -293,6 +307,7 @@ public class Event {
     /**
      * This method will set the max limit of entrants allowed in the event (note limit is optional)
      * @param eventLimitCount The new limit
+     * TODO: Make checks to ensure the limit amount is positive
      */
     public void setEventLimitCount(int eventLimitCount) {
         this.eventLimitCount = eventLimitCount;
@@ -309,6 +324,7 @@ public class Event {
     /**
      * This method will set the number of winners for the lottery in the event
      * @param eventWinnersCount The new number of lottery winners
+     * TODO: Set checks to make sure amount is > 0
      */
     public void setEventWinnersCount(int eventWinnersCount) {
         this.eventWinnersCount = eventWinnersCount;
