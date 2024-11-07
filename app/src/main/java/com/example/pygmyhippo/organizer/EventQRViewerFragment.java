@@ -27,12 +27,14 @@ import com.google.zxing.EncodeHintType;
 import net.glxn.qrgen.android.QRCode;
 
 import java.util.ArrayList;
+/*
+* This fragment will display the qr code
+* TODO:
+*  navigate to event details page
+* */
 
 /**
  * This fragment will display the qrcode
- * TODO:
- *  - Once connected to the database this will need to be reworked to fetch details
- *      about the event from the database
  * @author Griffin
  * @version 1.0
  * No returns and no parameters
@@ -64,7 +66,6 @@ public class EventQRViewerFragment extends Fragment implements DBOnCompleteListe
         eventDate = view.findViewById(R.id.o_eventqr_eventDate);
 
 
-        // code for button was copies from Koris work in viewEntantsFragments
         backButton = view.findViewById(R.id.o_eventqr_backBtn);
         backButton.setOnClickListener(view1 -> {
             Navigation.findNavController(view1).popBackStack();
@@ -82,6 +83,7 @@ public class EventQRViewerFragment extends Fragment implements DBOnCompleteListe
         myEventIDString = bundle.getString("my_event_id");
 
         if (getArguments() != null && !myEventIDString.isEmpty()) {
+            // searches for the event details
             handler.getEvent(myEventIDString, this);
             QRCodeImage = view.findViewById(R.id.o_eventqr_view);
             Bitmap bitmap = QRCode.from(myEventIDString)
@@ -92,7 +94,11 @@ public class EventQRViewerFragment extends Fragment implements DBOnCompleteListe
         }
         return view;
     }
-    void setScreenDetails(){
+
+    /**
+     * Updates the event details on screen
+     */
+    private void setScreenDetails(){
         eventDate.setText(myevent.getDate());
         eventTitle.setText(myevent.getEventTitle());
     }
@@ -107,11 +113,10 @@ public class EventQRViewerFragment extends Fragment implements DBOnCompleteListe
     public void OnComplete(@NonNull ArrayList<Event> docs, int queryID, int flags) {
         if (queryID == 1) {
             if (flags == DBOnCompleteFlags.SINGLE_DOCUMENT.value) {
-                // Get the event for this list of entrants and initialize the list
                 myevent = docs.get(0);
                 setScreenDetails();
             } else {
-                // Should only ever expect 1 document, otherwise there must be an error
+                // expect 1 document, else there must be an error
                 handleDBError();
             }
         }

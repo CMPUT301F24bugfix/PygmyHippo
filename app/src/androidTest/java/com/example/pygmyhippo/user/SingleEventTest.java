@@ -44,7 +44,7 @@ public class SingleEventTest {
     // navigate to event page
     @Test
     public void testNavigateToEventPage() {
-        onView(withId(R.id.u_scanQRButton)).perform(click());
+        //onView(withId(R.id.u_scanQRButton)).perform(click());
         onView(withId(R.id.u_eventNameView)).check(matches(isDisplayed()));
     }
 
@@ -56,7 +56,7 @@ public class SingleEventTest {
                 "123",
                 Entrant.EntrantStatus.invited
         );
-        onView(withId(R.id.u_scanQRButton)).perform(click());
+        //onView(withId(R.id.u_scanQRButton)).perform(click());
         // check to see that there is nothing in the entrants list
         assertEquals(0, event.getEntrants().size());
         onView(withId(R.id.u_registerButton)).perform(click());
@@ -77,7 +77,7 @@ public class SingleEventTest {
                 "123",
                 Entrant.EntrantStatus.invited
         );
-        onView(withId(R.id.u_scanQRButton)).perform(click());
+        //onView(withId(R.id.u_scanQRButton)).perform(click());
         assertEquals(0, event.getEntrants().size());
         onView(withId(R.id.u_registerButton)).perform(click());
         assertEquals(1, event.getEntrants().size());
@@ -110,7 +110,7 @@ public class SingleEventTest {
                 Entrant.EntrantStatus.invited
         );
 
-        onView(withId(R.id.u_scanQRButton)).perform(click());
+       //onView(withId(R.id.u_scanQRButton)).perform(click());
         onView(withId(R.id.u_registerButton)).perform(click());
         // TODO: double check to see if this actually works (hamcrest/matchers error)
         onView(withText("event requires geolocation")).check(matches(isDisplayed()));

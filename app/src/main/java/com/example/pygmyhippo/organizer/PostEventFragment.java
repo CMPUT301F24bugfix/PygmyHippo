@@ -33,14 +33,12 @@ import com.google.firebase.storage.StorageReference;
 import java.util.ArrayList;
 import java.util.UUID;
 /*
+* This fragment is for posting an event
 *  TODO:
- *  - attach event to database
- *  - navigation to qr code screen after event post
- *  - implement changing the image to a new image (this would require firestore connection)
  *  - hide the navigation when a keyboard pops up
- *  - add image uploading to database
  *  - set a standard size for post images
  *  - request that the database generated an id for the event
+ *  - generate a hash id for the event
  *  Thinking about:
  *   - should the current progress of the event reset if the organiser switches screen
  *   - a button called "Clear Fields" at the top to clear event feild
