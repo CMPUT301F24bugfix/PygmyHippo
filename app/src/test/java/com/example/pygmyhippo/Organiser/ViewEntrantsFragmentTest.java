@@ -1,8 +1,8 @@
 package com.example.pygmyhippo.Organiser;
 
-/*
-This Class is used to test the list filtering methods used in ViewEntrantsFragment
-Author: Kori
+/**
+*This Class is used to test the list filtering methods used in ViewEntrantsFragment
+*Author: Kori
  */
 
 import static org.junit.Assert.assertEquals;
