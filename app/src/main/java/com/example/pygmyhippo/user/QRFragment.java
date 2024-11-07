@@ -88,6 +88,7 @@ public class QRFragment extends Fragment {
             // TODO: if evenID doesnt correpond to anything in database, restart using startSingleScan()
             Bundle navArgs = new Bundle();
             navArgs.putParcelable("signedInAccount", signedInAccount);
+            navArgs.putString("eventID", eventID);
             navController.navigate(R.id.u_eventFragment, navArgs);
 //            Navigation.findNavController(requireView()).navigate(R.id.action_scanQRcodeFragment_to_eventFragment);
         }
