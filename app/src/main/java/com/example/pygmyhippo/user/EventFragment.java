@@ -169,6 +169,14 @@ public class EventFragment extends Fragment implements DBOnCompleteListener<Even
             } else {
                 Log.d("EventFragment", "Error in deleting event.");
             }
+        } else if (queryID == 2) {
+            // Log when the data is updated or catch if there was an error
+            if (flags == DBOnCompleteFlags.SUCCESS.value) {
+                Log.d("DB", "Successfully finished updating event with ID");
+            } else {
+                // If not the success flag, then there was an error
+                Log.d("EventFragment", "Error in updating event.");
+            }
         }
     }
 
@@ -212,6 +220,7 @@ public class EventFragment extends Fragment implements DBOnCompleteListener<Even
         if (event.hasEntrant(entrant)) {
             registerButton.setBackgroundColor(0xFF35B35D);
             event.removeEntrant(entrant);
+            handler.updateEvent(event, this);       // Add the changes to the database
             registerButton.setText("Register");
         } else {
             // otherwise, check for enabled geolocation and add entrant accordingly
@@ -224,6 +233,7 @@ public class EventFragment extends Fragment implements DBOnCompleteListener<Even
                 builder.setPositiveButton("Yes", (DialogInterface.OnClickListener) (dialog, which) -> {
                     registerButton.setBackgroundColor(0xFF808080);
                     event.addEntrant(entrant);
+                    handler.updateEvent(event, this);       // Update the database
                     registerButton.setText("✔");
                 });
                 builder.setNegativeButton("No", (DialogInterface.OnClickListener) (dialog, which) -> {
