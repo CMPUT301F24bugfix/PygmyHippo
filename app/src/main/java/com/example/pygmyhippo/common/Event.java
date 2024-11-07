@@ -33,7 +33,7 @@ public class Event {
     private String organiserID;
     private ArrayList<Entrant> entrants;
 
-    private String title;
+    private String title; //deprecated
     private String location;
     private String date;
     private String time;
@@ -59,8 +59,8 @@ public class Event {
         }
     }
 
-    public Event(String title, String location, String date, String time, EventStatus eventStatus) {
-        this.title = title;
+    public Event(String eventTitle, String location, String date, String time, EventStatus eventStatus) {
+        this.eventTitle = eventTitle;
         this.location = location;
         this.date = date;
         this.time = time;
@@ -219,10 +219,6 @@ public class Event {
 
     public void setEventStatus(EventStatus eventStatus) {
         this.eventStatus = eventStatus;
-    }
-
-    public String getTitle() {
-        return title;
     }
 
 }
