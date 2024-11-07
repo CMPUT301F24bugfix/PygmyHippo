@@ -17,6 +17,9 @@ import java.util.UUID;
  * Post Event Database handler.
  *
  * Adds image to Firestore storage when an organiser uploads it from PostEventFragment.
+ * TODO:
+ * - Perhaps make an image Handler class so we dont have to use and event listener for this
+ * (^talk to griffin if you are confused about this)
  */
 public class ImageStorage extends DBHandler {
     /**
