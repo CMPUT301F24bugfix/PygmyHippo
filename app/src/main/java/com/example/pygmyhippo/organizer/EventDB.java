@@ -16,13 +16,14 @@ import java.util.ArrayList;
 /**
  * Post Event Database handler.
  *
- * Adds new Event to Firestore when an organiser creates it from PostEventFragment.
+ * Adds and search Event to Firestore when an organiser creates it from PostEventFragment.
  */
 public class EventDB extends DBHandler {
     /**
      * This posts event to database
      * @param newEvent
      * @param listener
+     * @author james
      */
     public void addEvent(@NonNull Event newEvent, DBOnCompleteListener<Event> listener) {
         DocumentReference docRef = db.collection("Events").document();
@@ -46,7 +47,7 @@ public class EventDB extends DBHandler {
      * This method returns the matching event
      * @param eventID
      * @param listener
-     * @author griffin
+     * @author kori
      */
     public void getEvent(String eventID, DBOnCompleteListener<Event> listener) {
         db.collection("Events")
@@ -73,5 +74,4 @@ public class EventDB extends DBHandler {
                     }
                 });
     }
-
 }

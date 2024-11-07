@@ -59,7 +59,7 @@ public class EventQRViewerFragment extends Fragment implements DBOnCompleteListe
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.organiser_event_qrcode_view, container, false);
-
+        handler = new EventDB();
         eventTitle = view.findViewById(R.id.o_eventqr_eventTitle);
         eventDate = view.findViewById(R.id.o_eventqr_eventDate);
 
@@ -93,8 +93,8 @@ public class EventQRViewerFragment extends Fragment implements DBOnCompleteListe
         return view;
     }
     void setScreenDetails(){
-        eventTitle.setText(myevent.getTitle());
         eventDate.setText(myevent.getDate());
+        eventTitle.setText(myevent.getEventTitle());
     }
 
     /**

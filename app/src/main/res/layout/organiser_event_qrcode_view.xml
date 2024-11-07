@@ -59,7 +59,7 @@
         android:layout_marginEnd="31dp"
         android:fontFamily="@font/roboto_bold"
         android:text="Loading Event Title..."
-        android:textColor="@color/subtitle_text"
+        android:textColor="@color/title_text"
         android:textSize="25dp"
         app:layout_constraintBottom_toTopOf="@+id/o_eventqr_detailsBtn"
         app:layout_constraintEnd_toEndOf="parent"
