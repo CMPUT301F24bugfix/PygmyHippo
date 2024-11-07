@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".user.ProfileFragment">
+
+    <ImageButton
+        android:id="@+id/entrant_view_back_button"
+        android:layout_width="46dp"
+        android:layout_height="46dp"
+        android:layout_margin="10dp"
+        android:padding="3dp"
+        android:background="@drawable/rounded_corners"
+        android:scaleType="centerCrop"
+        android:src="@drawable/back_arrow"
+        app:cornerRadius="8dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:tint="@color/dark_purple">
+
+    </ImageButton>
+
+    <TextView
+        android:id="@+id/e_username"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/roboto_mono_bold"
+        android:text="User Name"
+        android:textAlignment="textStart"
+        android:textColor="@color/dark_purple"
+        android:textSize="34sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ScrollView
+        android:id="@+id/E_profile_form"
+        android:layout_width="533dp"
+        android:layout_height="708dp"
+        android:layout_marginTop="16dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/e_username"
+        app:layout_constraintVertical_bias="1.0">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            tools:context=".user.ProfileFragment">
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/E_profile_profileImg"
+                android:layout_width="210dp"
+                android:layout_height="210dp"
+                android:src="@drawable/dog"
+                app:civ_border_color="#FF000000"
+                app:civ_border_width="0dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.501"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.0" />
+
+            <TextView
+                android:id="@+id/E_profile_pronounsLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:fontFamily="@font/roboto_mono_bold"
+                android:text="Pronouns:"
+                android:textColor="@color/dark_purple"
+                android:textSize="20sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.275"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/E_profile_role" />
+
+            <TextView
+                android:id="@+id/entrant_prounouns"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/roboto_mono_medium"
+                android:text="she/they"
+                android:textColor="@color/dark_purple"
+                android:textSize="20sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.503"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/E_profile_pronounsLabel" />
+
+            <TextView
+                android:id="@+id/E_profile_phoneLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:fontFamily="@font/roboto_mono_bold"
+                android:text="Phone:"
+                android:textColor="@color/dark_purple"
+                android:textSize="20sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.255"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/entrant_email" />
+
+            <TextView
+                android:id="@+id/entrant_phone"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/roboto_mono_medium"
+                android:text="111 222 3333"
+                android:textColor="@color/dark_purple"
+                android:textSize="20sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.503"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/E_profile_phoneLabel" />
+
+            <TextView
+                android:id="@+id/E_profile_emailLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:fontFamily="@font/roboto_mono_bold"
+                android:text="Email:"
+                android:textColor="@color/dark_purple"
+                android:textSize="20sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.255"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/entrant_prounouns" />
+
+            <TextView
+                android:id="@+id/entrant_email"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/roboto_mono_medium"
+                android:text="moodeng@ualberta.ca"
+                android:textSize="20sp"
+                android:textColor="@color/dark_purple"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.503"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/E_profile_emailLabel" />
+
+            <TextView
+                android:id="@+id/E_profile_role"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:layout_marginEnd="228dp"
+                android:text="⭐ Entrant"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/E_profile_profileImg" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </ScrollView>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="160dp"
+        android:layout_gravity="bottom|center_horizontal"
+        android:background="@drawable/rounded_top_corners"
+        android:orientation="vertical"
+        android:padding="16dp"
+        android:paddingTop="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <TextView
+            android:id="@+id/entrant_status"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_margin="0dp"
+            android:padding="0dp"
+            android:fontFamily="@font/roboto_mono_medium"
+            android:text="Status"
+            android:textSize="20sp"
+            android:textColor="@color/dark_purple">
+
+        </TextView>
+
+        <Button
+            android:id="@+id/e_status_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/red"
+            android:visibility="gone"
+            android:clickable="false"
+            android:text="Cancel" />
+
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
