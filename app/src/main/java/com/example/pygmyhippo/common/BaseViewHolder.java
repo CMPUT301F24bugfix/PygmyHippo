@@ -1,5 +1,13 @@
 package com.example.pygmyhippo.common;
 
+/*
+Generic ViewHolder abstract class for implementing a custom RecyclerView adapter
+Purposes:
+    - Used to display the different classes used in the admin browsing
+Issues:
+    - None
+ */
+
 import android.view.View;
 
 import androidx.annotation.NonNull;

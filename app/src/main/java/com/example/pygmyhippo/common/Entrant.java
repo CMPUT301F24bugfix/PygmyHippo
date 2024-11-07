@@ -1,6 +1,12 @@
 
 package com.example.pygmyhippo.common;
-
+/*
+This class models Entrants for an event
+Purposes:
+    - Act as a reference to the Account dataclass
+    - Hold the current status for an event
+Issues: None
+ */
 import java.util.ArrayList;
 import java.util.Collections;
 
@@ -12,7 +18,6 @@ import java.util.Collections;
  * enum below.
  * TODO:
  *  - Use a builder for initialization
- *  - connect to the database
  * @author James Fu, Griffin, Katharine
  */
 public class Entrant {
@@ -33,18 +38,34 @@ public class Entrant {
         }
     };
 
+    /**
+     * This method returns the Account ID used to reference this entrant's corresponding account
+     * @return accountID
+     */
     public String getAccountID() {
         return accountID;
     }
 
+    /**
+     * This method will set the corresponding account ID for the entrant
+     * @param accountID The corresponding accountID
+     */
     public void setAccountID(String accountID) {
         this.accountID = accountID;
     }
 
+    /**
+     * This method will return the status of an entrant given in their event
+     * @return entrantStatus
+     */
     public EntrantStatus getEntrantStatus() {
         return entrantStatus;
     }
 
+    /**
+     * This method will alter the status of the entrant of an event
+     * @param entrantStatus The new status
+     */
     public void setEntrantStatus(EntrantStatus entrantStatus) {
         this.entrantStatus = entrantStatus;
     }

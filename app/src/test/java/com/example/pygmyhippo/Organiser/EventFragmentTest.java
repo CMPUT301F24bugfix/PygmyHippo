@@ -1,5 +1,10 @@
 package com.example.pygmyhippo.Organiser;
-
+/*
+The Unit tests for the organizer.EventFragment
+Purposes:
+    - To test the lottery draw in this fragment
+Issues: None
+ */
 
 import static org.junit.Assert.assertEquals;
 
