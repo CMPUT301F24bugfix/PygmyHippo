@@ -46,7 +46,7 @@ public class MainActivity extends AppCompatActivity implements OnRoleSelectedLis
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        boolean useDB = false; // Change to enable/disable DB use.
+        boolean useDB = true; // Change to enable/disable DB use.
 
         if (useDB) {
             dbHandler = new MainActivityDB();
