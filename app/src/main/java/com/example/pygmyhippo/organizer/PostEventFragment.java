@@ -4,6 +4,7 @@ import static androidx.navigation.Navigation.findNavController;
 
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,28 +27,33 @@ import com.example.pygmyhippo.common.Event;
 import com.example.pygmyhippo.database.DBOnCompleteFlags;
 import com.example.pygmyhippo.database.DBOnCompleteListener;
 import com.example.pygmyhippo.databinding.OrganiserPostEventBinding;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
-
-/**
- * This fragment will hold the post event
- * TODO:
- *  - attach event to database
- *  - navigation to qr code screen after event post
- *  - implement changing the image to a new image (this would require firestore connection)
+import java.util.UUID;
+/*
+* This fragment is for posting an event
+*  TODO:
  *  - hide the navigation when a keyboard pops up
- *  - add image uploading to database
  *  - set a standard size for post images
  *  - request that the database generated an id for the event
+ *  - generate a hash id for the event
  *  Thinking about:
  *   - should the current progress of the event reset if the organiser switches screen
  *   - a button called "Clear Fields" at the top to clear event feild
  *   - really similar idea can be applied to editing an event
+ * */
+
+
+
+/**
+ * This fragment will hold the post event
  * @author Griffin
  * @version 1.1
  * No returns and no parameters
  */
-public class PostEventFragment extends Fragment implements DBOnCompleteListener<Event> {
+public class PostEventFragment extends Fragment implements DBOnCompleteListener<Event>{
 
     private OrganiserPostEventBinding binding;
     private NavController navController;
@@ -55,8 +61,9 @@ public class PostEventFragment extends Fragment implements DBOnCompleteListener<
     private EditText eventNameEdit, eventDateTimeEdit, eventPriceEdit, eventLocationEdit, eventDescriptionEdit, eventLimitEdit, eventWinnersEdit;
     private CheckBox eventGeolocation;
     private ImageButton eventImageBtn;
-    private Uri imagePath = null;
-    private PostEventDB handler;
+    private String imagePath = null;
+    private EventDB handler;
+    private ImageStorage ImageHandler;
 
 
     /**
@@ -72,7 +79,8 @@ public class PostEventFragment extends Fragment implements DBOnCompleteListener<
         binding = OrganiserPostEventBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
-        handler = new PostEventDB();
+        handler = new EventDB();
+        ImageHandler = new ImageStorage();
 
         return root;
     }
@@ -119,7 +127,7 @@ public class PostEventFragment extends Fragment implements DBOnCompleteListener<
                 myEvent.setDate(eventDateTime);
                 myEvent.setDescription(eventDescription);
                 myEvent.setCost(eventPrice);
-                myEvent.setEventPoster(imagePath == null? "" : imagePath.toString());
+                myEvent.setEventPoster(imagePath == null? "" : imagePath);
                 myEvent.setEventLimitCount(eventLimit.isEmpty() ? -1 : Integer.valueOf(eventLimit));
                 myEvent.setEventWinnersCount(Integer.valueOf(eventWinners));
                 myEvent.setEntrants(new ArrayList<>()); // no entrants of a newly created event
@@ -152,8 +160,12 @@ public class PostEventFragment extends Fragment implements DBOnCompleteListener<
                     eventImageBtn.setImageURI(uri);
                     eventImageBtn.setScaleType(ImageView.ScaleType.CENTER_CROP);
                     // center cropped can be changed if we want to scale the picture differently
-                    imagePath = uri;
                     // TODO: add image upload to database
+                    ImageHandler.uploadImageToFirebase(uri, this);
+                }
+                else{
+                    // sets image path to null if no image is selected
+                    imagePath = null;
                 }
             });
 
@@ -192,6 +204,16 @@ public class PostEventFragment extends Fragment implements DBOnCompleteListener<
                 navController.navigate(R.id.action_organiser_postEvent_page_to_view_eventqr_fragment, eventBundle);
             } else {
                 Toast.makeText(getContext(), "Event Failed to Create", Toast.LENGTH_LONG).show();
+            }
+        }
+        else if (queryID == 3){
+            if (flags == DBOnCompleteFlags.SUCCESS.value) {
+                clearEditTextFields();
+                Event newEvent = docs.get(0);
+                imagePath = newEvent.getEventPoster();
+            }
+            else {
+                Toast.makeText(getContext(), "Image failed to upload", Toast.LENGTH_LONG).show();
             }
         }
     }
