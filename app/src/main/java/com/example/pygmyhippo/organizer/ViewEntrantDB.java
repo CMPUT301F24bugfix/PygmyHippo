@@ -103,7 +103,6 @@ public class ViewEntrantDB extends DBHandler {
      * @param listener The listener that initiates when the data is done updating
      */
     public void updateEvent(Event event, DBOnCompleteListener<Event> listener) {
-        // first remove the old entrant entry
         db.collection("Events")
                 .document(event.getEventID())
                 .set(event)
