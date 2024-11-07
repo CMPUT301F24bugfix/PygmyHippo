@@ -197,7 +197,7 @@ public class PostEventFragment extends Fragment implements DBOnCompleteListener<
                 Bundle navArgs = new Bundle();
                 navArgs.putString("eventID", newEvent.getEventID());
                 navArgs.putParcelable("signedInAccount", signedInAccount);
-                navController.navigate(R.id.organiser_eventFragment, navArgs);
+                navController.navigate(R.id.view_eventqr_fragment, navArgs);
             } else {
                 Toast.makeText(getContext(), "Event Failed to Create", Toast.LENGTH_LONG).show();
             }

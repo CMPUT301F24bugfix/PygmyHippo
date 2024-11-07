@@ -25,12 +25,12 @@ app:startDestination="@+id/o_loadingFragment">
     android:label="@string/title_post_event"
     tools:layout="@layout/organiser_post_event"
     android:background="@color/dark_purple">
-    <action
-        android:id="@+id/action_organiser_postEvent_page_to_event_fragment"
-        app:destination="@id/organiser_eventFragment" />
     <argument
         android:name="signedInAccount"
         app:argType="com.example.pygmyhippo.common.Account" />
+    <action
+        android:id="@+id/action_organiser_postEvent_page_to_view_eventqr_fragment"
+        app:destination="@id/view_eventqr_fragment" />
 </fragment>
 
     <fragment
@@ -42,12 +42,12 @@ app:startDestination="@+id/o_loadingFragment">
         <argument
             android:name="signedInAccount"
             app:argType="com.example.pygmyhippo.common.Account" />
-        <action
-            android:id="@+id/action_view_eventqr_fragment_to_organiser_eventFragment"
-            app:destination="@id/organiser_eventFragment" />
         <argument
             android:name="eventID"
             app:argType="string" />
+        <action
+            android:id="@+id/action_view_eventqr_fragment_to_organiser_eventFragment"
+            app:destination="@id/organiser_eventFragment" />
     </fragment>
 
     <fragment
@@ -94,17 +94,14 @@ app:startDestination="@+id/o_loadingFragment">
         android:label="view event"
         tools:layout="@layout/organiser_fragment_event"
         android:background="@color/dark_purple">
-        <action
-            android:id="@+id/action_event_fragment_to_view_eventqr_fragment"
-            app:destination="@id/view_eventqr_fragment" />
-        <action
-            android:id="@+id/action_event_fragment_to_view_entrants_fragment"
-            app:destination="@id/view_entrants_fragment" />
         <argument
             android:name="signedInAccount"
             app:argType="com.example.pygmyhippo.common.Account" />
         <argument android:name="eventID"
             app:argType="string" />
+        <action
+            android:id="@+id/action_organiser_eventFragment_to_view_entrants_fragment"
+            app:destination="@id/view_entrants_fragment" />
     </fragment>
 
     <fragment
