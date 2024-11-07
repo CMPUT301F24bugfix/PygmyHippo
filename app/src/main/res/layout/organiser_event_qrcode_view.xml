@@ -34,22 +34,39 @@
         app:srcCompat="@android:drawable/ic_dialog_alert" />
 
     <!--TODO: once database is connected display some info about the event-->
+
+
     <TextView
-        android:id="@+id/o_eventqr_eventDetails"
-        android:layout_width="350dp"
-        android:layout_height="60dp"
-        android:layout_marginStart="31dp"
-        android:layout_marginEnd="31dp"
+        android:id="@+id/o_eventqr_eventDate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Loading Event Date..."
         android:fontFamily="@font/roboto_medium"
-        android:text="@string/filler_short"
-        android:textColor="@color/title_text"
-        android:textSize="15sp"
-        app:layout_constraintBottom_toTopOf="@+id/o_eventqr_detailsBtn"
+        android:textColor="@color/black"
+        android:textSize="15dp"
+        app:layout_constraintBottom_toTopOf="@+id/o_eventqr_eventTitle"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintHorizontal_bias="0.107"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/o_eventqr_view"
-        app:layout_constraintVertical_bias="0.416" />
+        app:layout_constraintVertical_bias="0.75" />
+
+    <TextView
+        android:id="@+id/o_eventqr_eventTitle"
+        android:layout_width="362dp"
+        android:layout_height="41dp"
+        android:layout_marginStart="31dp"
+        android:layout_marginEnd="31dp"
+        android:fontFamily="@font/roboto_bold"
+        android:text="Loading Event Title..."
+        android:textColor="@color/subtitle_text"
+        android:textSize="25dp"
+        app:layout_constraintBottom_toTopOf="@+id/o_eventqr_detailsBtn"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.538"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/o_eventqr_view"
+        app:layout_constraintVertical_bias="0.65" />
 
     <!--TODO: once single event is complete make this navigate-->
     <Button

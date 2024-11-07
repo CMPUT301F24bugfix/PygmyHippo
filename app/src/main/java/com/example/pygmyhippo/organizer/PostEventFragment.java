@@ -28,10 +28,8 @@ import com.example.pygmyhippo.database.DBOnCompleteListener;
 import com.example.pygmyhippo.databinding.OrganiserPostEventBinding;
 
 import java.util.ArrayList;
-
-/**
- * This fragment will hold the post event
- * TODO:
+/*
+*  TODO:
  *  - attach event to database
  *  - navigation to qr code screen after event post
  *  - implement changing the image to a new image (this would require firestore connection)
@@ -43,6 +41,12 @@ import java.util.ArrayList;
  *   - should the current progress of the event reset if the organiser switches screen
  *   - a button called "Clear Fields" at the top to clear event feild
  *   - really similar idea can be applied to editing an event
+ * */
+
+
+
+/**
+ * This fragment will hold the post event
  * @author Griffin
  * @version 1.1
  * No returns and no parameters
@@ -56,7 +60,7 @@ public class PostEventFragment extends Fragment implements DBOnCompleteListener<
     private CheckBox eventGeolocation;
     private ImageButton eventImageBtn;
     private Uri imagePath = null;
-    private PostEventDB handler;
+    private EventDB handler;
 
 
     /**
@@ -72,7 +76,7 @@ public class PostEventFragment extends Fragment implements DBOnCompleteListener<
         binding = OrganiserPostEventBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
-        handler = new PostEventDB();
+        handler = new EventDB();
 
         return root;
     }
