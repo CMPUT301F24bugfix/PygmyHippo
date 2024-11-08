@@ -36,8 +36,8 @@ public class ViewEntrantDB extends DBHandler {
 
     /**
      * This method returns the matching event
-     * @param eventID
-     * @param listener
+     * @param eventID The ID of the event we want
+     * @param listener What gets notified of query results
      */
     public void getEvent(String eventID, DBOnCompleteListener<Event> listener) {
         db.collection("Events")
@@ -46,6 +46,8 @@ public class ViewEntrantDB extends DBHandler {
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
                         QuerySnapshot queryResult = task.getResult();
+
+                        // Add the results to a list
                         ArrayList<Event> events = new ArrayList<>();
                         queryResult.forEach(doc -> events.add(doc.toObject(Event.class)));
                         if (events.size() == 0) {
@@ -67,8 +69,8 @@ public class ViewEntrantDB extends DBHandler {
 
     /**
      * This method returns the account matching the entrant from the list
-     * @param accountID
-     * @param listener
+     * @param accountID The ID of the account we want
+     * @param listener What gets notified of the query results
      */
     public void getAccount(String accountID, DBOnCompleteListener<Account> listener) {
         db.collection("Accounts")
@@ -77,6 +79,8 @@ public class ViewEntrantDB extends DBHandler {
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
                         QuerySnapshot queryResult = task.getResult();
+
+                        // Add results to a list, this gets passed to the listener
                         ArrayList<Account> accounts = new ArrayList<>();
                         queryResult.forEach(doc -> accounts.add(doc.toObject(Account.class)));
                         if (accounts.size() == 0) {

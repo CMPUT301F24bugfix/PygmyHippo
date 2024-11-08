@@ -2,6 +2,7 @@ package com.example.pygmyhippo.organizer;
 
 /*
 This Fragment is meant for the Organizer to view the users who entered the waitlist on an event the Organizer made.
+Purposes:
 Will contain the functionality to filter the given list depending on the status of the entrant
 Deals with user stories 02.06.01, 02.06.02, 02.06.03, and 02.02.01
 Author: Kori
@@ -97,7 +98,7 @@ public class ViewEntrantsFragment extends Fragment implements DBOnCompleteListen
                 R.layout.e_p_role_dropdown
         );
 
-        // Attatch the adapter to the spinner
+        // Attach the adapter to the spinner
         o_spinner_adapter.setDropDownViewResource(R.layout.e_p_role_dropdown);
         statusSpinner.setAdapter(o_spinner_adapter);
 
@@ -223,6 +224,9 @@ public class ViewEntrantsFragment extends Fragment implements DBOnCompleteListen
         }
     }
 
+    /**
+     * Displays DB errors
+     */
     private void handleDBError() {
         Toast toast = Toast.makeText(getContext(), "DB Error!", Toast.LENGTH_SHORT);
         toast.show();
