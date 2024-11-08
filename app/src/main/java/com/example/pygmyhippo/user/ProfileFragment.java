@@ -39,15 +39,11 @@ import java.util.Objects;
 
 /**
  * This fragment holds most of the information about a user which is returned from a call to the database
- * To be Implemented: the edit button will change the interface and allow the user to edit all fields and send it to
- * the database.
+ * Purpose: To allow the user to update their profile and change their role
  *
- * To be fixed:
- * - The framework for the communication between this can the main activity needs to be more robust
- *   (right now when this fragment is open the drop down is triggered sending roleSelectedListener,
- *   which would change the role to user since its he first role in the drop down)
+ * Issues:
+ * - Profile Images not stored in the database yet
  *
- * Currently just a static page.
  * Allows the user to edit or view their current provided information.
  * @author Jennifer, Griffin
  * @version 1.1
@@ -105,6 +101,7 @@ public class ProfileFragment extends Fragment  implements AdapterView.OnItemSele
         String url = "https://api.multiavatar.com/";
         imagePath = Uri.parse(url+name+".png");
 
+        // Retrieve the generated profile picture
         Picasso.get()
                 .load(imagePath)
                 .into(binding.EProfileProfileImg);
@@ -121,12 +118,16 @@ public class ProfileFragment extends Fragment  implements AdapterView.OnItemSele
 
 
     /**
-     * Creates the view
-     * @author Jennifer
-     * @param inflater not sure
-     * @param container not sure
-     * @param savedInstanceState not sure
-     * @return root not sure
+     * Jennifer
+     * @param inflater The LayoutInflater object that can be used to inflate
+     * any views in the fragment,
+     * @param container If non-null, this is the parent view that the fragment's
+     * UI should be attached to.  The fragment should not add the view itself,
+     * but this can be used to generate the LayoutParams of the view.
+     * @param savedInstanceState If non-null, this fragment is being re-constructed
+     * from a previous saved state as given here.
+     *
+     * @return The view of the profile fragment
      */
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -209,17 +210,20 @@ public class ProfileFragment extends Fragment  implements AdapterView.OnItemSele
 
         /*
          * Exit edit mode the submit
-         * To Do: this needs to call whatever method will submit to the database
+         * TODO: Need to store the profile picture in the database
+         *      Add restrictions on certain fields
          * author Jennifer
          */
         View.OnClickListener updateUser = new View.OnClickListener() {
             /**
              * Tell whichs elements to become unfocusable, to appear or disappear
-             * @author Jennifer
+             * Will also update the attributes of the account and store that in the database
+             * @author Jennifer, Kori
              * @param view the fragment view
              */
             @Override
             public void onClick(View view) {
+                // Change the text visibilities
                 nameField.setFocusable(false);
                 pronounField.setFocusable(false);
                 phoneField.setFocusable(false);
@@ -237,6 +241,27 @@ public class ProfileFragment extends Fragment  implements AdapterView.OnItemSele
                 uploadImgBtn.setVisibility(View.GONE);
                 deleteImgBtn.setVisibility(View.GONE);
 
+                // Update the corresponding fields of the account
+                signedInAccount.setName(nameField.getText().toString());
+                signedInAccount.setPronouns(pronounField.getText().toString());
+                signedInAccount.setPhoneNumber(phoneField.getText().toString());
+                signedInAccount.setEmailAddress(emailField.getText().toString());
+                signedInAccount.setReceiveNotifications(decNotify.isChecked());
+                signedInAccount.setEnableGeolocation(decGeo.isChecked());
+
+                // Update to reflect in the database
+                handler.updateProfile(signedInAccount, new DBOnCompleteListener<Account>() {
+                    @Override
+                    public void OnComplete(@NonNull ArrayList<Account> docs, int queryID, int flags) {
+                        // Log when the data is updated or catch if there was an error
+                        if (flags == DBOnCompleteFlags.SUCCESS.value) {
+                            Log.d("DB", "Successfully finished updating account");
+                        } else {
+                            // If not the success flag, then there was an error
+                            Log.d("Profile", "Error in updating account.");
+                        }
+                    }
+                });
             }
         };
 

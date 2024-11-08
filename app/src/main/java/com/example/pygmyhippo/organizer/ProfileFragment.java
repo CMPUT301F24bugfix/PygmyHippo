@@ -24,26 +24,26 @@ import androidx.navigation.Navigation;
 
 import com.example.pygmyhippo.R;
 import com.example.pygmyhippo.common.Account;
+import com.example.pygmyhippo.common.Facility;
+import com.example.pygmyhippo.database.DBOnCompleteFlags;
+import com.example.pygmyhippo.database.DBOnCompleteListener;
 import com.example.pygmyhippo.databinding.OrganiserFragmentProfileBinding;
+import com.example.pygmyhippo.user.ProfileDB;
 import com.squareup.picasso.Picasso;
 
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.Objects;
 
 
 /**
  * This fragment holds most of the information about a user which is returned from a call to the database
  * To be Implemented:
- * - the edit button will change the interface and allow the user to edit all fields and send it to
- *   the database.
- * - Organiser profile page
+ * - Facility profile page
  *
- * To be fixed:
- * - The framework for the communication between this can the main activity needs to be more robust
- *   (right now when this fragment is open the drop down is triggered sending roleSelectedListener,
- *   which would change the role to user since its he first role in the drop down)
+ * Issues:
+ * - Profile picture doesn't get stored in database
  *
- * Currently just a static page.
  * Allows the organiser to edit or view their current provided information.
  * @author Jennifer, Griffin
  * @version 1.2
@@ -53,9 +53,13 @@ public class ProfileFragment extends Fragment implements AdapterView.OnItemSelec
     private Uri imagePath;
     private String uploadType = "avatar";
     private Account signedInAccount;
+    private String currentRole;
 
     private OrganiserFragmentProfileBinding binding;
     private NavController navController;
+    private ProfileDB handler;
+
+    private EditText name_f, pronoun_f, phone_f, email_f, facilityName_f, facilityLocation_f;
 
 
      // Registers a photo picker activity launcher in single-select mode and sets the profile image to the new URI
@@ -97,12 +101,16 @@ public class ProfileFragment extends Fragment implements AdapterView.OnItemSelec
     }
 
     /**
-     * Creates the view
      * @author Jennifer
-     * @param inflater not sure
-     * @param container not sure
-     * @param savedInstanceState not sure
-     * @return root not sure
+     * @param inflater The LayoutInflater object that can be used to inflate
+     * any views in the fragment,
+     * @param container If non-null, this is the parent view that the fragment's
+     * UI should be attached to.  The fragment should not add the view itself,
+     * but this can be used to generate the LayoutParams of the view.
+     * @param savedInstanceState If non-null, this fragment is being re-constructed
+     * from a previous saved state as given here.
+     *
+     * @return The profile view
      */
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -110,8 +118,6 @@ public class ProfileFragment extends Fragment implements AdapterView.OnItemSelec
 
         binding = OrganiserFragmentProfileBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
-
-        signedInAccount = ProfileFragmentArgs.fromBundle(getArguments()).getSignedInAccount();
 
         Spinner role_dropdown = binding.oRoleSpinner;
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(
@@ -132,12 +138,12 @@ public class ProfileFragment extends Fragment implements AdapterView.OnItemSelec
         Button updateButton = root.findViewById(R.id.O_profile_updateBtn);
 
         // All the text fields
-        EditText name_f = root.findViewById(R.id.O_profile_textName);
-        EditText pronoun_f = root.findViewById(R.id.O_profile_textPronouns);
-        EditText phone_f = root.findViewById(R.id.O_profile_textPhone);
-        EditText email_f = root.findViewById(R.id.O_profile_textEmail);
-        EditText facilityName_f = root.findViewById(R.id.O_Profile_facilityNameText);
-        EditText facilityLocation_f = root.findViewById(R.id.O_Profile_facilityLocationText);
+        name_f = root.findViewById(R.id.O_profile_textName);
+        pronoun_f = root.findViewById(R.id.O_profile_textPronouns);
+        phone_f = root.findViewById(R.id.O_profile_textPhone);
+        email_f = root.findViewById(R.id.O_profile_textEmail);
+        facilityName_f = root.findViewById(R.id.O_Profile_facilityNameText);
+        facilityLocation_f = root.findViewById(R.id.O_Profile_facilityLocationText);
 
 
         // Image Buttons
@@ -145,6 +151,9 @@ public class ProfileFragment extends Fragment implements AdapterView.OnItemSelec
         Button deleteIm_btn = root.findViewById(R.id.O_profile_deleteImageBtn);
         Button facility_uploadIm_btn = root.findViewById(R.id.O_Profile_facilityUploadImagebtn);
 
+        // Get the account and initialize the db handler
+        setProfile();
+        handler = new ProfileDB();
 
         // Allows te page elements to be edited by the user if the edit button is clicked
         View.OnClickListener edit = new View.OnClickListener() {
@@ -182,8 +191,9 @@ public class ProfileFragment extends Fragment implements AdapterView.OnItemSelec
 
         View.OnClickListener update = new View.OnClickListener() {
             /**
-             * Tell which elements to become unfocusable, to appear or disappear
-             * @author Jennifer
+             * Tell which elements to become unfocusable, and stores the new user info in the database
+             * TODO: Store the images in the database as well
+             * @author Jennifer, Kori
              * @param view the fragment view
              */
             @Override
@@ -211,6 +221,28 @@ public class ProfileFragment extends Fragment implements AdapterView.OnItemSelec
                 deleteIm_btn.setVisibility(View.GONE);
                 facility_uploadIm_btn.setVisibility(View.GONE);
 
+                // Update the corresponding fields of the account
+                signedInAccount.setName(name_f.getText().toString());
+                signedInAccount.setPronouns(pronoun_f.getText().toString());
+                signedInAccount.setPhoneNumber(phone_f.getText().toString());
+                signedInAccount.setEmailAddress(email_f.getText().toString());
+                String facilityName = facilityName_f.getText().toString();
+                String facilityLocation = facilityLocation_f.getText().toString();
+                signedInAccount.setFacilityProfile(new Facility("", facilityName, facilityLocation));
+
+                // Update to reflect in the database
+                handler.updateProfile(signedInAccount, new DBOnCompleteListener<Account>() {
+                    @Override
+                    public void OnComplete(@NonNull ArrayList<Account> docs, int queryID, int flags) {
+                        // Log when the data is updated or catch if there was an error
+                        if (flags == DBOnCompleteFlags.SUCCESS.value) {
+                            Log.d("DB", "Successfully finished updating account");
+                        } else {
+                            // If not the success flag, then there was an error
+                            Log.d("ProfileFragment", "Error in updating account.");
+                        }
+                    }
+                });
             }
         };
 
@@ -274,6 +306,32 @@ public class ProfileFragment extends Fragment implements AdapterView.OnItemSelec
         return root;
     }
 
+    private void populateTextViews(Account account) {
+        name_f.setText(account.getName());
+        pronoun_f.setText(account.getPronouns());
+        phone_f.setText(account.getPhoneNumber());
+        email_f.setText(account.getEmailAddress());
+
+        if (account.getFacilityProfile() != null) {
+            // Populate the facility fields if the account has one
+            facilityName_f.setText(account.getFacilityProfile().getName());
+            facilityLocation_f.setText(account.getFacilityProfile().getLocation());
+        }
+    }
+
+    private void setProfile() {
+        signedInAccount = ProfileFragmentArgs.fromBundle(getArguments()).getSignedInAccount();
+        currentRole = ProfileFragmentArgs.fromBundle(getArguments()).getCurrentRole();
+
+        Log.d("ProfileFragment", String.format("signedInAccount %s", signedInAccount));
+        if (signedInAccount != null) {
+            // An account was
+            Log.d("ProfileFragment", String.format("Populating text views with %s %s", signedInAccount.getAccountID(), signedInAccount.getName()));
+            populateTextViews(signedInAccount);
+        } else {
+            Log.d("ProfileFragment", "ERROR!");
+        }
+    }
 
     /**
      * since this implements the OnTimeSelectedLister we need to override these two methods to get
@@ -297,7 +355,7 @@ public class ProfileFragment extends Fragment implements AdapterView.OnItemSelec
             navArgs.putString("currentRole", "user");
             navController.navigate(R.id.u_mainActivity, navArgs);
         } else if (selectedRole.equals("organiser")) {
-            Log.d("ProfileFragment", "User was selected, not doign anything :)");
+            Log.d("ProfileFragment", "User was selected, not doing anything :)");
         } else if (selectedRole.equals("admin")) {
             navArgs.putString("currentRole", "admin");
             navController.navigate(R.id.a_mainActivity, navArgs);

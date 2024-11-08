@@ -6,10 +6,15 @@ package com.example.pygmyhippo.user;
 
 import android.util.Log;
 
+import androidx.annotation.NonNull;
+
 import com.example.pygmyhippo.common.Account;
+import com.example.pygmyhippo.common.Event;
 import com.example.pygmyhippo.database.DBHandler;
 import com.example.pygmyhippo.database.DBOnCompleteFlags;
 import com.example.pygmyhippo.database.DBOnCompleteListener;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentSnapshot;
 
 import java.util.ArrayList;
@@ -70,6 +75,30 @@ public class ProfileDB extends DBHandler {
                     } else {
                         Log.d("DB", String.format("Could not update current role for account %s", accountID));
                         listener.OnComplete(new ArrayList<>(), 2, DBOnCompleteFlags.SUCCESS.value);
+                    }
+                });
+    }
+
+    /**
+     * This method will set the currently existing account to the new one with updated values
+     * @author Kori
+     * @param account The account we want to update
+     * @param listener The listener that initiates when the data is done updating
+     */
+    public void updateProfile(Account account, DBOnCompleteListener<Account> listener) {
+        db.collection("Accounts")
+                .document(account.getAccountID())
+                .set(account)
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if (task.isSuccessful()) {
+                            Log.d("DB", String.format("Successfully updated account with ID (%s).", account.getAccountID()));
+                            listener.OnComplete(new ArrayList<>(), 3, DBOnCompleteFlags.SUCCESS.value);
+                        } else {
+                            Log.d("DB", String.format("Error: Could not update account with ID (%s).", account.getAccountID()));
+                            listener.OnComplete(new ArrayList<>(), 3, DBOnCompleteFlags.ERROR.value);
+                        }
                     }
                 });
     }

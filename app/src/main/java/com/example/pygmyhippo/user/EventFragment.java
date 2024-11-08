@@ -8,7 +8,7 @@ Purposes:
         - If they navigate back to this event, allow them the option to leave the event
 Contributors: Katharine
 Issues:
-        - Isn't connected to database yet (sample data is hardcoded)
+        - Needs testing
  */
 
 import android.app.AlertDialog;
@@ -63,8 +63,6 @@ public class EventFragment extends Fragment implements DBOnCompleteListener<Even
             eventLocationView, eventCostView, eventAboutDescriptionView;
     private Button registerButton, deleteEventButton, deleteQRCodeButton;
     private ConstraintLayout adminConstraint;
-
-    // TODO: pass entrant and even information using bundle...
 
     // populate single event page with hardcoded event information
     public Event hardcodeEvent() {
@@ -125,11 +123,10 @@ public class EventFragment extends Fragment implements DBOnCompleteListener<Even
         String navigationEventID = EventFragmentArgs.fromBundle(getArguments()).getEventID();
         getEvent(navigationEventID);
 
-        // TODO: add actual database stuff here, where user is added into the events list
-        // for now, this is hardcoding to figure out structure of entrant
+        // Make the entrant equivalent using the account info
         entrant = new Entrant(
-                "123",
-                Entrant.EntrantStatus.invited
+                signedInAccount.getAccountID(),
+                Entrant.EntrantStatus.waitlisted
         );
 
         FloatingActionButton backButton = view.findViewById(R.id.u_backButtonToQRView);
@@ -246,6 +243,7 @@ public class EventFragment extends Fragment implements DBOnCompleteListener<Even
             } else {
                 registerButton.setBackgroundColor(0xFF808080);
                 event.addEntrant(entrant);
+                handler.updateEvent(event, this);       // Update the database
                 registerButton.setText("✔");
             }
         }
