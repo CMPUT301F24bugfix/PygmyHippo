@@ -3,7 +3,7 @@
 xmlns:app="http://schemas.android.com/apk/res-auto"
 xmlns:tools="http://schemas.android.com/tools"
 android:id="@+id/organiser_mobile_navigation"
-app:startDestination="@+id/organiser_postEvent_page">
+app:startDestination="@+id/o_loadingFragment">
 
 <fragment
     android:id="@+id/organiser_myEvents_page"
@@ -13,7 +13,10 @@ app:startDestination="@+id/organiser_postEvent_page">
     android:background="@color/dark_purple">
     <action
         android:id="@+id/action_organiser_myEvents_page_to_event_fragment"
-        app:destination="@id/event_fragment" />
+        app:destination="@id/organiser_eventFragment" />
+    <argument
+        android:name="signedInAccount"
+        app:argType="com.example.pygmyhippo.common.Account" />
 </fragment>
 
 <fragment
@@ -22,6 +25,9 @@ app:startDestination="@+id/organiser_postEvent_page">
     android:label="@string/title_post_event"
     tools:layout="@layout/organiser_post_event"
     android:background="@color/dark_purple">
+    <argument
+        android:name="signedInAccount"
+        app:argType="com.example.pygmyhippo.common.Account" />
     <action
         android:id="@+id/action_organiser_postEvent_page_to_view_eventqr_fragment"
         app:destination="@id/view_eventqr_fragment" />
@@ -33,6 +39,15 @@ app:startDestination="@+id/organiser_postEvent_page">
         android:label="view QR"
         tools:layout="@layout/organiser_event_qrcode_view"
         android:background="@color/dark_purple">
+        <argument
+            android:name="signedInAccount"
+            app:argType="com.example.pygmyhippo.common.Account" />
+        <argument
+            android:name="eventID"
+            app:argType="string" />
+        <action
+            android:id="@+id/action_view_eventqr_fragment_to_organiser_eventFragment"
+            app:destination="@id/organiser_eventFragment" />
     </fragment>
 
     <fragment
@@ -42,8 +57,18 @@ app:startDestination="@+id/organiser_postEvent_page">
     tools:layout="@layout/organiser_fragment_profile"
     android:background="@color/dark_purple">
         <argument
-            android:name="account"
+            android:name="signedInAccount"
             app:argType="com.example.pygmyhippo.common.Account" />
+        <action
+            android:id="@+id/action_organiser_profile_page_to_u_mainActivity"
+            app:destination="@id/u_mainActivity" />
+        <action
+            android:id="@+id/action_organiser_profile_page_to_a_mainActivity"
+            app:destination="@id/a_mainActivity" />
+        <argument
+            android:name="currentRole"
+            app:argType="string"
+            android:defaultValue="organiser" />
     </fragment>
 
     <fragment
@@ -52,29 +77,31 @@ app:startDestination="@+id/organiser_postEvent_page">
         android:label="view entrants"
         tools:layout="@layout/o_view_entrants"
         android:background="@color/dark_purple">
-        <action
-            android:id="@+id/action_view_entrants_fragment_to_event_fragment"
-            app:destination="@id/event_fragment" />
         <argument
             android:name="eventID"
             app:argType="string" />
         <action
             android:id="@+id/action_view_entrants_fragment_to_single_entrant_fragment"
             app:destination="@id/single_entrant_fragment" />
+        <argument
+            android:name="signedInAccount"
+            app:argType="com.example.pygmyhippo.common.Account" />
     </fragment>
 
     <fragment
-        android:id="@+id/event_fragment"
+        android:id="@+id/organiser_eventFragment"
         android:name="com.example.pygmyhippo.organizer.EventFragment"
         android:label="view event"
         tools:layout="@layout/organiser_fragment_event"
         android:background="@color/dark_purple">
+        <argument
+            android:name="signedInAccount"
+            app:argType="com.example.pygmyhippo.common.Account" />
+        <argument android:name="eventID"
+            app:argType="string" />
         <action
-            android:id="@+id/action_event_fragment_to_view_entrants_fragment"
+            android:id="@+id/action_organiser_eventFragment_to_view_entrants_fragment"
             app:destination="@id/view_entrants_fragment" />
-        <action
-            android:id="@+id/action_event_fragment_to_organiser_myEvents_page"
-            app:destination="@id/organiser_myEvents_page" />
     </fragment>
 
     <fragment
@@ -83,9 +110,6 @@ app:startDestination="@+id/organiser_postEvent_page">
         android:label="view entrant"
         tools:layout="@layout/organiser_view_single_entrant"
         android:background="@color/dark_purple">
-        <action
-            android:id="@+id/action_single_entrant_fragment_to_view_entrants_fragment"
-            app:destination="@id/view_entrants_fragment" />
         <argument android:name="accountID"
             app:argType="string"/>
         <argument
@@ -94,5 +118,52 @@ app:startDestination="@+id/organiser_postEvent_page">
         <argument
             android:name="eventID"
             app:argType="string" />
+        <argument
+            android:name="signedInAccount"
+            app:argType="com.example.pygmyhippo.common.Account" />
     </fragment>
+
+    <fragment
+        android:id="@+id/o_loadingFragment"
+        android:name="com.example.pygmyhippo.LoadingFragment"
+        android:label="organiser_loading_fragment"
+        tools:layout="@layout/loading_fragment">
+        <action
+            android:id="@+id/action_o_loadingFragment_to_organiser_postEvent_page"
+            app:destination="@id/organiser_postEvent_page" />
+    </fragment>
+
+    <activity
+        android:id="@+id/u_mainActivity"
+        android:name="com.example.pygmyhippo.MainActivity"
+        android:label="User Main Activity"
+        tools:layout="@layout/user_main_activity_nagivation" >
+        <argument
+            android:name="signedInAccount"
+            app:argType="com.example.pygmyhippo.common.Account"
+            app:nullable="true"
+            android:defaultValue="@null" />
+        <argument
+            android:name="currentRole"
+            app:argType="string"
+            android:defaultValue="user"
+            app:nullable="true" />
+    </activity>
+
+    <activity
+        android:id="@+id/a_mainActivity"
+        android:name="com.example.pygmyhippo.MainActivity"
+        android:label="Admin Main Activity"
+        tools:layout="@layout/admin_main_activity_navigation" >
+        <argument
+            android:name="signedInAccount"
+            app:argType="com.example.pygmyhippo.common.Account"
+            app:nullable="true"
+            android:defaultValue="@null" />
+        <argument
+            android:name="currentRole"
+            app:argType="string"
+            app:nullable="true"
+            android:defaultValue="admin" />
+    </activity>
 </navigation>

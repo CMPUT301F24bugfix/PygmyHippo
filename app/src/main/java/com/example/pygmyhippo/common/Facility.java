@@ -24,6 +24,7 @@ public class Facility implements Parcelable {
     private String name;
     private String location;
 
+    public Facility() {}
     public Facility(String facilityPicture, String name, String location) {
         this.facilityPicture = facilityPicture;
         this.name = name;

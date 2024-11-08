@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/admin_mobile_navigation"
-    app:startDestination="@+id/admin_navigation_all_images">
+    app:startDestination="@+id/a_loadingFragment">
 
     <fragment
         android:id="@+id/admin_navigation_all_events"
@@ -11,18 +11,12 @@
         android:label="All Events"
         tools:layout="@layout/admin_fragment_all_list"
         android:background="@color/dark_purple">
-        <action
-            android:id="@+id/action_admin_navigation_all_events_to_admin_navigation_event_page"
-            app:destination="@id/admin_navigation_event_page" />
         <argument
             android:name="signedInAccount"
             app:argType="com.example.pygmyhippo.common.Account" />
         <action
-            android:id="@+id/action_admin_navigation_all_events_to_admin_navigation_all_images"
-            app:destination="@id/admin_navigation_all_images" />
-        <action
-            android:id="@+id/action_admin_navigation_all_events_to_admin_navigation_all_users"
-            app:destination="@id/admin_navigation_all_users" />
+            android:id="@+id/action_admin_navigation_all_events_to_admin_navigation_event_page"
+            app:destination="@id/admin_navigation_event_page" />
     </fragment>
 
     <fragment
@@ -35,13 +29,7 @@
             android:name="signedInAccount"
             app:argType="com.example.pygmyhippo.common.Account" />
         <action
-            android:id="@+id/action_admin_navigation_all_users_to_admin_navigation_all_events"
-            app:destination="@id/admin_navigation_all_events" />
-        <action
-            android:id="@+id/action_admin_navigation_all_users_to_admin_navigation_all_images"
-            app:destination="@id/admin_navigation_all_images" />
-        <action
-            android:id="@+id/action_admin_navigation_all_users_to_admin_navigation_profile_page"
+            android:id="@+id/action_admin_navigation_all_users_to_admin_navigation_profile_page2"
             app:destination="@id/admin_navigation_profile_page" />
     </fragment>
 
@@ -54,12 +42,6 @@
         <argument
             android:name="signedInAccount"
             app:argType="com.example.pygmyhippo.common.Account" />
-        <action
-            android:id="@+id/action_admin_navigation_all_images_to_admin_navigation_all_events"
-            app:destination="@id/admin_navigation_all_events" />
-        <action
-            android:id="@+id/action_admin_navigation_all_images_to_admin_navigation_all_users"
-            app:destination="@id/admin_navigation_all_users" />
     </fragment>
 
     <fragment
@@ -75,6 +57,9 @@
         <argument
             android:name="signedInAccount"
             app:argType="com.example.pygmyhippo.common.Account" />
+        <action
+            android:id="@+id/action_admin_navigation_event_page_to_admin_navigation_all_events"
+            app:destination="@id/admin_navigation_all_events" />
     </fragment>
 
     <fragment
@@ -92,6 +77,60 @@
             app:argType="string"
             app:nullable="true"
             android:defaultValue="null" />
+        <action
+            android:id="@+id/action_admin_navigation_profile_page_to_o_mainActivity"
+            app:destination="@id/o_mainActivity" />
+        <action
+            android:id="@+id/action_admin_navigation_profile_page_to_u_mainActivity"
+            app:destination="@id/u_mainActivity" />
+        <argument
+            android:name="currentRole"
+            app:argType="string"
+            android:defaultValue="admin" />
     </fragment>
+
+    <fragment
+        android:id="@+id/a_loadingFragment"
+        android:name="com.example.pygmyhippo.LoadingFragment"
+        android:label="admin_loading_fragment"
+        tools:layout="@layout/loading_fragment">
+        <action
+            android:id="@+id/action_a_loadingFragment_to_admin_navigation_all_images"
+            app:destination="@id/admin_navigation_all_images" />
+    </fragment>
+
+    <activity
+        android:id="@+id/o_mainActivity"
+        android:name="com.example.pygmyhippo.MainActivity"
+        android:label="Organiser Main Activity"
+        tools:layout="@layout/organiser_main_activity_nagivation" >
+        <argument
+            android:name="signedInAccount"
+            app:argType="com.example.pygmyhippo.common.Account"
+            app:nullable="true"
+            android:defaultValue="@null" />
+        <argument
+            android:name="currentRole"
+            app:argType="string"
+            android:defaultValue="organiser"
+            app:nullable="true" />
+    </activity>
+
+    <activity
+        android:id="@+id/u_mainActivity"
+        android:name="com.example.pygmyhippo.MainActivity"
+        android:label="User Main Activity"
+        tools:layout="@layout/user_main_activity_nagivation" >
+        <argument
+            android:name="signedInAccount"
+            app:argType="com.example.pygmyhippo.common.Account"
+            app:nullable="true"
+            android:defaultValue="@null" />
+        <argument
+            android:name="currentRole"
+            app:argType="string"
+            app:nullable="true"
+            android:defaultValue="user" />
+    </activity>
 
 </navigation>

@@ -22,22 +22,21 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
+import com.example.pygmyhippo.R;
+import com.example.pygmyhippo.common.Account;
 import com.example.pygmyhippo.common.Event;
 import com.example.pygmyhippo.database.DBOnCompleteFlags;
 import com.example.pygmyhippo.database.DBOnCompleteListener;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
-
-import android.widget.Toast;
-
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-
-import com.example.pygmyhippo.R;
 import java.util.Random;
 
 /**
@@ -50,11 +49,12 @@ import java.util.Random;
  */
 public class EventFragment extends Fragment {
 
+    private NavController navController;
     private Event event;
     private ArrayList<Entrant> entrants;
     private ViewEntrantDB dbHandler;
     private String eventID;
-    private Bundle eventBundle = new Bundle();
+    private Account signedInAccount;
 
     // populate single event page with hardcoded event information
     public Event hardcodeEvent() {
@@ -86,10 +86,12 @@ public class EventFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        navController = Navigation.findNavController(view);
 
         FloatingActionButton backButton = view.findViewById(R.id.u_backButtonToQRView);
         backButton.setOnClickListener(view1 -> {
-            Navigation.findNavController(view1).navigate(R.id.action_event_fragment_to_organiser_myEvents_page);
+            Log.d("EventFragment", "Back button pressed");
+            navController.popBackStack();
         });
 
         // Initialize the handler
@@ -104,9 +106,6 @@ public class EventFragment extends Fragment {
         TextView eventAboutDescriptionView = view.findViewById(R.id.u_aboutEventDescriptionView);
         Button closeEventButton = view.findViewById(R.id.close_event_button);
 
-        // Get the eventID and query for the related event
-        // TODO: Remove the hardcoded event when finished this fragment (get eventID from last fragment)
-        eventID = "IaMdwyQpHDh6GdZF025k";
 
         dbHandler.getEvent(eventID, new DBOnCompleteListener<Event>() {
             @Override
@@ -123,9 +122,6 @@ public class EventFragment extends Fragment {
                     eventLocationView.setText(event.getLocation());
                     eventCostView.setText(event.getCost());
                     eventAboutDescriptionView.setText(event.getDescription());
-
-                    // Set up the bundle here when we get the event object
-                    eventBundle.putString("eventID", event.getEventID());
 
                     // If the event is closed, then change the style of the draw button
                     if (event.getEventStatus().value.equals("cancelled")) {
@@ -149,7 +145,10 @@ public class EventFragment extends Fragment {
         // Set up the listener for viewing entrants button
         Button viewEntrantsButton = view.findViewById(R.id.button_view_entrants);
         viewEntrantsButton.setOnClickListener(view1 -> {
-            Navigation.findNavController(view1).navigate(R.id.action_event_fragment_to_view_entrants_fragment, eventBundle);
+            Bundle navArgs = new Bundle();
+            navArgs.putString("eventID", eventID);
+            navArgs.putParcelable("signedInAccount", signedInAccount);
+            navController.navigate(R.id.view_entrants_fragment, navArgs);
         });
 
     }
@@ -159,6 +158,14 @@ public class EventFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.organiser_fragment_event, container, false);
         Button closeEventButton = view.findViewById(R.id.close_event_button);
+
+        if (getArguments() != null) {
+            signedInAccount = EventFragmentArgs.fromBundle(getArguments()).getSignedInAccount();
+            eventID = EventFragmentArgs.fromBundle(getArguments()).getEventID();
+        } else {
+            eventID = "IaMdwyQpHDh6GdZF025k";
+            signedInAccount = new Account();
+        }
 
         closeEventButton.setOnClickListener(new View.OnClickListener(){
             @Override

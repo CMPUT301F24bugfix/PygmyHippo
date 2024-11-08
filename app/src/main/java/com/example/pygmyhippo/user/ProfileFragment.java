@@ -1,17 +1,19 @@
 package com.example.pygmyhippo.user;
 
-import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
@@ -26,7 +28,6 @@ import androidx.navigation.Navigation;
 
 import com.example.pygmyhippo.R;
 import com.example.pygmyhippo.common.Account;
-import com.example.pygmyhippo.common.OnRoleSelectedListener;
 import com.example.pygmyhippo.database.DBOnCompleteFlags;
 import com.example.pygmyhippo.database.DBOnCompleteListener;
 import com.example.pygmyhippo.databinding.UserFragmentProfileBinding;
@@ -60,6 +61,7 @@ public class ProfileFragment extends Fragment  implements AdapterView.OnItemSele
 
     private Account signedInAccount;
     private String adminViewAccountID;
+    private String currentRole;
 
     private EditText nameField, pronounField, phoneField, emailField;
     private RadioButton decGeo, decNotify;
@@ -68,28 +70,11 @@ public class ProfileFragment extends Fragment  implements AdapterView.OnItemSele
     private ImageView editButton;
     private Button updateButton, deleteUserButton;
     private ConstraintLayout adminConstraintLayout;
-
-    // Listener interface to communicate with the main activity
-    private OnRoleSelectedListener roleSelectedListener;
+    private Spinner roleSpinner;
 
     // initialized the listener
-    public void setOnRoleSelectedListener(OnRoleSelectedListener listener) {
-        this.roleSelectedListener = listener;
-    }
-
-    /**
-     * This is called when the fragment is created, this ensure a connection the onrole listener to the parent
-     * @author Griffin
-     * @param context not sure
-     */
-    @Override
-    public void onAttach(@NonNull Context context) {
-        super.onAttach(context);
-        try {
-            roleSelectedListener = (OnRoleSelectedListener) context;
-        } catch (ClassCastException e) {
-            throw new ClassCastException(context.toString() + " must implement OnRoleSelectedListener");
-        }
+    public void setOnRoleSelectedListener() {
+        Log.d("ProfileFragment", "Role selected");
     }
 
     /**
@@ -131,6 +116,7 @@ public class ProfileFragment extends Fragment  implements AdapterView.OnItemSele
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         navController = Navigation.findNavController(view);
+
     }
 
 
@@ -175,24 +161,19 @@ public class ProfileFragment extends Fragment  implements AdapterView.OnItemSele
         // Constraint Layout
         adminConstraintLayout = binding.aDeleteUserConstraint;
 
-        // Navigation arguments
-        signedInAccount = ProfileFragmentArgs.fromBundle(getArguments()).getSignedInAccount();
-        adminViewAccountID = ProfileFragmentArgs.fromBundle(getArguments()).getAdminViewAccountID();
+        roleSpinner = binding.uRoleSpinner;
 
-        setProfile();
-/*
-        Spinner role_dropdown = (Spinner) root.findViewById(R.id.user_spinner_role);
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(
+        ArrayAdapter<CharSequence> roleAdapter = ArrayAdapter.createFromResource(
                 root.getContext(),
                 R.array.role,
                 R.layout.e_p_role_dropdown
         );
+        roleSpinner.setAdapter(roleAdapter);
 
-        adapter.setDropDownViewResource(R.layout.e_p_role_dropdown);
-        role_dropdown.setAdapter(adapter);
+        roleSpinner.setOnItemSelectedListener(this);
 
-        // need to do this so the listener is connected
-        role_dropdown.setOnItemSelectedListener(this); */
+        setProfile();
+
 
         /*
          * Allows te page elements to be edited by the user if the edit button is clicked
@@ -322,11 +303,22 @@ public class ProfileFragment extends Fragment  implements AdapterView.OnItemSele
     }
 
     private void setProfile() {
-        if (signedInAccount.getCurrentRole() == Account.AccountRole.admin && !Objects.equals(adminViewAccountID, signedInAccount.getAccountID())) {
+        Log.d("ProfileFragment", String.format("adminViewAccountID %s was received", adminViewAccountID));
+        signedInAccount = ProfileFragmentArgs.fromBundle(getArguments()).getSignedInAccount();
+        adminViewAccountID = ProfileFragmentArgs.fromBundle(getArguments()).getAdminViewAccountID();
+        currentRole = ProfileFragmentArgs.fromBundle(getArguments()).getCurrentRole();
+
+        Log.d("ProfileFragment", String.format("signedInAccount %s", signedInAccount));
+        if (adminViewAccountID != null && !Objects.equals(adminViewAccountID, "null") && !Objects.equals(adminViewAccountID, signedInAccount.getAccountID())) {
+            Log.d("ProfileFragment", String.format("Getting Account %s for admin view", adminViewAccountID));
             handler.getAccountByID(adminViewAccountID, this);
             adminConstraintLayout.setVisibility(View.VISIBLE);
-        } else {
+            roleSpinner.setVisibility(View.INVISIBLE);
+        } else if (signedInAccount != null) {
+            Log.d("ProfileFragment", String.format("Populating text views with %s %s", signedInAccount.getAccountID(), signedInAccount.getName()));
             populateTextViews(signedInAccount);
+        } else {
+            Log.d("ProfileFragment", "ERROR!");
         }
     }
 
@@ -341,9 +333,25 @@ public class ProfileFragment extends Fragment  implements AdapterView.OnItemSele
      */
     @Override
     public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-        String selectedRole = adapterView.getItemAtPosition(i).toString();
-        if (roleSelectedListener != null) {
-            roleSelectedListener.onRoleSelected(selectedRole);
+        String selectedRole = adapterView.getItemAtPosition(i).toString().toLowerCase();
+        Log.d("ProfileFragment", String.format("Role Spinner selected %s", selectedRole));
+
+        // TODO: Verify signedInAccount has selected role in roles before navigating to new Main Activity.
+        // ACCOUNT MUST ALWAYS HAVE USER ROLE!!!
+        Bundle navArgs = new Bundle();
+        navArgs.putParcelable("signedInAccount", signedInAccount);
+        if (selectedRole.equals("user") && !Objects.equals(currentRole, "user")) {
+            Log.d("ProfileFragment", "User was selected, not doign anything :)");
+            navArgs.putString("currentRole", "user");
+            navController.navigate(R.id.u_mainActivity, navArgs);
+        } else if (selectedRole.equals("organiser") && !Objects.equals(currentRole, "organiser")) {
+            navArgs.putString("currentRole", "organiser");
+            navController.navigate(R.id.o_mainActivity, navArgs);
+        } else if (selectedRole.equals("admin") && !Objects.equals(currentRole, "admin")) {
+            navArgs.putString("currentRole", "admin");
+            navController.navigate(R.id.a_mainActivity, navArgs);
+        } else {
+            Log.d("ProfileFragment", String.format("Did not navigate to %s", selectedRole));
         }
     }
 
@@ -354,6 +362,7 @@ public class ProfileFragment extends Fragment  implements AdapterView.OnItemSele
      */
     @Override
     public void onNothingSelected(AdapterView<?> adapterView) {
+        Log.d("ProfileFragment", "No role selected using role spinner.");
     }
 
     @Override
@@ -366,7 +375,7 @@ public class ProfileFragment extends Fragment  implements AdapterView.OnItemSele
     public void OnComplete(@NonNull ArrayList<Account> docs, int queryID, int flags) {
         if (queryID == 0) {
             if (flags == DBOnCompleteFlags.SUCCESS.value) {
-                Account retrievedAccount= docs.get(0);
+                Account retrievedAccount = docs.get(0);
                 populateTextViews(retrievedAccount);
             } else {
                 Toast.makeText(getContext(), "Could not get account from Firestore.", Toast.LENGTH_LONG).show();
@@ -378,6 +387,15 @@ public class ProfileFragment extends Fragment  implements AdapterView.OnItemSele
                 navController.navigate(R.id.admin_navigation_all_users, navArgs);
             } else {
                 Toast.makeText(getContext(), "Error when deleting account from Firestore.", Toast.LENGTH_LONG).show();
+            }
+        } else if (queryID == 2) {
+            if (flags == DBOnCompleteFlags.SUCCESS.value) {
+                Account account = docs.get(0);
+                if (account.getCurrentRole() == Account.AccountRole.organiser) {
+                    navController.navigate(R.id.o_mainActivity);
+                }
+            } else {
+                Toast.makeText(getContext(), "Could not change current role", Toast.LENGTH_LONG).show();
             }
         }
     }

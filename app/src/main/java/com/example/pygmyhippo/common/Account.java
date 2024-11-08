@@ -13,6 +13,7 @@ Issues:
 import android.os.Build;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -46,7 +47,7 @@ public class Account implements Parcelable {
     private boolean enableGeolocation;
 
     private ArrayList<AccountRole> roles;
-    private AccountRole currentRole;
+    private AccountRole currentRole; // TODO remove
 
     @Nullable
     private Facility facilityProfile;
@@ -69,7 +70,7 @@ public class Account implements Parcelable {
         this.roles = new ArrayList<>();
         this.roles.add(AccountRole.user);
 
-        this.facilityProfile = null;
+        this.facilityProfile = new Facility();
     }
 
     /**
@@ -174,6 +175,28 @@ public class Account implements Parcelable {
         location = in.readString();
         receiveNotifications = in.readByte() != 0;
         enableGeolocation = in.readByte() != 0;
+
+        ArrayList<String> parcelRoles = new ArrayList<>();
+        in.readStringList(parcelRoles);
+
+        roles = new ArrayList<AccountRole>();
+        parcelRoles.forEach(roleString -> {
+            switch (roleString) {
+                case "user":
+                    roles.add(AccountRole.user);
+                    break;
+                case "organiser":
+                    roles.add(AccountRole.organiser);
+                    break;
+                case "admin":
+                    roles.add(AccountRole.admin);
+                default:
+                    Log.d("Account", String.format("Unknown roleString %s", roleString));
+            }
+        });
+
+        in.readString();
+        currentRole = AccountRole.user; // TODO Remove
         facilityProfile = in.readParcelable(Facility.class.getClassLoader());
     }
 
@@ -207,22 +230,18 @@ public class Account implements Parcelable {
         dest.writeString(deviceID);
         dest.writeString(profilePicture);
         dest.writeString(location);
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            dest.writeBoolean(receiveNotifications);
-        }
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            dest.writeBoolean(enableGeolocation);
-        }
+        dest.writeByte((byte) (receiveNotifications ? 1 : 0));
+        dest.writeByte((byte) (enableGeolocation ? 1 : 0));
 
         ArrayList<String> roleStrings = new ArrayList<>();
-        for (AccountRole role : this.roles) {
-            roleStrings.add(role.value);
-        }
+        roles.forEach(role -> roleStrings.add(role.value));
         dest.writeStringList(roleStrings);
-        dest.writeParcelable(facilityProfile, 0);
+
+        dest.writeString(currentRole.value);
+
+        dest.writeParcelable(facilityProfile, flags);
     }
+
 
     /*
      * AccountRole Enum

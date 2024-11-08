@@ -9,6 +9,7 @@
     <string name="all_users_title">All Users</string>
     <string name="all_images_title">All Images</string>
     <string-array name="role">
+        <item>-- select role --</item>
         <item>User</item>
         <item>Organiser</item>
         <item>Admin</item>
