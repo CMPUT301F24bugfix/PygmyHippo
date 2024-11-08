@@ -1,15 +1,17 @@
-/**
+package com.example.pygmyhippo.admin;
+/*
  * AllImagesFragment
  *
- * Displays all available in the system for admins to see. Displays users' profile pictures, events'
+ * Purposes:
+ * Displays all available images in the system for admins to see. Displays users' profile pictures, events'
  * posters, and facilities' pictures. Clicking on an image should navigate the admin to the relevant
  * page with admin permissions so they may or may not delete the image.
  *
+ * Issues:
  * TODO: Add images for facilities
  * TODO: Add navigation to profile, events, and (eventually) facilties.
  */
 
-package com.example.pygmyhippo.admin;
 
 import android.graphics.Rect;
 import android.os.Bundle;
@@ -44,6 +46,7 @@ public class AllImagesFragment extends Fragment implements RecyclerClickListener
 
     @Override
     public void onItemClick(int position) {
+        // TODO: add functionality here
         Log.d("Admin", String.format("Image at position (%d) clicked.", position));
     }
 
@@ -53,18 +56,22 @@ public class AllImagesFragment extends Fragment implements RecyclerClickListener
         binding =  AdminFragmentAllListBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
         handler = new AllImagesDB();
-        
+
+        // Set up the views for this fragment and hide the spinners
         binding.aAlllistTitleText.setText(R.string.all_images_title);
         binding.aAlllistFilterByText.setVisibility(View.INVISIBLE);
         binding.aAlllistCategorySpinner.setVisibility(View.INVISIBLE);
         binding.aAlllistOrderSpinner.setVisibility(View.INVISIBLE);
 
+        // Initialize list and adapter
         imageList = new ArrayList<>();
         adapter = new AllImagesAdapter(imageList, this);
 
+        // Get the accounts and events for their images
         handler.getAccounts(1000, this);
         handler.getEvents(1000, this);
 
+        // Format the recycler list
         binding.aAlllistRecycler.setAdapter(adapter);
         binding.aAlllistRecycler.setLayoutManager(new GridLayoutManager(getContext(), 2));
 
@@ -93,7 +100,9 @@ public class AllImagesFragment extends Fragment implements RecyclerClickListener
     public void OnComplete(@NonNull ArrayList<Object> docs, int queryID, int flags) {
         switch (queryID) {
             case 1:
+                // Go through obtained documents
                 docs.forEach(obj -> {
+                    // Get the account and obtain the profile image from it to add to the list
                     Account account = (Account) obj;
                     Image image = new Image(account.getProfilePicture(), account.getAccountID(), Image.ImageType.Account);
                     imageList.add(image);
@@ -102,6 +111,7 @@ public class AllImagesFragment extends Fragment implements RecyclerClickListener
                 break;
             case 2:
                 docs.forEach(obj -> {
+                    // Get the event poster from the obtained object and convert it to an image class
                     Event event = (Event) obj;
                     Image image = new Image(event.getEventPoster(), event.getEventID(), Image.ImageType.Event);
                     imageList.add(image);

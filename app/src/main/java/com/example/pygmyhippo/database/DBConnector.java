@@ -5,6 +5,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 // DBConnector Class
 // Initializes the connection to the database
+// Issues: I don't think this gets used anywhere. Should remove it in the future if so
 public class DBConnector {
     private FirebaseFirestore db;
 

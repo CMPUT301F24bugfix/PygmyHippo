@@ -7,6 +7,8 @@ import java.util.ArrayList;
 /**
  * OnCompleteListener interface for database queries.
  *
+ * No issues
+ *
  * Database clients (e.g. Fragments) who interact with database can implement this interface and
  * pass themselves as a listener to their handlers to execute logic when the query completes. An
  * example of its usage follows.

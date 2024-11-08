@@ -8,7 +8,7 @@ Purpose is to: Allow the organiser to update their event
 Contributors: Katharine, Kori
 Issues: Doesn't have updatable fields yet
         - No Image handling
-        - Hardcoded event ID, need to set up proper navigation to this event
+        - Hardcoded event ID, need to set up proper navigation to this event (The myEvents fragment)
  */
 
 import com.example.pygmyhippo.common.Entrant;
@@ -88,6 +88,7 @@ public class EventFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         navController = Navigation.findNavController(view);
 
+        // Set up navigation for the back button to return to last fragment
         FloatingActionButton backButton = view.findViewById(R.id.u_backButtonToQRView);
         backButton.setOnClickListener(view1 -> {
             Log.d("EventFragment", "Back button pressed");
@@ -97,6 +98,7 @@ public class EventFragment extends Fragment {
         // Initialize the handler
         dbHandler = new ViewEntrantDB();
 
+        // Get all the textViews we want to populate
         TextView eventNameView = view.findViewById(R.id.u_eventNameView);
         TextView eventDateView = view.findViewById(R.id.u_eventDateView);
         TextView eventTimeView = view.findViewById(R.id.u_eventTimeView);
@@ -106,7 +108,7 @@ public class EventFragment extends Fragment {
         TextView eventAboutDescriptionView = view.findViewById(R.id.u_aboutEventDescriptionView);
         Button closeEventButton = view.findViewById(R.id.close_event_button);
 
-
+        // Get the actual event data to populate this view
         dbHandler.getEvent(eventID, new DBOnCompleteListener<Event>() {
             @Override
             public void OnComplete(@NonNull ArrayList<Event> docs, int queryID, int flags) {
@@ -146,6 +148,8 @@ public class EventFragment extends Fragment {
         Button viewEntrantsButton = view.findViewById(R.id.button_view_entrants);
         viewEntrantsButton.setOnClickListener(view1 -> {
             Bundle navArgs = new Bundle();
+
+            // Pass the eventID and the current account to the next fragment
             navArgs.putString("eventID", eventID);
             navArgs.putParcelable("signedInAccount", signedInAccount);
             navController.navigate(R.id.view_entrants_fragment, navArgs);
@@ -167,6 +171,7 @@ public class EventFragment extends Fragment {
             signedInAccount = new Account();
         }
 
+        // Add functionality to the closing event button
         closeEventButton.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view) {
@@ -211,9 +216,8 @@ public class EventFragment extends Fragment {
     /**
      * This method will go through the event's entrants and randomly select a specific amount to be invited
      * It will change the statuses of the entrants in the event
-     * @param event
+     * @param event The event that's closing its lottery
      * @author Kori
-     * TODO: Update the event in the database when entrant status gets changed
      */
     public void drawWinners(Event event) {
         // Referenced Random class from https://www.geeksforgeeks.org/generating-random-numbers-in-java/
@@ -227,7 +231,7 @@ public class EventFragment extends Fragment {
             // Use the winner number as an index
             while (winnerNumber < event.getEntrants().size()) {
                 // Update all the entrants statuses
-                //TODO: Notifications would probably be sent from here
+                //TODO: Notifications would probably be sent from here (or at least because of this)
                 event.getEntrants().get(winnerNumber).setEntrantStatus(Entrant.EntrantStatus.invited);
                 winnerNumber++;
             }
@@ -249,6 +253,9 @@ public class EventFragment extends Fragment {
         }
     }
 
+    /**
+     * Method to display when a database error has occured
+     */
     private void handleDBError() {
         Toast toast = Toast.makeText(getContext(), "DB Error!", Toast.LENGTH_SHORT);
         toast.show();

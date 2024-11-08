@@ -1,10 +1,12 @@
-/**
+package com.example.pygmyhippo.admin;
+/*
  * AllImagesAdapter
  *
- * RecyclerView adapter for RecyclerView in AllImagesFragment.
+ * Purpose: RecyclerView adapter for RecyclerView in AllImagesFragment.
+ *          - Contributes to the image browsing for admin
+ * Issues: None
  */
 
-package com.example.pygmyhippo.admin;
 
 import android.net.Uri;
 import android.view.LayoutInflater;
@@ -29,6 +31,9 @@ import java.util.ArrayList;
  * Adapter for RecyclerView in AllImagesFragment.
  */
 public class AllImagesAdapter extends BaseRecyclerAdapter<Image, AllImagesAdapter.ImageViewHolder> {
+    /**
+     * The child of the base adapter, this child will hold an image formatted for this list
+     */
     public static class ImageViewHolder extends BaseViewHolder<Image> implements DBOnCompleteListener<Uri> {
         private final ImageView imageView;
         private final AllImagesDB handler;
@@ -41,6 +46,7 @@ public class AllImagesAdapter extends BaseRecyclerAdapter<Image, AllImagesAdapte
 
         @Override
         public void setViews(Image dataclass) {
+            // Get the image from the database
             handler.getImageDownloadUrl(dataclass, this);
         }
 
@@ -48,6 +54,7 @@ public class AllImagesAdapter extends BaseRecyclerAdapter<Image, AllImagesAdapte
         public void OnComplete(@NonNull ArrayList<Uri> docs, int queryID, int flags) {
             if (queryID == 0) {
                 if (flags == DBOnCompleteFlags.SUCCESS.value) {
+                    // Get the image and format it
                     Uri downloadUri = docs.get(0);
                     int imageSideLength = imageView.getWidth() / 2;
                     Picasso.get()
@@ -69,6 +76,8 @@ public class AllImagesAdapter extends BaseRecyclerAdapter<Image, AllImagesAdapte
     public ImageViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.admin_all_list_image_item, parent, false);
+
+        // Initialize the image holder
         AllImagesAdapter.ImageViewHolder viewHolder = new ImageViewHolder(view);
 
         view.setOnClickListener(v -> {
