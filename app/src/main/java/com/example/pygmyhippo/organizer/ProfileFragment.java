@@ -1,5 +1,16 @@
 package com.example.pygmyhippo.organizer;
 
+/*
+Profile fragment of an organiser
+Purposes:
+    - Allows organiser to see their profile details
+    - Allows organiser to update their details
+    - Allows organiser to make a facility profile
+    - Spinner allows for user to change their account role
+Issues:
+    - String fields get added to the database but images don't yet.
+ */
+
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -119,6 +130,7 @@ public class ProfileFragment extends Fragment implements AdapterView.OnItemSelec
         binding = OrganiserFragmentProfileBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
+        // Initialize the role spinner
         Spinner role_dropdown = binding.oRoleSpinner;
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(
                 root.getContext(),
@@ -134,6 +146,7 @@ public class ProfileFragment extends Fragment implements AdapterView.OnItemSelec
         // need to do this so the listener is connected
         role_dropdown.setOnItemSelectedListener(this);
 
+        // Get buttons
         ImageView editButton = root.findViewById(R.id.O_profile_editBtn);
         Button updateButton = root.findViewById(R.id.O_profile_updateBtn);
 
@@ -306,6 +319,10 @@ public class ProfileFragment extends Fragment implements AdapterView.OnItemSelec
         return root;
     }
 
+    /**
+     * This method just populates the profile details with the current account
+     * @param account The account of the current user
+     */
     private void populateTextViews(Account account) {
         name_f.setText(account.getName());
         pronoun_f.setText(account.getPronouns());
@@ -319,6 +336,9 @@ public class ProfileFragment extends Fragment implements AdapterView.OnItemSelec
         }
     }
 
+    /**
+     * This method will retrieve the signed in account and call for the details to be populated
+     */
     private void setProfile() {
         signedInAccount = ProfileFragmentArgs.fromBundle(getArguments()).getSignedInAccount();
         currentRole = ProfileFragmentArgs.fromBundle(getArguments()).getCurrentRole();
@@ -338,9 +358,9 @@ public class ProfileFragment extends Fragment implements AdapterView.OnItemSelec
      * the communication working
      * @author Griffin
      * @param adapterView: The adapter view of the selectable options
-     * @param view: not sure
-     * @param i: position of item clicked
-     * @param l: not sure
+     * @param view current view
+     * @param i position of item clicked
+     * @param l long
      */
     @Override
     public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
@@ -352,11 +372,13 @@ public class ProfileFragment extends Fragment implements AdapterView.OnItemSelec
         Bundle navArgs = new Bundle();
         navArgs.putParcelable("signedInAccount", signedInAccount);
         if (selectedRole.equals("user")) {
+            // Update current account and navigate to the user stuff
             navArgs.putString("currentRole", "user");
             navController.navigate(R.id.u_mainActivity, navArgs);
         } else if (selectedRole.equals("organiser")) {
             Log.d("ProfileFragment", "User was selected, not doing anything :)");
         } else if (selectedRole.equals("admin")) {
+            // Update current account and navigate to the admin stuff
             navArgs.putString("currentRole", "admin");
             navController.navigate(R.id.a_mainActivity, navArgs);
         } else {

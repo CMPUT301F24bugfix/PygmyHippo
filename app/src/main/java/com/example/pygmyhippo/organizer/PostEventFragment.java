@@ -1,5 +1,20 @@
 package com.example.pygmyhippo.organizer;
 
+/*
+ * This fragment is for posting an event
+ * Purposes:
+ *      - Gives the organiser the ability to post their event
+ *  TODO: / Issues
+ *   - hide the navigation when a keyboard pops up
+ *   - set a standard size for post images
+ *   - request that the database generated an id for the event
+ *   - generate a hash id for the event
+ *  Thinking about:
+ *   - should the current progress of the event reset if the organiser switches screen
+ *   - a button called "Clear Fields" at the top to clear event field
+ *   - really similar idea can be applied to editing an event
+ * */
+
 import static androidx.navigation.Navigation.findNavController;
 
 import android.net.Uri;
@@ -33,19 +48,6 @@ import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
 import java.util.UUID;
-/*
-* This fragment is for posting an event
-*  TODO:
- *  - hide the navigation when a keyboard pops up
- *  - set a standard size for post images
- *  - request that the database generated an id for the event
- *  - generate a hash id for the event
- *  Thinking about:
- *   - should the current progress of the event reset if the organiser switches screen
- *   - a button called "Clear Fields" at the top to clear event feild
- *   - really similar idea can be applied to editing an event
- * */
-
 
 
 /**
@@ -72,10 +74,15 @@ public class PostEventFragment extends Fragment implements DBOnCompleteListener<
     /**
      * Creates the view
      * @author Griffin
-     * @param inflater not sure
-     * @param container not sure
-     * @param savedInstanceState  not surre
-     * @return root not sure
+     * @param inflater The LayoutInflater object that can be used to inflate
+     * any views in the fragment,
+     * @param container If non-null, this is the parent view that the fragment's
+     * UI should be attached to.  The fragment should not add the view itself,
+     * but this can be used to generate the LayoutParams of the view.
+     * @param savedInstanceState If non-null, this fragment is being re-constructed
+     * from a previous saved state as given here.
+     *
+     * @return
      */
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
@@ -85,6 +92,7 @@ public class PostEventFragment extends Fragment implements DBOnCompleteListener<
         handler = new EventDB();
         ImageHandler = new ImageStorage();
 
+        // Get the current account that was passed to this fragment
         if (getArguments() != null) {
             signedInAccount = PostEventFragmentArgs.fromBundle(getArguments()).getSignedInAccount();
         }
@@ -97,6 +105,7 @@ public class PostEventFragment extends Fragment implements DBOnCompleteListener<
         super.onViewCreated(view, savedInstanceState);
         navController = findNavController(view);
 
+        // Get all the fields we want to get event data from
         eventNameEdit = view.findViewById(R.id.o_postEvent_name_edit);
         eventDateTimeEdit = view.findViewById(R.id.o_postEvent_dataTime_edit);
         eventPriceEdit = view.findViewById(R.id.o_postEvent_price_edit);
@@ -106,9 +115,11 @@ public class PostEventFragment extends Fragment implements DBOnCompleteListener<
         eventWinnersEdit = view.findViewById(R.id.o_postEvent_winners_edit);
         eventGeolocation = view.findViewById(R.id.o_postEvent_geolocation_check);
         Button postEventButton = view.findViewById(R.id.o_postEvent_post_button);
+
         Event myEvent = new Event();
 
         postEventButton.setOnClickListener(v -> {
+            // Get the inputs from the textViews
             String eventName = eventNameEdit.getText().toString();
             String eventDateTime = eventDateTimeEdit.getText().toString();
             String eventPrice = eventPriceEdit.getText().toString();
@@ -129,7 +140,7 @@ public class PostEventFragment extends Fragment implements DBOnCompleteListener<
                 Toast.makeText(getContext(), "Required fields missing!", Toast.LENGTH_SHORT).show();
             } else {
                 myEvent.setEventTitle(eventName);
-                myEvent.setOrganiserID("currentUserID"); // TODO: get the current organiser
+                myEvent.setOrganiserID(signedInAccount.getAccountID());
                 myEvent.setLocation(eventLocation);
                 myEvent.setDate(eventDateTime);
                 myEvent.setDescription(eventDescription);
@@ -140,12 +151,14 @@ public class PostEventFragment extends Fragment implements DBOnCompleteListener<
                 myEvent.setEntrants(new ArrayList<>()); // no entrants of a newly created event
                 myEvent.setGeolocation(eventGeolocaion);
                 myEvent.setEventStatus(Event.EventStatus.ongoing); // default is ongoing
-                handler.addEvent(myEvent, this); // TODO: Get organiser ID and pass it to addEvent.
+
+                handler.addEvent(myEvent, this); // TODO: Get organiser ID and pass it to addEvent.??? (solved above)
             }
         });
 
         // image picking section of onview created
         eventImageBtn = view.findViewById(R.id.o_postEvent_addImage);
+
         // this code was taken from Jens upload avatar profile code
         eventImageBtn.setOnClickListener(new View.OnClickListener() {
             @Override
