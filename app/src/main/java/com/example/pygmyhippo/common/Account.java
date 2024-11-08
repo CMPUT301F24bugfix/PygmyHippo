@@ -1,5 +1,16 @@
 package com.example.pygmyhippo.common;
-
+/*
+This is the Account data class
+Purposes:
+    - Model an account for everyone (user, organiser, admin)
+    - Hold the attributes to get or set account info
+    - Allow different permissions depending on the role (right now this is done for admin)
+Issues:
+    - No Image handling
+    - Constructors can get large and hard to read (so could look into builders for better initialization)
+    - Nothing is done with location yet
+ */
+import android.os.Build;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Log;
@@ -14,7 +25,6 @@ import java.util.ArrayList;
  * TODO: Decide how images are gonna be stored and set the appropriate datatype for profilePicture.
  * TODO:
  *  - Use a builder for initialization
- *  - connect to the database
  * Account Dataclass
  * The structure of this class should be similar to the schema used for Account Documents on
  * firebase. This contains all the info for any user on the app, this includes: admins, organizers,
@@ -42,6 +52,9 @@ public class Account implements Parcelable {
     @Nullable
     private Facility facilityProfile;
 
+    /**
+     * Constructor for account without any parameters needed
+     */
     public Account(){
         this.accountID = null;
         this.name = "";
@@ -60,6 +73,22 @@ public class Account implements Parcelable {
         this.facilityProfile = new Facility();
     }
 
+    /**
+     * Constructor with all params
+     * @param accountID
+     * @param name
+     * @param pronouns
+     * @param phoneNumber
+     * @param emailAddress
+     * @param deviceID
+     * @param profilePicture
+     * @param location
+     * @param receiveNotifications
+     * @param enableGeolocation
+     * @param roles
+     * @param currentRole
+     * @param facilityProfile
+     */
     public Account(
             String accountID,
             String name,
@@ -89,6 +118,14 @@ public class Account implements Parcelable {
         this.facilityProfile = facilityProfile;
     }
 
+    /**
+     * Constructor with specific params
+     * @param accountID
+     * @param name
+     * @param phoneNumber
+     * @param emailAddress
+     * @param location
+     */
     public Account(String accountID, String name, String phoneNumber, String emailAddress, String location) {
         this.accountID = accountID;
         this.name = name;
@@ -97,6 +134,19 @@ public class Account implements Parcelable {
         this.location = location;
     }
 
+    /**
+     * Constructor with specific Params
+     * @param accountID
+     * @param name
+     * @param pronouns
+     * @param phoneNumber
+     * @param emailAddress
+     * @param deviceID
+     * @param profilePicture
+     * @param location
+     * @param receiveNotifications
+     * @param enableGeolocation
+     */
     public Account(String accountID, String name, String pronouns, String phoneNumber, String emailAddress, String deviceID, String profilePicture, String location, boolean receiveNotifications, boolean enableGeolocation) {
         this.accountID = accountID;
         this.name = name;
@@ -110,6 +160,10 @@ public class Account implements Parcelable {
         this.enableGeolocation = enableGeolocation;
     }
 
+    /**
+     * Makes the account Parcelable
+     * @param in
+     */
     protected Account(Parcel in) {
         accountID = in.readString();
         name = in.readString();
@@ -146,6 +200,9 @@ public class Account implements Parcelable {
         facilityProfile = in.readParcelable(Facility.class.getClassLoader());
     }
 
+    /**
+     * Create Account from Parcel
+     */
     public static final Creator<Account> CREATOR = new Creator<Account>() {
         @Override
         public Account createFromParcel(Parcel in) {
@@ -203,92 +260,183 @@ public class Account implements Parcelable {
         }
     }
 
+    /**
+     * Returns the account name
+     * @return the name of the account
+     */
     public String getName() {
         return name;
     }
 
+    /**
+     * Changes the account name
+     * @param name The name we want to change to
+     */
     public void setName(String name) {
         this.name = name;
     }
 
+    /**
+     * Will return the Id of the account
+     * @return accountID
+     */
     public String getAccountID() {
         return accountID;
     }
 
+    /**
+     * Will change the ID of the account
+     * @param accountID The ID we want to change to
+     */
     public void setAccountID(String accountID) {
         this.accountID = accountID;
     }
 
+    /**
+     * Will return the Pronouns of the account
+     * @return pronouns
+     */
     public String getPronouns() {
         return pronouns;
     }
 
+    /**
+     * Changes the pronouns of the account
+     * @param pronouns The pronouns we want to change to
+     */
     public void setPronouns(String pronouns) {
         this.pronouns = pronouns;
     }
 
+    /**
+     * Will return the Account's phone number
+     * @return phoneNumber
+     */
     public String getPhoneNumber() {
         return phoneNumber;
     }
 
+    /**
+     * Will set the Account's phone number
+     * @param phoneNumber The phone number we want to change to
+     */
     public void setPhoneNumber(String phoneNumber) {
         this.phoneNumber = phoneNumber;
     }
 
+    /**
+     * Will return the Account's email
+     * @return emailAddress
+     */
     public String getEmailAddress() {
         return emailAddress;
     }
 
+    /**
+     * Changes the account's email address
+     * @param emailAddress What we want to change the email to
+     */
     public void setEmailAddress(String emailAddress) {
         this.emailAddress = emailAddress;
     }
 
+    /**
+     * Returns the Account's device ID
+     * This is the device ID that will get recognized so the user doesn't have to sign in
+     * @return deviceID
+     */
     public String getDeviceID() {
         return deviceID;
     }
 
+    /**
+     * Sets the deviceID of the account
+     * @param deviceID The ID we want to change to
+     */
     public void setDeviceID(String deviceID) {
         this.deviceID = deviceID;
     }
 
+    /**
+     * Will return the profile picture of the account
+     * TODO: Figure out how to handle images
+     * @return profilePicture
+     */
     public String getProfilePicture() {
         // FIXME: how are we going to handle images since this would have to return a link to image on firestore
         return profilePicture;
     }
 
+    /**
+     * Will set the profile picture of the account
+     * @param profilePicture The profile picture we want to set for the account
+     */
     public void setProfilePicture(String profilePicture) {
         // FIXME: How are we going to handle images, for now this can be a link to a image in firestore
         this.profilePicture = profilePicture;
     }
 
+    /**
+     * Will return the location of the user who uses the account
+     * @return location
+     */
     public String getLocation() {
         return location;
     }
 
+    /**
+     * Will change the location of the account
+     * @param location The location we want to change it to
+     */
     public void setLocation(String location) {
         this.location = location;
     }
 
+    /**
+     * Will return if the user wants notifications or not
+     * @return receiveNotifications
+     */
     public boolean isReceiveNotifications() {
         return receiveNotifications;
     }
 
+    /**
+     * Will change the account's notification preference
+     * @param receiveNotifications The boolean indicating true for wanting notifications, and false for not
+     */
     public void setReceiveNotifications(boolean receiveNotifications) {
         this.receiveNotifications = receiveNotifications;
     }
 
+    /**
+     * Will return the boolean value indicating if geolocation is endabled or not
+     * @return true for enabled geolocation and false for disabled geolocation
+     */
     public boolean isEnableGeolocation() {
         return enableGeolocation;
     }
 
+    /**
+     * Wiil set the boolean value indicating if the account has or doesn't have geolocation enabled
+     * @param enableGeolocation true for enabling and false for disabling
+     */
     public void setEnableGeolocation(boolean enableGeolocation) {
         this.enableGeolocation = enableGeolocation;
     }
 
+    /**
+     * This will return the list of roles the account has. ex: If the user is both an admin and organizer then the list would
+     * contain those roles
+     * @return The list of the account's current roles
+     */
     public ArrayList<AccountRole> getRoles() {
         return roles;
     }
 
+    /**
+     * This will change the list of the current permission roles that the account has
+     * @param roles The new list of roles for the account
+     */
     public void setRoles(ArrayList<AccountRole> roles) {
         this.roles = roles;
     }
@@ -301,11 +449,20 @@ public class Account implements Parcelable {
         this.currentRole = currentRole;
     }
 
+    /**
+     * This will return the profile of the facility
+     * Only accounts with organiser permissions will have facility profiles
+     * @return facilityProfile
+     */
     @Nullable
     public Facility getFacilityProfile() {
         return facilityProfile;
     }
 
+    /**
+     * This will set the profile of the facility for the account if it has an organiser role
+     * @param facilityProfile The profile we want to set to
+     */
     public void setFacilityProfile(@Nullable Facility facilityProfile) {
         this.facilityProfile = facilityProfile;
     }

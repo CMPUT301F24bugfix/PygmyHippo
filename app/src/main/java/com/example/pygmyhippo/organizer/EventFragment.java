@@ -11,6 +11,10 @@ Issues: Doesn't have updatable fields yet
         - Hardcoded event ID, need to set up proper navigation to this event
  */
 
+import com.example.pygmyhippo.common.Entrant;
+
+import java.util.ArrayList;
+
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -28,13 +32,11 @@ import androidx.navigation.Navigation;
 
 import com.example.pygmyhippo.R;
 import com.example.pygmyhippo.common.Account;
-import com.example.pygmyhippo.common.Entrant;
 import com.example.pygmyhippo.common.Event;
 import com.example.pygmyhippo.database.DBOnCompleteFlags;
 import com.example.pygmyhippo.database.DBOnCompleteListener;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
-import java.util.ArrayList;
 import java.util.Random;
 
 /**
