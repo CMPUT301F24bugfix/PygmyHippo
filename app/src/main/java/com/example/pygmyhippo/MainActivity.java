@@ -17,7 +17,6 @@ import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
 import com.example.pygmyhippo.common.Account;
-import com.example.pygmyhippo.common.OnRoleSelectedListener;
 import com.example.pygmyhippo.database.DBOnCompleteFlags;
 import com.example.pygmyhippo.database.DBOnCompleteListener;
 import com.example.pygmyhippo.databinding.AdminMainActivityNavigationBinding;
@@ -34,43 +33,23 @@ import java.util.Arrays;
  * FIXME: Double account creation when a new device tries to open the app.
  * @author Jennifer, Griffin
  */
-public class MainActivity extends AppCompatActivity implements OnRoleSelectedListener, DBOnCompleteListener<Account> {
+public class MainActivity extends AppCompatActivity implements DBOnCompleteListener<Account> {
     final int PERMISSION_REQUEST_CODE =112;
+    final boolean useDB = true;
+
     private OrganiserMainActivityNagivationBinding organiserBinder;
     private UserMainActivityNagivationBinding userBinder;
     private AdminMainActivityNavigationBinding adminBinding;
     private MainActivityDB dbHandler;
+
     private Account signedInAccount;
+    private Account.AccountRole currentRole;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        boolean useDB = true; // Change to enable/disable DB use.
-
-        if (useDB) {
-            dbHandler = new MainActivityDB();
-            dbHandler.getDeviceAccount(getDeviceID(), this);
-        } else {
-            signedInAccount = new Account(
-                    "1",  // accountID
-                    "Moo Deng",  // name
-                    "She/Her",  // pronouns
-                    "7801234567",  // phoneNumber
-                    "MooDeng@ualberta.ca",  // emailAddress
-                    "1",  // deviceID
-                    "profilePic.png",  // profilePicture
-                    "Edmonton, Alberta",  // location
-                    true,  // receiveNotifications
-                    true,  // enableGeolocation
-                    new ArrayList<>(Arrays.asList(Account.AccountRole.user, Account.AccountRole.organiser)),  // roles
-                    Account.AccountRole.organiser,  // CHANGE EITHER ORANIZER OR USER FOR ROLE currentRole (TODO: Change this if you want to test with user)
-                    null  // facilityProfile
-            );
-
-            setNavigation(signedInAccount);
-        }
-
+        getNavArguments();
         /* This code is from the stack overflow to fix an error I was having when trying to commit to github.
         It enables the app the app to prompt for user notifications... I don't know what was triggering the error.
         Author: Babbo Natale
@@ -117,48 +96,6 @@ public class MainActivity extends AppCompatActivity implements OnRoleSelectedLis
 
     }
 
-
-
-
-    /**
-     * This is the call back function that listens for when the role is changed on the profile page.
-     * Right now it is commented out because the navigation doesnt like to be switched.
-     * TODO
-     *  - need to check if the account has this permissions before changing
-     *  - need to update the account with the new current role
-     * @author Griffin
-     * @param role: this is a string this is sent from the drop down for switching the roles
-     */
-    @Override
-    public void onRoleSelected(String role) {
-//        switch (role) {
-//            case "User":
-//                if (organiserBinder != null) {
-//                    organiserBinder = null;
-//                }
-//                if (userBinding == null) {
-//                    userBinding = UserMainActivityNagivationBinding.inflate(getLayoutInflater());
-//                }
-//                setContentView(userBinding.getRoot());  // Set layout for user
-//                // Initialize NavController for user view
-//                setupNavController(userBinding.navView);
-//                break;
-//            case "Organizer":
-//                if (userBinding != null) {
-//                    userBinding = null;
-//                }
-//                if (organiserBinder == null) {
-//                    organiserBinder = OrganiserMainActivityNagivationBinding.inflate(getLayoutInflater());
-//                }
-//                setContentView(organiserBinder.getRoot());  // Set layout for organizer
-//                // Initialize NavController for organizer view
-//                setupNavController(organiserBinder.navView);
-//                break;
-//            default:
-//                break;
-//        }
-    }
-
     /**
      * This function does the initialization on the BottomNavigationView object passed
      * @author Griffin
@@ -173,6 +110,8 @@ public class MainActivity extends AppCompatActivity implements OnRoleSelectedLis
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_activity_main);
         navController.setGraph(R.navigation.user_mobile_navigation, bundle);
         NavigationUI.setupWithNavController(navView, navController);
+
+        navController.navigate(R.id.u_scanQR_menu_item, bundle);
         userBinder.navView.setOnItemSelectedListener(item -> {
             if (item.getItemId() == R.id.u_profile_menu_item) {
                 Log.d("Menu", "Sending account to profile");
@@ -181,6 +120,8 @@ public class MainActivity extends AppCompatActivity implements OnRoleSelectedLis
                 navController.navigate(R.id.u_scanQR_menu_item, bundle);
             } else if (item.getItemId() == R.id.u_my_events_menu_item) {
                 navController.navigate(R.id.u_my_events_menu_item, bundle);
+            } else {
+                Toast.makeText(this, "Unknown menu item selected for navigation", Toast.LENGTH_SHORT).show();
             }
             return true;
         });
@@ -199,24 +140,39 @@ public class MainActivity extends AppCompatActivity implements OnRoleSelectedLis
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_activity_main);
         navController.setGraph(R.navigation.organiser_mobile_navigation, bundle);
         NavigationUI.setupWithNavController(navView, navController);
+        navController.navigate(R.id.organiser_postEvent_page, bundle);
+        organiserBinder.navView.setOnItemSelectedListener(item -> {
+            if (item.getItemId() == R.id.organiser_myEvents_page) {
+                navController.navigate(R.id.organiser_myEvents_page, bundle);
+            } else if (item.getItemId() == R.id.organiser_postEvent_page) {
+                navController.navigate(R.id.organiser_postEvent_page, bundle);
+            } else if (item.getItemId() == R.id.organiser_profile_page) {
+                navController.navigate(R.id.organiser_profile_page, bundle);
+            } else {
+                Toast.makeText(this, "Unknown menu item selected for navigation", Toast.LENGTH_SHORT).show();
+            }
+            return true;
+        });
     }
 
 
-    private void setupNavControllerAdmin(BottomNavigationView navView, Bundle bundle) {
+    public void setupNavControllerAdmin(BottomNavigationView navView, Bundle bundle) {
         AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(
                 R.id.admin_all_events_menu_item, R.id.admin_all_images_menu_item, R.id.admin_all_profiles_menu_item)
                 .build();
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_activity_main);
         navController.setGraph(R.navigation.admin_mobile_navigation, bundle);
         NavigationUI.setupWithNavController(navView, navController);
+        navController.navigate(R.id.admin_navigation_all_images, bundle);
         adminBinding.navView.setOnItemSelectedListener(item -> {
             if (item.getItemId() == R.id.admin_all_events_menu_item) {
-                Log.d("Menu", "Sending account to profile");
                 navController.navigate(R.id.admin_navigation_all_events, bundle);
             } else if (item.getItemId() == R.id.admin_all_images_menu_item) {
                 navController.navigate(R.id.admin_navigation_all_images, bundle);
             } else if (item.getItemId() == R.id.admin_all_profiles_menu_item) {
                 navController.navigate(R.id.admin_navigation_all_users, bundle);
+            } else {
+                Toast.makeText(this, "Unknown menu item selected for navigation", Toast.LENGTH_SHORT).show();
             }
             return true;
         });
@@ -238,7 +194,7 @@ public class MainActivity extends AppCompatActivity implements OnRoleSelectedLis
                             String.format("Got account (%s)", signedInAccount.getAccountID()),
                             Toast.LENGTH_SHORT);
                     toast.show();
-                    setNavigation(signedInAccount);
+                    setupNavController();
                 } else if (flags == DBOnCompleteFlags.NO_DOCUMENTS.value) {
                     dbHandler.addNewDevice(getDeviceID(), this);
                 } else {
@@ -252,7 +208,7 @@ public class MainActivity extends AppCompatActivity implements OnRoleSelectedLis
                             Toast.LENGTH_SHORT);
                     toast.show();
                     signedInAccount = docs.get(0);
-                    setNavigation(signedInAccount);
+                    setupNavController();
                 } else {
                     Toast toast = Toast.makeText(this,
                             "Could not make new account for device",
@@ -284,14 +240,13 @@ public class MainActivity extends AppCompatActivity implements OnRoleSelectedLis
 
     /**
      * Setup navigation for user with a specific role.
-     * @param account Account currently signed in.
      */
-    private void setNavigation(Account account) {
+    private void setupNavController() {
         Bundle bundle = new Bundle();
-        bundle.putParcelable("signedInAccount", account);
+        bundle.putParcelable("signedInAccount", signedInAccount);
 
         // Use a switch to determine the nagivation based on the current role
-        switch (account.getCurrentRole()) {
+        switch (currentRole) {
             case user:
                 Log.d("MainActivity", "Setting navigation for user.");
                 userBinder = UserMainActivityNagivationBinding.inflate(getLayoutInflater());
@@ -311,8 +266,58 @@ public class MainActivity extends AppCompatActivity implements OnRoleSelectedLis
                 setupNavControllerAdmin(adminBinding.navView, bundle);
                 break;
             default:
-                Log.d("MainActivity", String.format("Unknown role (%s)", account.getCurrentRole().value));
+                Log.d("MainActivity", String.format("Unknown role (%s)", currentRole.value));
                 break;
+        }
+    }
+
+    private void getNavArguments() {
+        String receivedRole = getIntent().getStringExtra("currentRole") ;
+        signedInAccount = getIntent().getParcelableExtra("signedInAccount");
+
+        Log.d("MainActivity", String.format("Received %s as current role.", receivedRole));
+        if (receivedRole == null) {
+            currentRole = Account.AccountRole.user;
+        } else {
+            switch (receivedRole) {
+                case "organiser":
+                    currentRole = Account.AccountRole.organiser;
+                    break;
+                case "admin":
+                    currentRole = Account.AccountRole.admin;
+                    break;
+                default:
+                    currentRole = Account.AccountRole.user;
+            }
+        }
+
+        if (signedInAccount == null) {
+            if (useDB) {
+                Log.d("MainActivity", "Fetching account from DB based on DeviceID");
+                dbHandler = new MainActivityDB();
+                dbHandler.getDeviceAccount(getDeviceID(), this);
+            } else {
+                Log.d("MainActivity", "Using mock data");
+                signedInAccount = new Account(
+                        "1",  // accountID
+                        "Moo Deng",  // name
+                        "She/Her",  // pronouns
+                        "7801234567",  // phoneNumber
+                        "MooDeng@ualberta.ca",  // emailAddress
+                        "1",  // deviceID
+                        "profilePic.png",  // profilePicture
+                        "Edmonton, Alberta",  // location
+                        true,  // receiveNotifications
+                        true,  // enableGeolocation
+                        new ArrayList<>(Arrays.asList(Account.AccountRole.user, Account.AccountRole.organiser)),  // roles
+                        Account.AccountRole.organiser,  // CHANGE EITHER ORANIZER OR USER FOR ROLE currentRole (TODO: Change this if you want to test with user)
+                        null  // facilityProfile
+                );
+                setupNavController();
+            }
+        } else {
+            // TODO: Keep integrity of signedInAccount with Firestore (make sure fields match).
+            setupNavController();
         }
     }
 }

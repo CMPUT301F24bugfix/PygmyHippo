@@ -10,8 +10,6 @@ Issues:
       No Image handling
  */
 
-import static android.content.ContentValues.TAG;
-
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -27,20 +25,15 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
 import com.example.pygmyhippo.R;
 import com.example.pygmyhippo.common.Account;
 import com.example.pygmyhippo.common.Entrant;
 import com.example.pygmyhippo.common.Event;
-import com.example.pygmyhippo.database.DBConnector;
 import com.example.pygmyhippo.database.DBOnCompleteFlags;
 import com.example.pygmyhippo.database.DBOnCompleteListener;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 
@@ -56,9 +49,12 @@ public class ViewEntrantsFragment extends Fragment implements DBOnCompleteListen
     private ListView entrantListView;
     private Spinner statusSpinner;
     private ImageButton backButton;
-    private String eventID;
     private Event event = new Event();
     private ViewEntrantDB dbHandler;
+
+    private NavController navController;
+    private String eventID;
+    private Account signedInAccount;
 
     /**
      * OnCreateView sets up the interactables on viewEntrants page and deals with the list data
@@ -78,7 +74,14 @@ public class ViewEntrantsFragment extends Fragment implements DBOnCompleteListen
         View view = inflater.inflate(R.layout.o_view_entrants, container, false);
 
         // Get the event ID that was passed from the last fragment
-        eventID = getArguments().getString("eventID");
+        if (getArguments() != null) {
+            eventID = ViewEntrantsFragmentArgs.fromBundle(getArguments()).getEventID();
+            signedInAccount = ViewEntrantsFragmentArgs.fromBundle(getArguments()).getSignedInAccount();
+        } else {
+            // FIXME think of another solution for getting mock data that wont break things.
+            eventID = "37Pm3bM0Z0xBjwWLGTqD";
+            signedInAccount = new Account();
+        }
 
         // Get the event from the database
         dbHandler = new ViewEntrantDB();
@@ -110,6 +113,7 @@ public class ViewEntrantsFragment extends Fragment implements DBOnCompleteListen
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        navController = Navigation.findNavController(view);
 
         // Initialize our ListView
         entrantListView = view.findViewById(R.id.o_entrant_listview);
@@ -121,7 +125,7 @@ public class ViewEntrantsFragment extends Fragment implements DBOnCompleteListen
         // Get and set up navigation for the back button
         backButton = view.findViewById(R.id.o_entrant_view_back_button);
         backButton.setOnClickListener(view1 -> {
-            Navigation.findNavController(view1).navigate(R.id.action_view_entrants_fragment_to_event_fragment);
+            navController.popBackStack();
         });
 
         // Set up a listener for when an entrant is clicked
@@ -136,7 +140,7 @@ public class ViewEntrantsFragment extends Fragment implements DBOnCompleteListen
                 navArgs.putString("eventID", eventID);
 
                 // Navigate to the entrant profile fragment
-                Navigation.findNavController(view).navigate(R.id.action_view_entrants_fragment_to_single_entrant_fragment, navArgs);
+                navController.navigate(R.id.single_entrant_fragment, navArgs);
             }
         });
 
