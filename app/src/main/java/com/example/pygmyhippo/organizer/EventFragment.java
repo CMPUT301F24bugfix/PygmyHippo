@@ -11,8 +11,6 @@ Issues: Doesn't have updatable fields yet
         - Hardcoded event ID, need to set up proper navigation to this event
  */
 
-import static android.content.ContentValues.TAG;
-
 import com.example.pygmyhippo.common.Entrant;
 
 import java.util.ArrayList;
@@ -28,29 +26,13 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.navigation.Navigation;
 
-import com.example.pygmyhippo.common.Entrant;
 import com.example.pygmyhippo.common.Event;
 import com.example.pygmyhippo.database.DBOnCompleteFlags;
 import com.example.pygmyhippo.database.DBOnCompleteListener;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
-import java.util.ArrayList;
-import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.TextView;
+
 import android.widget.Toast;
-
-import androidx.annotation.NonNull;
-import androidx.navigation.Navigation;
-
-import com.example.pygmyhippo.common.Entrant;
-import com.example.pygmyhippo.common.Event;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-
-import java.util.ArrayList;
 
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;

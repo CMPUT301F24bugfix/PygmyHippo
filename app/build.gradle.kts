@@ -82,4 +82,5 @@ dependencies {
     testImplementation("org.hamcrest:hamcrest-library:3.0")
     debugImplementation("androidx.fragment:fragment-testing-manifest:1.8.5")
     androidTestImplementation("androidx.fragment:fragment-testing:1.8.5")
+    implementation("com.google.firebase:firebase-storage:20.1.0")
 }

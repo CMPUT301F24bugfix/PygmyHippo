@@ -5,6 +5,13 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 
+/*
+Purposes:
+    - To display single dataclasses in the admin browsing
+Issues:
+    - None
+ */
+
 /**
  * Abstract base class for RecyclerView Adapters for displaying single dataclasses (e.g. Event,
  * Account).

@@ -24,6 +24,7 @@ import androidx.test.filters.LargeTest;
 
 import com.example.pygmyhippo.MainActivity;
 import com.example.pygmyhippo.R;
+import com.example.pygmyhippo.admin.AllEventsFragment;
 import com.example.pygmyhippo.organizer.PostEventFragment;
 
 import org.junit.Before;
@@ -44,16 +45,14 @@ import org.junit.runner.RunWith;
 @RunWith(AndroidJUnit4.class)
 @LargeTest
 public class PostEventFragmentTesting {
+    private FragmentScenario<AllEventsFragment> scenario;
 
     @Rule
     public GrantPermissionRule mRuntimePermissionRule = GrantPermissionRule.grant(Manifest.permission.POST_NOTIFICATIONS);
 
-    @Rule
-    public ActivityScenarioRule<MainActivity> scenario = new ActivityScenarioRule<MainActivity>(MainActivity.class);
-
     @Before
-    public void setUp() {
-        onView(withId(R.id.organiser_postEvent_page)).perform(click());
+    public void setup() {
+        scenario = FragmentScenario.launchInContainer(AllEventsFragment.class);
     }
 
     @Test
