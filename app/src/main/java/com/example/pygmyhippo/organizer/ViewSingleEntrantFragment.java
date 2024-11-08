@@ -45,7 +45,7 @@ import java.util.ArrayList;
  * Fragment to see a user profile from navigating from an organiser's list of entrants
  * TODO: Add image handling
  * TODO: Add functions for the other status conditions (accepted and such)
- * TODO: Notification sending can also be done when one of the buttons are pressed
+ * TODO: Notification sending can also be done when one of the buttons are pressed (just one possible idea)
  */
 public class ViewSingleEntrantFragment extends Fragment {
     private Account account;
@@ -70,7 +70,7 @@ public class ViewSingleEntrantFragment extends Fragment {
      * @param savedInstanceState If non-null, this fragment is being re-constructed
      * from a previous saved state as given here.
      *
-     * @return
+     * @return the view
      */
     @Nullable
     @Override
@@ -197,6 +197,9 @@ public class ViewSingleEntrantFragment extends Fragment {
         });
     }
 
+    /**
+     * Displays DB Errors
+     */
     private void handleDBError() {
         Toast toast = Toast.makeText(getContext(), "DB Error!", Toast.LENGTH_SHORT);
         toast.show();

@@ -44,10 +44,10 @@ public class EntrantArrayAdapter extends ArrayAdapter<Entrant> {
 
     /**
      * This Method will customize the entrant list depending on their profile values
-     * @param position The index of the current entrant
-     * @param convertView not sure
+     * @param position position in the array
+     * @param convertView
      * @param parent
-     * @return view (The view of the list content)
+     * @return the view to display one entrant
      */
     @NonNull
     @Override

@@ -1,5 +1,22 @@
 package com.example.pygmyhippo.user;
 
+/*
+This class will display the account of a user
+It also provides functionality for the Admin wanting to delete this user
+Purposes:
+    - Allow user to see their account
+    - Allow user to update their account
+    - Spinner gives ability to change roles
+    - Allows admin functionality to delete the profile (given the permissions)
+    - Let's user delete profile pic, which generates a new one
+Issues:
+    - Only text fields are updated in database, It doesn't have image handling yet
+ */
+
+import android.widget.AdapterView;
+import android.widget.RadioButton;
+
+import com.example.pygmyhippo.databinding.UserFragmentProfileBinding;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -39,15 +56,11 @@ import java.util.Objects;
 
 /**
  * This fragment holds most of the information about a user which is returned from a call to the database
- * To be Implemented: the edit button will change the interface and allow the user to edit all fields and send it to
- * the database.
+ * Purpose: To allow the user to update their profile and change their role
  *
- * To be fixed:
- * - The framework for the communication between this can the main activity needs to be more robust
- *   (right now when this fragment is open the drop down is triggered sending roleSelectedListener,
- *   which would change the role to user since its he first role in the drop down)
+ * Issues:
+ * - Profile Images not stored in the database yet
  *
- * Currently just a static page.
  * Allows the user to edit or view their current provided information.
  * @author Jennifer, Griffin
  * @version 1.1
@@ -105,6 +118,7 @@ public class ProfileFragment extends Fragment  implements AdapterView.OnItemSele
         String url = "https://api.multiavatar.com/";
         imagePath = Uri.parse(url+name+".png");
 
+        // Retrieve the generated profile picture
         Picasso.get()
                 .load(imagePath)
                 .into(binding.EProfileProfileImg);
@@ -121,12 +135,16 @@ public class ProfileFragment extends Fragment  implements AdapterView.OnItemSele
 
 
     /**
-     * Creates the view
-     * @author Jennifer
-     * @param inflater not sure
-     * @param container not sure
-     * @param savedInstanceState not sure
-     * @return root not sure
+     * Jennifer
+     * @param inflater The LayoutInflater object that can be used to inflate
+     * any views in the fragment,
+     * @param container If non-null, this is the parent view that the fragment's
+     * UI should be attached to.  The fragment should not add the view itself,
+     * but this can be used to generate the LayoutParams of the view.
+     * @param savedInstanceState If non-null, this fragment is being re-constructed
+     * from a previous saved state as given here.
+     *
+     * @return The view of the profile fragment
      */
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -209,17 +227,20 @@ public class ProfileFragment extends Fragment  implements AdapterView.OnItemSele
 
         /*
          * Exit edit mode the submit
-         * To Do: this needs to call whatever method will submit to the database
+         * TODO: Need to store the profile picture in the database
+         *      Add restrictions on certain fields
          * author Jennifer
          */
         View.OnClickListener updateUser = new View.OnClickListener() {
             /**
              * Tell whichs elements to become unfocusable, to appear or disappear
-             * @author Jennifer
+             * Will also update the attributes of the account and store that in the database
+             * @author Jennifer, Kori
              * @param view the fragment view
              */
             @Override
             public void onClick(View view) {
+                // Change the text visibilities
                 nameField.setFocusable(false);
                 pronounField.setFocusable(false);
                 phoneField.setFocusable(false);
@@ -237,6 +258,27 @@ public class ProfileFragment extends Fragment  implements AdapterView.OnItemSele
                 uploadImgBtn.setVisibility(View.GONE);
                 deleteImgBtn.setVisibility(View.GONE);
 
+                // Update the corresponding fields of the account
+                signedInAccount.setName(nameField.getText().toString());
+                signedInAccount.setPronouns(pronounField.getText().toString());
+                signedInAccount.setPhoneNumber(phoneField.getText().toString());
+                signedInAccount.setEmailAddress(emailField.getText().toString());
+                signedInAccount.setReceiveNotifications(decNotify.isChecked());
+                signedInAccount.setEnableGeolocation(decGeo.isChecked());
+
+                // Update to reflect in the database
+                handler.updateProfile(signedInAccount, new DBOnCompleteListener<Account>() {
+                    @Override
+                    public void OnComplete(@NonNull ArrayList<Account> docs, int queryID, int flags) {
+                        // Log when the data is updated or catch if there was an error
+                        if (flags == DBOnCompleteFlags.SUCCESS.value) {
+                            Log.d("DB", "Successfully finished updating account");
+                        } else {
+                            // If not the success flag, then there was an error
+                            Log.d("Profile", "Error in updating account.");
+                        }
+                    }
+                });
             }
         };
 
@@ -282,6 +324,7 @@ public class ProfileFragment extends Fragment  implements AdapterView.OnItemSele
             }
         };
 
+        // Set the listener for each button
         uploadImgBtn.setOnClickListener(uploadImage);
         deleteImgBtn.setOnClickListener(deleteImage);
         editButton.setOnClickListener(editUser);
@@ -293,15 +336,26 @@ public class ProfileFragment extends Fragment  implements AdapterView.OnItemSele
         return root;
     }
 
+    /**
+     * Populate the profile fields
+     * @param account The current account whose data gets displayed
+     */
     private void populateTextViews(Account account) {
         nameField.setText(account.getName());
         pronounField.setText(account.getPronouns());
-        phoneField.setText(account.getPhoneNumber());
+        if (account.getPhoneNumber() != null) {
+            // Check first because this field is optional
+            phoneField.setText(account.getPhoneNumber());
+        }
         emailField.setText(account.getEmailAddress());
         decGeo.setActivated(account.isEnableGeolocation());
         decNotify.setActivated(account.isReceiveNotifications());
     }
 
+    /**
+     * This method will get the current signed in account, and change the views
+     * of the fragment depending on if their role is admin or user
+     */
     private void setProfile() {
         Log.d("ProfileFragment", String.format("adminViewAccountID %s was received", adminViewAccountID));
         signedInAccount = ProfileFragmentArgs.fromBundle(getArguments()).getSignedInAccount();
@@ -312,9 +366,12 @@ public class ProfileFragment extends Fragment  implements AdapterView.OnItemSele
         if (adminViewAccountID != null && !Objects.equals(adminViewAccountID, "null") && !Objects.equals(adminViewAccountID, signedInAccount.getAccountID())) {
             Log.d("ProfileFragment", String.format("Getting Account %s for admin view", adminViewAccountID));
             handler.getAccountByID(adminViewAccountID, this);
+
+            // Set the views for admin
             adminConstraintLayout.setVisibility(View.VISIBLE);
             roleSpinner.setVisibility(View.INVISIBLE);
         } else if (signedInAccount != null) {
+            // Setting the views for users
             Log.d("ProfileFragment", String.format("Populating text views with %s %s", signedInAccount.getAccountID(), signedInAccount.getName()));
             populateTextViews(signedInAccount);
         } else {
@@ -324,12 +381,12 @@ public class ProfileFragment extends Fragment  implements AdapterView.OnItemSele
 
     /**
      * since this implements the OnTimeSelectedLister we need to override these two methods to get
-     * the communication working
+     * the communication working (provides functionality for role changing)
      * @author Griffin
      * @param adapterView: The adapter view of the selectable options
-     * @param view: not sure
+     * @param view: current view
      * @param i: position of item clicked
-     * @param l: not sure
+     * @param l: long
      */
     @Override
     public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {

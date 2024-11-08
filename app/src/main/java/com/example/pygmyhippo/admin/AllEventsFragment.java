@@ -1,4 +1,18 @@
 package com.example.pygmyhippo.admin;
+/*
+This class displays the list of all events
+Purposes:
+    - Allows the admin to browse all events
+    - Allows the admin to select an event the want to view and potentially delete
+Issues:
+    - No spinner functionality yet
+ */
+
+
+
+import androidx.navigation.NavController;
+
+import com.example.pygmyhippo.common.RecyclerClickListener;
 
 import android.os.Bundle;
 import android.util.Log;
@@ -44,6 +58,8 @@ public class AllEventsFragment extends Fragment implements RecyclerClickListener
     @Override
     public void onItemClick(int position) {
         Log.i("User", String.format("Admin clicked item at position %d", position));
+
+        // An event was clicked, so send that info to the EventFragment for the Admin to view (and navigate there)
         Bundle navArgs = new Bundle();
         navArgs.putParcelable("signedInAccount", signedInAccount);
         navArgs.putString("eventID", allEvents.get(position).getEventID());
@@ -62,16 +78,20 @@ public class AllEventsFragment extends Fragment implements RecyclerClickListener
         binding = AdminFragmentAllListBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
+        // Get the signed in account that was passed from the fragment that navigated here
         signedInAccount = AllEventsFragmentArgs.fromBundle(getArguments()).getSignedInAccount();
         allEvents = new ArrayList<>();
 
+        // Initialize the handler and get all the events
         handler = new AllEventsDB();
         handler.getEvents(1000, this);
 
+        // Fill the fields of the recycle view
         adapter = new AllEventsAdapter(allEvents, this);
         binding.aAlllistRecycler.setLayoutManager(new LinearLayoutManager(getContext()));
         binding.aAlllistRecycler.setAdapter(adapter);
 
+        // Initialize the 1st spinner
         ArrayAdapter<CharSequence> categoryAdapter = ArrayAdapter.createFromResource(
                 this.requireContext(),
                 R.array.all_events_category_spinner,
@@ -79,9 +99,9 @@ public class AllEventsFragment extends Fragment implements RecyclerClickListener
         );
 
         categoryAdapter.setDropDownViewResource(android.R.layout.simple_spinner_item);
-
         binding.aAlllistCategorySpinner.setAdapter(categoryAdapter);
 
+        // Initialize the second spinner
         ArrayAdapter<CharSequence> orderAdapter = ArrayAdapter.createFromResource(
                 this.requireContext(),
                 R.array.order_spinner,
@@ -107,6 +127,7 @@ public class AllEventsFragment extends Fragment implements RecyclerClickListener
     public void OnComplete(@NonNull ArrayList<Event> docs, int queryID, int flags) {
         if (queryID == 0) {
             if (flags == DBOnCompleteFlags.SUCCESS.value) {
+                // Add each retrieved event to the list
                 docs.forEach(doc -> {
                     allEvents.add(doc);
                     adapter.notifyItemInserted(allEvents.size() - 1);

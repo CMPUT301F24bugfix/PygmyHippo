@@ -1,17 +1,25 @@
 package com.example.pygmyhippo.organizer;
 
+/*
+This class specifically handles storing the event poster to the database
+Purposes:
+    - Stores the event poster for the organiser (ie, lets them upload)
+Issues:
+    - Perhaps make an image Handler class so we dont have to use and event listener for this
+    - Should convert the image attributes to an actual image class
+ */
+
 import android.net.Uri;
 import android.util.Log;
 
-import com.example.pygmyhippo.common.Event;
 import com.example.pygmyhippo.database.DBHandler;
 import com.example.pygmyhippo.database.DBOnCompleteFlags;
-import com.example.pygmyhippo.database.DBOnCompleteListener;
-import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
 import java.util.UUID;
+import com.example.pygmyhippo.common.Event;
+import com.example.pygmyhippo.database.DBOnCompleteListener;
 
 /**
  * Post Event Database handler.
@@ -28,7 +36,7 @@ public class ImageStorage extends DBHandler {
      * @param listener
      * @author Griffin
      */
-    public void uploadImageToFirebase(Uri imageUri,  DBOnCompleteListener<Event> listener) {
+    public void uploadImageToFirebase(Uri imageUri, DBOnCompleteListener<Event> listener) {
         StorageReference storageRef = storage.getReference();
         String imageName = "events/" + UUID.randomUUID().toString();
         StorageReference imageRef = storageRef.child(imageName);
@@ -42,7 +50,7 @@ public class ImageStorage extends DBHandler {
                             Event newEvent = new Event();
                             newEvent.setEventPoster(uri.toString());
                             events.add(newEvent);
-                            listener.OnComplete(events, 3,DBOnCompleteFlags.SUCCESS.value);
+                            listener.OnComplete(events, 3, DBOnCompleteFlags.SUCCESS.value);
                         });
                     }
                     else{

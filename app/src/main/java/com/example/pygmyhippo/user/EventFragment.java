@@ -2,13 +2,15 @@ package com.example.pygmyhippo.user;
 
 /*
 This Fragment will display one of the events that a User can see after scanning its QR code
+Will be used by users and admins
 Purposes:
         - Let the User view the details of the event
         - Let the User join the event if they wish
         - If they navigate back to this event, allow them the option to leave the event
+        - Let Admin delete the event
 Contributors: Katharine
 Issues:
-        - Isn't connected to database yet (sample data is hardcoded)
+        - Needs testing
  */
 
 import android.app.AlertDialog;
@@ -64,8 +66,6 @@ public class EventFragment extends Fragment implements DBOnCompleteListener<Even
     private Button registerButton, deleteEventButton, deleteQRCodeButton;
     private ConstraintLayout adminConstraint;
 
-    // TODO: pass entrant and even information using bundle...
-
     // populate single event page with hardcoded event information
     public Event hardcodeEvent() {
         entrants = new ArrayList<>();
@@ -87,7 +87,6 @@ public class EventFragment extends Fragment implements DBOnCompleteListener<Even
         );
     }
 
-    // populates the view with information
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -119,19 +118,21 @@ public class EventFragment extends Fragment implements DBOnCompleteListener<Even
 
         handler = new EventDB();
 
+        // Get current user account
         signedInAccount = EventFragmentArgs.fromBundle(getArguments()).getSignedInAccount();
         setPermissions();
 
+        // Get the eventID that was passed by scanning the QR code
         String navigationEventID = EventFragmentArgs.fromBundle(getArguments()).getEventID();
         getEvent(navigationEventID);
 
-        // TODO: add actual database stuff here, where user is added into the events list
-        // for now, this is hardcoding to figure out structure of entrant
+        // Make the entrant equivalent using the account info (for if they join the waitlist)
         entrant = new Entrant(
-                "123",
-                Entrant.EntrantStatus.invited
+                signedInAccount.getAccountID(),
+                Entrant.EntrantStatus.waitlisted
         );
 
+        // Set up navigation back to last fragment
         FloatingActionButton backButton = view.findViewById(R.id.u_backButtonToQRView);
         backButton.setOnClickListener(view1 -> {
             navController.popBackStack();
@@ -142,10 +143,12 @@ public class EventFragment extends Fragment implements DBOnCompleteListener<Even
             registerUser();
         });
 
+        // This button is for admin to delete the event
         deleteEventButton.setOnClickListener(buttonView -> {
             handler.deleteEventByID(event.getEventID(), this);
         });
 
+        // For admin to delete the event's QR code
         deleteQRCodeButton.setOnClickListener(buttonView -> {
             Log.d("EventFragment", "Delete QR Code Button pressed");
             // TODO: Delete QR Code.
@@ -158,6 +161,7 @@ public class EventFragment extends Fragment implements DBOnCompleteListener<Even
     public void OnComplete(@NonNull ArrayList<Event> docs, int queryID, int flags) {
         if (queryID == 0) {
             if (flags == DBOnCompleteFlags.SINGLE_DOCUMENT.value) {
+                // Get the event from the database and populate the fragment
                 event = docs.get(0);
                 populateTextFields();
             }
@@ -232,20 +236,24 @@ public class EventFragment extends Fragment implements DBOnCompleteListener<Even
                 builder.setMessage("This event requires geolocation. Continue registering?");
                 builder.setCancelable(true);
                 builder.setPositiveButton("Yes", (DialogInterface.OnClickListener) (dialog, which) -> {
+                    // Add the user if they wish to continue (and update button looks)
                     registerButton.setBackgroundColor(0xFF808080);
                     event.addEntrant(entrant);
                     handler.updateEvent(event, this);       // Update the database
                     registerButton.setText("✔");
                 });
                 builder.setNegativeButton("No", (DialogInterface.OnClickListener) (dialog, which) -> {
+                    // Don't add the user to the waitlist
                     dialog.cancel();
                 });
                 AlertDialog geolocationWarning = builder.create();
                 geolocationWarning.show();
 
             } else {
+                // If no geolocation, then the user will just get added
                 registerButton.setBackgroundColor(0xFF808080);
                 event.addEntrant(entrant);
+                handler.updateEvent(event, this);       // Update the database
                 registerButton.setText("✔");
             }
         }

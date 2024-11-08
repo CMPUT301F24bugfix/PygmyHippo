@@ -1,5 +1,14 @@
 package com.example.pygmyhippo.user;
 
+/*
+This fragment gives the ability to scan QR codes
+Purposes:
+    - Lets the user scan QR codes so that the can view event details and join if they want
+Issues:
+    - No server connection
+    - Nothing to stop the navigation if the QR code doesn't actually have the encoded event ID
+ */
+
 import android.Manifest;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
@@ -38,12 +47,16 @@ public class QRFragment extends Fragment {
     private Account signedInAccount;
 
     /**
-     * Creates the view
-     * @author none
-     * @param inflater not sure
-     * @param container not sure
-     * @param savedInstanceState  not surre
-     * @return root not sure
+     *
+     * @param inflater The LayoutInflater object that can be used to inflate
+     * any views in the fragment,
+     * @param container If non-null, this is the parent view that the fragment's
+     * UI should be attached to.  The fragment should not add the view itself,
+     * but this can be used to generate the LayoutParams of the view.
+     * @param savedInstanceState If non-null, this fragment is being re-constructed
+     * from a previous saved state as given here.
+     *
+     * @return the view
      */
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -51,6 +64,7 @@ public class QRFragment extends Fragment {
         binding = UserFragmentQrBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
+        // Get the current account
         signedInAccount = QRFragmentArgs.fromBundle(getArguments()).getSignedInAccount();
 
         return root;
@@ -61,9 +75,11 @@ public class QRFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         navController = Navigation.findNavController(view);
 
+        // Get the scanner and ask user for permission to use camera
         QRScannerView = view.findViewById(R.id.u_QRScanner);
         if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.CAMERA)
                 == PackageManager.PERMISSION_GRANTED) {
+            // Let the user scan
             startSingleScan();
         } else {
             // request for camera permission
@@ -75,13 +91,22 @@ public class QRFragment extends Fragment {
         }
     }
 
+    /**
+     * Lets the user actually scan
+     */
     private void startSingleScan() {
         QRScannerView.decodeSingle(callback);
     }
 
+    /**
+     * When the QR is successfully scanned, will read an event ID and take that to the event fragment
+     * So that that fragment can get populated with those details
+     */
     private final BarcodeCallback callback = result -> {
         if (result != null && result.getText() != null) {
             String eventID = result.getText();
+
+            // FIXME: For testing
             Toast testShowBarcode = Toast.makeText(getActivity(), eventID, Toast.LENGTH_LONG);
             testShowBarcode.show();
 

@@ -1,5 +1,13 @@
 package com.example.pygmyhippo.organizer;
 
+/*
+ * This fragment will display the qr code
+ * Purposes:
+ *      - Provides the organiser with their generated QR code
+ * TODO:
+ *  navigate to event details page
+ * */
+
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.util.Log;
@@ -29,11 +37,7 @@ import com.google.zxing.EncodeHintType;
 import net.glxn.qrgen.android.QRCode;
 
 import java.util.ArrayList;
-/*
-* This fragment will display the qr code
-* TODO:
-*  navigate to event details page
-* */
+
 
 /**
  * This fragment will display the qrcode
@@ -67,10 +71,15 @@ public class EventQRViewerFragment extends Fragment implements DBOnCompleteListe
      * Creates the view
      * A bundle of a string with the event id with key: "my_event_id"
      * @author Griffin
-     * @param inflater not sure
-     * @param container not sure
-     * @param savedInstanceState  not surre
-     * @return root not sure
+     * @param inflater The LayoutInflater object that can be used to inflate
+     * any views in the fragment,
+     * @param container If non-null, this is the parent view that the fragment's
+     * UI should be attached to.  The fragment should not add the view itself,
+     * but this can be used to generate the LayoutParams of the view.
+     * @param savedInstanceState If non-null, this fragment is being re-constructed
+     * from a previous saved state as given here.
+     *
+     * @return The view
      */
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -86,7 +95,7 @@ public class EventQRViewerFragment extends Fragment implements DBOnCompleteListe
             eventID = EventQRViewerFragmentArgs.fromBundle(getArguments()).getEventID();
         }
 
-        // code for button was copies from Koris work in viewEntantsFragments
+        // code for button was copied from Kori's work in viewEntantsFragments
 
         backButton = view.findViewById(R.id.o_eventqr_backBtn);
         backButton.setOnClickListener(view1 -> {
@@ -148,6 +157,10 @@ public class EventQRViewerFragment extends Fragment implements DBOnCompleteListe
         }
     }
 
+    /**
+     * Displays when database error has occured. Mostly for testing
+     * TODO: Think of better exceptions for database errors?
+     */
     private void handleDBError () {
         Toast toast = Toast.makeText(getContext(), "DB Error!", Toast.LENGTH_SHORT);
         toast.show();

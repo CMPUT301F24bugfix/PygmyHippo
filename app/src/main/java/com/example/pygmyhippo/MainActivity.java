@@ -1,5 +1,14 @@
 package com.example.pygmyhippo;
 
+/*
+Starting point of the app
+Purposes:
+    - Sets up the navbar for navigating between the three fragments (for any role)
+    - Signs an account in based on device ID
+Issues:
+    - Double account creation when a new device tries to open the app.
+ */
+
 import android.Manifest;
 import android.content.pm.PackageManager;
 import android.os.Build;
@@ -37,6 +46,7 @@ public class MainActivity extends AppCompatActivity implements DBOnCompleteListe
     final int PERMISSION_REQUEST_CODE =112;
     final boolean useDB = true;
 
+    // Get the nav bars for each role
     private OrganiserMainActivityNagivationBinding organiserBinder;
     private UserMainActivityNagivationBinding userBinder;
     private AdminMainActivityNavigationBinding adminBinding;
@@ -64,7 +74,10 @@ public class MainActivity extends AppCompatActivity implements DBOnCompleteListe
     }
 
 
-
+    /**
+     * Dialog pop up asking for notification preference
+     * TODO: Decide to use this or the radio buttons in the profile
+     */
     public void getNotificationPermission(){
         try {
             if (Build.VERSION.SDK_INT > 32) {
@@ -98,8 +111,9 @@ public class MainActivity extends AppCompatActivity implements DBOnCompleteListe
 
     /**
      * This function does the initialization on the BottomNavigationView object passed
+     * For user navigation
      * @author Griffin
-     * @param navView: not sure
+     * @param navView: The navbar
      * @param bundle: Arguments to pass to first fragment.
      */
     private void setupNavControllerUser(BottomNavigationView navView, Bundle bundle) {
@@ -129,8 +143,9 @@ public class MainActivity extends AppCompatActivity implements DBOnCompleteListe
 
     /**
      * This function does the initialization on the BottomNavigationView object passed
+     * For organiser navigation
      * @author Griffin
-     * @param navView: not sure
+     * @param navView: The nav bar
      * @param bundle: Arguments to pass to first fragment.
      */
     private void setupNavControllerOrganiser(BottomNavigationView navView, Bundle bundle) {
@@ -156,6 +171,13 @@ public class MainActivity extends AppCompatActivity implements DBOnCompleteListe
     }
 
 
+    /**
+     * This function does the initialization on the BottomNavigationView object passed
+     * For Admin navigation
+     * @author Griffin
+     * @param navView: The nav bar
+     * @param bundle: Arguments to pass to first fragment.
+     */
     public void setupNavControllerAdmin(BottomNavigationView navView, Bundle bundle) {
         AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(
                 R.id.admin_all_events_menu_item, R.id.admin_all_images_menu_item, R.id.admin_all_profiles_menu_item)
@@ -203,6 +225,7 @@ public class MainActivity extends AppCompatActivity implements DBOnCompleteListe
                 break;
             case 1: // addNewDevice
                 if (flags == DBOnCompleteFlags.SUCCESS.value) {
+                    // Account did not exist based on device ID so a new one is automatically made
                     Toast toast = Toast.makeText(this,
                             "Made new account for device",
                             Toast.LENGTH_SHORT);
@@ -222,6 +245,9 @@ public class MainActivity extends AppCompatActivity implements DBOnCompleteListe
         }
     }
 
+    /**
+     * Displays DB errors
+     */
     private void handleDBError() {
         Toast toast = Toast.makeText(this, "DB Error!", Toast.LENGTH_SHORT);
         toast.show();
@@ -271,14 +297,20 @@ public class MainActivity extends AppCompatActivity implements DBOnCompleteListe
         }
     }
 
+    /**
+     * Calculates the current role based on what the main activity receives
+     */
     private void getNavArguments() {
         String receivedRole = getIntent().getStringExtra("currentRole") ;
         signedInAccount = getIntent().getParcelableExtra("signedInAccount");
 
         Log.d("MainActivity", String.format("Received %s as current role.", receivedRole));
         if (receivedRole == null) {
+            // If the account didn't exist, they get automatically set as a user for now
+            // TODO: Allow user to decide the role they want
             currentRole = Account.AccountRole.user;
         } else {
+            // Actually set the role of the incoming account
             switch (receivedRole) {
                 case "organiser":
                     currentRole = Account.AccountRole.organiser;
@@ -293,10 +325,12 @@ public class MainActivity extends AppCompatActivity implements DBOnCompleteListe
 
         if (signedInAccount == null) {
             if (useDB) {
+                // Makes a new account in the database if there wasn't one matching the device ID
                 Log.d("MainActivity", "Fetching account from DB based on DeviceID");
                 dbHandler = new MainActivityDB();
                 dbHandler.getDeviceAccount(getDeviceID(), this);
             } else {
+                // FIXME: For initial testing
                 Log.d("MainActivity", "Using mock data");
                 signedInAccount = new Account(
                         "1",  // accountID

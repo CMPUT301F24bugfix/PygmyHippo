@@ -1,5 +1,14 @@
 package com.example.pygmyhippo.organizer;
 
+/*
+This class will display the list of an organiser's events
+Purposes:
+    - Give the organiser ability to check their event details
+    - Basically gives them access to update event details
+Issues:
+    - This has not been implemented yet. We just have a button that shows what the navigation will look like once this is done
+ */
+
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -37,12 +46,16 @@ public class MyEventsFragment extends Fragment {
 
 
     /**
-     * Creates the view
-     * @author none
-     * @param inflater not sure
-     * @param container not sure
-     * @param savedInstanceState  not sure
-     * @return root not sure
+     *
+     * @param inflater The LayoutInflater object that can be used to inflate
+     * any views in the fragment,
+     * @param container If non-null, this is the parent view that the fragment's
+     * UI should be attached to.  The fragment should not add the view itself,
+     * but this can be used to generate the LayoutParams of the view.
+     * @param savedInstanceState If non-null, this fragment is being re-constructed
+     * from a previous saved state as given here.
+     *
+     * @return the view
      */
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -53,7 +66,7 @@ public class MyEventsFragment extends Fragment {
             signedInAccount = MyEventsFragmentArgs.fromBundle(getArguments()).getSignedInAccount();
         }
 
-        //FIXME: add a button to navigate to entrant list to see the draft
+        //FIXME: added a button to navigate to entrant list to see the draft, will delete once list is implemented
         Button button = binding.buttonSampleEvent;
         button.setOnClickListener(view -> {
             Bundle navArgs = new Bundle();
