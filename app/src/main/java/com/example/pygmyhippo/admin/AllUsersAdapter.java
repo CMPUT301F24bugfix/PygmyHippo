@@ -7,6 +7,24 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 
+import com.example.pygmyhippo.common.RecyclerClickListener;
+
+/*
+This class works as the adapter for the AllUsers recycler list.
+Purposes:
+    - Formats the user list entries
+    - To allow the Admin to browse through profiles
+Issues:
+    - None
+*/
+
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+
 import com.example.pygmyhippo.common.BaseRecyclerAdapter;
 import com.example.pygmyhippo.common.BaseViewHolder;
 import com.example.pygmyhippo.R;
@@ -19,6 +37,9 @@ import java.util.ArrayList;
  * Adapter for RecyclerView in AllUsersFragment.
  */
 public class AllUsersAdapter extends BaseRecyclerAdapter<Account, AllUsersAdapter.UserViewHolder> {
+    /**
+     * Child of the base adapter. This will hold the text views to display the account info
+     */
     public static class UserViewHolder extends BaseViewHolder<Account> {
         private final TextView usernameTextView, phoneTextView, emailTextView, locationTextView;
         public UserViewHolder(@NonNull View itemView) {
@@ -31,6 +52,7 @@ public class AllUsersAdapter extends BaseRecyclerAdapter<Account, AllUsersAdapte
 
         @Override
         public void setViews(Account account) {
+            // Initialize the texts based on the account attributes
             usernameTextView.setText(account.getName());
             phoneTextView.setText(account.getPhoneNumber());
             emailTextView.setText(account.getEmailAddress());

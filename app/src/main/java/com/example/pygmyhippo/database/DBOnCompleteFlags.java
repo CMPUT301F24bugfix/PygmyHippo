@@ -7,6 +7,8 @@ package com.example.pygmyhippo.database;
  * flags should be non-error related.
  * These are no all the flags that can be passed to OnComplete() which depends on how the querying
  * method is implemented.
+ *
+ * No issues
  */
 public enum DBOnCompleteFlags {
     ERROR(-1),
