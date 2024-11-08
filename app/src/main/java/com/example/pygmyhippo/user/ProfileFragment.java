@@ -1,5 +1,22 @@
 package com.example.pygmyhippo.user;
 
+/*
+This class will display the account of a user
+It also provides functionality for the Admin wanting to delete this user
+Purposes:
+    - Allow user to see their account
+    - Allow user to update their account
+    - Spinner gives ability to change roles
+    - Allows admin functionality to delete the profile (given the permissions)
+    - Let's user delete profile pic, which generates a new one
+Issues:
+    - Only text fields are updated in database, It doesn't have image handling yet
+ */
+
+import android.widget.AdapterView;
+import android.widget.RadioButton;
+
+import com.example.pygmyhippo.databinding.UserFragmentProfileBinding;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -307,6 +324,7 @@ public class ProfileFragment extends Fragment  implements AdapterView.OnItemSele
             }
         };
 
+        // Set the listener for each button
         uploadImgBtn.setOnClickListener(uploadImage);
         deleteImgBtn.setOnClickListener(deleteImage);
         editButton.setOnClickListener(editUser);
@@ -318,15 +336,26 @@ public class ProfileFragment extends Fragment  implements AdapterView.OnItemSele
         return root;
     }
 
+    /**
+     * Populate the profile fields
+     * @param account The current account whose data gets displayed
+     */
     private void populateTextViews(Account account) {
         nameField.setText(account.getName());
         pronounField.setText(account.getPronouns());
-        phoneField.setText(account.getPhoneNumber());
+        if (account.getPhoneNumber() != null) {
+            // Check first because this field is optional
+            phoneField.setText(account.getPhoneNumber());
+        }
         emailField.setText(account.getEmailAddress());
         decGeo.setActivated(account.isEnableGeolocation());
         decNotify.setActivated(account.isReceiveNotifications());
     }
 
+    /**
+     * This method will get the current signed in account, and change the views
+     * of the fragment depending on if their role is admin or user
+     */
     private void setProfile() {
         Log.d("ProfileFragment", String.format("adminViewAccountID %s was received", adminViewAccountID));
         signedInAccount = ProfileFragmentArgs.fromBundle(getArguments()).getSignedInAccount();
@@ -337,9 +366,12 @@ public class ProfileFragment extends Fragment  implements AdapterView.OnItemSele
         if (adminViewAccountID != null && !Objects.equals(adminViewAccountID, "null") && !Objects.equals(adminViewAccountID, signedInAccount.getAccountID())) {
             Log.d("ProfileFragment", String.format("Getting Account %s for admin view", adminViewAccountID));
             handler.getAccountByID(adminViewAccountID, this);
+
+            // Set the views for admin
             adminConstraintLayout.setVisibility(View.VISIBLE);
             roleSpinner.setVisibility(View.INVISIBLE);
         } else if (signedInAccount != null) {
+            // Setting the views for users
             Log.d("ProfileFragment", String.format("Populating text views with %s %s", signedInAccount.getAccountID(), signedInAccount.getName()));
             populateTextViews(signedInAccount);
         } else {
@@ -349,12 +381,12 @@ public class ProfileFragment extends Fragment  implements AdapterView.OnItemSele
 
     /**
      * since this implements the OnTimeSelectedLister we need to override these two methods to get
-     * the communication working
+     * the communication working (provides functionality for role changing)
      * @author Griffin
      * @param adapterView: The adapter view of the selectable options
-     * @param view: not sure
+     * @param view: current view
      * @param i: position of item clicked
-     * @param l: not sure
+     * @param l: long
      */
     @Override
     public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {

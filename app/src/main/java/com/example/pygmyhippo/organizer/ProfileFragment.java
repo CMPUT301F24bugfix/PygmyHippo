@@ -326,7 +326,10 @@ public class ProfileFragment extends Fragment implements AdapterView.OnItemSelec
     private void populateTextViews(Account account) {
         name_f.setText(account.getName());
         pronoun_f.setText(account.getPronouns());
-        phone_f.setText(account.getPhoneNumber());
+        if (account.getPhoneNumber() != null) {
+            // Check first because this field is optional
+            phone_f.setText(account.getPhoneNumber());
+        }
         email_f.setText(account.getEmailAddress());
 
         if (account.getFacilityProfile() != null) {

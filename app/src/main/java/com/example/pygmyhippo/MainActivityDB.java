@@ -1,5 +1,14 @@
 package com.example.pygmyhippo;
 
+/*
+This class acts as the data base handler for the main activity
+Purposes:
+    - Adds server connectivity
+    - Gets accounts based on device ID or makes a new one if it doesn't already exist
+Issues:
+    - Need an actual "registration page" so new users can fill out initial profile data
+ */
+
 import android.util.Log;
 
 import com.example.pygmyhippo.common.Account;

@@ -1,8 +1,13 @@
-/**
- * DBHandler for ProfileFragment
- */
-
 package com.example.pygmyhippo.user;
+
+/*
+ * DBHandler for ProfileFragment
+ *
+ * Purposes:
+ *      - Provide server connectivity to the profile fragments
+ * Issues:
+ *      - None
+ */
 
 import android.util.Log;
 
@@ -26,6 +31,11 @@ import java.util.ArrayList;
  * Can delete account based off of document ID.
  */
 public class ProfileDB extends DBHandler {
+    /**
+     * This method will notify the listener to return the account relating to the given ID
+     * @param accountID The ID of the account we want to get
+     * @param listener What gets notified of query results
+     */
     public void getAccountByID(String accountID, DBOnCompleteListener<Account> listener) {
         db.collection("Accounts")
             .document(accountID)
@@ -44,6 +54,11 @@ public class ProfileDB extends DBHandler {
             });
     }
 
+    /**
+     * This method will delete an account from the database
+     * @param accountID The ID of the account we want to delete
+     * @param listener What gets notified of query results
+     */
     public void deleteAccountByID(String accountID, DBOnCompleteListener<Account> listener) {
         db.collection("Accounts")
             .document(accountID)
@@ -59,6 +74,12 @@ public class ProfileDB extends DBHandler {
             });
     }
 
+    /**
+     * This method just updates the current role of an account
+     * @param accountID The account being updated
+     * @param newRole The new role to replace the old
+     * @param listener What gets notified of query results
+     */
     public void changeCurrentRole(String accountID, Account.AccountRole newRole, DBOnCompleteListener<Account> listener) {
         db.collection("Accounts")
                 .document(accountID)
