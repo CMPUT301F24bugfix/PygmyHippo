@@ -159,7 +159,7 @@ public class ProfileFragment extends Fragment  implements AdapterView.OnItemSele
         phoneField = root.findViewById(R.id.E_profile_textPhone);
         emailField = root.findViewById(R.id.E_profile_textEmail);
 
-        // Decorator radio buttons
+        // Decorator checkboxes
         decGeo = root.findViewById(R.id.E_profile_gps_dec);
         decNotify = root.findViewById(R.id.E_profile_notification_dec);
         decGeo.setEnabled(false);
