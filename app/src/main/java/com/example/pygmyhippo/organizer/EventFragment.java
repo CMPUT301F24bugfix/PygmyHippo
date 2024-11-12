@@ -166,7 +166,7 @@ public class EventFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.organiser_fragment_event, container, false);
-        Button closeEventButton = view.findViewById(R.id.close_event_button);
+        Button lotteryButton = view.findViewById(R.id.close_event_button);
 
         if (getArguments() != null) {
             signedInAccount = EventFragmentArgs.fromBundle(getArguments()).getSignedInAccount();
@@ -176,18 +176,18 @@ public class EventFragment extends Fragment {
             signedInAccount = new Account();
         }
 
-        // Add functionality to the closing event button
-        closeEventButton.setOnClickListener(new View.OnClickListener(){
+        // Add functionality to the lottery event button
+        lotteryButton.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view) {
                 // Only do the draw if the event hasn't already been closed
                 if (event.getEventStatus().value.equals("ongoing") && !event.getEntrants().isEmpty()) {
                     // Change the view of the button
-                    closeEventButton.setBackgroundColor(0xFFA4A8C3);
-                    closeEventButton.setText("Lottery closed");
-                    closeEventButton.setClickable(false);
-                    closeEventButton.setTextColor(0xFF3A5983);
-                    closeEventButton.setTextSize(20);
+                    lotteryButton.setBackgroundColor(0xFFA4A8C3);
+                    lotteryButton.setText("Lottery closed");
+                    lotteryButton.setClickable(false);
+                    lotteryButton.setTextColor(0xFF3A5983);
+                    lotteryButton.setTextSize(20);
 
                     // Update the status of the event to closed
                     event.setEventStatus(Event.EventStatus.cancelled);
@@ -214,11 +214,11 @@ public class EventFragment extends Fragment {
                 } else if (event.getEventStatus().value.equals("cancelled") && event.hasAvailability()) {
                     // There are available spots to do a redraw
                     // Change the view of the button
-                    closeEventButton.setBackgroundColor(0xFFA4A8C3);
-                    closeEventButton.setText("Lottery closed");
-                    closeEventButton.setClickable(false);
-                    closeEventButton.setTextColor(0xFF3A5983);
-                    closeEventButton.setTextSize(20);
+                    lotteryButton.setBackgroundColor(0xFFA4A8C3);
+                    lotteryButton.setText("Lottery closed");
+                    lotteryButton.setClickable(false);
+                    lotteryButton.setTextColor(0xFF3A5983);
+                    lotteryButton.setTextSize(20);
 
                     // Redraw the lottery to fill all the available spots
                     drawWinners(event);
@@ -256,30 +256,19 @@ public class EventFragment extends Fragment {
         Random rand = new Random();
         int winnerNumber = event.getCurrentWinners();
 
-        // If the entrant list is smaller than the winner size, then just set them all as winners
-        if (event.getEntrants().size() <= event.getEventWinnersCount()) {
-            // Use the winner number as an index
-            while (winnerNumber < event.getEntrants().size()) {
-                // Update all the entrants statuses
-                //TODO: Notifications would probably be sent from here (or at least because of this)
-                event.getEntrants().get(winnerNumber).setEntrantStatus(Entrant.EntrantStatus.invited);
-                winnerNumber++;
-            }
-        } else {
-            // Loop for how many winners this event wants (using winner count to keep check on it)
-            while (winnerNumber < event.getEventWinnersCount()) {
-                // Draw a random index number between 0 and the size of the list
-                int drawIndex = rand.nextInt(event.getEntrants().size());
+        // Loop for how many winners this event wants (using winner count to keep check on it)
+        while (winnerNumber < event.getEventWinnersCount()) {
+            // Draw a random index number between 0 and the size of the list
+            int drawIndex = rand.nextInt(event.getEntrants().size());
 
-                if (!event.getEntrants().get(drawIndex).getEntrantStatus().value.equals("waitlisted")) {
-                    // This entrant does not have the status for a draw/redraw, so skip them
-                    continue;
-                }
-
-                // If we get here, then the entrant hasn't already been invited
-                event.getEntrants().get(drawIndex).setEntrantStatus(Entrant.EntrantStatus.invited);
-                winnerNumber++;
+            if (!event.getEntrants().get(drawIndex).getEntrantStatus().value.equals("waitlisted")) {
+                // This entrant does not have the status for a draw/redraw, so skip them
+                continue;
             }
+
+            // If we get here, then the entrant hasn't already been invited
+            event.getEntrants().get(drawIndex).setEntrantStatus(Entrant.EntrantStatus.invited);
+            winnerNumber++;
         }
     }
 
