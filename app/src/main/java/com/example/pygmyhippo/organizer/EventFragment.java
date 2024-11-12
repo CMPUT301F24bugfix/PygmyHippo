@@ -106,7 +106,7 @@ public class EventFragment extends Fragment {
         TextView eventLocationView = view.findViewById(R.id.u_eventLocationView);
         TextView eventCostView = view.findViewById(R.id.u_eventCostView);
         TextView eventAboutDescriptionView = view.findViewById(R.id.u_aboutEventDescriptionView);
-        Button closeEventButton = view.findViewById(R.id.close_event_button);
+        Button lotteryButton = view.findViewById(R.id.close_event_button);
 
         // Get the actual event data to populate this view
         dbHandler.getEvent(eventID, new DBOnCompleteListener<Event>() {
@@ -125,12 +125,17 @@ public class EventFragment extends Fragment {
                     eventCostView.setText(event.getCost());
                     eventAboutDescriptionView.setText(event.getDescription());
 
-                    // If the event is closed, then change the style of the draw button
-                    if (event.getEventStatus().value.equals("cancelled")) {
-                        closeEventButton.setBackgroundColor(0xFFA4A8C3);
-                        closeEventButton.setText("Lottery closed");
-                        closeEventButton.setTextColor(0xFF3A5983);
-                        closeEventButton.setTextSize(20);
+                    // If the event is closed, then change the style of the draw button (and there are no available spots)
+                    if (event.getEventStatus().value.equals("cancelled") && !event.hasAvailability()) {
+                        lotteryButton.setBackgroundColor(0xFFA4A8C3);
+                        lotteryButton.setText("Lottery closed");
+                        lotteryButton.setTextColor(0xFF3A5983);
+                        lotteryButton.setClickable(false);
+                        lotteryButton.setTextSize(20);
+                    } else if (event.getEventStatus().value.equals("cancelled") && event.hasAvailability()) {
+                        // The lottery was drawn but there are available spots
+                        // So layout the button for a redraw
+                        lotteryButton.setText("Draw Replacements");
                     }
                 } else {
                     // Should only ever expect 1 document, otherwise there must be an error
@@ -206,6 +211,31 @@ public class EventFragment extends Fragment {
                 } else if (event.getEventStatus().value.equals("ongoing") && event.getEntrants().isEmpty()) {
                     // There are no entrants so the lottery should not be drawn
                     Toast.makeText(getContext(), "No entrants to run the lottery on!", Toast.LENGTH_SHORT).show();
+                } else if (event.getEventStatus().value.equals("cancelled") && event.hasAvailability()) {
+                    // There are available spots to do a redraw
+                    // Change the view of the button
+                    closeEventButton.setBackgroundColor(0xFFA4A8C3);
+                    closeEventButton.setText("Lottery closed");
+                    closeEventButton.setClickable(false);
+                    closeEventButton.setTextColor(0xFF3A5983);
+                    closeEventButton.setTextSize(20);
+
+                    // Redraw the lottery to fill all the available spots
+                    drawWinners(event);
+
+                    // After the redraw, update the event in the database
+                    dbHandler.updateEvent(event, new DBOnCompleteListener<Event>() {
+                        @Override
+                        public void OnComplete(@NonNull ArrayList<Event> docs, int queryID, int flags) {
+                            // Log when the data is updated or catch if there was an error
+                            if (flags == DBOnCompleteFlags.SUCCESS.value) {
+                                Log.d("DB", String.format("Successfully finished updating event with ID (%s).", event.getEventID()));
+                            } else {
+                                // If not the success flag, then there was an error
+                                handleDBError();
+                            }
+                        }
+                    });
                 }
             }
         });
@@ -215,7 +245,7 @@ public class EventFragment extends Fragment {
 
     /**
      * This method will go through the event's entrants and randomly select a specific amount to be invited
-     * It will change the statuses of the entrants in the event
+     * It will change the statuses of the entrants in the event (accounts for full draw or redraw status)
      * @param event The event that's closing its lottery
      * @author Kori
      */
@@ -224,7 +254,7 @@ public class EventFragment extends Fragment {
         // Accessed on Nov. 3, 2024
 
         Random rand = new Random();
-        int winnerNumber = 0;
+        int winnerNumber = event.getCurrentWinners();
 
         // If the entrant list is smaller than the winner size, then just set them all as winners
         if (event.getEntrants().size() <= event.getEventWinnersCount()) {
@@ -241,8 +271,8 @@ public class EventFragment extends Fragment {
                 // Draw a random index number between 0 and the size of the list
                 int drawIndex = rand.nextInt(event.getEntrants().size());
 
-                if (event.getEntrants().get(drawIndex).getEntrantStatus().value.equals("invited")) {
-                    // This entrant was already invited by the rng, so restart iteration
+                if (!event.getEntrants().get(drawIndex).getEntrantStatus().value.equals("waitlisted")) {
+                    // This entrant does not have the status for a draw/redraw, so skip them
                     continue;
                 }
 
