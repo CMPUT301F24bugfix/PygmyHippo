@@ -269,7 +269,7 @@ public class ProfileFragment extends Fragment  implements AdapterView.OnItemSele
                 // Update to reflect in the database
                 handler.updateProfile(signedInAccount, new DBOnCompleteListener<Account>() {
                     @Override
-                    public void OnComplete(@NonNull ArrayList<Account> docs, int queryID, int flags) {
+                    public void OnCompleteDB(@NonNull ArrayList<Account> docs, int queryID, int flags) {
                         // Log when the data is updated or catch if there was an error
                         if (flags == DBOnCompleteFlags.SUCCESS.value) {
                             Log.d("DB", "Successfully finished updating account");
@@ -429,7 +429,7 @@ public class ProfileFragment extends Fragment  implements AdapterView.OnItemSele
     }
 
     @Override
-    public void OnComplete(@NonNull ArrayList<Account> docs, int queryID, int flags) {
+    public void OnCompleteDB(@NonNull ArrayList<Account> docs, int queryID, int flags) {
         if (queryID == 0) {
             if (flags == DBOnCompleteFlags.SUCCESS.value) {
                 Account retrievedAccount = docs.get(0);

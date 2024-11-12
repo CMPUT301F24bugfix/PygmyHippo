@@ -121,7 +121,7 @@ public class AllUsersFragment extends Fragment implements RecyclerClickListener,
     }
 
     @Override
-    public void OnComplete(@NonNull ArrayList<Account> docs, int queryID, int flags) {
+    public void OnCompleteDB(@NonNull ArrayList<Account> docs, int queryID, int flags) {
         if (queryID == 0) {
             if (flags == DBOnCompleteFlags.SUCCESS.value) {
                 docs.forEach(doc -> {

@@ -18,8 +18,6 @@
 package com.example.pygmyhippo.common;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Our event class
@@ -46,6 +44,9 @@ public class Event {
     private int eventLimitCount;
     private int eventWinnersCount;
     private Boolean enableGeolocation;
+
+
+    private int hashcode;
 
     private EventStatus eventStatus;
 
@@ -86,6 +87,59 @@ public class Event {
         this.cost = cost;
         this.eventPoster = eventPoster;
         this.eventStatus = eventStatus;
+        this.enableGeolocation = enableGeolocation;
+    }
+
+    /**
+     * This method will generate the hashcode of the Event.
+     * returns boolean of if successful
+     *
+     * @return boolean
+     */
+    public boolean generateHashcode(){
+        if(hashcode == 0 && !eventID.isEmpty()){
+            hashcode = eventID.hashCode();
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * This method will validate the hashcode of the Event.
+     *
+     * @return boolean
+     */
+    public boolean validateHashcode(){
+        if(!eventID.isEmpty()){
+            int comphashcode = eventID.hashCode();
+            if(comphashcode == hashcode){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * This method will return the hashcode of the Event
+     * @return hashcode
+     */
+    public int getHashcode() {
+        return hashcode;
+    }
+
+    /**
+     * This method will return the enableGeolocation of the Event
+     * @return enableGeolocation
+     */
+    public Boolean getEnableGeolocation() {
+        return enableGeolocation;
+    }
+
+    /**
+     * This method will set the enableGeolocation of the Event
+     * @param enableGeolocation
+     */
+    public void setEnableGeolocation(Boolean enableGeolocation) {
         this.enableGeolocation = enableGeolocation;
     }
 

@@ -84,7 +84,7 @@ public class EntrantArrayAdapter extends ArrayAdapter<Entrant> {
         dbHandler = new ViewEntrantDB();
         dbHandler.getAccount(entrant.getAccountID(), new DBOnCompleteListener<Account>() {
             @Override
-            public void OnComplete(@NonNull ArrayList<Account> docs, int queryID, int flags) {
+            public void OnCompleteDB(@NonNull ArrayList<Account> docs, int queryID, int flags) {
                 switch (queryID) {
                     case 1: // getAccount()
                         if (flags == DBOnCompleteFlags.SINGLE_DOCUMENT.value) {

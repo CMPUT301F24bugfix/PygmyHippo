@@ -207,7 +207,7 @@ public class MainActivity extends AppCompatActivity implements DBOnCompleteListe
      * @param flags - Flags to indicate query status/set how to process query result.
      */
     @Override
-    public void OnComplete(@NonNull ArrayList<Account> docs, int queryID, int flags) {
+    public void OnCompleteDB(@NonNull ArrayList<Account> docs, int queryID, int flags) {
         switch (queryID) {
             case 0: // getDeviceAccount()
                 if (flags == DBOnCompleteFlags.SINGLE_DOCUMENT.value) {

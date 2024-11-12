@@ -44,11 +44,11 @@ public class AllUsersDB extends DBHandler {
                     query.forEach(doc -> {
                         accountList.add(doc.toObject(Account.class));
                     });
-                    listener.OnComplete(accountList, 0, DBOnCompleteFlags.SUCCESS.value);
+                    listener.OnCompleteDB(accountList, 0, DBOnCompleteFlags.SUCCESS.value);
                 } else {
                     // Notify the listener of an error
                     Log.d("DB", "Could not get accounts from Firestore");
-                    listener.OnComplete(new ArrayList<>(), 0, DBOnCompleteFlags.ERROR.value);
+                    listener.OnCompleteDB(new ArrayList<>(), 0, DBOnCompleteFlags.ERROR.value);
                 }
             });
     }

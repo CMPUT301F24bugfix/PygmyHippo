@@ -55,5 +55,5 @@ public interface StorageOnCompleteListener<T> {
      * @param queryID - ID of query completed.
      * @param flags - Flags to indicate query status/set how to process query result.
      */
-    void OnComplete(@NonNull ArrayList<T> docs, int queryID, int flags);
+    void OnCompleteStorage(@NonNull ArrayList<T> docs, int queryID, int flags);
 }

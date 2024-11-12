@@ -26,6 +26,8 @@ public class Image {
         this.type = type;
     }
 
+    public Image(){}
+
     /**
      * Returns the Image ID
      * @return ID

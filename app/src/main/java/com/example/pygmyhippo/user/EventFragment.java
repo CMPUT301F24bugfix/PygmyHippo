@@ -158,7 +158,7 @@ public class EventFragment extends Fragment implements DBOnCompleteListener<Even
     }
 
     @Override
-    public void OnComplete(@NonNull ArrayList<Event> docs, int queryID, int flags) {
+    public void OnCompleteDB(@NonNull ArrayList<Event> docs, int queryID, int flags) {
         if (queryID == 0) {
             if (flags == DBOnCompleteFlags.SINGLE_DOCUMENT.value) {
                 // Get the event from the database and populate the fragment
