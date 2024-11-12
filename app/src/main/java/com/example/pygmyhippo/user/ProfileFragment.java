@@ -14,7 +14,7 @@ Issues:
  */
 
 import android.widget.AdapterView;
-import android.widget.RadioButton;
+import android.widget.CheckBox;
 
 import com.example.pygmyhippo.databinding.UserFragmentProfileBinding;
 import android.net.Uri;
@@ -23,13 +23,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.RadioButton;
-import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.Toast;
 
@@ -47,7 +44,6 @@ import com.example.pygmyhippo.R;
 import com.example.pygmyhippo.common.Account;
 import com.example.pygmyhippo.database.DBOnCompleteFlags;
 import com.example.pygmyhippo.database.DBOnCompleteListener;
-import com.example.pygmyhippo.databinding.UserFragmentProfileBinding;
 import com.squareup.picasso.Picasso;
 
 import java.net.URISyntaxException;
@@ -77,8 +73,7 @@ public class ProfileFragment extends Fragment  implements AdapterView.OnItemSele
     private String currentRole;
 
     private EditText nameField, pronounField, phoneField, emailField;
-    private RadioButton decGeo, decNotify;
-    private RadioGroup notifyRGroup, geolocationRGroup;
+    private CheckBox decGeo, decNotify;
     private Button uploadImgBtn, deleteImgBtn;
     private ImageView editButton;
     private Button updateButton, deleteUserButton;
@@ -167,10 +162,8 @@ public class ProfileFragment extends Fragment  implements AdapterView.OnItemSele
         // Decorator radio buttons
         decGeo = root.findViewById(R.id.E_profile_gps_dec);
         decNotify = root.findViewById(R.id.E_profile_notification_dec);
-
-        // Functional Radio Groups
-        notifyRGroup = root.findViewById(R.id.E_profile_notify_setting);
-        geolocationRGroup = root.findViewById(R.id.E_profile_geo_setting);
+        decGeo.setEnabled(false);
+        decNotify.setEnabled(false);
 
         // Image Buttons
         uploadImgBtn = root.findViewById(R.id.E_profile_uploadImageBtn);
@@ -205,6 +198,11 @@ public class ProfileFragment extends Fragment  implements AdapterView.OnItemSele
              */
             @Override
             public void onClick(View view) {
+                // enable checkboxes
+                decGeo.setEnabled(true);
+                decNotify.setEnabled(true);
+
+                // Change the text visibilities
                 nameField.setFocusable(true);
                 pronounField.setFocusable(true);
                 phoneField.setFocusable(true);
@@ -214,13 +212,15 @@ public class ProfileFragment extends Fragment  implements AdapterView.OnItemSele
                 phoneField.setFocusableInTouchMode(true);
                 emailField.setFocusableInTouchMode(true);
                 updateButton.setVisibility(View.VISIBLE);
-                decNotify.setVisibility(View.GONE);
-                decGeo.setVisibility(View.GONE);
-                notifyRGroup.setVisibility(View.VISIBLE);
-                geolocationRGroup.setVisibility(View.VISIBLE);
                 editButton.setVisibility(View.GONE);
                 uploadImgBtn.setVisibility(View.VISIBLE);
                 deleteImgBtn.setVisibility(View.VISIBLE);
+
+                // edit margins
+                // https://stackoverflow.com/questions/34266057/android-viewgroup-marginlayoutparams-not-working
+                ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) decGeo.getLayoutParams();
+                params.bottomMargin = 550;
+                decGeo.setLayoutParams(params);
 
             }
         };
@@ -240,6 +240,10 @@ public class ProfileFragment extends Fragment  implements AdapterView.OnItemSele
              */
             @Override
             public void onClick(View view) {
+                // disable checkboxes
+                decGeo.setEnabled(false);
+                decNotify.setEnabled(false);
+
                 // Change the text visibilities
                 nameField.setFocusable(false);
                 pronounField.setFocusable(false);
@@ -250,10 +254,6 @@ public class ProfileFragment extends Fragment  implements AdapterView.OnItemSele
                 phoneField.setFocusableInTouchMode(false);
                 emailField.setFocusableInTouchMode(false);
                 updateButton.setVisibility(View.GONE);
-                decNotify.setVisibility(View.VISIBLE);
-                decGeo.setVisibility(View.VISIBLE);
-                notifyRGroup.setVisibility(View.GONE);
-                geolocationRGroup.setVisibility(View.GONE);
                 editButton.setVisibility(View.VISIBLE);
                 uploadImgBtn.setVisibility(View.GONE);
                 deleteImgBtn.setVisibility(View.GONE);
@@ -279,6 +279,11 @@ public class ProfileFragment extends Fragment  implements AdapterView.OnItemSele
                         }
                     }
                 });
+
+                // edit margins
+                ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) decGeo.getLayoutParams();
+                params.bottomMargin = 350;
+                decGeo.setLayoutParams(params);
             }
         };
 
@@ -348,8 +353,8 @@ public class ProfileFragment extends Fragment  implements AdapterView.OnItemSele
             phoneField.setText(account.getPhoneNumber());
         }
         emailField.setText(account.getEmailAddress());
-        decGeo.setActivated(account.isEnableGeolocation());
-        decNotify.setActivated(account.isReceiveNotifications());
+        decGeo.setChecked(account.isEnableGeolocation());
+        decNotify.setChecked(account.isReceiveNotifications());
     }
 
     /**
