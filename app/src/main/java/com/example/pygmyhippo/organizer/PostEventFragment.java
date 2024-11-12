@@ -7,8 +7,6 @@ package com.example.pygmyhippo.organizer;
  *  TODO: / Issues
  *   - hide the navigation when a keyboard pops up
  *   - set a standard size for post images
- *   - request that the database generated an id for the event
- *   - generate a hash id for the event
  *  Thinking about:
  *   - should the current progress of the event reset if the organiser switches screen
  *   - a button called "Clear Fields" at the top to clear event field

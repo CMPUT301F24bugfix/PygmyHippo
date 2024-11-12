@@ -4,8 +4,6 @@ package com.example.pygmyhippo.organizer;
  * This fragment will display the qr code
  * Purposes:
  *      - Provides the organiser with their generated QR code
- * TODO:
- *  navigate to event details page
  * */
 
 import android.graphics.Bitmap;
