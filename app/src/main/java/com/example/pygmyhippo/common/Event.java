@@ -392,5 +392,19 @@ public class Event {
         return false;
     }
 
+    /**
+     * This method will return the number of entrants in the event that are waitlisted
+     * @return The number of waitlisted entrants
+     */
+    public Integer getNumberWaitlisted() {
+        Integer waitlistCount = 0;
+        for (int index = 0; index < entrants.size(); index++) {
+            if (entrants.get(index).getEntrantStatus().value.equals("waitlisted")) {
+                waitlistCount++;
+            }
+        }
+        return waitlistCount;
+    }
+
 }
 

@@ -313,4 +313,22 @@ public class EventTest {
         testEvent.setEntrants(newEntrants);
         assertTrue(testEvent.hasAvailability());
     }
+
+    @Test
+    public void testGetNumberWaitlisted() {
+        assertEquals(1, (int) testEvent.getNumberWaitlisted());
+
+        testEvent.addEntrant(new Entrant("account5", Entrant.EntrantStatus.waitlisted));
+        assertEquals(2, (int) testEvent.getNumberWaitlisted());
+
+        testEvent.removeEntrant(new Entrant("account5", Entrant.EntrantStatus.waitlisted));
+        assertEquals(1, (int) testEvent.getNumberWaitlisted());
+
+        testEvent.removeEntrant(new Entrant("account5", Entrant.EntrantStatus.invited));
+        assertEquals(1, (int) testEvent.getNumberWaitlisted());
+        testEvent.removeEntrant(new Entrant("account6", Entrant.EntrantStatus.cancelled));
+        assertEquals(1, (int) testEvent.getNumberWaitlisted());
+        testEvent.removeEntrant(new Entrant("account7", Entrant.EntrantStatus.accepted));
+        assertEquals(1, (int) testEvent.getNumberWaitlisted());
+    }
 }

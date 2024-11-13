@@ -126,16 +126,20 @@ public class EventFragment extends Fragment {
                     eventAboutDescriptionView.setText(event.getDescription());
 
                     // If the event is closed, then change the style of the draw button (and there are no available spots)
-                    if (event.getEventStatus().value.equals("cancelled") && !event.hasAvailability()) {
-                        lotteryButton.setBackgroundColor(0xFFA4A8C3);
-                        lotteryButton.setText("Lottery closed");
-                        lotteryButton.setTextColor(0xFF3A5983);
-                        lotteryButton.setClickable(false);
-                        lotteryButton.setTextSize(20);
-                    } else if (event.getEventStatus().value.equals("cancelled") && event.hasAvailability()) {
-                        // The lottery was drawn but there are available spots
-                        // So layout the button for a redraw
-                        lotteryButton.setText("Draw Replacements");
+                    if (!event.hasAvailability()) {
+                        if (event.getEventStatus().value.equals("cancelled")) {
+                            lotteryButton.setBackgroundColor(0xFFA4A8C3);
+                            lotteryButton.setText("Lottery closed");
+                            lotteryButton.setTextColor(0xFF3A5983);
+                            lotteryButton.setClickable(false);
+                            lotteryButton.setTextSize(20);
+                        }
+                    } else if (event.hasAvailability()) {
+                        if (event.getEventStatus().value.equals("cancelled")) {
+                            // The lottery was drawn but there are available spots
+                            // So layout the button for a redraw
+                            lotteryButton.setText("Draw Replacements");
+                        }
                     }
                 } else {
                     // Should only ever expect 1 document, otherwise there must be an error
@@ -258,17 +262,24 @@ public class EventFragment extends Fragment {
 
         // Loop for how many winners this event wants (using winner count to keep check on it)
         while (winnerNumber < event.getEventWinnersCount()) {
-            // Draw a random index number between 0 and the size of the list
-            int drawIndex = rand.nextInt(event.getEntrants().size());
+            // Only try to draw applicants if there are entrants in the waitlist
+            if (event.getNumberWaitlisted() > 0) {
+                // Draw a random index number between 0 and the size of the list
+                int drawIndex = rand.nextInt(event.getEntrants().size());
 
-            if (!event.getEntrants().get(drawIndex).getEntrantStatus().value.equals("waitlisted")) {
-                // This entrant does not have the status for a draw/redraw, so skip them
-                continue;
+                if (!event.getEntrants().get(drawIndex).getEntrantStatus().value.equals("waitlisted")) {
+                    // This entrant does not have the status for a draw/redraw, so skip them
+                    continue;
+                }
+
+                // If we get here, then the entrant hasn't already been invited
+                event.getEntrants().get(drawIndex).setEntrantStatus(Entrant.EntrantStatus.invited);
+                winnerNumber++;
+            } else {
+                // There are no entrants in the waitlist, so no need to draw anymore
+                break;
             }
 
-            // If we get here, then the entrant hasn't already been invited
-            event.getEntrants().get(drawIndex).setEntrantStatus(Entrant.EntrantStatus.invited);
-            winnerNumber++;
         }
     }
 
