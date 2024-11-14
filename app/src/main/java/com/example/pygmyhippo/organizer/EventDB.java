@@ -18,6 +18,8 @@ import com.example.pygmyhippo.common.Image;
 import com.example.pygmyhippo.database.DBHandler;
 import com.example.pygmyhippo.database.DBOnCompleteFlags;
 import com.example.pygmyhippo.database.DBOnCompleteListener;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.StorageReference;
@@ -147,6 +149,30 @@ public class EventDB extends DBHandler {
                     } else {
                         Log.d("DB", String.format("Could not get event with organiser ID (%s).", accountID));
                         listener.OnComplete(new ArrayList<>(), 3, DBOnCompleteFlags.ERROR.value);
+                    }
+                });
+    }
+
+    /**
+     * This method will set the currently existing event to the new one with updated values
+     * @author Kori
+     * @param event The event we want to update
+     * @param listener The listener that initiates when the data is done updating
+     */
+    public void updateEvent(Event event, DBOnCompleteListener<Event> listener) {
+        db.collection("Events")
+                .document(event.getEventID())
+                .set(event)
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if (task.isSuccessful()) {
+                            Log.d("DB", String.format("Successfully updated event with ID (%s).", event.getEventID()));
+                            listener.OnComplete(new ArrayList<>(), 4, DBOnCompleteFlags.SUCCESS.value);
+                        } else {
+                            Log.d("DB", String.format("Error: Could not update event with ID (%s).", event.getEventID()));
+                            listener.OnComplete(new ArrayList<>(), 4, DBOnCompleteFlags.ERROR.value);
+                        }
                     }
                 });
     }

@@ -7,20 +7,21 @@ Purpose is to: Allow the organiser to update their event
                 - Let the organiser draw the lottery for that event
 Contributors: Katharine, Kori
 Issues: Doesn't have updatable fields yet
-        - No Image handling
-        - Hardcoded event ID, need to set up proper navigation to this event (The myEvents fragment)
+        - Need to separate database queries from code
  */
 
 import com.example.pygmyhippo.common.Entrant;
 
 import java.util.ArrayList;
 
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -36,6 +37,7 @@ import com.example.pygmyhippo.common.Event;
 import com.example.pygmyhippo.database.DBOnCompleteFlags;
 import com.example.pygmyhippo.database.DBOnCompleteListener;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.squareup.picasso.Picasso;
 
 import java.util.Random;
 
@@ -45,14 +47,13 @@ import java.util.Random;
  *          Kori added on to this for organiser
  * @version 2.0
  * No returns and no parameters
- * TODO: Set up proper navigation to this fragment and add image handling
  */
 public class EventFragment extends Fragment {
 
     private NavController navController;
     private Event event;
     private ArrayList<Entrant> entrants;
-    private ViewEntrantDB dbHandler;
+    private EventDB dbHandler;
     private String eventID;
     private Account signedInAccount;
 
@@ -96,7 +97,7 @@ public class EventFragment extends Fragment {
         });
 
         // Initialize the handler
-        dbHandler = new ViewEntrantDB();
+        dbHandler = new EventDB();
 
         // Get all the textViews we want to populate
         TextView eventNameView = view.findViewById(R.id.u_eventNameView);
@@ -106,6 +107,7 @@ public class EventFragment extends Fragment {
         TextView eventLocationView = view.findViewById(R.id.u_eventLocationView);
         TextView eventCostView = view.findViewById(R.id.u_eventCostView);
         TextView eventAboutDescriptionView = view.findViewById(R.id.u_aboutEventDescriptionView);
+        ImageView eventPoster = view.findViewById(R.id.u_eventImageView);
         Button closeEventButton = view.findViewById(R.id.close_event_button);
 
         // Get the actual event data to populate this view
@@ -132,6 +134,27 @@ public class EventFragment extends Fragment {
                         closeEventButton.setTextColor(0xFF3A5983);
                         closeEventButton.setTextSize(20);
                     }
+
+                    // Get the event poster from firebase
+                    dbHandler.getImageDownloadUrl(event.getEventPoster(), new DBOnCompleteListener<Uri>() {
+                        @Override
+                        public void OnComplete(@NonNull ArrayList<Uri> docs, int queryID, int flags) {
+                            // Author of this code segment is James
+                            if (flags == DBOnCompleteFlags.SUCCESS.value) {
+                                // Get the image and format it
+                                Uri downloadUri = docs.get(0);
+                                int imageSideLength = eventPoster.getWidth() / 2;
+                                Picasso.get()
+                                        .load(downloadUri)
+                                        .resize(imageSideLength, imageSideLength)
+                                        .centerCrop()
+                                        .into(eventPoster);
+                            } else {
+                                // Event had no image, so it will stay as default image
+                                Log.d("DB", String.format("No image found, setting default"));
+                            }
+                        }
+                    });
                 } else {
                     // Should only ever expect 1 document, otherwise there must be an error
                     handleDBError();
@@ -143,18 +166,6 @@ public class EventFragment extends Fragment {
                 }
             }
         });
-
-        // Set up the listener for viewing entrants button
-        Button viewEntrantsButton = view.findViewById(R.id.button_view_entrants);
-        viewEntrantsButton.setOnClickListener(view1 -> {
-            Bundle navArgs = new Bundle();
-
-            // Pass the eventID and the current account to the next fragment
-            navArgs.putString("eventID", eventID);
-            navArgs.putParcelable("signedInAccount", signedInAccount);
-            navController.navigate(R.id.view_entrants_fragment, navArgs);
-        });
-
     }
 
     @Override
@@ -170,6 +181,17 @@ public class EventFragment extends Fragment {
             eventID = "IaMdwyQpHDh6GdZF025k";
             signedInAccount = new Account();
         }
+
+        // Set up the listener for viewing entrants button
+        Button viewEntrantsButton = view.findViewById(R.id.button_view_entrants);
+        viewEntrantsButton.setOnClickListener(view1 -> {
+            Bundle navArgs = new Bundle();
+
+            // Pass the eventID and the current account to the next fragment
+            navArgs.putString("eventID", eventID);
+            navArgs.putParcelable("signedInAccount", signedInAccount);
+            navController.navigate(R.id.view_entrants_fragment, navArgs);
+        });
 
         // Add functionality to the closing event button
         closeEventButton.setOnClickListener(new View.OnClickListener(){
