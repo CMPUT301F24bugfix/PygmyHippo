@@ -6,10 +6,12 @@
 
 package com.example.pygmyhippo.user;
 
+import android.net.Uri;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
 
+import com.example.pygmyhippo.common.Entrant;
 import com.example.pygmyhippo.common.Event;
 import com.example.pygmyhippo.database.DBHandler;
 import com.example.pygmyhippo.database.DBOnCompleteFlags;
@@ -17,6 +19,9 @@ import com.example.pygmyhippo.database.DBOnCompleteListener;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.Filter;
+import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
 
@@ -95,4 +100,76 @@ public class EventDB extends DBHandler {
                     }
                 });
     }
-}
+
+    /**
+     * This method will return the list of events that an entrant is in
+     * @author Kori
+     * @param accountID The ID of the entrant
+     * @param listener What gets called when the data is retrieved
+     */
+    public void getEntrantEvents(String accountID, DBOnCompleteListener<Event> listener) {
+        // Query modified from James' AllEventsDB
+        db.collection("Events")
+                .get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        // Get all the docs
+                        QuerySnapshot docs = task.getResult();
+                        Log.d("DB", String.format("Found %d Events", docs.size()));
+
+                        // Convert each doc to an event and store it only if it contains the entrant
+                        ArrayList<Event> eventList = new ArrayList<>();
+                        docs.forEach(doc -> {
+                            // Convert the doc to an event object
+                            Event event = doc.toObject(Event.class);
+
+                            // Go through the entrant list if it has
+                            if (event.getEntrants() != null) {
+                                // Note, setting the status won't alter the results of the query
+                                // because hasEntrant only matches by accountID
+                                if (event.hasEntrant(new Entrant(accountID, Entrant.EntrantStatus.waitlisted))) {
+                                    // If the current Account ID matches, then add this event to the list to return
+                                    eventList.add(event);
+                                }
+                            }
+                        });
+
+                        // Call the listener
+                        listener.OnComplete(eventList, 3, DBOnCompleteFlags.SUCCESS.value);
+                    } else {
+                        Log.d("DB", "Could not get Events");
+                        listener.OnComplete(new ArrayList<>(), 3, DBOnCompleteFlags.ERROR.value);
+                    }
+                });
+        }
+
+    /**
+     * Gets a long-live download uris for Picasso to get image from Firebase Storage.
+     * @author James
+     * @param url String rul with gs:// link to Firebase Storage image.
+     * @param listener DBOnCompleteListener to call when query completes.
+     */
+    public void getImageDownloadUrl(String url, DBOnCompleteListener<Uri> listener) {
+        Log.d("DB", String.format("Getting storage reference for image url %s", url));
+        try {
+            // Try to get an image
+            StorageReference ref = storage.getReferenceFromUrl(url);
+            ref.getDownloadUrl().addOnCompleteListener(task -> {
+                if (task.isSuccessful()) {
+                    // Add the result to an array list and notify the listener
+                    Log.d("DB", String.format("Found image at %s", url));
+                    Uri uri = task.getResult();
+                    ArrayList<Uri> results = new ArrayList<>();
+                    results.add(uri);
+                    listener.OnComplete(results, 4, DBOnCompleteFlags.SUCCESS.value);
+                } else {
+                    Log.d("DB", String.format("Image download failed for %s", url));
+                }
+            });
+        } catch (IllegalArgumentException e) {
+            // Notify the listener with an error flag raised
+            Log.d("DB", String.format("IllegalArgumentException for url %s", url));
+            listener.OnComplete(new ArrayList<>(), 4, DBOnCompleteFlags.ERROR.value);
+        }
+    }
+    }

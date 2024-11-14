@@ -6,7 +6,7 @@ Purposes:
     - Give the organiser ability to check their event details
     - Basically gives them access to update event details
 Issues:
-    - This has not been implemented yet. We just have a button that shows what the navigation will look like once this is done
+    - None
  */
 
 import android.os.Bundle;
@@ -117,7 +117,7 @@ public class MyEventsFragment extends Fragment implements DBOnCompleteListener<E
     }
 
     /**
-     * Callback called when view entrant DB queries complete.
+     * Callback called when event DB queries complete.
      * @param docs - Documents retrieved from DB (if it was a get query).
      * @param queryID - ID of query completed.
      * @param flags - Flags to indicate query status/set how to process query result.

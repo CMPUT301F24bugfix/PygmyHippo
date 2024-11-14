@@ -11,16 +11,19 @@ Purposes:
 Contributors: Katharine
 Issues:
         - Needs testing
+        - Needs to stop user from joining or leaving waitlist if the event is closed
  */
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -38,6 +41,7 @@ import com.example.pygmyhippo.database.DBOnCompleteFlags;
 import com.example.pygmyhippo.database.DBOnCompleteListener;
 import com.example.pygmyhippo.databinding.UserFragmentEventBinding;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
@@ -65,6 +69,7 @@ public class EventFragment extends Fragment implements DBOnCompleteListener<Even
             eventLocationView, eventCostView, eventAboutDescriptionView;
     private Button registerButton, deleteEventButton, deleteQRCodeButton;
     private ConstraintLayout adminConstraint;
+    private ImageView eventImageView;
 
     // populate single event page with hardcoded event information
     public Event hardcodeEvent() {
@@ -107,6 +112,9 @@ public class EventFragment extends Fragment implements DBOnCompleteListener<Even
         eventLocationView = binding.uEventLocationView;
         eventCostView = binding.uEventCostView;
         eventAboutDescriptionView = binding.uAboutEventDescriptionView;
+
+        // ImageView
+        eventImageView = binding.uEventImageView;
 
         // Buttons
         registerButton = binding.uRegisterButton;
@@ -203,7 +211,7 @@ public class EventFragment extends Fragment implements DBOnCompleteListener<Even
     }
 
     /**
-     * Updates text views in the fragment to reflect the same info in event.
+     * Updates text views and buttons in the fragment to reflect the same info in event.
      */
     private void populateTextFields() {
         eventNameView.setText(event.getEventTitle());
@@ -213,6 +221,33 @@ public class EventFragment extends Fragment implements DBOnCompleteListener<Even
         eventLocationView.setText(event.getLocation());
         eventCostView.setText(event.getCost());
         eventAboutDescriptionView.setText(event.getDescription());
+
+        // If the event already has the entrant, then we want to change the looks of the button
+        if (event.hasEntrant(entrant)) {
+            registerButton.setBackgroundColor(0xFF808080);
+            registerButton.setText("✔");
+        }
+
+        // Get the poster for the event
+        handler.getImageDownloadUrl(event.getEventPoster(), new DBOnCompleteListener<Uri>() {
+            @Override
+            public void OnComplete(@NonNull ArrayList<Uri> docs, int queryID, int flags) {
+                // Author of this code segment is James
+                if (flags == DBOnCompleteFlags.SUCCESS.value) {
+                    // Get the image and format it
+                    Uri downloadUri = docs.get(0);
+                    int imageSideLength = eventImageView.getWidth() / 2;
+                    Picasso.get()
+                            .load(downloadUri)
+                            .resize(imageSideLength, imageSideLength)
+                            .centerCrop()
+                            .into(eventImageView);
+                } else {
+                    // Event had no image, so it will stay as default image
+                    Log.d("DB", String.format("No image found, setting default"));
+                }
+            }
+        });
     }
 
     /**
