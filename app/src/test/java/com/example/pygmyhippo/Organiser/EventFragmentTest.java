@@ -139,4 +139,46 @@ public class EventFragmentTest {
         // Basically assert that nothing should happen
         assertEquals(0, testEvent.getEntrants().size());
     }
+
+    @Test
+    public void testRedraw() {
+        // Set some invited
+        for (int id = 0 ; id < 5 ; id++) {
+            testEvent.getEntrants().get(id).setEntrantStatus(Entrant.EntrantStatus.invited);
+        }
+
+        // Set some accepted
+        for (int id = 5 ; id < 10 ; id++) {
+            testEvent.getEntrants().get(id).setEntrantStatus(Entrant.EntrantStatus.accepted);
+        }
+
+        // Set half cancelled
+        for (int id = 10 ; id < 20 ; id++) {
+            testEvent.getEntrants().get(id).setEntrantStatus(Entrant.EntrantStatus.cancelled);
+        }
+
+        // Do the redraw
+        eventFragment.drawWinners(testEvent);
+
+        int invitedCount = 0;
+        int waitlistCount = 0;
+        int cancelledCount = 0;
+        int acceptedCount = 0;
+        for (int id = 0 ; id < 1000 ; id++) {
+            if (testEvent.getEntrants().get(id).getEntrantStatus().value.equals("invited")) {
+                invitedCount++;
+            } else if (testEvent.getEntrants().get(id).getEntrantStatus().value.equals("waitlisted")) {
+                waitlistCount++;
+            } else if (testEvent.getEntrants().get(id).getEntrantStatus().value.equals("cancelled")) {
+                cancelledCount++;
+            } else if (testEvent.getEntrants().get(id).getEntrantStatus().value.equals("accepted")) {
+                acceptedCount++;
+            }
+        }
+
+        assertEquals(15, invitedCount);
+        assertEquals(5, acceptedCount);
+        assertEquals(10, cancelledCount);
+        assertEquals(970 , waitlistCount);
+    }
 }
