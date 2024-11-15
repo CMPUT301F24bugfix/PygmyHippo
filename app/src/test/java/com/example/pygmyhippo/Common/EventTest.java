@@ -7,6 +7,7 @@ Issues: No tests for trying to enter a negative limit amount (and for winner cou
  */
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 
 import com.example.pygmyhippo.common.Entrant;
@@ -232,6 +233,21 @@ public class EventTest {
         testEvent.setEventStatus(Event.EventStatus.ongoing);
         assertEquals("ongoing", testEvent.getEventStatus().value);
     }
+
+    @Test
+    public void testgeneratingHashdata(){
+        testEvent.tryGenerateHashcode();
+        int validhash = testEvent.getEventID().hashCode();
+        assertEquals(testEvent.getHashcode(), validhash);
+    }
+
+    @Test
+    public void testValidatingHashdata(){
+        assertFalse(testEvent.isValidHashcode());
+        testEvent.tryGenerateHashcode();
+        assertTrue(testEvent.isValidHashcode());
+    }
+
 
     @Test
     public void testGetCurrentWinners() {

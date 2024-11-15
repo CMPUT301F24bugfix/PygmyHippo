@@ -47,17 +47,17 @@ public class MainActivityDB extends DBHandler {
                     queryResult.forEach(doc -> accounts.add(doc.toObject(Account.class)));
                     if (accounts.size() == 0) {
                         Log.d("DB", String.format("Found no accounts with device ID (%s)", deviceID));
-                        listener.OnComplete(accounts, 0, DBOnCompleteFlags.NO_DOCUMENTS.value);
+                        listener.OnCompleteDB(accounts, 0, DBOnCompleteFlags.NO_DOCUMENTS.value);
                     } else if (accounts.size() == 1) {
                         Log.d("DB", String.format("Found account (%s) with device ID (%s)", accounts.get(0).getAccountID(), deviceID));
-                        listener.OnComplete(accounts, 0, DBOnCompleteFlags.SINGLE_DOCUMENT.value);
+                        listener.OnCompleteDB(accounts, 0, DBOnCompleteFlags.SINGLE_DOCUMENT.value);
                     } else {
                         Log.d("DB", String.format("Found %d accounts  with device ID (%s)", accounts.size(), deviceID));
-                        listener.OnComplete(accounts, 0, DBOnCompleteFlags.MULTIPLE_DOCUMENTS.value);
+                        listener.OnCompleteDB(accounts, 0, DBOnCompleteFlags.MULTIPLE_DOCUMENTS.value);
                     }
                 } else {
                     Log.d("DB", String.format("Could not get account with device ID (%s).", deviceID));
-                    listener.OnComplete(new ArrayList<>(), 0, DBOnCompleteFlags.ERROR.value);
+                    listener.OnCompleteDB(new ArrayList<>(), 0, DBOnCompleteFlags.ERROR.value);
                 }
             });
     }
@@ -80,9 +80,9 @@ public class MainActivityDB extends DBHandler {
             if (task.isSuccessful()) {
                 ArrayList<Account> accounts = new ArrayList<>();
                 accounts.add(newAccount);
-                listener.OnComplete(accounts, 1, DBOnCompleteFlags.SUCCESS.value);
+                listener.OnCompleteDB(accounts, 1, DBOnCompleteFlags.SUCCESS.value);
             } else {
-                listener.OnComplete(new ArrayList<>(), 1, DBOnCompleteFlags.ERROR.value);
+                listener.OnCompleteDB(new ArrayList<>(), 1, DBOnCompleteFlags.ERROR.value);
             }
         });
     }

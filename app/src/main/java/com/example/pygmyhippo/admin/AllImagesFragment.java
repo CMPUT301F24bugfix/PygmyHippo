@@ -97,7 +97,7 @@ public class AllImagesFragment extends Fragment implements RecyclerClickListener
     }
 
     @Override
-    public void OnComplete(@NonNull ArrayList<Object> docs, int queryID, int flags) {
+    public void OnCompleteDB(@NonNull ArrayList<Object> docs, int queryID, int flags) {
         switch (queryID) {
             case 1:
                 // Go through obtained documents

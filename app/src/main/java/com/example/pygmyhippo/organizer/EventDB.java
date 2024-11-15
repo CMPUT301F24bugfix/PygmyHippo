@@ -16,6 +16,8 @@ import com.example.pygmyhippo.common.Event;
 import com.example.pygmyhippo.database.DBHandler;
 import com.example.pygmyhippo.database.DBOnCompleteFlags;
 import com.example.pygmyhippo.database.DBOnCompleteListener;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.QuerySnapshot;
 
@@ -44,11 +46,11 @@ public class EventDB extends DBHandler {
                     // Add the translated documents to a list to pass to the listener
                     ArrayList<Event> newEventList = new ArrayList<>();
                     newEventList.add(newEvent);
-                    listener.OnComplete(newEventList, 0, DBOnCompleteFlags.SUCCESS.value);
+                    listener.OnCompleteDB(newEventList, 0, DBOnCompleteFlags.SUCCESS.value);
                 } else {
                     // Notify the listeners of errors
                     Log.d("DB", String.format("Unsuccessfully in adding Event %s", newEvent.getEventID()));
-                    listener.OnComplete(new ArrayList<>(), 0, DBOnCompleteFlags.ERROR.value);
+                    listener.OnCompleteDB(new ArrayList<>(), 0, DBOnCompleteFlags.ERROR.value);
                 }
             });
     }
@@ -71,17 +73,37 @@ public class EventDB extends DBHandler {
                         queryResult.forEach(doc -> events.add(doc.toObject(Event.class)));
                         if (events.size() == 0) {
                             Log.d("DB", String.format("Found no events with event ID (%s)", eventID));
-                            listener.OnComplete(events, 1, DBOnCompleteFlags.NO_DOCUMENTS.value);
+                            listener.OnCompleteDB(events, 1, DBOnCompleteFlags.NO_DOCUMENTS.value);
                         } else if (events.size() == 1) {
                             Log.d("DB", String.format("Found event (%s) with event ID (%s)", events.get(0).getEventID(), eventID));
-                            listener.OnComplete(events, 1, DBOnCompleteFlags.SINGLE_DOCUMENT.value);
+                            listener.OnCompleteDB(events, 1, DBOnCompleteFlags.SINGLE_DOCUMENT.value);
                         } else {
                             Log.d("DB", String.format("Found %d events  with event ID (%s)", events.size(), eventID));
-                            listener.OnComplete(events, 1, DBOnCompleteFlags.MULTIPLE_DOCUMENTS.value);
+                            listener.OnCompleteDB(events, 1, DBOnCompleteFlags.MULTIPLE_DOCUMENTS.value);
                         }
                     } else {
                         Log.d("DB", String.format("Could not get event with event ID (%s).", eventID));
-                        listener.OnComplete(new ArrayList<>(), 1, DBOnCompleteFlags.ERROR.value);
+                        listener.OnCompleteDB(new ArrayList<>(), 1, DBOnCompleteFlags.ERROR.value);
+                    }
+                });
+    }
+
+    public void updateEvent(Event event, DBOnCompleteListener<Event> listener) {
+        db.collection("Events")
+                .document(event.getEventID())
+                .set(event)
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        ArrayList<Event> events = new ArrayList<>();
+                        if (task.isSuccessful()) {
+                            events.add(event);
+                            Log.d("DB", String.format("Successfully updated event with ID (%s).", event.getEventID()));
+                            listener.OnCompleteDB(events, 2, DBOnCompleteFlags.SUCCESS.value);
+                        } else {
+                            Log.d("DB", String.format("Error: Could not update event with ID (%s).", event.getEventID()));
+                            listener.OnCompleteDB(events, 2, DBOnCompleteFlags.ERROR.value);
+                        }
                     }
                 });
     }

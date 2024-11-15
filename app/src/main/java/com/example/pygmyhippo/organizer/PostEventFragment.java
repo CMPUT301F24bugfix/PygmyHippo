@@ -7,8 +7,6 @@ package com.example.pygmyhippo.organizer;
  *  TODO: / Issues
  *   - hide the navigation when a keyboard pops up
  *   - set a standard size for post images
- *   - request that the database generated an id for the event
- *   - generate a hash id for the event
  *  Thinking about:
  *   - should the current progress of the event reset if the organiser switches screen
  *   - a button called "Clear Fields" at the top to clear event field
@@ -17,7 +15,6 @@ package com.example.pygmyhippo.organizer;
 
 import static androidx.navigation.Navigation.findNavController;
 
-import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -40,14 +37,14 @@ import androidx.navigation.NavController;
 import com.example.pygmyhippo.R;
 import com.example.pygmyhippo.common.Account;
 import com.example.pygmyhippo.common.Event;
+import com.example.pygmyhippo.common.Image;
 import com.example.pygmyhippo.database.DBOnCompleteFlags;
 import com.example.pygmyhippo.database.DBOnCompleteListener;
+import com.example.pygmyhippo.database.ImageStorage;
+import com.example.pygmyhippo.database.StorageOnCompleteListener;
 import com.example.pygmyhippo.databinding.OrganiserPostEventBinding;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
-import java.util.UUID;
 
 
 /**
@@ -56,7 +53,7 @@ import java.util.UUID;
  * @version 1.1
  * No returns and no parameters
  */
-public class PostEventFragment extends Fragment implements DBOnCompleteListener<Event>{
+public class PostEventFragment extends Fragment implements DBOnCompleteListener<Event>, StorageOnCompleteListener<Image> {
 
     private OrganiserPostEventBinding binding;
     private NavController navController;
@@ -151,7 +148,6 @@ public class PostEventFragment extends Fragment implements DBOnCompleteListener<
                 myEvent.setEntrants(new ArrayList<>()); // no entrants of a newly created event
                 myEvent.setGeolocation(eventGeolocaion);
                 myEvent.setEventStatus(Event.EventStatus.ongoing); // default is ongoing
-
                 handler.addEvent(myEvent, this); // TODO: Get organiser ID and pass it to addEvent.??? (solved above)
             }
         });
@@ -180,7 +176,6 @@ public class PostEventFragment extends Fragment implements DBOnCompleteListener<
                     eventImageBtn.setImageURI(uri);
                     eventImageBtn.setScaleType(ImageView.ScaleType.CENTER_CROP);
                     // center cropped can be changed if we want to scale the picture differently
-                    // TODO: add image upload to database
                     ImageHandler.uploadImageToFirebase(uri, this);
                 }
                 else{
@@ -204,36 +199,75 @@ public class PostEventFragment extends Fragment implements DBOnCompleteListener<
         eventGeolocation.setChecked(false);
     }
 
+    /**
+     * Destroys view
+     */
     @Override
     public void onDestroyView() {
         super.onDestroyView();
         binding = null;
     }
 
+    /**
+     * Callback called when view entrant DB queries complete.
+     * @param docs - Documents retrieved from DB (if it was a get query).
+     * @param queryID - ID of query completed.
+     * @param flags - Flags to indicate query status/set how to process query result.
+     */
     @Override
-    public void OnComplete(@NonNull ArrayList<Event> docs, int queryID, int flags) {
+    public void OnCompleteDB(@NonNull ArrayList<Event> docs, int queryID, int flags) {
         if (queryID == 0) {
+            if (flags == DBOnCompleteFlags.SUCCESS.value) {
+                Event newEvent = docs.get(0);
+                if(newEvent.getHashcode() == 0){
+                    boolean hashcodeValid = newEvent.tryGenerateHashcode();
+                    if(hashcodeValid) {
+                        Log.i("Post Event", String.format("Event generated with hashcode", newEvent.getHashcode()));
+                        handler.updateEvent(newEvent, this);
+                    }
+                    else {
+                        Log.e("Post Event", "Hashcode generation unsuccessful");
+                        Toast.makeText(getContext(), "Event Failed to Create", Toast.LENGTH_LONG).show();
+                    }
+                }
+            } else {
+                Log.e("Post Event", "Hashcode generation unsuccessful");
+                Toast.makeText(getContext(), "Event Failed to Create", Toast.LENGTH_LONG).show();
+            }
+        }
+        else if (queryID == 2){
             if (flags == DBOnCompleteFlags.SUCCESS.value) {
                 clearEditTextFields();
                 Event newEvent = docs.get(0);
-                // create a bundle to send an event to the qr code widget
-                // the bundle must have a id for the qr code to generate
-                // event should be added to data base then it should be
                 Bundle navArgs = new Bundle();
                 navArgs.putString("eventID", newEvent.getEventID());
                 navArgs.putParcelable("signedInAccount", signedInAccount);
                 navController.navigate(R.id.view_eventqr_fragment, navArgs);
-            } else {
+            }
+            else {
+                Log.e("Post Event", "Hashcode generation unsuccessful");
                 Toast.makeText(getContext(), "Event Failed to Create", Toast.LENGTH_LONG).show();
             }
         }
-        else if (queryID == 3){
+    }
+
+    /**
+     * Callback called when view entrant Storage queries complete.
+     * @param docs - Documents retrieved from DB (if it was a get query).
+     * @param queryID - ID of query completed.
+     * @param flags - Flags to indicate query status/set how to process query result.
+     */
+    @Override
+    public void OnCompleteStorage(@NonNull ArrayList<Image> docs, int queryID, int flags) {
+          if (queryID == 1){
             if (flags == DBOnCompleteFlags.SUCCESS.value) {
+                Log.i("Post Event", "Image upload successful");
                 clearEditTextFields();
-                Event newEvent = docs.get(0);
-                imagePath = newEvent.getEventPoster();
+                Image newImage = docs.get(0);
+                imagePath = newImage.getUrl(); // set the image path from the URL
             }
             else {
+                Log.e("Post Event", "Image upload unsuccessful");
                 Toast.makeText(getContext(), "Image failed to upload", Toast.LENGTH_LONG).show();
             }
         }

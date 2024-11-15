@@ -43,10 +43,10 @@ public class EventDB extends DBHandler {
                     DocumentSnapshot doc = task.getResult();
                     ArrayList<Event> eventList = new ArrayList<>();
                     eventList.add(doc.toObject(Event.class));
-                    listener.OnComplete(eventList, 0, DBOnCompleteFlags.SINGLE_DOCUMENT.value);
+                    listener.OnCompleteDB(eventList, 0, DBOnCompleteFlags.SINGLE_DOCUMENT.value);
                 } else {
                     Log.d("DB", String.format("Unsuccessful finding Event with ID %s", eventID));
-                    listener.OnComplete(new ArrayList<>(), 0, DBOnCompleteFlags.ERROR.value);
+                    listener.OnCompleteDB(new ArrayList<>(), 0, DBOnCompleteFlags.ERROR.value);
                 }
             });
     }
@@ -64,10 +64,10 @@ public class EventDB extends DBHandler {
             .addOnCompleteListener(task -> {
                 if (task.isSuccessful()) {
                     Log.d("DB", String.format("Successfully deleted Event with ID %s", eventID));
-                    listener.OnComplete(new ArrayList<>(), 1, DBOnCompleteFlags.SUCCESS.value);
+                    listener.OnCompleteDB(new ArrayList<>(), 1, DBOnCompleteFlags.SUCCESS.value);
                 } else {
                     Log.d("DB", String.format("Unsuccessful in deleting Event with ID %s", eventID));
-                    listener.OnComplete(new ArrayList<>(), 1, DBOnCompleteFlags.ERROR.value);
+                    listener.OnCompleteDB(new ArrayList<>(), 1, DBOnCompleteFlags.ERROR.value);
                 }
             });
     }
@@ -87,10 +87,10 @@ public class EventDB extends DBHandler {
                     public void onComplete(@NonNull Task<Void> task) {
                         if (task.isSuccessful()) {
                             Log.d("DB", String.format("Successfully updated event with ID (%s).", event.getEventID()));
-                            listener.OnComplete(new ArrayList<>(), 2, DBOnCompleteFlags.SUCCESS.value);
+                            listener.OnCompleteDB(new ArrayList<>(), 2, DBOnCompleteFlags.SUCCESS.value);
                         } else {
                             Log.d("DB", String.format("Error: Could not update event with ID (%s).", event.getEventID()));
-                            listener.OnComplete(new ArrayList<>(), 2, DBOnCompleteFlags.ERROR.value);
+                            listener.OnCompleteDB(new ArrayList<>(), 2, DBOnCompleteFlags.ERROR.value);
                         }
                     }
                 });

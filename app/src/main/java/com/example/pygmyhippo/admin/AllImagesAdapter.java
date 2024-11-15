@@ -51,7 +51,7 @@ public class AllImagesAdapter extends BaseRecyclerAdapter<Image, AllImagesAdapte
         }
 
         @Override
-        public void OnComplete(@NonNull ArrayList<Uri> docs, int queryID, int flags) {
+        public void OnCompleteDB(@NonNull ArrayList<Uri> docs, int queryID, int flags) {
             if (queryID == 0) {
                 if (flags == DBOnCompleteFlags.SUCCESS.value) {
                     // Get the image and format it
