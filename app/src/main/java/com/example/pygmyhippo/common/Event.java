@@ -97,7 +97,7 @@ public class Event {
      * @return boolean
      */
     public boolean generateHashcode(){
-        if(hashcode == 0 && !eventID.isEmpty()){
+        if(!eventID.isEmpty()){
             hashcode = eventID.hashCode();
             return true;
         }
