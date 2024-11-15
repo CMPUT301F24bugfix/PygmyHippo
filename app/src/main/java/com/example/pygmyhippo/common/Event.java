@@ -363,5 +363,49 @@ public class Event {
         this.eventStatus = eventStatus;
     }
 
+    /**
+     * This method will count all the entrants that are invited or accepted an invitation and return it.
+     * Used to check if there are still open spots available for a lottery redraw
+     * @return The number of event spots already taken
+     */
+    public Integer getCurrentWinners() {
+        Integer count = 0;
+
+        // Go through the list of entrants
+        for (int index = 0; index < entrants.size(); index++) {
+            if (entrants.get(index).getEntrantStatus().value.equals("invited") || entrants.get(index).getEntrantStatus().value.equals("accepted")) {
+                // Increase the count if the entrant status is invited or accepted
+                count++;
+            }
+        }
+        return count;
+    }
+
+    /**
+     * This method will check if the event has open positions for a lottery redraw or not
+     * @return true if there are open spots, false otherwise
+     */
+    public Boolean hasAvailability() {
+        if (getCurrentWinners() < eventWinnersCount) {
+            // Open spots available
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * This method will return the number of entrants in the event that are waitlisted
+     * @return The number of waitlisted entrants
+     */
+    public Integer getNumberWaitlisted() {
+        Integer waitlistCount = 0;
+        for (int index = 0; index < entrants.size(); index++) {
+            if (entrants.get(index).getEntrantStatus().value.equals("waitlisted")) {
+                waitlistCount++;
+            }
+        }
+        return waitlistCount;
+    }
+
 }
 
