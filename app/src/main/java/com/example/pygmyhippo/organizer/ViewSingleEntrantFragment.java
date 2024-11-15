@@ -96,27 +96,6 @@ public class ViewSingleEntrantFragment extends Fragment {
         // Set the status indication
         statusTextView.setText(status);
 
-        // Get the account from the database
-        dbHandler = new ViewEntrantDB();
-        dbHandler.getAccount(accountID, new DBOnCompleteListener<Account>() {
-            @Override
-            public void OnCompleteDB(@NonNull ArrayList<Account> docs, int queryID, int flags) {
-                if (flags == DBOnCompleteFlags.SINGLE_DOCUMENT.value) {
-                    // Get the event for this list of entrants and initialize the list
-                    account = docs.get(0);
-
-                    // Set the text views once we get the data
-                    userNameView.setText(account.getName());
-                    pronounsTextView.setText(account.getPronouns());
-                    emailTextView.setText(account.getEmailAddress());
-                    phoneTextView.setText(account.getPhoneNumber());
-                } else {
-                    // Should only ever expect 1 document, otherwise there must be an error
-                    handleDBError();
-                }
-            }
-        });
-
         // Depending on entrant status, display and/or alter the status button
         // TODO: Add settings for other statuses and provide more functionalities than just cancel
         if (status.equals("invited")) {
@@ -160,6 +139,27 @@ public class ViewSingleEntrantFragment extends Fragment {
         Bundle navArgs = new Bundle();
         navArgs.putString("eventID", eventID);
         backButton.setOnClickListener(view -> navController.popBackStack());
+
+        // Get the account from the database
+        dbHandler = new ViewEntrantDB();
+        dbHandler.getAccount(accountID, new DBOnCompleteListener<Account>() {
+            @Override
+            public void OnCompleteDB(@NonNull ArrayList<Account> docs, int queryID, int flags) {
+                if (flags == DBOnCompleteFlags.SINGLE_DOCUMENT.value) {
+                    // Get the event for this list of entrants and initialize the list
+                    account = docs.get(0);
+
+                    // Set the text views once we get the data
+                    userNameView.setText(account.getName());
+                    pronounsTextView.setText(account.getPronouns());
+                    emailTextView.setText(account.getEmailAddress());
+                    phoneTextView.setText(account.getPhoneNumber());
+                } else {
+                    // Should only ever expect 1 document, otherwise there must be an error
+                    handleDBError();
+                }
+            }
+        });
 
         return root;
     }

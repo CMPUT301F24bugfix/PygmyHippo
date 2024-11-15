@@ -28,7 +28,7 @@ public class EventTest {
         entrants.add(new Entrant("account1", Entrant.EntrantStatus.invited));
         entrants.add(new Entrant("account2", Entrant.EntrantStatus.waitlisted));
         entrants.add(new Entrant("account3", Entrant.EntrantStatus.cancelled));
-        entrants.add(new Entrant("account1", Entrant.EntrantStatus.accepted));
+        entrants.add(new Entrant("account4", Entrant.EntrantStatus.accepted));
 
         testEvent = new Event(
                 "event_title",
@@ -248,4 +248,103 @@ public class EventTest {
         assertTrue(testEvent.isValidHashcode());
     }
 
+
+    @Test
+    public void testGetCurrentWinners() {
+        assertEquals(2, (int) testEvent.getCurrentWinners());
+        testEvent.addEntrant(new Entrant("account5", Entrant.EntrantStatus.accepted));
+
+        assertEquals(3, (int) testEvent.getCurrentWinners());
+        testEvent.addEntrant(new Entrant("account6", Entrant.EntrantStatus.waitlisted));
+
+        assertEquals(3, (int) testEvent.getCurrentWinners());
+        testEvent.addEntrant(new Entrant("account7", Entrant.EntrantStatus.invited));
+
+        assertEquals(4, (int) testEvent.getCurrentWinners());
+        testEvent.addEntrant(new Entrant("account8", Entrant.EntrantStatus.cancelled));
+        assertEquals(4, (int) testEvent.getCurrentWinners());
+
+        // Remove all the entrants with "invited" or "accepted"
+        testEvent.removeEntrant(new Entrant("account5", Entrant.EntrantStatus.accepted));
+        testEvent.removeEntrant(new Entrant("account7", Entrant.EntrantStatus.invited));
+        testEvent.removeEntrant(new Entrant("account1", Entrant.EntrantStatus.invited));
+        testEvent.removeEntrant(new Entrant("account4", Entrant.EntrantStatus.accepted));
+
+        assertEquals(0, (int) testEvent.getCurrentWinners());
+    }
+
+    @Test
+    public void testHasAvailability() {
+        ArrayList<Entrant> newEntrants = new ArrayList<>();
+        newEntrants.add(new Entrant("account1", Entrant.EntrantStatus.waitlisted));
+        newEntrants.add(new Entrant("account2", Entrant.EntrantStatus.waitlisted));
+        newEntrants.add(new Entrant("account3", Entrant.EntrantStatus.waitlisted));
+        newEntrants.add(new Entrant("account4", Entrant.EntrantStatus.waitlisted));
+
+        testEvent.setEntrants(newEntrants);
+        assertTrue(testEvent.hasAvailability());
+
+        newEntrants = new ArrayList<>();
+        newEntrants.add(new Entrant("account1", Entrant.EntrantStatus.waitlisted));
+        newEntrants.add(new Entrant("account2", Entrant.EntrantStatus.invited));
+        newEntrants.add(new Entrant("account3", Entrant.EntrantStatus.invited));
+        newEntrants.add(new Entrant("account4", Entrant.EntrantStatus.invited));
+
+        testEvent.setEntrants(newEntrants);
+        assertFalse(testEvent.hasAvailability());
+
+        newEntrants = new ArrayList<>();
+        newEntrants.add(new Entrant("account1", Entrant.EntrantStatus.waitlisted));
+        newEntrants.add(new Entrant("account2", Entrant.EntrantStatus.invited));
+        newEntrants.add(new Entrant("account3", Entrant.EntrantStatus.cancelled));
+        newEntrants.add(new Entrant("account4", Entrant.EntrantStatus.invited));
+
+        testEvent.setEntrants(newEntrants);
+        assertTrue(testEvent.hasAvailability());
+
+        newEntrants = new ArrayList<>();
+        newEntrants.add(new Entrant("account1", Entrant.EntrantStatus.waitlisted));
+        newEntrants.add(new Entrant("account2", Entrant.EntrantStatus.cancelled));
+        newEntrants.add(new Entrant("account3", Entrant.EntrantStatus.cancelled));
+        newEntrants.add(new Entrant("account4", Entrant.EntrantStatus.invited));
+
+        testEvent.setEntrants(newEntrants);
+        assertTrue(testEvent.hasAvailability());
+
+        newEntrants = new ArrayList<>();
+        newEntrants.add(new Entrant("account1", Entrant.EntrantStatus.invited));
+        newEntrants.add(new Entrant("account2", Entrant.EntrantStatus.cancelled));
+        newEntrants.add(new Entrant("account3", Entrant.EntrantStatus.cancelled));
+        newEntrants.add(new Entrant("account4", Entrant.EntrantStatus.cancelled));
+
+        testEvent.setEntrants(newEntrants);
+        assertTrue(testEvent.hasAvailability());
+
+        newEntrants = new ArrayList<>();
+        newEntrants.add(new Entrant("account1", Entrant.EntrantStatus.cancelled));
+        newEntrants.add(new Entrant("account2", Entrant.EntrantStatus.cancelled));
+        newEntrants.add(new Entrant("account3", Entrant.EntrantStatus.cancelled));
+        newEntrants.add(new Entrant("account4", Entrant.EntrantStatus.cancelled));
+
+        testEvent.setEntrants(newEntrants);
+        assertTrue(testEvent.hasAvailability());
+    }
+
+    @Test
+    public void testGetNumberWaitlisted() {
+        assertEquals(1, (int) testEvent.getNumberWaitlisted());
+
+        testEvent.addEntrant(new Entrant("account5", Entrant.EntrantStatus.waitlisted));
+        assertEquals(2, (int) testEvent.getNumberWaitlisted());
+
+        testEvent.removeEntrant(new Entrant("account5", Entrant.EntrantStatus.waitlisted));
+        assertEquals(1, (int) testEvent.getNumberWaitlisted());
+
+        testEvent.removeEntrant(new Entrant("account5", Entrant.EntrantStatus.invited));
+        assertEquals(1, (int) testEvent.getNumberWaitlisted());
+        testEvent.removeEntrant(new Entrant("account6", Entrant.EntrantStatus.cancelled));
+        assertEquals(1, (int) testEvent.getNumberWaitlisted());
+        testEvent.removeEntrant(new Entrant("account7", Entrant.EntrantStatus.accepted));
+        assertEquals(1, (int) testEvent.getNumberWaitlisted());
+    }
 }

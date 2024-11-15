@@ -71,7 +71,7 @@ public class MyEventsFragment extends Fragment {
         button.setOnClickListener(view -> {
             Bundle navArgs = new Bundle();
             navArgs.putParcelable("signedInAccount", signedInAccount);
-            navArgs.putString("eventID", "37Pm3bM0Z0xBjwWLGTqD"); // TODO remove hardcoded eventID.
+            navArgs.putString("eventID", "IaMdwyQpHDh6GdZF025k"); // TODO remove hardcoded eventID.
             navController.navigate(R.id.organiser_eventFragment, navArgs);
         });
 
