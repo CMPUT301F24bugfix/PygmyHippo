@@ -14,7 +14,6 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 
 import com.example.pygmyhippo.common.Account;
-import com.example.pygmyhippo.common.Event;
 import com.example.pygmyhippo.database.DBHandler;
 import com.example.pygmyhippo.database.DBOnCompleteFlags;
 import com.example.pygmyhippo.database.DBOnCompleteListener;
@@ -46,10 +45,10 @@ public class ProfileDB extends DBHandler {
                     DocumentSnapshot doc = task.getResult();
                     ArrayList<Account> accountList = new ArrayList<>();
                     accountList.add(doc.toObject(Account.class));
-                    listener.OnComplete(accountList, 0, DBOnCompleteFlags.SUCCESS.value);
+                    listener.OnCompleteDB(accountList, 0, DBOnCompleteFlags.SUCCESS.value);
                 } else {
                     Log.d("DB", String.format("Unsuccessful in getting Account with ID %s", accountID));
-                    listener.OnComplete(new ArrayList<>(), 0, DBOnCompleteFlags.ERROR.value);
+                    listener.OnCompleteDB(new ArrayList<>(), 0, DBOnCompleteFlags.ERROR.value);
                 }
             });
     }
@@ -66,10 +65,10 @@ public class ProfileDB extends DBHandler {
             .addOnCompleteListener(task -> {
                 if (task.isSuccessful()) {
                     Log.d("DB", String.format("Successfully deleted Account with ID %s", accountID));
-                    listener.OnComplete(new ArrayList<>(), 1, DBOnCompleteFlags.SUCCESS.value);
+                    listener.OnCompleteDB(new ArrayList<>(), 1, DBOnCompleteFlags.SUCCESS.value);
                 } else {
                     Log.d("DB", String.format("Unsuccessful in deleting Account with ID %s", accountID));
-                    listener.OnComplete(new ArrayList<>(), 1, DBOnCompleteFlags.ERROR.value);
+                    listener.OnCompleteDB(new ArrayList<>(), 1, DBOnCompleteFlags.ERROR.value);
                 }
             });
     }
@@ -92,10 +91,10 @@ public class ProfileDB extends DBHandler {
                         newAccount.setAccountID(accountID);
                         newAccount.setCurrentRole(newRole);
                         accountList.add(newAccount);
-                        listener.OnComplete(accountList, 2, DBOnCompleteFlags.SUCCESS.value);
+                        listener.OnCompleteDB(accountList, 2, DBOnCompleteFlags.SUCCESS.value);
                     } else {
                         Log.d("DB", String.format("Could not update current role for account %s", accountID));
-                        listener.OnComplete(new ArrayList<>(), 2, DBOnCompleteFlags.SUCCESS.value);
+                        listener.OnCompleteDB(new ArrayList<>(), 2, DBOnCompleteFlags.SUCCESS.value);
                     }
                 });
     }
@@ -115,10 +114,10 @@ public class ProfileDB extends DBHandler {
                     public void onComplete(@NonNull Task<Void> task) {
                         if (task.isSuccessful()) {
                             Log.d("DB", String.format("Successfully updated account with ID (%s).", account.getAccountID()));
-                            listener.OnComplete(new ArrayList<>(), 3, DBOnCompleteFlags.SUCCESS.value);
+                            listener.OnCompleteDB(new ArrayList<>(), 3, DBOnCompleteFlags.SUCCESS.value);
                         } else {
                             Log.d("DB", String.format("Error: Could not update account with ID (%s).", account.getAccountID()));
-                            listener.OnComplete(new ArrayList<>(), 3, DBOnCompleteFlags.ERROR.value);
+                            listener.OnCompleteDB(new ArrayList<>(), 3, DBOnCompleteFlags.ERROR.value);
                         }
                     }
                 });

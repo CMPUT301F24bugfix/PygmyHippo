@@ -113,10 +113,11 @@ public class ViewSingleEntrantFragment extends Fragment {
                     // Get the event from the database and change the status of the entrant there
                     dbHandler.getEvent(eventID, new DBOnCompleteListener<Event>() {
                         @Override
-                        public void OnComplete(@NonNull ArrayList<Event> docs, int queryID, int flags) {
+                        public void OnCompleteDB(@NonNull ArrayList<Event> docs, int queryID, int flags) {
                             if (flags == DBOnCompleteFlags.SINGLE_DOCUMENT.value) {
                                 // Get the event for this list of entrants
                                 Event event = docs.get(0);
+                                ArrayList<Entrant> entrants = event.getEntrants();
 
                                 // Find the entrant in the list and update their status
                                 findAndUpdateEntrant(accountID, event, "cancelled");
@@ -143,7 +144,7 @@ public class ViewSingleEntrantFragment extends Fragment {
         dbHandler = new ViewEntrantDB();
         dbHandler.getAccount(accountID, new DBOnCompleteListener<Account>() {
             @Override
-            public void OnComplete(@NonNull ArrayList<Account> docs, int queryID, int flags) {
+            public void OnCompleteDB(@NonNull ArrayList<Account> docs, int queryID, int flags) {
                 if (flags == DBOnCompleteFlags.SINGLE_DOCUMENT.value) {
                     // Get the event for this list of entrants and initialize the list
                     account = docs.get(0);
@@ -184,7 +185,7 @@ public class ViewSingleEntrantFragment extends Fragment {
         // Now send this updated event to the database to update it
         dbHandler.updateEvent(event, new DBOnCompleteListener<Event>() {
             @Override
-            public void OnComplete(@NonNull ArrayList<Event> docs, int queryID, int flags) {
+            public void OnCompleteDB(@NonNull ArrayList<Event> docs, int queryID, int flags) {
                 // Log when the data is updated or catch if there was an error
                 if (flags == DBOnCompleteFlags.SUCCESS.value) {
                     Log.d("DB", String.format("Successfully finished updating event with ID (%s).", eventID));

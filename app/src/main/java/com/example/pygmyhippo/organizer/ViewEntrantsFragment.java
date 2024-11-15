@@ -198,7 +198,7 @@ public class ViewEntrantsFragment extends Fragment implements DBOnCompleteListen
      * @param flags - Flags to indicate query status/set how to process query result.
      */
     @Override
-    public void OnComplete(@NonNull ArrayList<Event> docs, int queryID, int flags) {
+    public void OnCompleteDB(@NonNull ArrayList<Event> docs, int queryID, int flags) {
         switch (queryID) {
             case 0: // getEvent()
                 if (flags == DBOnCompleteFlags.SINGLE_DOCUMENT.value) {

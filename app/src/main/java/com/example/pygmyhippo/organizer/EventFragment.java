@@ -113,7 +113,7 @@ public class EventFragment extends Fragment {
         // Get the actual event data to populate this view
         dbHandler.getEvent(eventID, new DBOnCompleteListener<Event>() {
             @Override
-            public void OnComplete(@NonNull ArrayList<Event> docs, int queryID, int flags) {
+            public void OnCompleteDB(@NonNull ArrayList<Event> docs, int queryID, int flags) {
                 if (flags == DBOnCompleteFlags.SINGLE_DOCUMENT.value) {
                     // Get the event to display for this fragment
                     event = docs.get(0);
@@ -224,7 +224,7 @@ public class EventFragment extends Fragment {
                     // After the draw, update the event in the database
                     dbHandler.updateEvent(event, new DBOnCompleteListener<Event>() {
                         @Override
-                        public void OnComplete(@NonNull ArrayList<Event> docs, int queryID, int flags) {
+                        public void OnCompleteDB(@NonNull ArrayList<Event> docs, int queryID, int flags) {
                             // Log when the data is updated or catch if there was an error
                             if (flags == DBOnCompleteFlags.SUCCESS.value) {
                                 Log.d("DB", String.format("Successfully finished updating event with ID (%s).", event.getEventID()));
@@ -252,7 +252,7 @@ public class EventFragment extends Fragment {
                     // After the redraw, update the event in the database
                     dbHandler.updateEvent(event, new DBOnCompleteListener<Event>() {
                         @Override
-                        public void OnComplete(@NonNull ArrayList<Event> docs, int queryID, int flags) {
+                        public void OnCompleteDB(@NonNull ArrayList<Event> docs, int queryID, int flags) {
                             // Log when the data is updated or catch if there was an error
                             if (flags == DBOnCompleteFlags.SUCCESS.value) {
                                 Log.d("DB", String.format("Successfully finished updating event with ID (%s).", event.getEventID()));

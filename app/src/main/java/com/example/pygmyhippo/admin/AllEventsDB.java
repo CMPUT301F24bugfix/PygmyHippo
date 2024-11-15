@@ -53,10 +53,10 @@ public class AllEventsDB extends DBHandler {
                     });
 
                     // Call the listener
-                    listener.OnComplete(eventList, 0, DBOnCompleteFlags.SUCCESS.value);
+                    listener.OnCompleteDB(eventList, 0, DBOnCompleteFlags.SUCCESS.value);
                 } else {
                     Log.d("DB", "Could not get Events");
-                    listener.OnComplete(new ArrayList<>(), 0, DBOnCompleteFlags.ERROR.value);
+                    listener.OnCompleteDB(new ArrayList<>(), 0, DBOnCompleteFlags.ERROR.value);
                 }
             });
     }

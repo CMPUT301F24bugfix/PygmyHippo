@@ -48,7 +48,7 @@ public class AllImagesDB extends DBHandler {
                     Uri uri = task.getResult();
                     ArrayList<Uri> results = new ArrayList<>();
                     results.add(uri);
-                    listener.OnComplete(results, 0, DBOnCompleteFlags.SUCCESS.value);
+                    listener.OnCompleteDB(results, 0, DBOnCompleteFlags.SUCCESS.value);
                 } else {
                     Log.d("DB", String.format("Image download failed for %s", image.getUrl()));
                 }
@@ -56,7 +56,7 @@ public class AllImagesDB extends DBHandler {
         } catch (IllegalArgumentException e) {
             // Notify the listener with an error flag raised
             Log.d("DB", String.format("IllegalArgumentException for url %s", image.getUrl()));
-            listener.OnComplete(new ArrayList<>(), 0, DBOnCompleteFlags.ERROR.value);
+            listener.OnCompleteDB(new ArrayList<>(), 0, DBOnCompleteFlags.ERROR.value);
         }
     }
 
@@ -77,11 +77,11 @@ public class AllImagesDB extends DBHandler {
                     Log.d("DB", String.format("%d Accounts with non-empty profilePicture are fetched.", queryResult.size()));
                     ArrayList<Account> accountList = new ArrayList<>();
                     queryResult.forEach(doc -> accountList.add(doc.toObject(Account.class)));
-                    listener.OnComplete(new ArrayList<>(accountList), 1, DBOnCompleteFlags.SUCCESS.value);
+                    listener.OnCompleteDB(new ArrayList<>(accountList), 1, DBOnCompleteFlags.SUCCESS.value);
                 } else {
                     // Notify the listener with the Error flag raised
                     Log.d("DB", "Error in getting accounts for All Images");
-                    listener.OnComplete(new ArrayList<>(), 1, DBOnCompleteFlags.ERROR.value);
+                    listener.OnCompleteDB(new ArrayList<>(), 1, DBOnCompleteFlags.ERROR.value);
                 }
             });
     }
@@ -103,11 +103,11 @@ public class AllImagesDB extends DBHandler {
                     Log.d("DB", String.format("%d Events with non-empty eventPoster are fetched.", queryResult.size()));
                     ArrayList<Event> eventList = new ArrayList<>();
                     queryResult.forEach(doc -> eventList.add(doc.toObject(Event.class)));
-                    listener.OnComplete(new ArrayList<>(eventList), 2, DBOnCompleteFlags.SUCCESS.value);
+                    listener.OnCompleteDB(new ArrayList<>(eventList), 2, DBOnCompleteFlags.SUCCESS.value);
                 } else {
                     // Notify the listener with error flag raised
                     Log.d("DB", "Error in getting events for All Images");
-                    listener.OnComplete(new ArrayList<>(), 2, DBOnCompleteFlags.ERROR.value);
+                    listener.OnCompleteDB(new ArrayList<>(), 2, DBOnCompleteFlags.ERROR.value);
                 }
             });
     }

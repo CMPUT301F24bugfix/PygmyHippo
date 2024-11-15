@@ -124,7 +124,7 @@ public class AllEventsFragment extends Fragment implements RecyclerClickListener
     }
 
     @Override
-    public void OnComplete(@NonNull ArrayList<Event> docs, int queryID, int flags) {
+    public void OnCompleteDB(@NonNull ArrayList<Event> docs, int queryID, int flags) {
         if (queryID == 0) {
             if (flags == DBOnCompleteFlags.SUCCESS.value) {
                 // Add each retrieved event to the list
