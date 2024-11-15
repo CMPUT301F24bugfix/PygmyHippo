@@ -191,8 +191,6 @@ public class EventFragment extends Fragment {
             signedInAccount = new Account();
         }
 
-        // Add functionality to the lottery event button
-        lotteryButton.setOnClickListener(new View.OnClickListener(){
         // Set up the listener for viewing entrants button
         Button viewEntrantsButton = view.findViewById(R.id.button_view_entrants);
         viewEntrantsButton.setOnClickListener(view1 -> {
@@ -204,8 +202,8 @@ public class EventFragment extends Fragment {
             navController.navigate(R.id.view_entrants_fragment, navArgs);
         });
 
-        // Add functionality to the closing event button
-        closeEventButton.setOnClickListener(new View.OnClickListener(){
+        // Add functionality to the lottery event button
+        lotteryButton.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view) {
                 // Only do the draw if the event hasn't already been closed
@@ -267,7 +265,6 @@ public class EventFragment extends Fragment {
                 }
             }
         });
-
         return view;
     }
 
