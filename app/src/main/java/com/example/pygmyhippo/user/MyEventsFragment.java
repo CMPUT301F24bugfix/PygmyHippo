@@ -120,7 +120,7 @@ public class MyEventsFragment extends Fragment implements DBOnCompleteListener<E
      * @param flags - Flags to indicate query status/set how to process query result.
      */
     @Override
-    public void OnComplete(@NonNull ArrayList<Event> docs, int queryID, int flags) {
+    public void OnCompleteDB(@NonNull ArrayList<Event> docs, int queryID, int flags) {
         switch (queryID) {
             case 3: // getEvent()
                 if (flags != DBOnCompleteFlags.ERROR.value) {

@@ -16,6 +16,7 @@ import com.example.pygmyhippo.common.Event;
 import com.example.pygmyhippo.database.DBHandler;
 import com.example.pygmyhippo.database.DBOnCompleteFlags;
 import com.example.pygmyhippo.database.DBOnCompleteListener;
+import com.example.pygmyhippo.database.StorageOnCompleteListener;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -135,10 +136,10 @@ public class EventDB extends DBHandler {
                         });
 
                         // Call the listener
-                        listener.OnComplete(eventList, 3, DBOnCompleteFlags.SUCCESS.value);
+                        listener.OnCompleteDB(eventList, 3, DBOnCompleteFlags.SUCCESS.value);
                     } else {
                         Log.d("DB", "Could not get Events");
-                        listener.OnComplete(new ArrayList<>(), 3, DBOnCompleteFlags.ERROR.value);
+                        listener.OnCompleteDB(new ArrayList<>(), 3, DBOnCompleteFlags.ERROR.value);
                     }
                 });
         }
@@ -149,7 +150,7 @@ public class EventDB extends DBHandler {
      * @param url String rul with gs:// link to Firebase Storage image.
      * @param listener DBOnCompleteListener to call when query completes.
      */
-    public void getImageDownloadUrl(String url, DBOnCompleteListener<Uri> listener) {
+    public void getImageDownloadUrl(String url, StorageOnCompleteListener<Uri> listener) {
         Log.d("DB", String.format("Getting storage reference for image url %s", url));
         try {
             // Try to get an image
@@ -161,7 +162,7 @@ public class EventDB extends DBHandler {
                     Uri uri = task.getResult();
                     ArrayList<Uri> results = new ArrayList<>();
                     results.add(uri);
-                    listener.OnComplete(results, 4, DBOnCompleteFlags.SUCCESS.value);
+                    listener.OnCompleteStorage(results, 4, DBOnCompleteFlags.SUCCESS.value);
                 } else {
                     Log.d("DB", String.format("Image download failed for %s", url));
                 }
@@ -169,7 +170,7 @@ public class EventDB extends DBHandler {
         } catch (IllegalArgumentException e) {
             // Notify the listener with an error flag raised
             Log.d("DB", String.format("IllegalArgumentException for url %s", url));
-            listener.OnComplete(new ArrayList<>(), 4, DBOnCompleteFlags.ERROR.value);
+            listener.OnCompleteStorage(new ArrayList<>(), 4, DBOnCompleteFlags.ERROR.value);
         }
     }
     }

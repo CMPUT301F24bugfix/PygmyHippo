@@ -39,7 +39,9 @@ import com.example.pygmyhippo.common.Entrant;
 import com.example.pygmyhippo.common.Event;
 import com.example.pygmyhippo.database.DBOnCompleteFlags;
 import com.example.pygmyhippo.database.DBOnCompleteListener;
+import com.example.pygmyhippo.database.StorageOnCompleteListener;
 import com.example.pygmyhippo.databinding.UserFragmentEventBinding;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.squareup.picasso.Picasso;
 
@@ -229,9 +231,9 @@ public class EventFragment extends Fragment implements DBOnCompleteListener<Even
         }
 
         // Get the poster for the event
-        handler.getImageDownloadUrl(event.getEventPoster(), new DBOnCompleteListener<Uri>() {
+        handler.getImageDownloadUrl(event.getEventPoster(), new StorageOnCompleteListener<Uri>() {
             @Override
-            public void OnComplete(@NonNull ArrayList<Uri> docs, int queryID, int flags) {
+            public void OnCompleteStorage(@NonNull ArrayList<Uri> docs, int queryID, int flags) {
                 // Author of this code segment is James
                 if (flags == DBOnCompleteFlags.SUCCESS.value) {
                     // Get the image and format it

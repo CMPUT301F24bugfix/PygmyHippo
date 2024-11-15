@@ -17,17 +17,14 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.example.pygmyhippo.R;
-import com.example.pygmyhippo.common.Account;
-import com.example.pygmyhippo.common.Entrant;
 import com.example.pygmyhippo.common.Event;
 import com.example.pygmyhippo.database.DBOnCompleteFlags;
-import com.example.pygmyhippo.database.DBOnCompleteListener;
+import com.example.pygmyhippo.database.StorageOnCompleteListener;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -88,9 +85,9 @@ public class EventArrayAdapter extends ArrayAdapter<Event> {
         }
 
         // Get the event poster from firebase
-        dbHandler.getImageDownloadUrl(event.getEventPoster(), new DBOnCompleteListener<Uri>() {
+        dbHandler.getImageDownloadUrl(event.getEventPoster(), new StorageOnCompleteListener<Uri>() {
             @Override
-            public void OnComplete(@NonNull ArrayList<Uri> docs, int queryID, int flags) {
+            public void OnCompleteStorage(@NonNull ArrayList<Uri> docs, int queryID, int flags) {
                 // Author of this code segment is James
                 if (flags == DBOnCompleteFlags.SUCCESS.value) {
                     // Get the image and format it
