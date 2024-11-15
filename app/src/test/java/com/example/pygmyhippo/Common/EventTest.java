@@ -236,16 +236,16 @@ public class EventTest {
 
     @Test
     public void testgeneratingHashdata(){
-        testEvent.generateHashcode();
+        testEvent.tryGenerateHashcode();
         int validhash = testEvent.getEventID().hashCode();
         assertEquals(testEvent.getHashcode(), validhash);
     }
 
     @Test
     public void testValidatingHashdata(){
-        assertFalse(testEvent.validateHashcode());
-        testEvent.generateHashcode();
-        assertTrue(testEvent.validateHashcode());
+        assertFalse(testEvent.isValidHashcode());
+        testEvent.tryGenerateHashcode();
+        assertTrue(testEvent.isValidHashcode());
     }
 
 }

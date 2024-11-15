@@ -139,7 +139,7 @@ public class EventQRViewerFragment extends Fragment implements DBOnCompleteListe
         if (queryID == 1) {
             if (flags == DBOnCompleteFlags.SINGLE_DOCUMENT.value) {
                 myevent = docs.get(0);
-                if(myevent.validateHashcode()){
+                if(myevent.isValidHashcode()){
                     Log.i("QR Viewer", "Valid hashcode, displaying info");
                     setScreenDetails();
                 }

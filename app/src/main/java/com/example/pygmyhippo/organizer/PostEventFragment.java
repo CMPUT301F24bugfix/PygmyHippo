@@ -220,7 +220,7 @@ public class PostEventFragment extends Fragment implements DBOnCompleteListener<
             if (flags == DBOnCompleteFlags.SUCCESS.value) {
                 Event newEvent = docs.get(0);
                 if(newEvent.getHashcode() == 0){
-                    boolean hashcodeValid = newEvent.generateHashcode();
+                    boolean hashcodeValid = newEvent.tryGenerateHashcode();
                     if(hashcodeValid) {
                         Log.i("Post Event", String.format("Event generated with hashcode", newEvent.getHashcode()));
                         handler.updateEvent(newEvent, this);
