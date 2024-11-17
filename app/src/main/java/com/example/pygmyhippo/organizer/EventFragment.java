@@ -36,6 +36,7 @@ import com.example.pygmyhippo.common.Account;
 import com.example.pygmyhippo.common.Event;
 import com.example.pygmyhippo.database.DBOnCompleteFlags;
 import com.example.pygmyhippo.database.DBOnCompleteListener;
+import com.example.pygmyhippo.database.ImageStorage;
 import com.example.pygmyhippo.database.StorageOnCompleteListener;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.squareup.picasso.Picasso;
@@ -55,6 +56,7 @@ public class EventFragment extends Fragment implements DBOnCompleteListener<Even
     private Event event;
     private ArrayList<Entrant> entrants;
     private EventDB dbHandler;
+    private ImageStorage imageHandler;
     private String eventID;
     private Account signedInAccount;
     private TextView eventNameView, eventDateView, eventTimeView, eventOrganizerView, eventLocationView,
@@ -93,8 +95,9 @@ public class EventFragment extends Fragment implements DBOnCompleteListener<Even
         super.onViewCreated(view, savedInstanceState);
         navController = Navigation.findNavController(view);
 
-        // Initialize the handler
+        // Initialize the handlers
         dbHandler = new EventDB();
+        imageHandler = new ImageStorage();
 
         // Get the actual event data to populate this view
         dbHandler.getEvent(eventID, this);
@@ -216,7 +219,7 @@ public class EventFragment extends Fragment implements DBOnCompleteListener<Even
         }
 
         // Get the event poster from firebase
-        dbHandler.getImageDownloadUrl(event.getEventPoster(), new StorageOnCompleteListener<Uri>() {
+        imageHandler.getImageDownloadUrl(event.getEventPoster(), new StorageOnCompleteListener<Uri>() {
             @Override
             public void OnCompleteStorage(@NonNull ArrayList<Uri> docs, int queryID, int flags) {
                 // Author of this code segment is James
@@ -290,7 +293,7 @@ public class EventFragment extends Fragment implements DBOnCompleteListener<Even
                 // Set the all the event fields
                 populateAllFields();
             }
-        } else if (queryID == 4) {
+        } else if (queryID == 2) {
             // Log when the data is updated or catch if there was an error
             if (flags == DBOnCompleteFlags.SUCCESS.value) {
                 Log.d("DB", String.format("Successfully finished updating event with ID (%s).", event.getEventID()));

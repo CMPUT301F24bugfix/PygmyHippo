@@ -24,6 +24,7 @@ import androidx.annotation.Nullable;
 import com.example.pygmyhippo.R;
 import com.example.pygmyhippo.common.Event;
 import com.example.pygmyhippo.database.DBOnCompleteFlags;
+import com.example.pygmyhippo.database.ImageStorage;
 import com.example.pygmyhippo.database.StorageOnCompleteListener;
 import com.squareup.picasso.Picasso;
 
@@ -34,7 +35,7 @@ import java.util.ArrayList;
  * @author Kori
  */
 public class EventArrayAdapter extends ArrayAdapter<Event> {
-    private EventDB dbHandler;
+    private ImageStorage imageHandler;
     private Event event;
 
     public EventArrayAdapter(Context context, ArrayList<Event> eventListData) {
@@ -62,7 +63,7 @@ public class EventArrayAdapter extends ArrayAdapter<Event> {
             view = convertView;
         }
 
-        dbHandler = new EventDB();
+        imageHandler = new ImageStorage();
         event = getItem(position);
         Log.d("DB", String.format("Finding %s Event", event.getEventID()));
 
@@ -85,7 +86,7 @@ public class EventArrayAdapter extends ArrayAdapter<Event> {
         }
 
         // Get the event poster from firebase
-        dbHandler.getImageDownloadUrl(event.getEventPoster(), new StorageOnCompleteListener<Uri>() {
+        imageHandler.getImageDownloadUrl(event.getEventPoster(), new StorageOnCompleteListener<Uri>() {
             @Override
             public void OnCompleteStorage(@NonNull ArrayList<Uri> docs, int queryID, int flags) {
                 // Author of this code segment is James

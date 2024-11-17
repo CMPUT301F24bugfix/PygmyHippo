@@ -91,12 +91,14 @@ public class EventDB extends DBHandler {
                 .addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
+                        ArrayList<Event> events = new ArrayList<>();
                         if (task.isSuccessful()) {
+                            events.add(event);
                             Log.d("DB", String.format("Successfully updated event with ID (%s).", event.getEventID()));
-                            listener.OnCompleteDB(new ArrayList<>(), 2, DBOnCompleteFlags.SUCCESS.value);
+                            listener.OnCompleteDB(events, 2, DBOnCompleteFlags.SUCCESS.value);
                         } else {
                             Log.d("DB", String.format("Error: Could not update event with ID (%s).", event.getEventID()));
-                            listener.OnCompleteDB(new ArrayList<>(), 2, DBOnCompleteFlags.ERROR.value);
+                            listener.OnCompleteDB(events, 2, DBOnCompleteFlags.ERROR.value);
                         }
                     }
                 });
@@ -143,34 +145,4 @@ public class EventDB extends DBHandler {
                     }
                 });
         }
-
-    /**
-     * Gets a long-live download uris for Picasso to get image from Firebase Storage.
-     * @author James
-     * @param url String rul with gs:// link to Firebase Storage image.
-     * @param listener DBOnCompleteListener to call when query completes.
-     */
-    public void getImageDownloadUrl(String url, StorageOnCompleteListener<Uri> listener) {
-        Log.d("DB", String.format("Getting storage reference for image url %s", url));
-        try {
-            // Try to get an image
-            StorageReference ref = storage.getReferenceFromUrl(url);
-            ref.getDownloadUrl().addOnCompleteListener(task -> {
-                if (task.isSuccessful()) {
-                    // Add the result to an array list and notify the listener
-                    Log.d("DB", String.format("Found image at %s", url));
-                    Uri uri = task.getResult();
-                    ArrayList<Uri> results = new ArrayList<>();
-                    results.add(uri);
-                    listener.OnCompleteStorage(results, 4, DBOnCompleteFlags.SUCCESS.value);
-                } else {
-                    Log.d("DB", String.format("Image download failed for %s", url));
-                }
-            });
-        } catch (IllegalArgumentException e) {
-            // Notify the listener with an error flag raised
-            Log.d("DB", String.format("IllegalArgumentException for url %s", url));
-            listener.OnCompleteStorage(new ArrayList<>(), 4, DBOnCompleteFlags.ERROR.value);
-        }
-    }
     }
