@@ -200,7 +200,8 @@ public class Event {
     }
 
     /**
-     * This method will check if an event has a certain entrant
+     * This method will check if an event has a certain entrant (based on accountID ONLY,
+     * because there should not be the same entrant with different statuses in an event)
      * @param entrant The entrant to check for
      * @return true if the entrant is in the event, false otherwise
      */
@@ -208,7 +209,7 @@ public class Event {
         if (this.entrants != null) {
             // Go through the whole list of entrants until you find one with matching attributes
             for (int index = 0; index < entrants.size(); index++) {
-                if (entrant.getAccountID().equals(entrants.get(index).getAccountID()) && entrants.get(index).getEntrantStatus().value.equals(entrant.getEntrantStatus().value)) {
+                if (entrant.getAccountID().equals(entrants.get(index).getAccountID())) {
                     // If the attributes are equal, then the list has the entrant
                     return true;
                 }

@@ -15,6 +15,7 @@ Purposes:
 Contributors: Katharine
 Issues:
         - Needs testing
+        - Needs to stop user from joining or leaving waitlist if the event is closed
  */
 
 import static androidx.core.content.ContextCompat.getSystemService;
@@ -23,6 +24,7 @@ import android.Manifest;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.net.Uri;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
@@ -33,6 +35,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -50,8 +53,11 @@ import com.example.pygmyhippo.common.Entrant;
 import com.example.pygmyhippo.common.Event;
 import com.example.pygmyhippo.database.DBOnCompleteFlags;
 import com.example.pygmyhippo.database.DBOnCompleteListener;
+import com.example.pygmyhippo.database.ImageStorage;
+import com.example.pygmyhippo.database.StorageOnCompleteListener;
 import com.example.pygmyhippo.databinding.UserFragmentEventBinding;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
@@ -73,15 +79,16 @@ public class EventFragment extends Fragment implements DBOnCompleteListener<Even
     private ArrayList<Entrant> entrants;
     private Account signedInAccount;
 
+    private EventDB DBhandler;
+    private ImageStorage imageHandler;
     // For getting current location
     private LocationManager locationManager;
-
-    private EventDB handler;
 
     private TextView eventNameView, eventDateView, eventTimeView, eventOrganizerView,
             eventLocationView, eventCostView, eventAboutDescriptionView;
     private Button registerButton, deleteEventButton, deleteQRCodeButton;
     private ConstraintLayout adminConstraint;
+    private ImageView eventImageView;
 
     // populate single event page with hardcoded event information
     public Event hardcodeEvent() {
@@ -125,6 +132,9 @@ public class EventFragment extends Fragment implements DBOnCompleteListener<Even
         eventCostView = binding.uEventCostView;
         eventAboutDescriptionView = binding.uAboutEventDescriptionView;
 
+        // ImageView
+        eventImageView = binding.uEventImageView;
+
         // Buttons
         registerButton = binding.uRegisterButton;
         deleteEventButton = binding.aDeleteEventButton;
@@ -133,8 +143,8 @@ public class EventFragment extends Fragment implements DBOnCompleteListener<Even
         // Container Layouts
         adminConstraint = binding.aActionsConstraint;
 
-        // Initialize location manager and database handler
-        handler = new EventDB();
+        DBhandler = new EventDB();
+        imageHandler = new ImageStorage();
         locationManager = (LocationManager) requireContext().getSystemService(Context.LOCATION_SERVICE);
 
         // Get current user account
@@ -164,7 +174,7 @@ public class EventFragment extends Fragment implements DBOnCompleteListener<Even
 
         // This button is for admin to delete the event
         deleteEventButton.setOnClickListener(buttonView -> {
-            handler.deleteEventByID(event.getEventID(), this);
+            DBhandler.deleteEventByID(event.getEventID(), this);
         });
 
         // For admin to delete the event's QR code
@@ -217,12 +227,12 @@ public class EventFragment extends Fragment implements DBOnCompleteListener<Even
             populateTextFields();
         } else {
             Log.d("EventFragment", String.format("Non-null eventID, attempting to retrieve Event with ID %s", eventID));
-            handler.getEventByID(eventID, this);
+            DBhandler.getEventByID(eventID, this);
         }
     }
 
     /**
-     * Updates text views in the fragment to reflect the same info in event.
+     * Updates text views and buttons in the fragment to reflect the same info in event.
      */
     private void populateTextFields() {
         eventNameView.setText(event.getEventTitle());
@@ -232,6 +242,33 @@ public class EventFragment extends Fragment implements DBOnCompleteListener<Even
         eventLocationView.setText(event.getLocation());
         eventCostView.setText(event.getCost());
         eventAboutDescriptionView.setText(event.getDescription());
+
+        // If the event already has the entrant, then we want to change the looks of the button
+        if (event.hasEntrant(entrant)) {
+            registerButton.setBackgroundColor(0xFF808080);
+            registerButton.setText("✔");
+        }
+
+        // Get the poster for the event
+        imageHandler.getImageDownloadUrl(event.getEventPoster(), new StorageOnCompleteListener<Uri>() {
+            @Override
+            public void OnCompleteStorage(@NonNull ArrayList<Uri> docs, int queryID, int flags) {
+                // Author of this code segment is James
+                if (flags == DBOnCompleteFlags.SUCCESS.value) {
+                    // Get the image and format it
+                    Uri downloadUri = docs.get(0);
+                    int imageSideLength = eventImageView.getWidth() / 2;
+                    Picasso.get()
+                            .load(downloadUri)
+                            .resize(imageSideLength, imageSideLength)
+                            .centerCrop()
+                            .into(eventImageView);
+                } else {
+                    // Event had no image, so it will stay as default image
+                    Log.d("Storage", String.format("No image found, setting default"));
+                }
+            }
+        });
     }
 
     /**
@@ -244,7 +281,7 @@ public class EventFragment extends Fragment implements DBOnCompleteListener<Even
         if (event.hasEntrant(entrant)) {
             registerButton.setBackgroundColor(0xFF35B35D);
             event.removeEntrant(entrant);
-            handler.updateEvent(event, this);       // Add the changes to the database
+            DBhandler.updateEvent(event, this);       // Add the changes to the database
             registerButton.setText("Register");
         } else {
             // otherwise, check for enabled geolocation and add entrant accordingly
@@ -259,7 +296,7 @@ public class EventFragment extends Fragment implements DBOnCompleteListener<Even
                     if (signedInAccount.isEnableGeolocation()) {
                         registerButton.setBackgroundColor(0xFF808080);
                         event.addEntrant(entrant);
-                        handler.updateEvent(event, this);       // Update the database
+                        DBhandler.updateEvent(event, this);       // Update the database
                         registerButton.setText("✔");
 
                         // Get the user's location
@@ -294,7 +331,7 @@ public class EventFragment extends Fragment implements DBOnCompleteListener<Even
                 // If no geolocation, then the user will just get added
                 registerButton.setBackgroundColor(0xFF808080);
                 event.addEntrant(entrant);
-                handler.updateEvent(event, this);       // Update the database
+                DBhandler.updateEvent(event, this);       // Update the database
                 registerButton.setText("✔");
             }
         }
