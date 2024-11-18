@@ -85,7 +85,6 @@ public class EventFragment extends Fragment implements DBOnCompleteListener<Even
                 entrants,
                 "The Swamp",
                 "2024-10-31",
-                // TODO: there is a bit of an issue with aligning the time when it is shorter on the xml
                 "4:00 PM MST - 4:00 AM MST",
                 "Love hippos and a party? Love a party! Join a party!",
                 "$150.00",
