@@ -16,6 +16,9 @@
             android:name="currentRole"
             app:argType="string"
             android:defaultValue="user" />
+        <action
+            android:id="@+id/user_to_event_fragment"
+            app:destination="@id/u_eventFragment" />
     </fragment>
 
     <fragment
@@ -70,6 +73,9 @@
         <action
             android:id="@+id/action_u_eventFragment_to_u_scanQR_menu_item"
             app:destination="@id/u_scanQR_menu_item" />
+        <action
+            android:id="@+id/user_event_fragment_to_list"
+            app:destination="@id/u_my_events_menu_item" />
     </fragment>
 
     <fragment

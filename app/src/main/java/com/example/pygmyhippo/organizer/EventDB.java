@@ -8,18 +8,22 @@ Issues:
     - None
  */
 
+import android.net.Uri;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
 
 import com.example.pygmyhippo.common.Event;
+import com.example.pygmyhippo.common.Image;
 import com.example.pygmyhippo.database.DBHandler;
 import com.example.pygmyhippo.database.DBOnCompleteFlags;
 import com.example.pygmyhippo.database.DBOnCompleteListener;
+import com.example.pygmyhippo.database.StorageOnCompleteListener;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
 
@@ -88,6 +92,12 @@ public class EventDB extends DBHandler {
                 });
     }
 
+    /**
+     * This method will set the currently existing event to the new one with updated values
+     * @author Kori
+     * @param event The event we want to update
+     * @param listener The listener that initiates when the data is done updating
+     */
     public void updateEvent(Event event, DBOnCompleteListener<Event> listener) {
         db.collection("Events")
                 .document(event.getEventID())
@@ -104,6 +114,38 @@ public class EventDB extends DBHandler {
                             Log.d("DB", String.format("Error: Could not update event with ID (%s).", event.getEventID()));
                             listener.OnCompleteDB(events, 2, DBOnCompleteFlags.ERROR.value);
                         }
+                    }
+                });
+    }
+
+    /**
+     * This method returns the list of events belonging to an organiser
+     * @param accountID The ID used to retrieve the matching events from the database
+     * @param listener What gets notified of results
+     * @author Kori
+     */
+    public void getOrganiserEvents(String accountID, DBOnCompleteListener<Event> listener) {
+        db.collection("Events")
+                .whereEqualTo("organiserID", accountID)
+                .get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        QuerySnapshot queryResult = task.getResult();
+                        ArrayList<Event> events = new ArrayList<>();
+                        queryResult.forEach(doc -> events.add(doc.toObject(Event.class)));
+                        if (events.size() == 0) {
+                            Log.d("DB", String.format("Found no events with organiser ID (%s)", accountID));
+                            listener.OnCompleteDB(events, 3, DBOnCompleteFlags.NO_DOCUMENTS.value);
+                        } else if (events.size() == 1) {
+                            Log.d("DB", String.format("Found event (%s) with organiser ID (%s)", events.get(0).getEventID(), accountID));
+                            listener.OnCompleteDB(events, 3, DBOnCompleteFlags.SINGLE_DOCUMENT.value);
+                        } else {
+                            Log.d("DB", String.format("Found %d events  with organiser ID (%s)", events.size(), accountID));
+                            listener.OnCompleteDB(events, 3, DBOnCompleteFlags.MULTIPLE_DOCUMENTS.value);
+                        }
+                    } else {
+                        Log.d("DB", String.format("Could not get event with organiser ID (%s).", accountID));
+                        listener.OnCompleteDB(new ArrayList<>(), 3, DBOnCompleteFlags.ERROR.value);
                     }
                 });
     }
