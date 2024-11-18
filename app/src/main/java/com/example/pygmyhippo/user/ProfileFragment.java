@@ -13,6 +13,7 @@ Issues:
     - Only text fields are updated in database, It doesn't have image handling yet
  */
 
+import android.Manifest;
 import android.widget.AdapterView;
 import android.widget.CheckBox;
 
@@ -149,6 +150,31 @@ public class ProfileFragment extends Fragment  implements AdapterView.OnItemSele
 
         handler = new ProfileDB();
 
+        /*
+        Code is from https://developer.android.com/develop/sensors-and-location/location/permissions#:~:text=ACCESS_FINE_LOCATION%20must%20be%20requested%20with,to%20only%20approximate%20location%20information.
+        Accessed on 2024-11-17
+        It sets up the permission launcher to ask for location permissions, and then launches it
+        TODO: Remove check box for geolocation, permissions handle it
+         */
+        ActivityResultLauncher<String> locationPermissionRequest =
+                registerForActivityResult(new ActivityResultContracts
+                                .RequestPermission(), isGranted -> {
+                            if (isGranted) {
+                                // Approximate location access granted, set that in the user's profile
+                                Log.d("Profile", "Location permissions granted");
+                                signedInAccount.setEnableGeolocation(true);
+                                handler.updateProfile(signedInAccount, this);
+                            } else {
+                                // No location access granted.
+                                Log.d("Profile", "No location permissions granted");
+                                signedInAccount.setEnableGeolocation(false);
+                                handler.updateProfile(signedInAccount, this);
+                            }
+                        }
+                );
+        // Launch the permission request
+        locationPermissionRequest.launch(Manifest.permission.ACCESS_COARSE_LOCATION);
+
         editButton = root.findViewById(R.id.E_profile_editBtn);
         updateButton = root.findViewById(R.id.E_profile_create);
         deleteUserButton = binding.aDeleteUserButton;
@@ -267,18 +293,7 @@ public class ProfileFragment extends Fragment  implements AdapterView.OnItemSele
                 signedInAccount.setEnableGeolocation(decGeo.isChecked());
 
                 // Update to reflect in the database
-                handler.updateProfile(signedInAccount, new DBOnCompleteListener<Account>() {
-                    @Override
-                    public void OnCompleteDB(@NonNull ArrayList<Account> docs, int queryID, int flags) {
-                        // Log when the data is updated or catch if there was an error
-                        if (flags == DBOnCompleteFlags.SUCCESS.value) {
-                            Log.d("DB", "Successfully finished updating account");
-                        } else {
-                            // If not the success flag, then there was an error
-                            Log.d("Profile", "Error in updating account.");
-                        }
-                    }
-                });
+                handler.updateProfile(signedInAccount, ProfileFragment.this::OnCompleteDB);
 
                 // edit margins
                 ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) decGeo.getLayoutParams();
@@ -458,6 +473,14 @@ public class ProfileFragment extends Fragment  implements AdapterView.OnItemSele
                 }
             } else {
                 Toast.makeText(getContext(), "Could not change current role", Toast.LENGTH_LONG).show();
+            }
+        } else if (queryID == 3) {
+            // Log when the data is updated or catch if there was an error
+            if (flags == DBOnCompleteFlags.SUCCESS.value) {
+                Log.d("DB", "Successfully finished updating account");
+            } else {
+                // If not the success flag, then there was an error
+                Log.d("Profile", "Error in updating account.");
             }
         }
     }

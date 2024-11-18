@@ -3,6 +3,10 @@ package com.example.pygmyhippo.user;
 /*
 This Fragment will display one of the events that a User can see after scanning its QR code
 Will be used by users and admins
+Citations:
+        - ALL Location handling was researched on https://stackoverflow.com/questions/21085497/how-to-use-android-locationmanager-and-listener
+          * Code referring to location is sourced from this cite and modified
+          Accessed on 2024-11-17 and answered by nisarg parekh
 Purposes:
         - Let the User view the details of the event
         - Let the User join the event if they wish
@@ -13,8 +17,16 @@ Issues:
         - Needs testing
  */
 
+import static androidx.core.content.ContextCompat.getSystemService;
+
+import android.Manifest;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
+import android.content.pm.PackageManager;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -22,10 +34,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
@@ -47,7 +61,7 @@ import java.util.ArrayList;
  * @version 1.0
  * No returns and no parameters
  */
-public class EventFragment extends Fragment implements DBOnCompleteListener<Event> {
+public class EventFragment extends Fragment implements DBOnCompleteListener<Event>, LocationListener {
 
     private UserFragmentEventBinding binding;
     private NavController navController;
@@ -58,6 +72,9 @@ public class EventFragment extends Fragment implements DBOnCompleteListener<Even
     private Entrant entrant;
     private ArrayList<Entrant> entrants;
     private Account signedInAccount;
+
+    // For getting current location
+    private LocationManager locationManager;
 
     private EventDB handler;
 
@@ -116,7 +133,9 @@ public class EventFragment extends Fragment implements DBOnCompleteListener<Even
         // Container Layouts
         adminConstraint = binding.aActionsConstraint;
 
+        // Initialize location manager and database handler
         handler = new EventDB();
+        locationManager = (LocationManager) requireContext().getSystemService(Context.LOCATION_SERVICE);
 
         // Get current user account
         signedInAccount = EventFragmentArgs.fromBundle(getArguments()).getSignedInAccount();
@@ -236,11 +255,33 @@ public class EventFragment extends Fragment implements DBOnCompleteListener<Even
                 builder.setMessage("This event requires geolocation. Continue registering?");
                 builder.setCancelable(true);
                 builder.setPositiveButton("Yes", (DialogInterface.OnClickListener) (dialog, which) -> {
-                    // Add the user if they wish to continue (and update button looks)
-                    registerButton.setBackgroundColor(0xFF808080);
-                    event.addEntrant(entrant);
-                    handler.updateEvent(event, this);       // Update the database
-                    registerButton.setText("✔");
+                    // Add the user if they wish to continue only if they have geolocation enabled (and update button looks)
+                    if (signedInAccount.isEnableGeolocation()) {
+                        registerButton.setBackgroundColor(0xFF808080);
+                        event.addEntrant(entrant);
+                        handler.updateEvent(event, this);       // Update the database
+                        registerButton.setText("✔");
+
+                        // Get the user's location
+                        if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                            // TODO: Consider calling
+                            //    ActivityCompat#requestPermissions
+                            // here to request the missing permissions, and then overriding
+                            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                            //                                          int[] grantResults)
+                            // to handle the case where the user grants the permission. See the documentation
+                            // for ActivityCompat#requestPermissions for more details.
+                            return;
+                        }
+                        Location location = locationManager.getLastKnownLocation(locationManager.NETWORK_PROVIDER);
+
+                        // Use this method implemented from the location listener to continue our operations when location is found
+                        onLocationChanged(location);
+
+                    } else {
+                        // Don't sign the user up for the event
+                        Toast.makeText(getContext(), "Error joining waitlist: Must have geolocation enabled!", Toast.LENGTH_LONG).show();
+                    }
                 });
                 builder.setNegativeButton("No", (DialogInterface.OnClickListener) (dialog, which) -> {
                     // Don't add the user to the waitlist
@@ -256,6 +297,20 @@ public class EventFragment extends Fragment implements DBOnCompleteListener<Even
                 handler.updateEvent(event, this);       // Update the database
                 registerButton.setText("✔");
             }
+        }
+    }
+
+    /**
+     * This method implements the LocationListener. Used to update the user's location when registering for an event
+     * TODO: reconfigure account or entrant to contain this
+     * @param location The retrieved location
+     */
+    @Override
+    public void onLocationChanged(Location location) {
+        if (location != null) {
+            double longitude = location.getLongitude();
+            double latitude = location.getLatitude();
+            Log.d("Location", String.format("latitude: %f, longitude: %f", latitude, longitude));
         }
     }
 
