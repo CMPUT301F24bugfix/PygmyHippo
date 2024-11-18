@@ -40,6 +40,7 @@ import com.example.pygmyhippo.common.Event;
 import com.example.pygmyhippo.common.Image;
 import com.example.pygmyhippo.database.DBOnCompleteFlags;
 import com.example.pygmyhippo.database.DBOnCompleteListener;
+import com.example.pygmyhippo.database.EventDB;
 import com.example.pygmyhippo.database.ImageStorage;
 import com.example.pygmyhippo.database.StorageOnCompleteListener;
 import com.example.pygmyhippo.databinding.OrganiserPostEventBinding;

@@ -23,6 +23,8 @@ import com.example.pygmyhippo.common.Image;
 import com.example.pygmyhippo.common.RecyclerClickListener;
 import com.example.pygmyhippo.database.DBOnCompleteFlags;
 import com.example.pygmyhippo.database.DBOnCompleteListener;
+import com.example.pygmyhippo.database.ImageStorage;
+import com.example.pygmyhippo.database.StorageOnCompleteListener;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -34,25 +36,25 @@ public class AllImagesAdapter extends BaseRecyclerAdapter<Image, AllImagesAdapte
     /**
      * The child of the base adapter, this child will hold an image formatted for this list
      */
-    public static class ImageViewHolder extends BaseViewHolder<Image> implements DBOnCompleteListener<Uri> {
+    public static class ImageViewHolder extends BaseViewHolder<Image> implements StorageOnCompleteListener<Uri> {
         private final ImageView imageView;
-        private final AllImagesDB handler;
+        private final ImageStorage handler;
 
         public ImageViewHolder(@NonNull View itemView) {
             super(itemView);
             imageView = itemView.findViewById(R.id.a_alllist_image);
-            handler = new AllImagesDB();
+            handler = new ImageStorage();
         }
 
         @Override
         public void setViews(Image dataclass) {
             // Get the image from the database
-            handler.getImageDownloadUrl(dataclass, this);
+            handler.getImageDownloadUrl(dataclass.getUrl(), this);
         }
 
         @Override
-        public void OnCompleteDB(@NonNull ArrayList<Uri> docs, int queryID, int flags) {
-            if (queryID == 0) {
+        public void OnCompleteStorage(@NonNull ArrayList<Uri> docs, int queryID, int flags) {
+            if (queryID == 1) {
                 if (flags == DBOnCompleteFlags.SUCCESS.value) {
                     // Get the image and format it
                     Uri downloadUri = docs.get(0);

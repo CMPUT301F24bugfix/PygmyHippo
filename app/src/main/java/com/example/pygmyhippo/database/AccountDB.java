@@ -1,4 +1,4 @@
-package com.example.pygmyhippo.user;
+package com.example.pygmyhippo.database;
 
 /*
  * DBHandler for ProfileFragment
@@ -14,12 +14,9 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 
 import com.example.pygmyhippo.common.Account;
-import com.example.pygmyhippo.database.DBHandler;
-import com.example.pygmyhippo.database.DBOnCompleteFlags;
-import com.example.pygmyhippo.database.DBOnCompleteListener;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 
@@ -29,7 +26,7 @@ import java.util.ArrayList;
  * Queries for account based off of document ID.
  * Can delete account based off of document ID.
  */
-public class ProfileDB extends DBHandler {
+public class AccountDB extends DBHandler {
     /**
      * This method will notify the listener to return the account relating to the given ID
      * @param accountID The ID of the account we want to get
@@ -37,21 +34,32 @@ public class ProfileDB extends DBHandler {
      */
     public void getAccountByID(String accountID, DBOnCompleteListener<Account> listener) {
         db.collection("Accounts")
-            .document(accountID)
-            .get()
-            .addOnCompleteListener(task -> {
-                if (task.isSuccessful()) {
-                    Log.d("DB", String.format("Successfully got Account with ID %s", accountID));
-                    DocumentSnapshot doc = task.getResult();
-                    ArrayList<Account> accountList = new ArrayList<>();
-                    accountList.add(doc.toObject(Account.class));
-                    listener.OnCompleteDB(accountList, 0, DBOnCompleteFlags.SUCCESS.value);
-                } else {
-                    Log.d("DB", String.format("Unsuccessful in getting Account with ID %s", accountID));
-                    listener.OnCompleteDB(new ArrayList<>(), 0, DBOnCompleteFlags.ERROR.value);
-                }
-            });
+                .whereEqualTo("accountID", accountID)
+                .get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        QuerySnapshot queryResult = task.getResult();
+
+                        // Add results to a list, this gets passed to the listener
+                        ArrayList<Account> accounts = new ArrayList<>();
+                        queryResult.forEach(doc -> accounts.add(doc.toObject(Account.class)));
+                        if (accounts.size() == 0) {
+                            Log.d("DB", String.format("Found no accounts with account ID (%s)", accountID));
+                            listener.OnCompleteDB(accounts, 0, DBOnCompleteFlags.NO_DOCUMENTS.value);
+                        } else if (accounts.size() == 1) {
+                            Log.d("DB", String.format("Found account (%s) with account ID (%s)", accounts.get(0).getAccountID(), accountID));
+                            listener.OnCompleteDB(accounts, 0, DBOnCompleteFlags.SINGLE_DOCUMENT.value);
+                        } else {
+                            Log.d("DB", String.format("Found %d accounts  with account ID (%s)", accounts.size(), accountID));
+                            listener.OnCompleteDB(accounts, 0, DBOnCompleteFlags.MULTIPLE_DOCUMENTS.value);
+                        }
+                    } else {
+                        Log.d("DB", String.format("Could not get account with account ID (%s).", accountID));
+                        listener.OnCompleteDB(new ArrayList<>(), 0, DBOnCompleteFlags.ERROR.value);
+                    }
+                });
     }
+
 
     /**
      * This method will delete an account from the database
@@ -119,6 +127,34 @@ public class ProfileDB extends DBHandler {
                             Log.d("DB", String.format("Error: Could not update account with ID (%s).", account.getAccountID()));
                             listener.OnCompleteDB(new ArrayList<>(), 3, DBOnCompleteFlags.ERROR.value);
                         }
+                    }
+                });
+    }
+
+    /**
+     * This query specifically gets all the users from the database
+     * @param limit The max amount of accounts we want to retrieve
+     * @param listener The listener that gets notified when the data is retrieved
+     */
+    public void getUsers(int limit, DBOnCompleteListener<Account> listener) {
+        db.collection("Accounts")
+                .limit(limit)
+                .get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        QuerySnapshot query = task.getResult();
+                        Log.d("DB", String.format("Successfully got %d accounts from Firestore", query.size()));
+
+                        // Convert and add the docs to accounts into a list, and notify the listener about the success
+                        ArrayList<Account> accountList = new ArrayList<>();
+                        query.forEach(doc -> {
+                            accountList.add(doc.toObject(Account.class));
+                        });
+                        listener.OnCompleteDB(accountList, 4, DBOnCompleteFlags.SUCCESS.value);
+                    } else {
+                        // Notify the listener of an error
+                        Log.d("DB", "Could not get accounts from Firestore");
+                        listener.OnCompleteDB(new ArrayList<>(), 4, DBOnCompleteFlags.ERROR.value);
                     }
                 });
     }

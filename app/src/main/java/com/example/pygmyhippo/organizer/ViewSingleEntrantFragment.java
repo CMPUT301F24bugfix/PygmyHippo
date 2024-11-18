@@ -35,8 +35,10 @@ import androidx.navigation.Navigation;
 import com.example.pygmyhippo.common.Account;
 import com.example.pygmyhippo.common.Entrant;
 import com.example.pygmyhippo.common.Event;
+import com.example.pygmyhippo.database.AccountDB;
 import com.example.pygmyhippo.database.DBOnCompleteFlags;
 import com.example.pygmyhippo.database.DBOnCompleteListener;
+import com.example.pygmyhippo.database.EventDB;
 import com.example.pygmyhippo.databinding.OrganiserViewSingleEntrantBinding;
 
 import java.util.ArrayList;
@@ -51,7 +53,8 @@ public class ViewSingleEntrantFragment extends Fragment {
     private Account account;
     private String status;
     private String eventID;
-    private ViewEntrantDB dbHandler;
+    private EventDB dbHandler;
+    private AccountDB dbProfileHandler;
     private NavController navController;
 
     @Override
@@ -82,6 +85,7 @@ public class ViewSingleEntrantFragment extends Fragment {
         String accountID = getArguments().getString("accountID");
         status = getArguments().getString("status");
         eventID = getArguments().getString("eventID");
+        dbHandler = new EventDB();
 
         // Get the textviews and buttons
         // TODO: Would also get for image here
@@ -111,7 +115,7 @@ public class ViewSingleEntrantFragment extends Fragment {
                     statusTextView.setText("cancelled");
 
                     // Get the event from the database and change the status of the entrant there
-                    dbHandler.getEvent(eventID, new DBOnCompleteListener<Event>() {
+                    dbHandler.getEventByID(eventID, new DBOnCompleteListener<Event>() {
                         @Override
                         public void OnCompleteDB(@NonNull ArrayList<Event> docs, int queryID, int flags) {
                             if (flags == DBOnCompleteFlags.SINGLE_DOCUMENT.value) {
@@ -141,8 +145,8 @@ public class ViewSingleEntrantFragment extends Fragment {
         backButton.setOnClickListener(view -> navController.popBackStack());
 
         // Get the account from the database
-        dbHandler = new ViewEntrantDB();
-        dbHandler.getAccount(accountID, new DBOnCompleteListener<Account>() {
+        dbProfileHandler = new AccountDB();
+        dbProfileHandler.getAccountByID(accountID, new DBOnCompleteListener<Account>() {
             @Override
             public void OnCompleteDB(@NonNull ArrayList<Account> docs, int queryID, int flags) {
                 if (flags == DBOnCompleteFlags.SINGLE_DOCUMENT.value) {

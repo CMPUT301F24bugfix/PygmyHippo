@@ -35,6 +35,7 @@ import com.example.pygmyhippo.common.Entrant;
 import com.example.pygmyhippo.common.Event;
 import com.example.pygmyhippo.database.DBOnCompleteFlags;
 import com.example.pygmyhippo.database.DBOnCompleteListener;
+import com.example.pygmyhippo.database.EventDB;
 
 import java.util.ArrayList;
 
@@ -51,7 +52,7 @@ public class ViewEntrantsFragment extends Fragment implements DBOnCompleteListen
     private Spinner statusSpinner;
     private ImageButton backButton;
     private Event event = new Event();
-    private ViewEntrantDB dbHandler;
+    private EventDB dbHandler;
 
     private NavController navController;
     private String eventID;
@@ -85,8 +86,8 @@ public class ViewEntrantsFragment extends Fragment implements DBOnCompleteListen
         }
 
         // Get the event from the database
-        dbHandler = new ViewEntrantDB();
-        dbHandler.getEvent(eventID, this);
+        dbHandler = new EventDB();
+        dbHandler.getEventByID(eventID, this);
 
         // Get the spinner view
         statusSpinner = view.findViewById(R.id.o_entrant_list_spinner);
@@ -200,7 +201,7 @@ public class ViewEntrantsFragment extends Fragment implements DBOnCompleteListen
     @Override
     public void OnCompleteDB(@NonNull ArrayList<Event> docs, int queryID, int flags) {
         switch (queryID) {
-            case 0: // getEvent()
+            case 1: // getEvent()
                 if (flags == DBOnCompleteFlags.SINGLE_DOCUMENT.value) {
                     // Get the event for this list of entrants and initialize the list
                     event = docs.get(0);
