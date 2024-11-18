@@ -155,6 +155,23 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/E_profile_profileImg" />
 
+            <Button
+                android:id="@+id/e_location_button"
+                android:layout_marginTop="30dp"
+                android:paddingStart="60dp"
+                android:paddingEnd="60dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:backgroundTint="@color/main_buton"
+                android:text="View Location"
+                android:textColor="@color/main_button_text"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/entrant_phone"
+                android:visibility="gone"
+                android:clickable="false"/>
+
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>
 
