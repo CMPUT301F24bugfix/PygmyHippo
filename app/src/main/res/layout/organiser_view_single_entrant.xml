@@ -38,7 +38,7 @@
 
     <ScrollView
         android:id="@+id/E_profile_form"
-        android:layout_width="533dp"
+        android:layout_width="match_parent"
         android:layout_height="708dp"
         android:layout_marginTop="16dp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -73,8 +73,7 @@
                 android:text="Pronouns:"
                 android:textColor="@color/dark_purple"
                 android:textSize="20sp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.275"
+                app:layout_constraintEnd_toStartOf="@+id/E_profile_role"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/E_profile_role" />
 
@@ -86,9 +85,7 @@
                 android:text="she/they"
                 android:textColor="@color/dark_purple"
                 android:textSize="20sp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.503"
-                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintStart_toStartOf="@+id/entrant_email"
                 app:layout_constraintTop_toBottomOf="@+id/E_profile_pronounsLabel" />
 
             <TextView
@@ -100,9 +97,7 @@
                 android:text="Phone:"
                 android:textColor="@color/dark_purple"
                 android:textSize="20sp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.255"
-                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintStart_toStartOf="@+id/E_profile_emailLabel"
                 app:layout_constraintTop_toBottomOf="@+id/entrant_email" />
 
             <TextView
@@ -113,9 +108,7 @@
                 android:text="111 222 3333"
                 android:textColor="@color/dark_purple"
                 android:textSize="20sp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.503"
-                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintStart_toStartOf="@+id/entrant_email"
                 app:layout_constraintTop_toBottomOf="@+id/E_profile_phoneLabel" />
 
             <TextView
@@ -127,9 +120,7 @@
                 android:text="Email:"
                 android:textColor="@color/dark_purple"
                 android:textSize="20sp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.255"
-                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintStart_toStartOf="@+id/E_profile_pronounsLabel"
                 app:layout_constraintTop_toBottomOf="@+id/entrant_prounouns" />
 
             <TextView
@@ -150,27 +141,25 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
-                android:layout_marginEnd="228dp"
                 android:text="⭐ Entrant"
                 app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/E_profile_profileImg" />
 
-            <Button
-                android:id="@+id/e_location_button"
+            <!-- map is attributed to Strebe - Own work, CC BY-SA 3.0, https://commons.wikimedia.org/w/index.php?curid=16115228 -->
+            <ImageView
+                android:id="@+id/e_map"
                 android:layout_marginTop="30dp"
-                android:paddingStart="60dp"
-                android:paddingEnd="60dp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:backgroundTint="@color/main_buton"
-                android:text="View Location"
-                android:textColor="@color/main_button_text"
+                android:layout_width="match_parent"
+                android:layout_marginBottom="100dp"
+                android:layout_height="230dp"
+                android:background="@drawable/equirectangular_map"
+                android:scaleType="fitCenter"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/entrant_phone"
-                android:visibility="gone"
-                android:clickable="false"/>
+                android:visibility="gone" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>

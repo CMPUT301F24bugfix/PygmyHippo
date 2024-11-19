@@ -23,6 +23,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -96,6 +97,7 @@ public class ViewSingleEntrantFragment extends Fragment {
         TextView phoneTextView = binding.entrantPhone;
         TextView statusTextView = binding.entrantStatus;
         Button statusButton = binding.eStatusButton;
+        ImageView mapView = binding.eMap;
 
         // Set the status indication
         statusTextView.setText(status);
@@ -153,11 +155,16 @@ public class ViewSingleEntrantFragment extends Fragment {
                     // Get the event for this list of entrants and initialize the list
                     account = docs.get(0);
 
-                    // Set the text views once we get the data
+                    // Set all the views once we get the data
                     userNameView.setText(account.getName());
                     pronounsTextView.setText(account.getPronouns());
                     emailTextView.setText(account.getEmailAddress());
                     phoneTextView.setText(account.getPhoneNumber());
+
+                    // Check if geolocation is set, if it is display the map and location
+                    if (account.isEnableGeolocation()) {
+                        mapView.setVisibility(View.VISIBLE);
+                    }
                 } else {
                     // Should only ever expect 1 document, otherwise there must be an error
                     handleDBError();
@@ -207,5 +214,10 @@ public class ViewSingleEntrantFragment extends Fragment {
     private void handleDBError() {
         Toast toast = Toast.makeText(getContext(), "DB Error!", Toast.LENGTH_SHORT);
         toast.show();
+    }
+
+    public void displayLocation() {
+        // TODO: Get longitude and latitude from some account attribute
+
     }
 }
