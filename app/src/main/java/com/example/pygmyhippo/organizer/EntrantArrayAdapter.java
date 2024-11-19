@@ -23,6 +23,7 @@ import androidx.annotation.Nullable;
 import com.example.pygmyhippo.R;
 import com.example.pygmyhippo.common.Account;
 import com.example.pygmyhippo.common.Entrant;
+import com.example.pygmyhippo.database.AccountDB;
 import com.example.pygmyhippo.database.DBOnCompleteFlags;
 import com.example.pygmyhippo.database.DBOnCompleteListener;
 
@@ -35,7 +36,7 @@ import java.util.ArrayList;
  *  - Make profile image change based on the user profile
  */
 public class EntrantArrayAdapter extends ArrayAdapter<Entrant> {
-    private ViewEntrantDB dbHandler;
+    private AccountDB dbHandler;
     private Account account;
 
     public EntrantArrayAdapter(Context context, ArrayList<Entrant> entrantListData) {
@@ -81,12 +82,12 @@ public class EntrantArrayAdapter extends ArrayAdapter<Entrant> {
         accountStatus.setText("Status: " + entrant.getEntrantStatus().value);
 
         // From the database, get the entrant's account info
-        dbHandler = new ViewEntrantDB();
-        dbHandler.getAccount(entrant.getAccountID(), new DBOnCompleteListener<Account>() {
+        dbHandler = new AccountDB();
+        dbHandler.getAccountByID(entrant.getAccountID(), new DBOnCompleteListener<Account>() {
             @Override
             public void OnCompleteDB(@NonNull ArrayList<Account> docs, int queryID, int flags) {
                 switch (queryID) {
-                    case 1: // getAccount()
+                    case 0: // getAccount()
                         if (flags == DBOnCompleteFlags.SINGLE_DOCUMENT.value) {
                             // Get the account for this entrant
                             account = docs.get(0);
