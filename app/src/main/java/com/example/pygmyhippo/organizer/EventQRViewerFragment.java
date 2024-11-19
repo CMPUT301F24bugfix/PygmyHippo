@@ -29,6 +29,7 @@ import com.example.pygmyhippo.common.Account;
 import com.example.pygmyhippo.common.Event;
 import com.example.pygmyhippo.database.DBOnCompleteFlags;
 import com.example.pygmyhippo.database.DBOnCompleteListener;
+import com.example.pygmyhippo.database.EventDB;
 import com.google.zxing.EncodeHintType;
 
 import net.glxn.qrgen.android.QRCode;
@@ -111,7 +112,7 @@ public class EventQRViewerFragment extends Fragment implements DBOnCompleteListe
 
         Bundle bundle = this.getArguments();
         myEventIDString = bundle.getString("eventID");
-        handler.getEvent(myEventIDString, this);
+        handler.getEventByID(myEventIDString, this);
         return view;
     }
 

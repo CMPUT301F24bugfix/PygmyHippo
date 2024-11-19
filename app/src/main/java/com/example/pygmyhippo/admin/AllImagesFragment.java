@@ -31,6 +31,8 @@ import com.example.pygmyhippo.common.Event;
 import com.example.pygmyhippo.common.Image;
 import com.example.pygmyhippo.common.RecyclerClickListener;
 import com.example.pygmyhippo.database.DBOnCompleteListener;
+import com.example.pygmyhippo.database.ImageStorage;
+import com.example.pygmyhippo.database.StorageOnCompleteListener;
 import com.example.pygmyhippo.databinding.AdminFragmentAllListBinding;
 
 import java.util.ArrayList;
@@ -38,11 +40,11 @@ import java.util.ArrayList;
 /**
  * Fragment for displaying all images for admins.
  */
-public class AllImagesFragment extends Fragment implements RecyclerClickListener, DBOnCompleteListener<Object> {
+public class AllImagesFragment extends Fragment implements RecyclerClickListener, StorageOnCompleteListener<Object> {
     AdminFragmentAllListBinding binding;
     AllImagesAdapter adapter;
     ArrayList<Image> imageList;
-    AllImagesDB handler;
+    ImageStorage handler;
 
     @Override
     public void onItemClick(int position) {
@@ -55,7 +57,7 @@ public class AllImagesFragment extends Fragment implements RecyclerClickListener
                              ViewGroup container, Bundle savedInstanceState) {
         binding =  AdminFragmentAllListBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
-        handler = new AllImagesDB();
+        handler = new ImageStorage();
 
         // Set up the views for this fragment and hide the spinners
         binding.aAlllistTitleText.setText(R.string.all_images_title);
@@ -68,8 +70,8 @@ public class AllImagesFragment extends Fragment implements RecyclerClickListener
         adapter = new AllImagesAdapter(imageList, this);
 
         // Get the accounts and events for their images
-        handler.getAccounts(1000, this);
-        handler.getEvents(1000, this);
+        handler.getAccountsWithImage(1000, this);
+        handler.getEventsWithImage(1000, this);
 
         // Format the recycler list
         binding.aAlllistRecycler.setAdapter(adapter);
@@ -97,9 +99,9 @@ public class AllImagesFragment extends Fragment implements RecyclerClickListener
     }
 
     @Override
-    public void OnCompleteDB(@NonNull ArrayList<Object> docs, int queryID, int flags) {
+    public void OnCompleteStorage(@NonNull ArrayList<Object> docs, int queryID, int flags) {
         switch (queryID) {
-            case 1:
+            case 2:
                 // Go through obtained documents
                 docs.forEach(obj -> {
                     // Get the account and obtain the profile image from it to add to the list
@@ -109,7 +111,7 @@ public class AllImagesFragment extends Fragment implements RecyclerClickListener
                     adapter.notifyItemInserted(imageList.size() - 1);
                 });
                 break;
-            case 2:
+            case 3:
                 docs.forEach(obj -> {
                     // Get the event poster from the obtained object and convert it to an image class
                     Event event = (Event) obj;

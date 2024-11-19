@@ -29,6 +29,7 @@ import com.example.pygmyhippo.R;
 import com.example.pygmyhippo.common.Account;
 import com.example.pygmyhippo.common.Event;
 import com.example.pygmyhippo.database.DBOnCompleteFlags;
+import com.example.pygmyhippo.database.EventDB;
 import com.example.pygmyhippo.database.DBOnCompleteListener;
 import com.example.pygmyhippo.databinding.UserFragmentMyeventsBinding;
 import com.example.pygmyhippo.organizer.MyEventsFragmentArgs;
@@ -122,7 +123,7 @@ public class MyEventsFragment extends Fragment implements DBOnCompleteListener<E
     @Override
     public void OnCompleteDB(@NonNull ArrayList<Event> docs, int queryID, int flags) {
         switch (queryID) {
-            case 3: // getEvent()
+            case 5: // getEvent()
                 if (flags != DBOnCompleteFlags.ERROR.value) {
                     if (flags != DBOnCompleteFlags.NO_DOCUMENTS.value) {
                         // There are events for this organiser, so update the list

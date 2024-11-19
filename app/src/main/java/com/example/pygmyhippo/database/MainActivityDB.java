@@ -1,4 +1,4 @@
-package com.example.pygmyhippo;
+package com.example.pygmyhippo.database;
 
 /*
 This class acts as the data base handler for the main activity
@@ -12,9 +12,6 @@ Issues:
 import android.util.Log;
 
 import com.example.pygmyhippo.common.Account;
-import com.example.pygmyhippo.database.DBHandler;
-import com.example.pygmyhippo.database.DBOnCompleteFlags;
-import com.example.pygmyhippo.database.DBOnCompleteListener;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.QuerySnapshot;
 
