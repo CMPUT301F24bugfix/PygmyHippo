@@ -12,7 +12,10 @@ Issues:
 import android.net.Uri;
 import android.util.Log;
 
+import com.example.pygmyhippo.common.Account;
+import com.example.pygmyhippo.common.Event;
 import com.example.pygmyhippo.common.Image;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
@@ -84,5 +87,57 @@ public class ImageStorage extends DBHandler {
             Log.d("DB", String.format("IllegalArgumentException for url %s", url));
             listener.OnCompleteStorage(new ArrayList<>(), 1, DBOnCompleteFlags.ERROR.value);
         }
+    }
+
+    /**
+     * Gets accounts from Firestore with non-empty string in profilePicture field.
+     * @param limit Limit on number of accounts to get in query.
+     * @param listener DBOnCompleteListener to call when query completes.
+     */
+    public void getAccountsWithImage(int limit, StorageOnCompleteListener<Object> listener) {
+        db.collection("Accounts")
+                .whereNotEqualTo("profilePicture", "")
+                .limit(limit)
+                .get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        // Convert each document to an account, add it to a list, and notify the listener with success flag raised
+                        QuerySnapshot queryResult = task.getResult();
+                        Log.d("DB", String.format("%d Accounts with non-empty profilePicture are fetched.", queryResult.size()));
+                        ArrayList<Account> accountList = new ArrayList<>();
+                        queryResult.forEach(doc -> accountList.add(doc.toObject(Account.class)));
+                        listener.OnCompleteStorage(new ArrayList<>(accountList), 2, DBOnCompleteFlags.SUCCESS.value);
+                    } else {
+                        // Notify the listener with the Error flag raised
+                        Log.d("DB", "Error in getting accounts for All Images");
+                        listener.OnCompleteStorage(new ArrayList<>(), 2, DBOnCompleteFlags.ERROR.value);
+                    }
+                });
+    }
+
+    /**
+     * Gets accounts from Firestore with non-empty string in eventPoster field.
+     * @param limit Limit on number of events to get in query.
+     * @param listener DBOnCompleteListener to call when query completes.
+     */
+    public void getEventsWithImage(int limit, StorageOnCompleteListener<Object> listener) {
+        db.collection("Events")
+                .whereNotEqualTo("eventPoster", "")
+                .limit(limit)
+                .get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        // Convert the docs to events, pass them as a list to the listener with the succes flag raised
+                        QuerySnapshot queryResult = task.getResult();
+                        Log.d("DB", String.format("%d Events with non-empty eventPoster are fetched.", queryResult.size()));
+                        ArrayList<Event> eventList = new ArrayList<>();
+                        queryResult.forEach(doc -> eventList.add(doc.toObject(Event.class)));
+                        listener.OnCompleteStorage(new ArrayList<>(eventList), 3, DBOnCompleteFlags.SUCCESS.value);
+                    } else {
+                        // Notify the listener with error flag raised
+                        Log.d("DB", "Error in getting events for All Images");
+                        listener.OnCompleteStorage(new ArrayList<>(), 3, DBOnCompleteFlags.ERROR.value);
+                    }
+                });
     }
 }

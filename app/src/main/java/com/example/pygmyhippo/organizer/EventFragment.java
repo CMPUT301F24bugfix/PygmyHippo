@@ -36,6 +36,7 @@ import com.example.pygmyhippo.common.Account;
 import com.example.pygmyhippo.common.Event;
 import com.example.pygmyhippo.database.DBOnCompleteFlags;
 import com.example.pygmyhippo.database.DBOnCompleteListener;
+import com.example.pygmyhippo.database.EventDB;
 import com.example.pygmyhippo.database.ImageStorage;
 import com.example.pygmyhippo.database.StorageOnCompleteListener;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -100,7 +101,7 @@ public class EventFragment extends Fragment implements DBOnCompleteListener<Even
         imageHandler = new ImageStorage();
 
         // Get the actual event data to populate this view
-        dbHandler.getEvent(eventID, this);
+        dbHandler.getEventByID(eventID, this);
     }
 
     @Override

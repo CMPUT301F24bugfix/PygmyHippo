@@ -54,6 +54,7 @@ import com.example.pygmyhippo.common.Event;
 import com.example.pygmyhippo.database.DBOnCompleteFlags;
 import com.example.pygmyhippo.database.DBOnCompleteListener;
 import com.example.pygmyhippo.database.ImageStorage;
+import com.example.pygmyhippo.database.EventDB;
 import com.example.pygmyhippo.database.StorageOnCompleteListener;
 import com.example.pygmyhippo.databinding.UserFragmentEventBinding;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -194,7 +195,7 @@ public class EventFragment extends Fragment implements DBOnCompleteListener<Even
                 event = docs.get(0);
                 populateTextFields();
             }
-        } else if (queryID == 1) {
+        } else if (queryID == 4) {
             if (flags == DBOnCompleteFlags.SUCCESS.value) {
                 Log.d("EventFragment", "Successfully deleted event. Navigating back to all events");
                 Bundle navArgs = new Bundle();

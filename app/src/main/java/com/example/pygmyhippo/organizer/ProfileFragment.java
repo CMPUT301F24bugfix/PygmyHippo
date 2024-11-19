@@ -36,10 +36,10 @@ import androidx.navigation.Navigation;
 import com.example.pygmyhippo.R;
 import com.example.pygmyhippo.common.Account;
 import com.example.pygmyhippo.common.Facility;
+import com.example.pygmyhippo.database.AccountDB;
 import com.example.pygmyhippo.database.DBOnCompleteFlags;
 import com.example.pygmyhippo.database.DBOnCompleteListener;
 import com.example.pygmyhippo.databinding.OrganiserFragmentProfileBinding;
-import com.example.pygmyhippo.user.ProfileDB;
 import com.squareup.picasso.Picasso;
 
 import java.net.URISyntaxException;
@@ -68,7 +68,7 @@ public class ProfileFragment extends Fragment implements AdapterView.OnItemSelec
 
     private OrganiserFragmentProfileBinding binding;
     private NavController navController;
-    private ProfileDB handler;
+    private AccountDB handler;
 
     private EditText name_f, pronoun_f, phone_f, email_f, facilityName_f, facilityLocation_f;
 
@@ -166,7 +166,7 @@ public class ProfileFragment extends Fragment implements AdapterView.OnItemSelec
 
         // Get the account and initialize the db handler
         setProfile();
-        handler = new ProfileDB();
+        handler = new AccountDB();
 
         // Allows te page elements to be edited by the user if the edit button is clicked
         View.OnClickListener edit = new View.OnClickListener() {

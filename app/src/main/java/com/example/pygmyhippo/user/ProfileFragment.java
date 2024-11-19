@@ -17,6 +17,7 @@ import android.Manifest;
 import android.widget.AdapterView;
 import android.widget.CheckBox;
 
+import com.example.pygmyhippo.database.AccountDB;
 import com.example.pygmyhippo.databinding.UserFragmentProfileBinding;
 import android.net.Uri;
 import android.os.Bundle;
@@ -67,7 +68,7 @@ public class ProfileFragment extends Fragment  implements AdapterView.OnItemSele
     private Uri imagePath;
     private UserFragmentProfileBinding binding;
     private NavController navController;
-    private ProfileDB handler;
+    private AccountDB handler;
 
     private Account signedInAccount;
     private String adminViewAccountID;
@@ -148,7 +149,7 @@ public class ProfileFragment extends Fragment  implements AdapterView.OnItemSele
         binding = UserFragmentProfileBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
-        handler = new ProfileDB();
+        handler = new AccountDB();
 
         /*
         Code is from https://developer.android.com/develop/sensors-and-location/location/permissions#:~:text=ACCESS_FINE_LOCATION%20must%20be%20requested%20with,to%20only%20approximate%20location%20information.
@@ -451,7 +452,7 @@ public class ProfileFragment extends Fragment  implements AdapterView.OnItemSele
     @Override
     public void OnCompleteDB(@NonNull ArrayList<Account> docs, int queryID, int flags) {
         if (queryID == 0) {
-            if (flags == DBOnCompleteFlags.SUCCESS.value) {
+            if (flags != DBOnCompleteFlags.ERROR.value) {
                 Account retrievedAccount = docs.get(0);
                 populateTextViews(retrievedAccount);
             } else {

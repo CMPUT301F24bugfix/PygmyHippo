@@ -34,6 +34,7 @@ import com.example.pygmyhippo.common.Event;
 import com.example.pygmyhippo.common.RecyclerClickListener;
 import com.example.pygmyhippo.database.DBOnCompleteFlags;
 import com.example.pygmyhippo.database.DBOnCompleteListener;
+import com.example.pygmyhippo.database.EventDB;
 import com.example.pygmyhippo.databinding.AdminFragmentAllListBinding;
 
 import java.util.ArrayList;
@@ -51,7 +52,7 @@ public class AllEventsFragment extends Fragment implements RecyclerClickListener
 
     ArrayList<Event> allEvents;
     AllEventsAdapter adapter;
-    AllEventsDB handler;
+    EventDB handler;
     Account signedInAccount;
 
 
@@ -83,7 +84,7 @@ public class AllEventsFragment extends Fragment implements RecyclerClickListener
         allEvents = new ArrayList<>();
 
         // Initialize the handler and get all the events
-        handler = new AllEventsDB();
+        handler = new EventDB();
         handler.getEvents(1000, this);
 
         // Fill the fields of the recycle view
@@ -125,7 +126,7 @@ public class AllEventsFragment extends Fragment implements RecyclerClickListener
 
     @Override
     public void OnCompleteDB(@NonNull ArrayList<Event> docs, int queryID, int flags) {
-        if (queryID == 0) {
+        if (queryID == 6) {
             if (flags == DBOnCompleteFlags.SUCCESS.value) {
                 // Add each retrieved event to the list
                 docs.forEach(doc -> {

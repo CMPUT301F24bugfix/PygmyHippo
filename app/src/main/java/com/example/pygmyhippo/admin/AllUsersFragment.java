@@ -27,6 +27,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import com.example.pygmyhippo.R;
 import com.example.pygmyhippo.common.Account;
 import com.example.pygmyhippo.common.RecyclerClickListener;
+import com.example.pygmyhippo.database.AccountDB;
 import com.example.pygmyhippo.database.DBOnCompleteFlags;
 import com.example.pygmyhippo.database.DBOnCompleteListener;
 import com.example.pygmyhippo.databinding.AdminFragmentAllListBinding;
@@ -46,7 +47,7 @@ public class AllUsersFragment extends Fragment implements RecyclerClickListener,
     NavController navController;
 
     AllUsersAdapter adapter;
-    AllUsersDB handler;
+    AccountDB handler;
 
     ArrayList<Account> allListData;
     Account signedInAccount;
@@ -75,7 +76,7 @@ public class AllUsersFragment extends Fragment implements RecyclerClickListener,
         binding = AdminFragmentAllListBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
-        handler = new AllUsersDB();
+        handler = new AccountDB();
         allListData = new ArrayList<>();
 
         // Get the account of the current user
@@ -122,7 +123,7 @@ public class AllUsersFragment extends Fragment implements RecyclerClickListener,
 
     @Override
     public void OnCompleteDB(@NonNull ArrayList<Account> docs, int queryID, int flags) {
-        if (queryID == 0) {
+        if (queryID == 4) {
             if (flags == DBOnCompleteFlags.SUCCESS.value) {
                 docs.forEach(doc -> {
                     // Add the retrieved accounts to the list
