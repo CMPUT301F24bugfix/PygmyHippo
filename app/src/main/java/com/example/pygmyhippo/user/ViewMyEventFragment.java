@@ -135,10 +135,21 @@ public class ViewMyEventFragment extends Fragment implements DBOnCompleteListene
         });
 
         // TODO: do stuff here for buttons... and stuff
-
-
+        String clickedEventID = MyEventsFragmentArgs.fromBundle(getArguments()).getEventID();
+        getEvent(clickedEventID);
 
         return view;
+    }
+
+    /**
+     * Tries to query for event by eventID.
+     * eventID should never be null...
+     *
+     * @param eventID ID of the event to query for.
+     */
+    private void getEvent(@Nullable String eventID) {
+        Log.d("EventFragment", String.format("Non-null eventID, attempting to retrieve Event with ID %s", eventID));
+        dbHandler.getEventByID(eventID, this);
     }
 
     /**
@@ -146,7 +157,7 @@ public class ViewMyEventFragment extends Fragment implements DBOnCompleteListene
      */
     // TODO: this is probably where to do the button and text changing for population
     // check the entrant status...
-    private void populateTextFields() {
+    private void populateAllFields() {
         eventNameView.setText(event.getEventTitle());
         eventDateView.setText(event.getDate());
         eventTimeView.setText(event.getTime());
@@ -183,7 +194,7 @@ public class ViewMyEventFragment extends Fragment implements DBOnCompleteListene
             if (flags == DBOnCompleteFlags.SINGLE_DOCUMENT.value) {
                 // Get the event from the database and populate the fragment
                 event = docs.get(0);
-                populateTextFields();
+                populateAllFields();
             }
         } else if (queryID == 2) {
             // Log when the data is updated or catch if there was an error
@@ -194,5 +205,13 @@ public class ViewMyEventFragment extends Fragment implements DBOnCompleteListene
                 Log.d("EventFragment", "Error in updating event.");
             }
         }
+    }
+
+    public void leavePendingWaitlist() {
+
+    }
+
+    public void wonWaitlistSelection() {
+
     }
 }

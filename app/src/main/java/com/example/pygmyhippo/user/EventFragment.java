@@ -25,6 +25,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -75,26 +76,6 @@ public class EventFragment extends Fragment implements DBOnCompleteListener<Even
     private ConstraintLayout adminConstraint;
     private ImageView eventImageView;
 
-    // populate single event page with hardcoded event information
-    public Event hardcodeEvent() {
-        entrants = new ArrayList<>();
-
-        return event = new Event(
-                "Hippo Party",
-                "1",
-                "The Hippopotamus Society",
-                entrants,
-                "The Swamp",
-                "2024-10-31",
-                "4:00 PM MST - 4:00 AM MST",
-                "Love hippos and a party? Love a party! Join a party!",
-                "$150.00",
-                "hippoparty.png",
-                Event.EventStatus.ongoing,
-                true
-        );
-    }
-
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -102,7 +83,7 @@ public class EventFragment extends Fragment implements DBOnCompleteListener<Even
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         binding = UserFragmentEventBinding.inflate(inflater, container, false);
         View view = binding.getRoot();
@@ -177,6 +158,14 @@ public class EventFragment extends Fragment implements DBOnCompleteListener<Even
                 event = docs.get(0);
                 populateTextFields();
             }
+            else {
+                // TODO: popback here
+                // TODO: toast for bad dabatas
+                Toast badEvent = Toast.makeText(getActivity(), "No such event exists", Toast.LENGTH_SHORT);
+                badEvent.show();
+                // should lead back to the qr code scanner
+                navController.popBackStack();
+            }
         } else if (queryID == 4) {
             if (flags == DBOnCompleteFlags.SUCCESS.value) {
                 Log.d("EventFragment", "Successfully deleted event. Navigating back to all events");
@@ -205,9 +194,8 @@ public class EventFragment extends Fragment implements DBOnCompleteListener<Even
      */
     private void getEvent(@Nullable String eventID) {
         if (eventID == null) {
-            Log.d("EventFragment", "No Event ID was passed via navigation to EventFragment, using mock data...");
-            event = hardcodeEvent();
-            populateTextFields();
+            Log.d("EventFragment", "No Event ID was passed via navigation to EventFragment, go back...");
+            navController.popBackStack();
         } else {
             Log.d("EventFragment", String.format("Non-null eventID, attempting to retrieve Event with ID %s", eventID));
             DBhandler.getEventByID(eventID, this);

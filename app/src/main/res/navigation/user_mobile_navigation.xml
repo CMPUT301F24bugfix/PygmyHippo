@@ -16,6 +16,10 @@
             android:name="currentRole"
             app:argType="string"
             android:defaultValue="user" />
+        <argument
+            android:name="eventID"
+            app:argType="string"
+            app:nullable="true" />
         <action
             android:id="@+id/user_to_event_fragment"
             app:destination="@id/u_eventFragment" />
