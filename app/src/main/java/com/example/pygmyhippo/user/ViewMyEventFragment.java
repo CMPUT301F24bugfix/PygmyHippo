@@ -86,6 +86,7 @@ public class ViewMyEventFragment extends Fragment implements DBOnCompleteListene
         );
     }
 
+    // TODO: need to do something with getEvent (ie in user, by eventID passed...)
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -175,15 +176,6 @@ public class ViewMyEventFragment extends Fragment implements DBOnCompleteListene
             }
         });
     }
-
-    /**
-     * Method to display when a database error has occured
-     */
-    private void handleDBError() {
-        Toast toast = Toast.makeText(getContext(), "DB Error!", Toast.LENGTH_SHORT);
-        toast.show();
-    }
-
 
     @Override
     public void OnCompleteDB(@NonNull ArrayList<Event> docs, int queryID, int flags) {
