@@ -218,6 +218,7 @@ public class ViewSingleEntrantFragment extends Fragment {
 
     public void displayLocation() {
         // TODO: Get longitude and latitude from some account attribute
-
+        double latitide = 37.423423;
+        double longitude = -122.083953;
     }
 }

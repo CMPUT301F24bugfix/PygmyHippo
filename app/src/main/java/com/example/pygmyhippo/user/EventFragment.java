@@ -24,6 +24,7 @@ import android.Manifest;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.location.Criteria;
 import android.net.Uri;
 import android.content.pm.PackageManager;
 import android.location.Location;
@@ -189,7 +190,7 @@ public class EventFragment extends Fragment implements DBOnCompleteListener<Even
 
     @Override
     public void OnCompleteDB(@NonNull ArrayList<Event> docs, int queryID, int flags) {
-        if (queryID == 0) {
+        if (queryID == 1) {
             if (flags == DBOnCompleteFlags.SINGLE_DOCUMENT.value) {
                 // Get the event from the database and populate the fragment
                 event = docs.get(0);
@@ -309,12 +310,11 @@ public class EventFragment extends Fragment implements DBOnCompleteListener<Even
                             //                                          int[] grantResults)
                             // to handle the case where the user grants the permission. See the documentation
                             // for ActivityCompat#requestPermissions for more details.
-                            return;
+                            Toast.makeText(getContext(), "No location permission?", Toast.LENGTH_LONG).show();
                         }
-                        Location location = locationManager.getLastKnownLocation(locationManager.NETWORK_PROVIDER);
-
-                        // Use this method implemented from the location listener to continue our operations when location is found
-                        onLocationChanged(location);
+                        // https://stackoverflow.com/questions/16898675/how-does-it-work-requestlocationupdates-locationrequest-listener
+                        // Accessed on 2024-11-19, used to help understand when the listener is called
+                        locationManager.requestLocationUpdates(locationManager.NETWORK_PROVIDER, 1000, 0, this);
 
                     } else {
                         // Don't sign the user up for the event
@@ -349,7 +349,11 @@ public class EventFragment extends Fragment implements DBOnCompleteListener<Even
             double longitude = location.getLongitude();
             double latitude = location.getLatitude();
             Log.d("Location", String.format("latitude: %f, longitude: %f", latitude, longitude));
+        } else {
+            Log.d("Location", "Error location is null");
         }
+
+        locationManager.removeUpdates(this);
     }
 
     /**
