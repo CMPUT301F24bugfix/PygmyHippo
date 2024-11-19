@@ -10,13 +10,16 @@ Purposes:
 Contributors: Katharine, Kori
  */
 
+import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -31,10 +34,13 @@ import com.example.pygmyhippo.common.Entrant;
 import com.example.pygmyhippo.common.Event;
 import com.example.pygmyhippo.database.DBOnCompleteFlags;
 import com.example.pygmyhippo.database.DBOnCompleteListener;
+import com.example.pygmyhippo.database.EventDB;
 import com.example.pygmyhippo.database.ImageStorage;
 import com.example.pygmyhippo.database.StorageOnCompleteListener;
 import com.example.pygmyhippo.databinding.UserFragmentEventBinding;
 import com.example.pygmyhippo.organizer.EventFragmentArgs;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
@@ -50,12 +56,12 @@ public class ViewMyEventFragment extends Fragment implements DBOnCompleteListene
     private Account signedInAccount;
     private String eventID;
 
-    private EventDB DBhandler;
+    private EventDB dbHandler;
     private ImageStorage imageHandler;
 
     private TextView eventNameView, eventDateView, eventTimeView, eventOrganizerView,
             eventLocationView, eventCostView, eventAboutDescriptionView;
-    private Button registerButton, deleteEventButton, deleteQRCodeButton;
+    private Button leaveWaitlistButton;
     private ConstraintLayout adminConstraint;
     private ImageView eventPoster;
 
@@ -84,6 +90,13 @@ public class ViewMyEventFragment extends Fragment implements DBOnCompleteListene
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         navController = Navigation.findNavController(view);
+
+        // Initialize the handlers
+        dbHandler = new EventDB();
+        imageHandler = new ImageStorage();
+
+        // Get the actual event data to populate this view
+        dbHandler.getEventByID(eventID, this);
     }
 
     @Override
@@ -110,12 +123,84 @@ public class ViewMyEventFragment extends Fragment implements DBOnCompleteListene
         eventAboutDescriptionView = view.findViewById(R.id.u_aboutMyEventDescriptionView);
         eventPoster = view.findViewById(R.id.u_myEventImageView);
 
+        // BUTTONS
+        leaveWaitlistButton = view.findViewById(R.id.u_leaveWaitlistButton);
+
+        // Set up navigation for the back button to return to last fragment
+        FloatingActionButton backButton = view.findViewById(R.id.u_backButtonToMyEvents);
+        backButton.setOnClickListener(view1 -> {
+            Log.d("ViewMyEventFragment", "Back button pressed");
+            navController.popBackStack();
+        });
+
+        // TODO: do stuff here for buttons... and stuff
+
+
+
         return view;
+    }
+
+    /**
+     * Updates text views and buttons in the fragment to reflect the same info in event.
+     */
+    // TODO: this is probably where to do the button and text changing for population
+    // check the entrant status...
+    private void populateTextFields() {
+        eventNameView.setText(event.getEventTitle());
+        eventDateView.setText(event.getDate());
+        eventTimeView.setText(event.getTime());
+        eventOrganizerView.setText(event.getOrganiserID());
+        eventLocationView.setText(event.getLocation());
+        eventCostView.setText(event.getCost());
+        eventAboutDescriptionView.setText(event.getDescription());
+
+        // Get the event poster from firebase
+        imageHandler.getImageDownloadUrl(event.getEventPoster(), new StorageOnCompleteListener<Uri>() {
+            @Override
+            public void OnCompleteStorage(@NonNull ArrayList<Uri> docs, int queryID, int flags) {
+                // Author of this code segment is James
+                if (flags == DBOnCompleteFlags.SUCCESS.value) {
+                    // Get the image and format it
+                    Uri downloadUri = docs.get(0);
+                    int imageSideLength = eventPoster.getWidth() / 2;
+                    Picasso.get()
+                            .load(downloadUri)
+                            .resize(imageSideLength, imageSideLength)
+                            .centerCrop()
+                            .into(eventPoster);
+                } else {
+                    // Event had no image, so it will stay as default image
+                    Log.d("DB", String.format("No image found, setting default"));
+                }
+            }
+        });
+    }
+
+    /**
+     * Method to display when a database error has occured
+     */
+    private void handleDBError() {
+        Toast toast = Toast.makeText(getContext(), "DB Error!", Toast.LENGTH_SHORT);
+        toast.show();
     }
 
 
     @Override
     public void OnCompleteDB(@NonNull ArrayList<Event> docs, int queryID, int flags) {
-
+        if (queryID == 0) {
+            if (flags == DBOnCompleteFlags.SINGLE_DOCUMENT.value) {
+                // Get the event from the database and populate the fragment
+                event = docs.get(0);
+                populateTextFields();
+            }
+        } else if (queryID == 2) {
+            // Log when the data is updated or catch if there was an error
+            if (flags == DBOnCompleteFlags.SUCCESS.value) {
+                Log.d("DB", "Successfully finished updating event with ID");
+            } else {
+                // If not the success flag, then there was an error
+                Log.d("EventFragment", "Error in updating event.");
+            }
+        }
     }
 }

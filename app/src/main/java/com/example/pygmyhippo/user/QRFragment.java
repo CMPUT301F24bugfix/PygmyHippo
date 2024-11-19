@@ -108,7 +108,7 @@ public class QRFragment extends Fragment {
 
             // FIXME: For testing
             Toast testShowBarcode = Toast.makeText(getActivity(), eventID, Toast.LENGTH_LONG);
-            testShowBarcode.show();
+            // testShowBarcode.show();
 
             // TODO: if evenID doesnt correpond to anything in database, restart using startSingleScan()
             Bundle navArgs = new Bundle();
