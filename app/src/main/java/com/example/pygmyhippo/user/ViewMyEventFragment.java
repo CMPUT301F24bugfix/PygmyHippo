@@ -249,7 +249,7 @@ public class ViewMyEventFragment extends Fragment implements DBOnCompleteListene
                     .stream()
                     .filter(e -> (e.getAccountID().equals(entrant.getAccountID())))
                     .findFirst()
-                    .ifPresent(e -> e.setEntrantStatus(Entrant.EntrantStatus.invited));
+                    .ifPresent(e -> e.setEntrantStatus(Entrant.EntrantStatus.accepted));
             dbHandler.updateEvent(event, this);
 
             acceptWaitlistButton.setVisibility(View.GONE);
