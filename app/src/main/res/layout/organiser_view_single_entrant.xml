@@ -146,10 +146,25 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/E_profile_profileImg" />
 
+            <TextView
+                android:id="@+id/E_location_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="35dp"
+                android:fontFamily="@font/roboto_bold"
+                android:text="Location:"
+                android:textColor="@color/dark_purple"
+                android:textSize="25sp"
+                android:visibility="gone"
+                app:layout_constraintEnd_toEndOf="@+id/E_profile_profileImg"
+                app:layout_constraintStart_toStartOf="@+id/E_profile_profileImg"
+                app:layout_constraintTop_toBottomOf="@+id/entrant_phone" />
+
+
             <!-- map is attributed to Strebe - Own work, CC BY-SA 3.0, https://commons.wikimedia.org/w/index.php?curid=16115228 -->
-            <ImageView
+            <FrameLayout
                 android:id="@+id/e_map"
-                android:layout_marginTop="30dp"
+                android:layout_marginTop="10dp"
                 android:layout_width="match_parent"
                 android:layout_marginBottom="100dp"
                 android:layout_height="230dp"
@@ -158,8 +173,16 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/entrant_phone"
-                android:visibility="gone" />
+                app:layout_constraintTop_toBottomOf="@+id/E_location_label"
+                android:visibility="gone">
+                    <FrameLayout
+                        android:id="@+id/map_marker"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:scaleType="fitCenter"
+                        android:background="@drawable/map_marker">
+                    </FrameLayout>
+            </FrameLayout>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>

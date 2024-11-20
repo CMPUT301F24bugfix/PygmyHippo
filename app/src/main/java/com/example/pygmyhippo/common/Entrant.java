@@ -24,6 +24,8 @@ public class Entrant {
 
     private String accountID;
     private EntrantStatus entrantStatus;
+    private Double longitude;
+    private Double latitude;
 
     public enum EntrantStatus {
         waitlisted("waitlisted"),
@@ -75,5 +77,37 @@ public class Entrant {
     public Entrant(String accountID, EntrantStatus entrantStatus) {
         this.accountID = accountID;
         this.entrantStatus = entrantStatus;
+    }
+
+    /**
+     * Get the longitude location of the entrant when they signed up
+     * @return The longitude they were at when they signed up for the event
+     */
+    public Double getLongitude() {
+        return longitude;
+    }
+
+    /**
+     * Get the latitude location of the entrant when they signed up
+     * @return The latitude they were at when they signed up for the event
+     */
+    public Double getLatitude() {
+        return latitude;
+    }
+
+    /**
+     * This method will set the longitude of the entrant when they sign up for an event
+     * @param longitude Their longitude location when they signed up
+     */
+    public void setLongitude(Double longitude) {
+        this.longitude = longitude;
+    }
+
+    /**
+     * This method will set the latitude of the entrant when they sign up for an event
+     * @param latitude Their latitude location when they signed up
+     */
+    public void setLatitude(Double latitude) {
+        this.latitude = latitude;
     }
 }

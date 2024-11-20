@@ -165,31 +165,6 @@ public class ProfileFragment extends Fragment  implements AdapterView.OnItemSele
         handler = new AccountDB();
         imageHandler = new ImageStorage();
 
-        /*
-        Code is from https://developer.android.com/develop/sensors-and-location/location/permissions#:~:text=ACCESS_FINE_LOCATION%20must%20be%20requested%20with,to%20only%20approximate%20location%20information.
-        Accessed on 2024-11-17
-        It sets up the permission launcher to ask for location permissions, and then launches it
-        TODO: Remove check box for geolocation, permissions handle it
-         */
-        ActivityResultLauncher<String> locationPermissionRequest =
-                registerForActivityResult(new ActivityResultContracts
-                                .RequestPermission(), isGranted -> {
-                            if (isGranted) {
-                                // Approximate location access granted, set that in the user's profile
-                                Log.d("Profile", "Location permissions granted");
-                                signedInAccount.setEnableGeolocation(true);
-                                handler.updateProfile(signedInAccount, this);
-                            } else {
-                                // No location access granted.
-                                Log.d("Profile", "No location permissions granted");
-                                signedInAccount.setEnableGeolocation(false);
-                                handler.updateProfile(signedInAccount, this);
-                            }
-                        }
-                );
-        // Launch the permission request
-        locationPermissionRequest.launch(Manifest.permission.ACCESS_COARSE_LOCATION);
-
         editButton = root.findViewById(R.id.E_profile_editBtn);
         updateButton = root.findViewById(R.id.E_profile_create);
         deleteUserButton = binding.aDeleteUserButton;

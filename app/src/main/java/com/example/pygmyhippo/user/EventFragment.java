@@ -40,6 +40,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -52,6 +54,7 @@ import com.example.pygmyhippo.R;
 import com.example.pygmyhippo.common.Account;
 import com.example.pygmyhippo.common.Entrant;
 import com.example.pygmyhippo.common.Event;
+import com.example.pygmyhippo.database.AccountDB;
 import com.example.pygmyhippo.database.DBOnCompleteFlags;
 import com.example.pygmyhippo.database.DBOnCompleteListener;
 import com.example.pygmyhippo.database.ImageStorage;
@@ -83,6 +86,7 @@ public class EventFragment extends Fragment implements DBOnCompleteListener<Even
 
     private EventDB DBhandler;
     private ImageStorage imageHandler;
+    private AccountDB profileDBHandler;
     // For getting current location
     private LocationManager locationManager;
 
@@ -117,6 +121,38 @@ public class EventFragment extends Fragment implements DBOnCompleteListener<Even
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         navController = Navigation.findNavController(view);
+
+        profileDBHandler = new AccountDB();
+        /*
+        Code is from https://developer.android.com/develop/sensors-and-location/location/permissions#:~:text=ACCESS_FINE_LOCATION%20must%20be%20requested%20with,to%20only%20approximate%20location%20information.
+        Accessed on 2024-11-17
+        It sets up the permission launcher to ask for location permissions, and then launches it
+        TODO: Remove check box for geolocation, permissions handle it
+         */
+        ActivityResultLauncher<String> locationPermissionRequest =
+                registerForActivityResult(new ActivityResultContracts
+                                .RequestPermission(), isGranted -> {
+                            if (isGranted) {
+                                // Approximate location access granted, set that in the user's profile
+                                Log.d("Profile", "Location permissions granted");
+                                signedInAccount.setEnableGeolocation(true);
+                            } else {
+                                // No location access granted.
+                                Log.d("Profile", "No location permissions granted");
+                                signedInAccount.setEnableGeolocation(false);
+                            }
+
+                            // Regardless of choice, update the profile
+                            profileDBHandler.updateProfile(signedInAccount, new DBOnCompleteListener<Account>() {
+                                @Override
+                                public void OnCompleteDB(@NonNull ArrayList<Account> docs, int queryID, int flags) {
+                                    Log.d("DB", "Profile has been updated");
+                                }
+                            });
+                        }
+                );
+        // Launch the permission request
+        locationPermissionRequest.launch(Manifest.permission.ACCESS_COARSE_LOCATION);
     }
 
     @Override
@@ -297,8 +333,6 @@ public class EventFragment extends Fragment implements DBOnCompleteListener<Even
                     // Add the user if they wish to continue only if they have geolocation enabled (and update button looks)
                     if (signedInAccount.isEnableGeolocation()) {
                         registerButton.setBackgroundColor(0xFF808080);
-                        event.addEntrant(entrant);
-                        DBhandler.updateEvent(event, this);       // Update the database
                         registerButton.setText("✔");
 
                         // Get the user's location
@@ -340,7 +374,6 @@ public class EventFragment extends Fragment implements DBOnCompleteListener<Even
 
     /**
      * This method implements the LocationListener. Used to update the user's location when registering for an event
-     * TODO: reconfigure account or entrant to contain this
      * @param location The retrieved location
      */
     @Override
@@ -349,6 +382,12 @@ public class EventFragment extends Fragment implements DBOnCompleteListener<Even
             double longitude = location.getLongitude();
             double latitude = location.getLatitude();
             Log.d("Location", String.format("latitude: %f, longitude: %f", latitude, longitude));
+
+            // With the location retrieved, note that in the entrant class and update the event data
+            entrant.setLatitude(latitude);
+            entrant.setLongitude(longitude);
+            event.addEntrant(entrant);
+            DBhandler.updateEvent(event, this);       // Update the database
         } else {
             Log.d("Location", "Error location is null");
         }
