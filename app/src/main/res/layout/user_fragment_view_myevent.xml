@@ -214,7 +214,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="15dp"
-                android:text="PENDING"
+                android:text="You have left this event"
                 android:textSize="18sp"
                 android:textStyle="bold" />
 
@@ -229,7 +229,7 @@
             android:layout_marginBottom = "3dp"
             android:textSize="12sp"
             android:visibility="visible"
-            android:text="hi" />
+            android:text="you are officially accepted into the event" />
         <Button
             android:id="@+id/u_leaveWaitlistButton"
             android:layout_width="match_parent"
@@ -251,7 +251,7 @@
                 android:layout_height="wrap_content"
                 android:backgroundTint="@color/green"
                 android:text="Accept"
-                android:visibility="visible"/>
+                android:visibility="gone"/>
 
             <Button
                 android:id="@+id/u_declineWaitlistButton"
@@ -260,7 +260,7 @@
                 android:backgroundTint="@color/red"
                 android:layout_marginStart = "40dp"
                 android:text="Decline"
-                android:visibility="visible"/>
+                android:visibility="gone"/>
 
 
         </LinearLayout>

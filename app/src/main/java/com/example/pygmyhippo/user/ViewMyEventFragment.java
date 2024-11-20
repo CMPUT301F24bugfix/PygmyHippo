@@ -69,27 +69,6 @@ public class ViewMyEventFragment extends Fragment implements DBOnCompleteListene
     // ACCEPTED WAITLIST
     private Button acceptWaitlistButton, declineWaitlistButton;
 
-
-    // populate single event page with hardcoded event information
-    public Event hardcodeEvent() {
-        entrants = new ArrayList<>();
-
-        return event = new Event(
-                "Hippo Party",
-                "1",
-                "The Hippopotamus Society",
-                entrants,
-                "The Swamp",
-                "2024-10-31",
-                "4:00 PM MST - 4:00 AM MST",
-                "Love hippos and a party? Love a party! Join a party!",
-                "$150.00",
-                "hippoparty.png",
-                Event.EventStatus.ongoing,
-                true
-        );
-    }
-
     // TODO: need to do something with getEvent (ie in user, by eventID passed...)
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
@@ -136,6 +115,8 @@ public class ViewMyEventFragment extends Fragment implements DBOnCompleteListene
         acceptWaitlistButton = view.findViewById(R.id.u_acceptWaitlistButton);
         declineWaitlistButton = view.findViewById(R.id.u_declineWaitlistButton);
 
+        // TODO: should set buttons to invisible
+
         // Set up navigation for the back button to return to last fragment
         FloatingActionButton backButton = view.findViewById(R.id.u_backButtonToMyEvents);
         backButton.setOnClickListener(view1 -> {
@@ -146,6 +127,12 @@ public class ViewMyEventFragment extends Fragment implements DBOnCompleteListene
         // TODO: do stuff here for buttons... and stuff
         String clickedEventID = MyEventsFragmentArgs.fromBundle(getArguments()).getEventID();
         getEvent(clickedEventID);
+
+        // based on user status in waitlist
+        // TODO: figure out if this is the event clicked
+        if (event.getEventStatus().value.equals("ongoing")) {
+
+        }
 
         return view;
     }
@@ -199,12 +186,14 @@ public class ViewMyEventFragment extends Fragment implements DBOnCompleteListene
 
     @Override
     public void OnCompleteDB(@NonNull ArrayList<Event> docs, int queryID, int flags) {
-        if (queryID == 0) {
+        // get event by id from database
+        if (queryID == 1) {
             if (flags == DBOnCompleteFlags.SINGLE_DOCUMENT.value) {
                 // Get the event from the database and populate the fragment
                 event = docs.get(0);
                 populateAllFields();
             }
+        // update event database
         } else if (queryID == 2) {
             // Log when the data is updated or catch if there was an error
             if (flags == DBOnCompleteFlags.SUCCESS.value) {
@@ -216,15 +205,43 @@ public class ViewMyEventFragment extends Fragment implements DBOnCompleteListene
         }
     }
 
-    public void leavePendingWaitlist() {
+    public void pendingWaitlist() {
+        userWaitlistStatus.setText("PENDING");
+        userStatusDescription.setVisibility(View.VISIBLE);
+        userStatusDescription.setText("The waitlist is still open/your status for this event is pending. Do you want to leave this event?");
+        leaveWaitlistButton.setVisibility(View.VISIBLE);
 
+        leaveWaitlistButton.setOnClickListener(view -> {
+            event.removeEntrant(entrant);
+            dbHandler.updateEvent(event, this);
+            leaveWaitlistButton.setVisibility(View.GONE);
+            userWaitlistStatus.setText("UNAVAILABLE");
+            userStatusDescription.setText("You have left this event. Sign up again using a QR code.");
+        });
     }
 
-    // on the condition: entrant.getEntrantStatus(Entrant.EntrantStatus.invited);
-    // this is probably wrong ^
+
     public void wonWaitlistSelection() {
         // populate the views, make sure to make buttons visible,
         // when button is clicked, either set user status to accepted or just remove the user entirely from the waitlist
         userWaitlistStatus.setText("WON");
+        userStatusDescription.setVisibility(View.VISIBLE);
+        userStatusDescription.setText("You have been accepted from the waitlist to attend this event. Do you accept or decline this invitation?");
+        acceptWaitlistButton.setVisibility(View.VISIBLE);
+        declineWaitlistButton.setVisibility(View.VISIBLE);
+
+        // https://hellokoding.com/query-an-arraylist-in-java/
+        acceptWaitlistButton.setOnClickListener(view -> {
+            // TODO: change entrant status to something that makes them confirmed on the list
+            event.getEntrants().stream().filter(e -> (e.getAccountID().equals(entrant.getAccountID()))).;
+            acceptWaitlistButton.setVisibility(View.GONE);
+            declineWaitlistButton.setVisibility(View.GONE);
+            userStatusDescription.setText("You are officially accepted into this event!");
+        });
+
+        // TODO: add decline waitlist button funtionality here
+        // use removeEntrant from list and update DB
+
+
     }
 }
