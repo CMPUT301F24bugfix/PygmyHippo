@@ -256,7 +256,7 @@ public class EventFragment extends Fragment implements DBOnCompleteListener<Even
                     int imageSideLength = eventPoster.getWidth() / 2;
                     Picasso.get()
                             .load(downloadUri)
-                            .resize(imageSideLength, imageSideLength)
+                            .resize(eventPoster.getWidth(), eventPoster.getHeight())
                             .centerCrop()
                             .into(eventPoster);
                 } else {
