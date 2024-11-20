@@ -36,7 +36,7 @@ import com.example.pygmyhippo.database.DBOnCompleteListener;
 import com.example.pygmyhippo.database.EventDB;
 import com.example.pygmyhippo.database.ImageStorage;
 import com.example.pygmyhippo.database.StorageOnCompleteListener;
-import com.example.pygmyhippo.databinding.UserFragmentEventBinding;
+import com.example.pygmyhippo.databinding.UserFragmentViewMyeventBinding;
 import com.example.pygmyhippo.organizer.EventFragmentArgs;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.squareup.picasso.Picasso;
@@ -44,7 +44,7 @@ import com.squareup.picasso.Picasso;
 import java.util.ArrayList;
 
 public class ViewMyEventFragment extends Fragment implements DBOnCompleteListener<Event>{
-    private UserFragmentEventBinding binding;
+    private UserFragmentViewMyeventBinding binding;
     private NavController navController;
 
     private Event event;
@@ -52,8 +52,8 @@ public class ViewMyEventFragment extends Fragment implements DBOnCompleteListene
     // this is the current user who is trying to join the event
     private Entrant entrant;
     private ArrayList<Entrant> entrants;
-    private Account signedInAccount;
     private String eventID;
+    private Account signedInAccount;
 
     private EventDB dbHandler;
     private ImageStorage imageHandler;
@@ -86,11 +86,11 @@ public class ViewMyEventFragment extends Fragment implements DBOnCompleteListene
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        binding = UserFragmentEventBinding.inflate(inflater, container, false);
+        binding = UserFragmentViewMyeventBinding.inflate(inflater, container, false);
         View view = binding.getRoot();
 
         if (getArguments() != null) {
-            signedInAccount = com.example.pygmyhippo.organizer.EventFragmentArgs.fromBundle(getArguments()).getSignedInAccount();
+            signedInAccount = EventFragmentArgs.fromBundle(getArguments()).getSignedInAccount();
             eventID = EventFragmentArgs.fromBundle(getArguments()).getEventID();
         } else {
             eventID = "IaMdwyQpHDh6GdZF025k";
@@ -107,6 +107,7 @@ public class ViewMyEventFragment extends Fragment implements DBOnCompleteListene
         eventAboutDescriptionView = view.findViewById(R.id.u_aboutMyEventDescriptionView);
         eventPoster = view.findViewById(R.id.u_myEventImageView);
         userWaitlistStatus = view.findViewById(R.id.u_userStatus);
+        userStatusDescription = view.findViewById(R.id.u_userStatusDescription);
 
         // BUTTONS
         leaveWaitlistButton = view.findViewById(R.id.u_leaveWaitlistButton);
@@ -117,6 +118,7 @@ public class ViewMyEventFragment extends Fragment implements DBOnCompleteListene
 
         // TODO: should set buttons to invisible
 
+        // TODO: fix back button
         // Set up navigation for the back button to return to last fragment
         FloatingActionButton backButton = view.findViewById(R.id.u_backButtonToMyEvents);
         backButton.setOnClickListener(view1 -> {
@@ -125,14 +127,7 @@ public class ViewMyEventFragment extends Fragment implements DBOnCompleteListene
         });
 
         // TODO: do stuff here for buttons... and stuff
-        String clickedEventID = MyEventsFragmentArgs.fromBundle(getArguments()).getEventID();
-        getEvent(clickedEventID);
 
-        // based on user status in waitlist
-        // TODO: figure out if this is the event clicked
-        if (event.getEventStatus().value.equals("ongoing")) {
-
-        }
 
         return view;
     }
@@ -161,6 +156,14 @@ public class ViewMyEventFragment extends Fragment implements DBOnCompleteListene
         eventLocationView.setText(event.getLocation());
         eventCostView.setText(event.getCost());
         eventAboutDescriptionView.setText(event.getDescription());
+
+        if (signedInAccount != null && event.getEntrants() != null) {
+            entrant = event.getEntrants()
+                    .stream()
+                    .filter(e -> e.getAccountID().equals(signedInAccount.getAccountID()))
+                    .findFirst()
+                    .orElse(null);
+        }
 
         // Get the event poster from firebase
         imageHandler.getImageDownloadUrl(event.getEventPoster(), new StorageOnCompleteListener<Uri>() {
@@ -192,6 +195,15 @@ public class ViewMyEventFragment extends Fragment implements DBOnCompleteListene
                 // Get the event from the database and populate the fragment
                 event = docs.get(0);
                 populateAllFields();
+
+                // based on user status in waitlist
+                // TODO: figure out if this is the event clicked
+                if (event.getEventStatus().value.equals("ongoing")) {
+                    pendingWaitlist();
+                } else if (event.getEntrants().stream().anyMatch(e -> e.getAccountID().equals(entrant.getAccountID()) && e.getEntrantStatus() == Entrant.EntrantStatus.invited)) {
+                    wonWaitlistSelection();
+                }
+
             }
         // update event database
         } else if (queryID == 2) {
@@ -232,8 +244,14 @@ public class ViewMyEventFragment extends Fragment implements DBOnCompleteListene
 
         // https://hellokoding.com/query-an-arraylist-in-java/
         acceptWaitlistButton.setOnClickListener(view -> {
-            // TODO: change entrant status to something that makes them confirmed on the list
-            event.getEntrants().stream().filter(e -> (e.getAccountID().equals(entrant.getAccountID()))).;
+
+            event.getEntrants()
+                    .stream()
+                    .filter(e -> (e.getAccountID().equals(entrant.getAccountID())))
+                    .findFirst()
+                    .ifPresent(e -> e.setEntrantStatus(Entrant.EntrantStatus.invited));
+            dbHandler.updateEvent(event, this);
+
             acceptWaitlistButton.setVisibility(View.GONE);
             declineWaitlistButton.setVisibility(View.GONE);
             userStatusDescription.setText("You are officially accepted into this event!");

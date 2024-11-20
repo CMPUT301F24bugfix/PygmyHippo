@@ -129,7 +129,6 @@ public class EventFragment extends Fragment implements DBOnCompleteListener<Even
         FloatingActionButton backButton = view.findViewById(R.id.u_backButtonToQRView);
         backButton.setOnClickListener(view1 -> {
             navController.popBackStack();
-//            Navigation.findNavController(view1).navigate(R.id.action_eventFragment_to_scanQRcodeFragment);
         });
 
         registerButton.setOnClickListener(buttonView -> {

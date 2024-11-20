@@ -154,7 +154,7 @@
                 android:id="@+id/u_aboutMyEventDescriptionView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="135dp"
+                android:layout_marginBottom="190dp"
                 android:background="@drawable/light_rounded_corners"
                 android:paddingStart="30dp"
                 android:paddingTop="10dp"
@@ -190,10 +190,11 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="130dp"
+        android:layout_height="190dp"
         android:layout_gravity="bottom|center_horizontal"
         android:background="@drawable/rounded_top_corners"
         android:orientation="vertical"
+
         android:padding="16dp">
 
         <LinearLayout
