@@ -83,4 +83,5 @@ dependencies {
     debugImplementation("androidx.fragment:fragment-testing-manifest:1.8.5")
     androidTestImplementation("androidx.fragment:fragment-testing:1.8.5")
     implementation("com.google.firebase:firebase-storage:20.1.0")
+    implementation(files("C:/Users/korik/AppData/Local/Android/Sdk/platforms/android-34/android.jar"))
 }
