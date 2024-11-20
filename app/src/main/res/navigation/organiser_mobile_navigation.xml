@@ -17,6 +17,14 @@ app:startDestination="@+id/o_loadingFragment">
     <argument
         android:name="signedInAccount"
         app:argType="com.example.pygmyhippo.common.Account" />
+    <argument
+        android:name="useNavigation"
+        app:argType="boolean"
+        android:defaultValue="true" />
+    <argument
+        android:name="useFirebase"
+        app:argType="boolean"
+        android:defaultValue="true" />
 </fragment>
 
 <fragment
@@ -31,6 +39,14 @@ app:startDestination="@+id/o_loadingFragment">
     <action
         android:id="@+id/action_organiser_postEvent_page_to_view_eventqr_fragment"
         app:destination="@id/view_eventqr_fragment" />
+    <argument
+        android:name="useNavigation"
+        app:argType="boolean"
+        android:defaultValue="true" />
+    <argument
+        android:name="useFirebase"
+        app:argType="boolean"
+        android:defaultValue="true" />
 </fragment>
 
     <fragment
@@ -48,6 +64,14 @@ app:startDestination="@+id/o_loadingFragment">
         <action
             android:id="@+id/action_view_eventqr_fragment_to_organiser_eventFragment"
             app:destination="@id/organiser_eventFragment" />
+        <argument
+            android:name="useNavigation"
+            app:argType="boolean"
+            android:defaultValue="true" />
+        <argument
+            android:name="useFirebase"
+            app:argType="boolean"
+            android:defaultValue="true" />
     </fragment>
 
     <fragment
@@ -69,6 +93,14 @@ app:startDestination="@+id/o_loadingFragment">
             android:name="currentRole"
             app:argType="string"
             android:defaultValue="organiser" />
+        <argument
+            android:name="useNavigation"
+            app:argType="boolean"
+            android:defaultValue="true" />
+        <argument
+            android:name="useFirebase"
+            app:argType="boolean"
+            android:defaultValue="true" />
     </fragment>
 
     <fragment
@@ -86,6 +118,14 @@ app:startDestination="@+id/o_loadingFragment">
         <argument
             android:name="signedInAccount"
             app:argType="com.example.pygmyhippo.common.Account" />
+        <argument
+            android:name="useNavigation"
+            app:argType="boolean"
+            android:defaultValue="true" />
+        <argument
+            android:name="useFirebase"
+            app:argType="boolean"
+            android:defaultValue="true" />
     </fragment>
 
     <fragment
@@ -102,6 +142,14 @@ app:startDestination="@+id/o_loadingFragment">
         <action
             android:id="@+id/action_organiser_eventFragment_to_view_entrants_fragment"
             app:destination="@id/view_entrants_fragment" />
+        <argument
+            android:name="useNavigation"
+            app:argType="boolean"
+            android:defaultValue="true" />
+        <argument
+            android:name="useFirebase"
+            app:argType="boolean"
+            android:defaultValue="true" />
     </fragment>
 
     <fragment

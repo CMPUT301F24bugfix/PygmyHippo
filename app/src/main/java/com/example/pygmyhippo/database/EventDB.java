@@ -14,12 +14,11 @@ import androidx.annotation.NonNull;
 
 import com.example.pygmyhippo.common.Entrant;
 import com.example.pygmyhippo.common.Event;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  * Post Event Database handler.
@@ -27,6 +26,10 @@ import java.util.ArrayList;
  * Adds and search Event to Firestore when an organiser creates it from PostEventFragment.
  */
 public class EventDB extends DBHandler {
+    public EventDB(boolean useFirebase) {
+        super(useFirebase);
+    }
+
     /**
      * This posts event to database
      * @param newEvent The event getting posted to the database
@@ -34,23 +37,30 @@ public class EventDB extends DBHandler {
      * @author James
      */
     public void addEvent(@NonNull Event newEvent, DBOnCompleteListener<Event> listener) {
-        DocumentReference docRef = db.collection("Events").document();
-        newEvent.setEventID(docRef.getId());
-        docRef.set(newEvent)
-            .addOnCompleteListener(task -> {
-                if (task.isSuccessful()) {
-                    Log.d("DB", String.format("Successfully added Event %s", newEvent.getEventID()));
+        if (useFirebase) {
+            DocumentReference docRef = db.collection("Events").document();
+            newEvent.setEventID(docRef.getId());
+            docRef.set(newEvent)
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        Log.d("DB", String.format("Successfully added Event %s", newEvent.getEventID()));
 
-                    // Add the translated documents to a list to pass to the listener
-                    ArrayList<Event> newEventList = new ArrayList<>();
-                    newEventList.add(newEvent);
-                    listener.OnCompleteDB(newEventList, 0, DBOnCompleteFlags.SUCCESS.value);
-                } else {
-                    // Notify the listeners of errors
-                    Log.d("DB", String.format("Unsuccessfully in adding Event %s", newEvent.getEventID()));
-                    listener.OnCompleteDB(new ArrayList<>(), 0, DBOnCompleteFlags.ERROR.value);
-                }
-            });
+                        // Add the translated documents to a list to pass to the listener
+                        ArrayList<Event> newEventList = new ArrayList<>();
+                        newEventList.add(newEvent);
+                        listener.OnCompleteDB(newEventList, 0, DBOnCompleteFlags.SUCCESS.value);
+                    } else {
+                        // Notify the listeners of errors
+                        Log.d("DB", String.format("Unsuccessfully in adding Event %s", newEvent.getEventID()));
+                        listener.OnCompleteDB(new ArrayList<>(), 0, DBOnCompleteFlags.ERROR.value);
+                    }
+                });
+        } else {
+            Log.d("DB", "Using offline data for addEvent()");
+            ArrayList<Event> newEventList = new ArrayList<>();
+            newEventList.add(newEvent);
+            listener.OnCompleteDB(newEventList, 0, DBOnCompleteFlags.SUCCESS.value);
+        }
     }
 
 
@@ -61,7 +71,8 @@ public class EventDB extends DBHandler {
      * @author Kori
      */
     public void getEventByID(String eventID, DBOnCompleteListener<Event> listener) {
-        db.collection("Events")
+        if (useFirebase) {
+            db.collection("Events")
                 .whereEqualTo("eventID", eventID)
                 .get()
                 .addOnCompleteListener(task -> {
@@ -84,6 +95,21 @@ public class EventDB extends DBHandler {
                         listener.OnCompleteDB(new ArrayList<>(), 1, DBOnCompleteFlags.ERROR.value);
                     }
                 });
+        } else {
+            Log.d("DB", "Using offline data for getEventByID()");
+            ArrayList<Event> events = new ArrayList<>();
+            Event newEvent = new Event();
+            newEvent.setEventTitle("Some Awesome Event Title");
+            newEvent.setDescription("Awesome stuff is gonna happen here!");
+            newEvent.setLocation("Somewhere close by");
+            newEvent.setEventStatus(Event.EventStatus.ongoing);
+            newEvent.setCost("$5 CAD / $10 USD");
+            newEvent.setDate("Sometime soon");
+            newEvent.setEventWinnersCount(100);
+            newEvent.setEventID(eventID);
+            events.add(newEvent);
+            listener.OnCompleteDB(events, 1, DBOnCompleteFlags.SINGLE_DOCUMENT.value);
+        }
     }
 
     /**
@@ -93,23 +119,27 @@ public class EventDB extends DBHandler {
      * @param listener The listener that initiates when the data is done updating
      */
     public void updateEvent(Event event, DBOnCompleteListener<Event> listener) {
-        db.collection("Events")
+        if (useFirebase) {
+            db.collection("Events")
                 .document(event.getEventID())
                 .set(event)
-                .addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        ArrayList<Event> events = new ArrayList<>();
-                        if (task.isSuccessful()) {
-                            events.add(event);
-                            Log.d("DB", String.format("Successfully updated event with ID (%s).", event.getEventID()));
-                            listener.OnCompleteDB(events, 2, DBOnCompleteFlags.SUCCESS.value);
-                        } else {
-                            Log.d("DB", String.format("Error: Could not update event with ID (%s).", event.getEventID()));
-                            listener.OnCompleteDB(events, 2, DBOnCompleteFlags.ERROR.value);
-                        }
+                .addOnCompleteListener(task -> {
+                    ArrayList<Event> events = new ArrayList<>();
+                    if (task.isSuccessful()) {
+                        events.add(event);
+                        Log.d("DB", String.format("Successfully updated event with ID (%s).", event.getEventID()));
+                        listener.OnCompleteDB(events, 2, DBOnCompleteFlags.SUCCESS.value);
+                    } else {
+                        Log.d("DB", String.format("Error: Could not update event with ID (%s).", event.getEventID()));
+                        listener.OnCompleteDB(events, 2, DBOnCompleteFlags.ERROR.value);
                     }
                 });
+        } else {
+            Log.d("DB", "Using offline data for updateEvent()");
+            ArrayList<Event> events = new ArrayList<>();
+            events.add(event);
+            listener.OnCompleteDB(events, 2, DBOnCompleteFlags.SUCCESS.value);
+        }
     }
 
     /**
@@ -119,7 +149,8 @@ public class EventDB extends DBHandler {
      * @author Kori
      */
     public void getOrganiserEvents(String accountID, DBOnCompleteListener<Event> listener) {
-        db.collection("Events")
+        if (useFirebase) {
+            db.collection("Events")
                 .whereEqualTo("organiserID", accountID)
                 .get()
                 .addOnCompleteListener(task -> {
@@ -127,7 +158,7 @@ public class EventDB extends DBHandler {
                         QuerySnapshot queryResult = task.getResult();
                         ArrayList<Event> events = new ArrayList<>();
                         queryResult.forEach(doc -> events.add(doc.toObject(Event.class)));
-                        if (events.size() == 0) {
+                        if (events.isEmpty()) {
                             Log.d("DB", String.format("Found no events with organiser ID (%s)", accountID));
                             listener.OnCompleteDB(events, 3, DBOnCompleteFlags.NO_DOCUMENTS.value);
                         } else if (events.size() == 1) {
@@ -142,6 +173,17 @@ public class EventDB extends DBHandler {
                         listener.OnCompleteDB(new ArrayList<>(), 3, DBOnCompleteFlags.ERROR.value);
                     }
                 });
+        } else {
+            Log.d("DB", "Using offline data for getOrganiserEvents()");
+            ArrayList<String> names = new ArrayList<>(Arrays.asList("Event1", "Event2", "Event3", "Event4"));
+            ArrayList<Event> events = new ArrayList<>();
+            names.forEach(name -> {
+                Event newEvent = new Event();
+                newEvent.setEventTitle(name);
+                events.add(newEvent);
+            });
+            listener.OnCompleteDB(events, 3, DBOnCompleteFlags.SINGLE_DOCUMENT.value);
+        }
     }
 
     /**
@@ -151,7 +193,8 @@ public class EventDB extends DBHandler {
      * @param listener The listener for when the deletion is done
      */
     public void deleteEventByID(String eventID, DBOnCompleteListener<Event> listener) {
-        db.collection("Events")
+        if (useFirebase) {
+            db.collection("Events")
                 .document(eventID)
                 .delete()
                 .addOnCompleteListener(task -> {
@@ -163,6 +206,10 @@ public class EventDB extends DBHandler {
                         listener.OnCompleteDB(new ArrayList<>(), 4, DBOnCompleteFlags.ERROR.value);
                     }
                 });
+        } else {
+            Log.d("DB", "Using offline data for deleteEventByID()");
+            listener.OnCompleteDB(new ArrayList<>(), 4, DBOnCompleteFlags.SUCCESS.value);
+        }
     }
 
     /**
@@ -172,8 +219,9 @@ public class EventDB extends DBHandler {
      * @param listener What gets called when the data is retrieved
      */
     public void getEntrantEvents(String accountID, DBOnCompleteListener<Event> listener) {
-        // Query modified from James' AllEventsDB
-        db.collection("Events")
+        if (useFirebase) {
+            // Query modified from James' AllEventsDB
+            db.collection("Events")
                 .get()
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
@@ -205,6 +253,17 @@ public class EventDB extends DBHandler {
                         listener.OnCompleteDB(new ArrayList<>(), 5, DBOnCompleteFlags.ERROR.value);
                     }
                 });
+        } else {
+            Log.d("DB", "Using offline data for getEntrantEvents()");
+            ArrayList<String> names = new ArrayList<>(Arrays.asList("Event1", "Event2", "Event3", "Event4"));
+            ArrayList<Event> events = new ArrayList<>();
+            names.forEach(name -> {
+                Event newEvent = new Event();
+                newEvent.setEventTitle(name);
+                events.add(newEvent);
+            });
+            listener.OnCompleteDB(events, 5, DBOnCompleteFlags.SUCCESS.value);
+        }
     }
 
     /**
@@ -215,7 +274,8 @@ public class EventDB extends DBHandler {
      *          The DB listener for data callback
      */
     public void getEvents(int limit, DBOnCompleteListener<Event> listener) {
-        db.collection("Events")
+        if (useFirebase) {
+            db.collection("Events")
                 .limit(limit)
                 .get()
                 .addOnCompleteListener(task -> {
@@ -237,5 +297,16 @@ public class EventDB extends DBHandler {
                         listener.OnCompleteDB(new ArrayList<>(), 6, DBOnCompleteFlags.ERROR.value);
                     }
                 });
+        } else {
+            Log.d("DB", "Using offline data for getEvents()");
+            ArrayList<String> names = new ArrayList<>(Arrays.asList("Event1", "Event2", "Event3", "Event4"));
+            ArrayList<Event> events = new ArrayList<>();
+            names.forEach(name -> {
+                Event newEvent = new Event();
+                newEvent.setEventTitle(name);
+                events.add(newEvent);
+            });
+            listener.OnCompleteDB(events, 6, DBOnCompleteFlags.SUCCESS.value);
+        }
     }
 }

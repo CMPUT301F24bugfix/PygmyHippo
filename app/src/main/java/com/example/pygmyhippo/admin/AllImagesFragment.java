@@ -21,6 +21,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -30,7 +31,6 @@ import com.example.pygmyhippo.common.Account;
 import com.example.pygmyhippo.common.Event;
 import com.example.pygmyhippo.common.Image;
 import com.example.pygmyhippo.common.RecyclerClickListener;
-import com.example.pygmyhippo.database.DBOnCompleteListener;
 import com.example.pygmyhippo.database.ImageStorage;
 import com.example.pygmyhippo.database.StorageOnCompleteListener;
 import com.example.pygmyhippo.databinding.AdminFragmentAllListBinding;
@@ -41,15 +41,29 @@ import java.util.ArrayList;
  * Fragment for displaying all images for admins.
  */
 public class AllImagesFragment extends Fragment implements RecyclerClickListener, StorageOnCompleteListener<Object> {
-    AdminFragmentAllListBinding binding;
-    AllImagesAdapter adapter;
-    ArrayList<Image> imageList;
-    ImageStorage handler;
+    private AdminFragmentAllListBinding binding;
+    private AllImagesAdapter adapter;
+    private ArrayList<Image> imageList;
+
+    private ImageStorage handler;
+    private Account signedInAccount;
+    private boolean useNavigation, useFirebase;
 
     @Override
     public void onItemClick(int position) {
-        // TODO: add functionality here
+        // TODO: add navigation
         Log.d("Admin", String.format("Image at position (%d) clicked.", position));
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        if (getArguments() != null) {
+            AllImagesFragmentArgs args = AllImagesFragmentArgs.fromBundle(getArguments());
+            signedInAccount = args.getSignedInAccount();
+            useNavigation = args.getUseNavigation();
+            useFirebase = args.getUseFirebase();
+        }
     }
 
     @Override
@@ -57,7 +71,6 @@ public class AllImagesFragment extends Fragment implements RecyclerClickListener
                              ViewGroup container, Bundle savedInstanceState) {
         binding =  AdminFragmentAllListBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
-        handler = new ImageStorage();
 
         // Set up the views for this fragment and hide the spinners
         binding.aAlllistTitleText.setText(R.string.all_images_title);
@@ -67,11 +80,8 @@ public class AllImagesFragment extends Fragment implements RecyclerClickListener
 
         // Initialize list and adapter
         imageList = new ArrayList<>();
-        adapter = new AllImagesAdapter(imageList, this);
+        adapter = new AllImagesAdapter(imageList, this, useFirebase);
 
-        // Get the accounts and events for their images
-        handler.getAccountsWithImage(1000, this);
-        handler.getEventsWithImage(1000, this);
 
         // Format the recycler list
         binding.aAlllistRecycler.setAdapter(adapter);
@@ -90,6 +100,15 @@ public class AllImagesFragment extends Fragment implements RecyclerClickListener
         });
 
         return root;
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        handler = new ImageStorage(useFirebase);
+        // Get the accounts and events for their images
+        handler.getAccountsWithImage(1000, this);
+        handler.getEventsWithImage(1000, this);
     }
 
     @Override

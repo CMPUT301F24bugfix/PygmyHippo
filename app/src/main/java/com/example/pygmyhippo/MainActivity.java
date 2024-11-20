@@ -45,7 +45,7 @@ import java.util.Arrays;
  */
 public class MainActivity extends AppCompatActivity implements DBOnCompleteListener<Account> {
     final int PERMISSION_REQUEST_CODE =112;
-    final boolean useDB = true;
+    final boolean useDB = false;
 
     // Get the nav bars for each role
     private OrganiserMainActivityNagivationBinding organiserBinder;
@@ -73,7 +73,6 @@ public class MainActivity extends AppCompatActivity implements DBOnCompleteListe
             }
         }
     }
-
 
     /**
      * Dialog pop up asking for notification preference

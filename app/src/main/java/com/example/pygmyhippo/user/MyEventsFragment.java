@@ -22,15 +22,15 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
 import com.example.pygmyhippo.R;
 import com.example.pygmyhippo.common.Account;
+import com.example.pygmyhippo.common.AppNavController;
 import com.example.pygmyhippo.common.Event;
 import com.example.pygmyhippo.database.DBOnCompleteFlags;
-import com.example.pygmyhippo.database.EventDB;
 import com.example.pygmyhippo.database.DBOnCompleteListener;
+import com.example.pygmyhippo.database.EventDB;
 import com.example.pygmyhippo.databinding.UserFragmentMyeventsBinding;
 import com.example.pygmyhippo.organizer.MyEventsFragmentArgs;
 
@@ -45,22 +45,36 @@ import java.util.ArrayList;
 public class MyEventsFragment extends Fragment implements DBOnCompleteListener<Event> {
 
     private UserFragmentMyeventsBinding binding;
-    private NavController navController;
+    private AppNavController navController;
     private Account signedInAccount;
+    private boolean useNavigation, useFirebase;
+
     private ArrayList<Event> eventDataList;
     private ArrayAdapter<Event> eventArrayAdapter;
     private ListView eventListView;
     private EventDB dbHandler;
 
     @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        if (getArguments() != null) {
+            MyEventsFragmentArgs args = MyEventsFragmentArgs.fromBundle(getArguments());
+            signedInAccount = args.getSignedInAccount();
+            useNavigation = args.getUseNavigation();
+            useFirebase = args.getUseFirebase();
+        }
+    }
+
+    @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
         // Set up nav controller
-        navController = Navigation.findNavController(view);
+        navController = new AppNavController(useNavigation, Navigation.findNavController(view));
 
         // Get the data for the list
-        dbHandler = new EventDB();
+        dbHandler = new EventDB(useFirebase);
         dbHandler.getEntrantEvents(signedInAccount.getAccountID(), this);
     }
 
@@ -82,16 +96,13 @@ public class MyEventsFragment extends Fragment implements DBOnCompleteListener<E
         binding = UserFragmentMyeventsBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
-        if (getArguments() != null) {
-            signedInAccount = MyEventsFragmentArgs.fromBundle(getArguments()).getSignedInAccount();
-        }
 
         // Get the list view, and initialize the data list
         eventListView = binding.uEventListview;
         eventDataList = new ArrayList<>();
 
         // Set up our array adapter and connect it to our listView
-        eventArrayAdapter = new com.example.pygmyhippo.organizer.EventArrayAdapter(root.getContext(), eventDataList);
+        eventArrayAdapter = new com.example.pygmyhippo.organizer.EventArrayAdapter(root.getContext(), eventDataList, useFirebase);
         eventListView.setAdapter(eventArrayAdapter);
 
         // Set up the onClickListener

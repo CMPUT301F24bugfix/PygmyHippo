@@ -19,6 +19,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  * DBHandler for ProfileFragment
@@ -27,13 +28,18 @@ import java.util.ArrayList;
  * Can delete account based off of document ID.
  */
 public class AccountDB extends DBHandler {
+    public AccountDB(boolean useFirebase) {
+        super(useFirebase);
+    }
+
     /**
      * This method will notify the listener to return the account relating to the given ID
      * @param accountID The ID of the account we want to get
      * @param listener What gets notified of query results
      */
     public void getAccountByID(String accountID, DBOnCompleteListener<Account> listener) {
-        db.collection("Accounts")
+        if (useFirebase) {
+            db.collection("Accounts")
                 .whereEqualTo("accountID", accountID)
                 .get()
                 .addOnCompleteListener(task -> {
@@ -58,6 +64,19 @@ public class AccountDB extends DBHandler {
                         listener.OnCompleteDB(new ArrayList<>(), 0, DBOnCompleteFlags.ERROR.value);
                     }
                 });
+        } else {
+            Log.d("DB", "Using offline data for getAccountByID()");
+            Account account = new Account();
+            account.setAccountID(accountID);
+            account.setName("Jane Doe");
+            account.setEmailAddress("jane@gmail.com");
+            account.setPhoneNumber("000-000-0000");
+            account.setRoles(new ArrayList<>(Arrays.asList(Account.AccountRole.user, Account.AccountRole.organiser, Account.AccountRole.admin)));
+            account.setPronouns("she/her");
+            account.setEnableGeolocation(false);
+            account.setReceiveNotifications(true);
+            listener.OnCompleteDB(new ArrayList<>(Arrays.asList(account)), 0, DBOnCompleteFlags.SINGLE_DOCUMENT.value);
+        }
     }
 
 
@@ -67,18 +86,23 @@ public class AccountDB extends DBHandler {
      * @param listener What gets notified of query results
      */
     public void deleteAccountByID(String accountID, DBOnCompleteListener<Account> listener) {
-        db.collection("Accounts")
-            .document(accountID)
-            .delete()
-            .addOnCompleteListener(task -> {
-                if (task.isSuccessful()) {
-                    Log.d("DB", String.format("Successfully deleted Account with ID %s", accountID));
-                    listener.OnCompleteDB(new ArrayList<>(), 1, DBOnCompleteFlags.SUCCESS.value);
-                } else {
-                    Log.d("DB", String.format("Unsuccessful in deleting Account with ID %s", accountID));
-                    listener.OnCompleteDB(new ArrayList<>(), 1, DBOnCompleteFlags.ERROR.value);
-                }
-            });
+        if (useFirebase) {
+            db.collection("Accounts")
+                .document(accountID)
+                .delete()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        Log.d("DB", String.format("Successfully deleted Account with ID %s", accountID));
+                        listener.OnCompleteDB(new ArrayList<>(), 1, DBOnCompleteFlags.SUCCESS.value);
+                    } else {
+                        Log.d("DB", String.format("Unsuccessful in deleting Account with ID %s", accountID));
+                        listener.OnCompleteDB(new ArrayList<>(), 1, DBOnCompleteFlags.ERROR.value);
+                    }
+                });
+        } else {
+            Log.d("DB", "Using offline data for deleteAccountByID()");
+            listener.OnCompleteDB(new ArrayList<>(), 1, DBOnCompleteFlags.SUCCESS.value);
+        }
     }
 
     /**
@@ -88,7 +112,8 @@ public class AccountDB extends DBHandler {
      * @param listener What gets notified of query results
      */
     public void changeCurrentRole(String accountID, Account.AccountRole newRole, DBOnCompleteListener<Account> listener) {
-        db.collection("Accounts")
+        if (useFirebase) {
+            db.collection("Accounts")
                 .document(accountID)
                 .update("currentRole", newRole)
                 .addOnCompleteListener(task -> {
@@ -105,6 +130,13 @@ public class AccountDB extends DBHandler {
                         listener.OnCompleteDB(new ArrayList<>(), 2, DBOnCompleteFlags.SUCCESS.value);
                     }
                 });
+        } else {
+            Log.d("DB", "Using offline data for changeCurrentRole()");
+            Account newAccount = new Account();
+            newAccount.setAccountID(accountID);
+            newAccount.setCurrentRole(newRole);
+            listener.OnCompleteDB(new ArrayList<>(Arrays.asList(newAccount)), 2, DBOnCompleteFlags.SUCCESS.value);
+        }
     }
 
     /**
@@ -114,7 +146,8 @@ public class AccountDB extends DBHandler {
      * @param listener The listener that initiates when the data is done updating
      */
     public void updateProfile(Account account, DBOnCompleteListener<Account> listener) {
-        db.collection("Accounts")
+        if (useFirebase) {
+            db.collection("Accounts")
                 .document(account.getAccountID())
                 .set(account)
                 .addOnCompleteListener(new OnCompleteListener<Void>() {
@@ -129,6 +162,10 @@ public class AccountDB extends DBHandler {
                         }
                     }
                 });
+        } else {
+            Log.d("DB", "Using offline data for updateProfile()");
+            listener.OnCompleteDB(new ArrayList<>(), 3, DBOnCompleteFlags.SUCCESS.value);
+        }
     }
 
     /**
@@ -137,7 +174,8 @@ public class AccountDB extends DBHandler {
      * @param listener The listener that gets notified when the data is retrieved
      */
     public void getUsers(int limit, DBOnCompleteListener<Account> listener) {
-        db.collection("Accounts")
+        if (useFirebase) {
+            db.collection("Accounts")
                 .limit(limit)
                 .get()
                 .addOnCompleteListener(task -> {
@@ -157,5 +195,16 @@ public class AccountDB extends DBHandler {
                         listener.OnCompleteDB(new ArrayList<>(), 4, DBOnCompleteFlags.ERROR.value);
                     }
                 });
+        } else {
+            Log.d("DB", "Using offline data for getUsers()");
+            ArrayList<String> names = new ArrayList<>(Arrays.asList("John Doe", "Jack Frost", "Santa Claus", "Mr. Beast"));
+            ArrayList<Account> accounts = new ArrayList<>();
+            names.forEach(name -> {
+                Account account = new Account();
+                account.setName(name);
+                accounts.add(account);
+            });
+            listener.OnCompleteDB(accounts, 4, DBOnCompleteFlags.SUCCESS.value);
+        }
     }
 }

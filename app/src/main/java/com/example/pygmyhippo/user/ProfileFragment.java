@@ -13,19 +13,16 @@ Issues:
     - Only text fields are updated in database, It doesn't have image handling yet
  */
 
-import android.widget.AdapterView;
-import android.widget.CheckBox;
-
-import com.example.pygmyhippo.database.AccountDB;
-import com.example.pygmyhippo.databinding.UserFragmentProfileBinding;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
@@ -38,13 +35,15 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
-import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
 import com.example.pygmyhippo.R;
 import com.example.pygmyhippo.common.Account;
+import com.example.pygmyhippo.common.AppNavController;
+import com.example.pygmyhippo.database.AccountDB;
 import com.example.pygmyhippo.database.DBOnCompleteFlags;
 import com.example.pygmyhippo.database.DBOnCompleteListener;
+import com.example.pygmyhippo.databinding.UserFragmentProfileBinding;
 import com.squareup.picasso.Picasso;
 
 import java.net.URISyntaxException;
@@ -66,12 +65,13 @@ import java.util.Objects;
 public class ProfileFragment extends Fragment  implements AdapterView.OnItemSelectedListener, DBOnCompleteListener<Account> {
     private Uri imagePath;
     private UserFragmentProfileBinding binding;
-    private NavController navController;
+    private AppNavController navController;
     private AccountDB handler;
 
     private Account signedInAccount;
     private String adminViewAccountID;
     private String currentRole;
+    private boolean useNavigation, useFirebase;
 
     private EditText nameField, pronounField, phoneField, emailField;
     private CheckBox decGeo, decNotify;
@@ -81,10 +81,6 @@ public class ProfileFragment extends Fragment  implements AdapterView.OnItemSele
     private ConstraintLayout adminConstraintLayout;
     private Spinner roleSpinner;
 
-    // initialized the listener
-    public void setOnRoleSelectedListener() {
-        Log.d("ProfileFragment", "Role selected");
-    }
 
     /**
      * Registers a photo picker activity launcher in single-select mode and sets the profile image to the new URI
@@ -121,12 +117,25 @@ public class ProfileFragment extends Fragment  implements AdapterView.OnItemSele
 
     }
 
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        if (getArguments() != null) {
+            ProfileFragmentArgs args = ProfileFragmentArgs.fromBundle(getArguments());
+            signedInAccount = args.getSignedInAccount();
+            adminViewAccountID = args.getAdminViewAccountID();
+            currentRole = args.getCurrentRole();
+            useNavigation = args.getUseNavigation();
+            useFirebase = args.getUseFirebase();
+        }
+    }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        navController = Navigation.findNavController(view);
-
+        navController = new AppNavController(useNavigation, Navigation.findNavController(view));
+        handler = new AccountDB(useFirebase);
+        setProfile();
     }
 
 
@@ -147,8 +156,6 @@ public class ProfileFragment extends Fragment  implements AdapterView.OnItemSele
 
         binding = UserFragmentProfileBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
-
-        handler = new AccountDB();
 
         editButton = root.findViewById(R.id.E_profile_editBtn);
         updateButton = root.findViewById(R.id.E_profile_create);
@@ -183,9 +190,6 @@ public class ProfileFragment extends Fragment  implements AdapterView.OnItemSele
         roleSpinner.setAdapter(roleAdapter);
 
         roleSpinner.setOnItemSelectedListener(this);
-
-        setProfile();
-
 
         /*
          * Allows te page elements to be edited by the user if the edit button is clicked
@@ -364,10 +368,6 @@ public class ProfileFragment extends Fragment  implements AdapterView.OnItemSele
      */
     private void setProfile() {
         Log.d("ProfileFragment", String.format("adminViewAccountID %s was received", adminViewAccountID));
-        signedInAccount = ProfileFragmentArgs.fromBundle(getArguments()).getSignedInAccount();
-        adminViewAccountID = ProfileFragmentArgs.fromBundle(getArguments()).getAdminViewAccountID();
-        currentRole = ProfileFragmentArgs.fromBundle(getArguments()).getCurrentRole();
-
         Log.d("ProfileFragment", String.format("signedInAccount %s", signedInAccount));
         if (adminViewAccountID != null && !Objects.equals(adminViewAccountID, "null") && !Objects.equals(adminViewAccountID, signedInAccount.getAccountID())) {
             Log.d("ProfileFragment", String.format("Getting Account %s for admin view", adminViewAccountID));
@@ -455,7 +455,7 @@ public class ProfileFragment extends Fragment  implements AdapterView.OnItemSele
             if (flags == DBOnCompleteFlags.SUCCESS.value) {
                 Account account = docs.get(0);
                 if (account.getCurrentRole() == Account.AccountRole.organiser) {
-                    navController.navigate(R.id.o_mainActivity);
+                    navController.navigate(R.id.o_mainActivity, null);
                 }
             } else {
                 Toast.makeText(getContext(), "Could not change current role", Toast.LENGTH_LONG).show();
