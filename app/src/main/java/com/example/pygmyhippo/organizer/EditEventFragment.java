@@ -45,6 +45,7 @@ import com.example.pygmyhippo.database.EventDB;
 import com.example.pygmyhippo.database.ImageStorage;
 import com.example.pygmyhippo.database.StorageOnCompleteListener;
 import com.example.pygmyhippo.databinding.OrganiserEditEventBinding;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -70,6 +71,7 @@ public class EditEventFragment extends Fragment implements DBOnCompleteListener<
 
     private Account signedInAccount;
     private Event updatedEvent;
+    private Button editEventButton;
 
 
     /**
@@ -114,7 +116,7 @@ public class EditEventFragment extends Fragment implements DBOnCompleteListener<
         eventPriceEdit = view.findViewById(R.id.o_editEvent_price_edit);
         eventLocationEdit = view.findViewById(R.id.o_editEvent_location_edit);
         eventDescriptionEdit = view.findViewById(R.id.o_editEvent_description_edit);
-        Button editEventButton = view.findViewById(R.id.o_editEvent_update_button);
+        editEventButton = view.findViewById(R.id.o_editEvent_update_button);
 
         editEventButton.setOnClickListener(v -> {
             // Get the inputs from the textViews
@@ -156,6 +158,16 @@ public class EditEventFragment extends Fragment implements DBOnCompleteListener<
             }
         });
 
+        // code for back button
+        FloatingActionButton backButton = view.findViewById(R.id.o_editEvent_backBtn);
+        backButton.setOnClickListener(view1 -> {
+            Log.d("EventFragment", "Back button pressed");
+            Bundle navArgs = new Bundle();
+            navArgs.putString("eventID", updatedEvent.getEventID());
+            navArgs.putParcelable("signedInAccount", signedInAccount);
+            navController.navigate(R.id.organiser_eventFragment, navArgs);
+        });
+
         handler.getEventByID(updatedEvent.getEventID(), this);
     }
 
@@ -166,10 +178,11 @@ public class EditEventFragment extends Fragment implements DBOnCompleteListener<
     private final ActivityResultLauncher<PickVisualMediaRequest> pickMedia =
             registerForActivityResult(new ActivityResultContracts.PickVisualMedia(), uri -> {
                 if (uri != null) {
-                    eventImageBtn.setImageURI(uri);
-                    eventImageBtn.setScaleType(ImageView.ScaleType.CENTER_CROP);
                     // center cropped can be changed if we want to scale the picture differently
+                    Toast.makeText(getContext(), "Image uploading to database", Toast.LENGTH_LONG).show();
                     ImageHandler.uploadEventImageToFirebase(uri, this);
+                    editEventButton.setClickable(false);
+                    // set update event clickable till image is uploaded
                 }
                 else{
                     // sets image path to null if no image is selected
@@ -251,11 +264,18 @@ public class EditEventFragment extends Fragment implements DBOnCompleteListener<
      */
     @Override
     public void OnCompleteStorage(@NonNull ArrayList<Image> docs, int queryID, int flags) {
+        editEventButton.setClickable(true);
         if (queryID == 0){ // post image and link to event
             if (flags == DBOnCompleteFlags.SUCCESS.value) {
                 Log.i("Post Event", "Image upload successful");
                 Toast.makeText(getContext(), "Image uploaded", Toast.LENGTH_LONG).show();
                 Image newImage = docs.get(0);
+                Picasso.get()
+                        .load(newImage.getUrl())
+                        .resize(eventImageBtn.getWidth(), eventImageBtn.getHeight())
+                        .rotate(90) // TODO: figure rotation bug
+                        .centerCrop()
+                        .into(eventImageBtn);
                 updatedEvent.setEventPoster(newImage.getUrl()); // set the image path from the URL
             }
             else {
@@ -265,4 +285,3 @@ public class EditEventFragment extends Fragment implements DBOnCompleteListener<
         }
     }
 }
-

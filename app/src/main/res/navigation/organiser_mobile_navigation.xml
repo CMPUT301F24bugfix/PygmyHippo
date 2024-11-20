@@ -185,5 +185,8 @@ app:startDestination="@+id/o_loadingFragment">
         <argument
             android:name="eventID"
             app:argType="string" />
+        <action
+            android:id="@+id/organiser_editEvent_to_organiser_eventView_page"
+            app:destination="@id/organiser_eventFragment" />
     </fragment>
 </navigation>
