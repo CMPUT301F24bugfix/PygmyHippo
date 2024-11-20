@@ -98,7 +98,6 @@ public class EventArrayAdapter extends ArrayAdapter<Event> {
                             .load(downloadUri)
                             .resize(imageSideLength, imageSideLength)
                             .centerCrop()
-                            .rotate(90) // TODO: figure rotation bug
                             .into(eventPoster);
                 } else {
                     // Event had no image, so it will stay as default image
