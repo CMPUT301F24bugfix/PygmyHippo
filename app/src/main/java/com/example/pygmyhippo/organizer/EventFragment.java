@@ -65,7 +65,7 @@ public class EventFragment extends Fragment implements DBOnCompleteListener<Even
             eventCostView, eventAboutDescriptionView;
     private ImageView eventPoster;
     private ImageButton editEvent;
-    Button lotteryButton;
+    private Button lotteryButton, viewQrButton;
     com.example.pygmyhippo.organizer.EventFragmentArgs Args;
 
     // populate single event page with hardcoded event information
@@ -132,6 +132,7 @@ public class EventFragment extends Fragment implements DBOnCompleteListener<Even
         eventPoster = view.findViewById(R.id.u_eventImageView);
         lotteryButton = view.findViewById(R.id.close_event_button);
         editEvent = view.findViewById(R.id.u_edit_event_button);
+        viewQrButton = view.findViewById(R.id.o_button_view_QR);
 
         // Set up event edit
         editEvent.setOnClickListener(view1 -> {
@@ -141,11 +142,23 @@ public class EventFragment extends Fragment implements DBOnCompleteListener<Even
             navController.navigate(R.id.organiser_editEvent_page, navArgs);
         });
 
-        // Set up navigation for the back button to return to last fragment
+        // Set up navigation for the back button to return to my event fragment
         FloatingActionButton backButton = view.findViewById(R.id.u_backButtonToQRView);
         backButton.setOnClickListener(view1 -> {
             Log.d("EventFragment", "Back button pressed");
-            navController.popBackStack();
+            Bundle navArgs = new Bundle();
+            navArgs.putParcelable("signedInAccount", signedInAccount);
+            navController.navigate(R.id.organiser_myEvents_page, navArgs);
+        });
+
+        // sets listener for viewing qrcode
+        viewQrButton.setOnClickListener(view1 -> {
+            Bundle navArgs = new Bundle();
+
+            // Pass the eventID and the current account to the next fragment
+            navArgs.putString("eventID", eventID);
+            navArgs.putParcelable("signedInAccount", signedInAccount);
+            navController.navigate(R.id.view_eventqr_fragment, navArgs);
         });
 
         // Set up the listener for viewing entrants button

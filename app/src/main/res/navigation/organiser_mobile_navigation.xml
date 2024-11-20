@@ -102,6 +102,12 @@ app:startDestination="@+id/o_loadingFragment">
         <action
             android:id="@+id/action_organiser_eventFragment_to_view_entrants_fragment"
             app:destination="@id/view_entrants_fragment" />
+        <action
+            android:id="@+id/action_organiser_eventFragment_to_view_qr_fragment"
+            app:destination="@id/view_eventqr_fragment" />
+        <action
+            android:id="@+id/action_organiser_eventFragment_to_view_my_events"
+            app:destination="@id/organiser_myEvents_page" />
     </fragment>
 
     <fragment
