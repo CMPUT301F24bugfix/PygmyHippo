@@ -66,7 +66,7 @@
                 android:id="@+id/O_profile_image"
                 android:layout_width="210dp"
                 android:layout_height="210dp"
-                android:src="@drawable/dog"
+                android:src="@drawable/loading_profile"
                 app:civ_border_color="#FF000000"
                 app:civ_border_width="0dp"
                 app:layout_constraintBottom_toTopOf="@id/O_profile_nameLabel"

@@ -161,4 +161,60 @@ public class ImageStorage extends DBHandler {
             listener.OnCompleteStorage(new ArrayList<>(), 3, DBOnCompleteFlags.SUCCESS.value);
         }
     }
+
+    /**
+     * This posts a profile image to the database
+     * @param imageUri
+     * @param listener
+     * @author Griffin (Kori modified this)
+     */
+    public void uploadProfileImageToFirebase(Uri imageUri, StorageOnCompleteListener<Image> listener) {
+        StorageReference storageRef = storage.getReference();
+        String imageName = "profiles/" + UUID.randomUUID().toString();
+        StorageReference imageRef = storageRef.child(imageName);
+        ArrayList<Image> images = new ArrayList<>();
+
+        imageRef.putFile(imageUri)
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        imageRef.getDownloadUrl().addOnSuccessListener(uri -> {
+                            Log.d("FirebaseStorage", "Image uploaded successfully. URL: " +  uri.toString());
+                            Image newImage = new Image();
+                            newImage.setUrl(uri.toString());
+                            newImage.setType(Image.ImageType.Event);
+
+                            images.add(newImage);
+                            listener.OnCompleteStorage(images, 4, DBOnCompleteFlags.SUCCESS.value);
+                        });
+                    }
+                    else{
+                        Log.e("FirebaseStorage:", "Image uploaded Error.");
+                        listener.OnCompleteStorage(images, 4,DBOnCompleteFlags.ERROR.value);
+                    }
+                });
+    }
+
+    /**
+     * This deletes the given image from the database
+     * @param url The url of the image we want to delete
+     * @param listener What gets called when the deletion is done
+     * @author Kori
+     */
+    public void DeleteImageByURL(String url, StorageOnCompleteListener<Image> listener) {
+        StorageReference imageRef = storage.getReferenceFromUrl(url);
+
+        // Delete the image using the reference we got based from the url
+        imageRef.delete()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        Log.d("FirebaseStorage", "Image deleted successfully. URL: " + url);
+
+                        listener.OnCompleteStorage(new ArrayList<>(), 5, DBOnCompleteFlags.SUCCESS.value);
+                    }
+                    else{
+                        Log.e("FirebaseStorage:", "Image deletion Error.");
+                        listener.OnCompleteStorage(new ArrayList<>(), 5,DBOnCompleteFlags.ERROR.value);
+                    }
+                });
+    }
 }
