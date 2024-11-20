@@ -230,7 +230,6 @@ public class EditEventFragment extends Fragment implements DBOnCompleteListener<
                             Picasso.get()
                                     .load(downloadUri)
                                     .resize(eventImageBtn.getWidth(), eventImageBtn.getHeight())
-                                    .rotate(90) // TODO: figure rotation bug
                                     .centerCrop()
                                     .into(eventImageBtn);
                         } else {
@@ -273,7 +272,6 @@ public class EditEventFragment extends Fragment implements DBOnCompleteListener<
                 Picasso.get()
                         .load(newImage.getUrl())
                         .resize(eventImageBtn.getWidth(), eventImageBtn.getHeight())
-                        .rotate(90) // TODO: figure rotation bug
                         .centerCrop()
                         .into(eventImageBtn);
                 updatedEvent.setEventPoster(newImage.getUrl()); // set the image path from the URL
