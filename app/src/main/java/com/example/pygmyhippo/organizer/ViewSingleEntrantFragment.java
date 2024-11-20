@@ -13,7 +13,6 @@ Purposes:
 Issues:
     - No Image handling
     - Notifications haven't been dealt with yet
-    - Replacement draw hasn't been dealt with yet
  */
 
 import static java.lang.Math.abs;
@@ -290,8 +289,8 @@ public class ViewSingleEntrantFragment extends Fragment implements DBOnCompleteL
         // https://stackoverflow.com/questions/12728255/in-android-how-do-i-set-margins-in-dp-programmatically
         FrameLayout.LayoutParams layoutParams = (FrameLayout.LayoutParams) mapMarker.getLayoutParams();
 
-        xCoordinate = (int) abs((xCoordinate));
-        yCoordinate = (int) abs((yCoordinate));
+        xCoordinate = xCoordinate - ((float) mapMarker.getWidth() / 2);
+        yCoordinate = yCoordinate - mapMarker.getHeight();
 
         Log.d("Location", String.format("x-coordinate: %f y-coordinate: %f", xCoordinate, yCoordinate));
 
