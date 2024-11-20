@@ -94,7 +94,7 @@ public class EditEventFragment extends Fragment implements DBOnCompleteListener<
         ImageHandler = new ImageStorage();
         updatedEvent = new Event();
 
-        // Get the current account that was passed to this fragment
+        // Get the current account and event that was passed to this fragment
         if (getArguments() != null) {
             signedInAccount = EditEventFragmentArgs.fromBundle(getArguments()).getSignedInAccount();
             updatedEvent.setEventID(EditEventFragmentArgs.fromBundle(getArguments()).getEventID());
