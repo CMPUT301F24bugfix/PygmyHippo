@@ -19,7 +19,6 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -61,9 +60,14 @@ public class ViewMyEventFragment extends Fragment implements DBOnCompleteListene
 
     private TextView eventNameView, eventDateView, eventTimeView, eventOrganizerView,
             eventLocationView, eventCostView, eventAboutDescriptionView;
-    private Button leaveWaitlistButton;
     private ConstraintLayout adminConstraint;
     private ImageView eventPoster;
+
+    private TextView userWaitlistStatus, userStatusDescription;
+    private Button leaveWaitlistButton;
+
+    // ACCEPTED WAITLIST
+    private Button acceptWaitlistButton, declineWaitlistButton;
 
 
     // populate single event page with hardcoded event information
@@ -123,9 +127,14 @@ public class ViewMyEventFragment extends Fragment implements DBOnCompleteListene
         eventCostView = view.findViewById(R.id.u_myEventCostView);
         eventAboutDescriptionView = view.findViewById(R.id.u_aboutMyEventDescriptionView);
         eventPoster = view.findViewById(R.id.u_myEventImageView);
+        userWaitlistStatus = view.findViewById(R.id.u_userStatus);
 
         // BUTTONS
         leaveWaitlistButton = view.findViewById(R.id.u_leaveWaitlistButton);
+
+        // ACCEPTED FROM WAITLIST BUTTONS
+        acceptWaitlistButton = view.findViewById(R.id.u_acceptWaitlistButton);
+        declineWaitlistButton = view.findViewById(R.id.u_declineWaitlistButton);
 
         // Set up navigation for the back button to return to last fragment
         FloatingActionButton backButton = view.findViewById(R.id.u_backButtonToMyEvents);
@@ -211,7 +220,11 @@ public class ViewMyEventFragment extends Fragment implements DBOnCompleteListene
 
     }
 
+    // on the condition: entrant.getEntrantStatus(Entrant.EntrantStatus.invited);
+    // this is probably wrong ^
     public void wonWaitlistSelection() {
-
+        // populate the views, make sure to make buttons visible,
+        // when button is clicked, either set user status to accepted or just remove the user entirely from the waitlist
+        userWaitlistStatus.setText("WON");
     }
 }
