@@ -166,4 +166,18 @@ app:startDestination="@+id/o_loadingFragment">
             app:nullable="true"
             android:defaultValue="admin" />
     </activity>
+
+    <fragment
+        android:id="@+id/organiser_editEvent_page"
+        android:name="com.example.pygmyhippo.organizer.EditEventFragment"
+        android:label="Edit Event"
+        tools:layout="@layout/organiser_edit_event"
+        android:background="@color/dark_purple">
+        <argument
+            android:name="signedInAccount"
+            app:argType="com.example.pygmyhippo.common.Account" />
+        <argument
+            android:name="eventID"
+            app:argType="string" />
+    </fragment>
 </navigation>

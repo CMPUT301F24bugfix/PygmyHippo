@@ -10,8 +10,7 @@
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingBottom="70dp">
+        android:layout_height="wrap_content">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -37,11 +36,12 @@
                 android:id="@+id/u_eventDateView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="24dp"
                 android:text="October 21, 2024"
                 android:textSize="16sp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.10"
+                app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/u_eventImageView"
                 app:layout_constraintVertical_bias="0.02" />
@@ -51,12 +51,13 @@
                 android:id="@+id/u_eventNameView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="24dp"
                 android:text="Hippo Party"
                 android:textSize="36sp"
                 android:textStyle="bold"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.12"
+                app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/u_eventDateView"
                 app:layout_constraintVertical_bias="0.01" />
@@ -66,6 +67,7 @@
                 android:id="@+id/u_organizerNameView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="24dp"
                 android:background="@drawable/mid_light_rounded_corners"
                 android:drawableStart="@drawable/organizer_profile_picture"
                 android:drawablePadding="20dp"
@@ -78,47 +80,50 @@
                 android:textSize="20sp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/u_eventNameView"
                 app:layout_constraintVertical_bias="0.04" />
 
             <TextView
                 android:id="@+id/u_eventTimeView"
-                android:layout_width="wrap_content"
+                android:layout_width="244dp"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="24dp"
                 android:drawableStart="@drawable/icon_time"
                 android:drawablePadding="5dp"
                 android:gravity="center_vertical"
                 android:text="4:00 PM MST - 4:00 AM MST"
                 android:textSize="16sp"
-                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintBottom_toTopOf="@+id/u_eventLocationView"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.15"
+                app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/u_organizerNameView"
-                app:layout_constraintVertical_bias="0.05" />
+                app:layout_constraintVertical_bias="1.0" />
 
             <TextView
                 android:id="@+id/u_eventLocationView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="22dp"
                 android:drawableStart="@drawable/icon_location"
                 android:drawablePadding="5dp"
                 android:gravity="center_vertical"
                 android:text="The Swamp"
                 android:textSize="16sp"
-                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintBottom_toTopOf="@+id/u_eventCostView"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.08"
+                app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/u_organizerNameView"
-                app:layout_constraintVertical_bias="0.18" />
+                app:layout_constraintVertical_bias="1" />
 
             <TextView
                 android:id="@+id/u_eventCostView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="24dp"
                 android:drawableStart="@drawable/icon_card"
                 android:drawablePadding="5dp"
                 android:gravity="center_vertical"
@@ -126,27 +131,28 @@
                 android:textSize="16sp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.1"
+                app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/u_organizerNameView"
-                app:layout_constraintVertical_bias="0.31" />
+                app:layout_constraintVertical_bias="0.221" />
 
             <TextView
                 android:id="@+id/u_aboutEventTitleView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="24dp"
                 android:text="About This Event:"
                 android:textSize="18sp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.1"
+                app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/u_eventCostView"
                 app:layout_constraintVertical_bias="0.1" />
 
             <TextView
                 android:id="@+id/u_aboutEventDescriptionView"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="135dp"
                 android:background="@drawable/light_rounded_corners"
@@ -174,6 +180,19 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/u_aboutEventDescriptionView" />
+
+            <ImageButton
+                android:id="@+id/u_edit_event_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="20dp"
+                android:background="@drawable/e_p_ic_edit"
+                app:layout_constraintBottom_toTopOf="@+id/u_eventNameView"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="1.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.976" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

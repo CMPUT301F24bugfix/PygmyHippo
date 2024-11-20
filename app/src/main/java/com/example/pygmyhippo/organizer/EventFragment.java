@@ -21,6 +21,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -63,7 +64,9 @@ public class EventFragment extends Fragment implements DBOnCompleteListener<Even
     private TextView eventNameView, eventDateView, eventTimeView, eventOrganizerView, eventLocationView,
             eventCostView, eventAboutDescriptionView;
     private ImageView eventPoster;
+    private ImageButton editEvent;
     Button lotteryButton;
+    com.example.pygmyhippo.organizer.EventFragmentArgs Args;
 
     // populate single event page with hardcoded event information
     public Event hardcodeEvent() {
@@ -93,6 +96,7 @@ public class EventFragment extends Fragment implements DBOnCompleteListener<Even
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        Args = com.example.pygmyhippo.organizer.EventFragmentArgs.fromBundle(getArguments());
         super.onViewCreated(view, savedInstanceState);
         navController = Navigation.findNavController(view);
 
@@ -127,6 +131,15 @@ public class EventFragment extends Fragment implements DBOnCompleteListener<Even
         eventAboutDescriptionView = view.findViewById(R.id.u_aboutEventDescriptionView);
         eventPoster = view.findViewById(R.id.u_eventImageView);
         lotteryButton = view.findViewById(R.id.close_event_button);
+        editEvent = view.findViewById(R.id.u_edit_event_button);
+
+        // Set up event edit
+        editEvent.setOnClickListener(view1 -> {
+            Bundle navArgs = new Bundle();
+            navArgs.putString("eventID", eventID);
+            navArgs.putParcelable("signedInAccount", signedInAccount);
+            navController.navigate(R.id.organiser_editEvent_page, navArgs);
+        });
 
         // Set up navigation for the back button to return to last fragment
         FloatingActionButton backButton = view.findViewById(R.id.u_backButtonToQRView);
@@ -232,6 +245,7 @@ public class EventFragment extends Fragment implements DBOnCompleteListener<Even
                             .load(downloadUri)
                             .resize(imageSideLength, imageSideLength)
                             .centerCrop()
+                            .rotate(90) // TODO: figure rotation bug
                             .into(eventPoster);
                 } else {
                     // Event had no image, so it will stay as default image
