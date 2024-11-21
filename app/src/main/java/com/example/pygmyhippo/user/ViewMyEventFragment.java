@@ -180,6 +180,9 @@ public class ViewMyEventFragment extends Fragment implements DBOnCompleteListene
                     pendingWaitlist();
                 } else if (event.getEntrants().stream().anyMatch(e -> e.getAccountID().equals(entrant.getAccountID()) && e.getEntrantStatus() == Entrant.EntrantStatus.invited)) {
                     wonWaitlistSelection();
+                // this is the case where the user did not get picked and the event is no longer ongoing
+                } else if (event.getEntrants().stream().anyMatch(e -> e.getAccountID().equals(entrant.getAccountID()) && e.getEntrantStatus() == Entrant.EntrantStatus.waitlisted)) {
+                    lostWaitlistSelection();
                 }
 
             }
@@ -223,6 +226,8 @@ public class ViewMyEventFragment extends Fragment implements DBOnCompleteListene
         userWaitlistStatus.setText("WON");
         userStatusDescription.setVisibility(View.VISIBLE);
         userStatusDescription.setText("You have been accepted from the waitlist to attend this event. Do you accept or decline this invitation?");
+        acceptWaitlistButton.setText("Accept");
+        declineWaitlistButton.setText("Decline");
         acceptWaitlistButton.setVisibility(View.VISIBLE);
         declineWaitlistButton.setVisibility(View.VISIBLE);
 
@@ -242,5 +247,41 @@ public class ViewMyEventFragment extends Fragment implements DBOnCompleteListene
 
         // TODO: add decline waitlist button funtionality here
         // use removeEntrant from list and update DB
+        declineWaitlistButton.setOnClickListener(view -> {
+            event.getEntrants()
+                    .stream()
+                    .filter(e -> (e.getAccountID().equals(entrant.getAccountID())))
+                    .findFirst()
+                    .ifPresent(e -> e.setEntrantStatus(Entrant.EntrantStatus.cancelled));
+            dbHandler.updateEvent(event, this);
+            userWaitlistStatus.setText("DECLINED");
+            userStatusDescription.setText("You have declined to join the event :(");
+            acceptWaitlistButton.setVisibility(View.GONE);
+            declineWaitlistButton.setVisibility(View.GONE);
+        });
+    }
+
+    public void lostWaitlistSelection() {
+        userWaitlistStatus.setText("LOST");
+        userStatusDescription.setVisibility(View.VISIBLE);
+        userStatusDescription.setText("You have lost the waitlist lottery to attend this event. Do you stay on the waitlist?");
+        acceptWaitlistButton.setText("Yes");
+        declineWaitlistButton.setText("No");
+        acceptWaitlistButton.setVisibility(View.VISIBLE);
+        declineWaitlistButton.setVisibility(View.VISIBLE);
+
+        acceptWaitlistButton.setOnClickListener(view -> {
+            userStatusDescription.setText("We will notify you if we have a spot for you!");
+            acceptWaitlistButton.setVisibility(View.GONE);
+            declineWaitlistButton.setVisibility(View.GONE);
+        });
+
+        declineWaitlistButton.setOnClickListener(view -> {
+            event.removeEntrant(entrant);
+            dbHandler.updateEvent(event, this);
+            userStatusDescription.setText("You have declined to join the event :(");
+            acceptWaitlistButton.setVisibility(View.GONE);
+            declineWaitlistButton.setVisibility(View.GONE);
+        });
     }
 }
