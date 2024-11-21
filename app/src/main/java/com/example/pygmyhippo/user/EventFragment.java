@@ -246,8 +246,10 @@ public class EventFragment extends Fragment implements DBOnCompleteListener<Even
      *
      * Button is only visible when the signedInAccount is a user.
      */
+    // TODO: check to see if number of entrants have been exceeded (can limit number of people joining waitlist)
     private void registerUser() {
         // if the even already has the user, remove the user upon clicking
+        // TODO: rescanning the qr code doesn't make options actually change
         if (event.hasEntrant(entrant)) {
             registerButton.setBackgroundColor(0xFF35B35D);
             event.removeEntrant(entrant);

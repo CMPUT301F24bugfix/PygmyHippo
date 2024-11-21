@@ -251,7 +251,7 @@ public class ViewMyEventFragment extends Fragment implements DBOnCompleteListene
                     .findFirst()
                     .ifPresent(e -> e.setEntrantStatus(Entrant.EntrantStatus.accepted));
             dbHandler.updateEvent(event, this);
-
+            userWaitlistStatus.setText("ACCEPTED");
             acceptWaitlistButton.setVisibility(View.GONE);
             declineWaitlistButton.setVisibility(View.GONE);
             userStatusDescription.setText("You are officially accepted into this event!");
