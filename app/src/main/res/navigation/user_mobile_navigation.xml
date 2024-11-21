@@ -80,6 +80,10 @@
         <action
             android:id="@+id/user_event_fragment_to_list"
             app:destination="@id/u_my_events_menu_item" />
+        <argument
+            android:name="isAdmin"
+            app:argType="boolean"
+            android:defaultValue="false" />
     </fragment>
 
     <fragment

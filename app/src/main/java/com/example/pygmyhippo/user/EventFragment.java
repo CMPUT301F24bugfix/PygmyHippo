@@ -66,6 +66,8 @@ public class EventFragment extends Fragment implements DBOnCompleteListener<Even
     private Entrant entrant;
     private ArrayList<Entrant> entrants;
     private Account signedInAccount;
+    private boolean isAdmin;
+    private String eventID;
 
     private EventDB DBhandler;
     private ImageStorage imageHandler;
@@ -75,6 +77,17 @@ public class EventFragment extends Fragment implements DBOnCompleteListener<Even
     private Button registerButton, deleteEventButton, deleteQRCodeButton;
     private ConstraintLayout adminConstraint;
     private ImageView eventImageView;
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        if (getArguments() != null) {
+            EventFragmentArgs args = EventFragmentArgs.fromBundle(getArguments());
+            isAdmin = args.getIsAdmin();
+            signedInAccount = args.getSignedInAccount();
+            eventID = args.getEventID();
+        }
+    }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
@@ -112,12 +125,10 @@ public class EventFragment extends Fragment implements DBOnCompleteListener<Even
         imageHandler = new ImageStorage();
 
         // Get current user account
-        signedInAccount = EventFragmentArgs.fromBundle(getArguments()).getSignedInAccount();
         setPermissions();
 
         // Get the eventID that was passed by scanning the QR code
-        String navigationEventID = EventFragmentArgs.fromBundle(getArguments()).getEventID();
-        DBhandler.getEventByID(navigationEventID, this);
+        DBhandler.getEventByID(eventID, this);
 
         // Make the entrant equivalent using the account info (for if they join the waitlist)
         entrant = new Entrant(
@@ -271,7 +282,7 @@ public class EventFragment extends Fragment implements DBOnCompleteListener<Even
      * Toggles visibility of certain buttons depending on role of signedInAccount.
      */
     private void setPermissions() {
-        if (signedInAccount.getCurrentRole() == Account.AccountRole.admin) {
+        if (isAdmin) {
             Log.d("EventFragment", "Admin user detected. Setting Admin permissions");
             adminConstraint.setVisibility(View.VISIBLE);
             registerButton.setVisibility(View.GONE);
