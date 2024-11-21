@@ -112,8 +112,10 @@ public class ViewMyEventFragment extends Fragment implements DBOnCompleteListene
         acceptWaitlistButton = view.findViewById(R.id.u_acceptWaitlistButton);
         declineWaitlistButton = view.findViewById(R.id.u_declineWaitlistButton);
 
-        // TODO: should set buttons to invisible, when all the buttons have been made
-
+        // TODO: should set buttons to invisible
+        leaveWaitlistButton.setVisibility(View.GONE);
+        acceptWaitlistButton.setVisibility(View.GONE);
+        declineWaitlistButton.setVisibility(View.GONE);
 
         // Set up navigation for the back button to return to last fragment
         FloatingActionButton backButton = view.findViewById(R.id.u_backButtonToMyEvents);
