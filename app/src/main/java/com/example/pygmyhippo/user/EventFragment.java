@@ -1,7 +1,7 @@
 package com.example.pygmyhippo.user;
 
 /*
-This Fragment will display one of the events that a User can see after scanning its QR code
+This fragment will display one of the events that a User can see after scanning its QR code
 Will be used by users and admins
 Purposes:
         - Let the User view the details of the event
@@ -25,6 +25,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -49,9 +50,9 @@ import com.squareup.picasso.Picasso;
 import java.util.ArrayList;
 
 /**
- * This fragment will hold a single events
+ * This fragment will hold a single events from scanning the QR code
  * @author Katharine
- * @version 1.0
+ * @version 2.0
  * No returns and no parameters
  */
 public class EventFragment extends Fragment implements DBOnCompleteListener<Event> {
@@ -75,27 +76,6 @@ public class EventFragment extends Fragment implements DBOnCompleteListener<Even
     private ConstraintLayout adminConstraint;
     private ImageView eventImageView;
 
-    // populate single event page with hardcoded event information
-    public Event hardcodeEvent() {
-        entrants = new ArrayList<>();
-
-        return event = new Event(
-                "Hippo Party",
-                "1",
-                "The Hippopotamus Society",
-                entrants,
-                "The Swamp",
-                "2024-10-31",
-                // TODO: there is a bit of an issue with aligning the time when it is shorter on the xml
-                "4:00 PM MST - 4:00 AM MST",
-                "Love hippos and a party? Love a party! Join a party!",
-                "$150.00",
-                "hippoparty.png",
-                Event.EventStatus.ongoing,
-                true
-        );
-    }
-
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -103,7 +83,7 @@ public class EventFragment extends Fragment implements DBOnCompleteListener<Even
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         binding = UserFragmentEventBinding.inflate(inflater, container, false);
         View view = binding.getRoot();
@@ -137,7 +117,7 @@ public class EventFragment extends Fragment implements DBOnCompleteListener<Even
 
         // Get the eventID that was passed by scanning the QR code
         String navigationEventID = EventFragmentArgs.fromBundle(getArguments()).getEventID();
-        getEvent(navigationEventID);
+        DBhandler.getEventByID(navigationEventID, this);
 
         // Make the entrant equivalent using the account info (for if they join the waitlist)
         entrant = new Entrant(
@@ -149,7 +129,6 @@ public class EventFragment extends Fragment implements DBOnCompleteListener<Even
         FloatingActionButton backButton = view.findViewById(R.id.u_backButtonToQRView);
         backButton.setOnClickListener(view1 -> {
             navController.popBackStack();
-//            Navigation.findNavController(view1).navigate(R.id.action_eventFragment_to_scanQRcodeFragment);
         });
 
         registerButton.setOnClickListener(buttonView -> {
@@ -172,11 +151,15 @@ public class EventFragment extends Fragment implements DBOnCompleteListener<Even
 
     @Override
     public void OnCompleteDB(@NonNull ArrayList<Event> docs, int queryID, int flags) {
-        if (queryID == 0) {
+        if (queryID == 1) {
             if (flags == DBOnCompleteFlags.SINGLE_DOCUMENT.value) {
                 // Get the event from the database and populate the fragment
                 event = docs.get(0);
                 populateTextFields();
+            }
+            else {
+                Log.d("EventFragment", "Database error in getting event");
+                navController.popBackStack();
             }
         } else if (queryID == 4) {
             if (flags == DBOnCompleteFlags.SUCCESS.value) {
@@ -195,23 +178,6 @@ public class EventFragment extends Fragment implements DBOnCompleteListener<Even
                 // If not the success flag, then there was an error
                 Log.d("EventFragment", "Error in updating event.");
             }
-        }
-    }
-
-    /**
-     * Tries to query for event by eventID.
-     *
-     * If there is no event ID then mock data is loaded in.
-     * @param eventID ID of the event to query for.
-     */
-    private void getEvent(@Nullable String eventID) {
-        if (eventID == null) {
-            Log.d("EventFragment", "No Event ID was passed via navigation to EventFragment, using mock data...");
-            event = hardcodeEvent();
-            populateTextFields();
-        } else {
-            Log.d("EventFragment", String.format("Non-null eventID, attempting to retrieve Event with ID %s", eventID));
-            DBhandler.getEventByID(eventID, this);
         }
     }
 
@@ -260,8 +226,10 @@ public class EventFragment extends Fragment implements DBOnCompleteListener<Even
      *
      * Button is only visible when the signedInAccount is a user.
      */
+    // TODO: check to see if number of entrants have been exceeded (can limit number of people joining waitlist)
     private void registerUser() {
         // if the even already has the user, remove the user upon clicking
+        // TODO: rescanning the qr code doesn't make options actually change
         if (event.hasEntrant(entrant)) {
             registerButton.setBackgroundColor(0xFF35B35D);
             event.removeEntrant(entrant);
