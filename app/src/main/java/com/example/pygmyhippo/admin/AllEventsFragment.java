@@ -9,6 +9,11 @@ Issues:
  */
 
 
+
+import androidx.navigation.NavController;
+
+import com.example.pygmyhippo.common.RecyclerClickListener;
+
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -19,12 +24,12 @@ import android.widget.ArrayAdapter;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.example.pygmyhippo.R;
 import com.example.pygmyhippo.common.Account;
-import com.example.pygmyhippo.common.AppNavController;
 import com.example.pygmyhippo.common.Event;
 import com.example.pygmyhippo.common.RecyclerClickListener;
 import com.example.pygmyhippo.database.DBOnCompleteFlags;
@@ -42,15 +47,13 @@ import java.util.ArrayList;
  * event's profile page with admin permissions.
  */
 public class AllEventsFragment extends Fragment implements RecyclerClickListener, DBOnCompleteListener<Event> {
-    private AdminFragmentAllListBinding binding;
+    AdminFragmentAllListBinding binding;
+    NavController navController;
 
-    private ArrayList<Event> allEvents;
-    private AllEventsAdapter adapter;
-    private EventDB handler;
-
-    private AppNavController navController;
-    private Account signedInAccount;
-    private boolean useNavigation, useFirebase;
+    ArrayList<Event> allEvents;
+    AllEventsAdapter adapter;
+    EventDB handler;
+    Account signedInAccount;
 
 
     @Override
@@ -61,21 +64,13 @@ public class AllEventsFragment extends Fragment implements RecyclerClickListener
         Bundle navArgs = new Bundle();
         navArgs.putParcelable("signedInAccount", signedInAccount);
         navArgs.putString("eventID", allEvents.get(position).getEventID());
-        navArgs.putBoolean("isAdmin", true);
-        navArgs.putBoolean("useNavigation", true);
-        navArgs.putBoolean("useFirebase", true);
         navController.navigate(R.id.action_admin_navigation_all_events_to_admin_navigation_event_page, navArgs);
     }
 
     @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            AllEventsFragmentArgs args = AllEventsFragmentArgs.fromBundle(getArguments());
-            signedInAccount = args.getSignedInAccount();
-            useNavigation = args.getUseNavigation();
-            useFirebase = args.getUseFirebase();
-        }
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        navController = Navigation.findNavController(view);
     }
 
     @Override
@@ -85,7 +80,12 @@ public class AllEventsFragment extends Fragment implements RecyclerClickListener
         View root = binding.getRoot();
 
         // Get the signed in account that was passed from the fragment that navigated here
+        signedInAccount = AllEventsFragmentArgs.fromBundle(getArguments()).getSignedInAccount();
         allEvents = new ArrayList<>();
+
+        // Initialize the handler and get all the events
+        handler = new EventDB();
+        handler.getEvents(1000, this);
 
         // Fill the fields of the recycle view
         adapter = new AllEventsAdapter(allEvents, this);
@@ -116,16 +116,6 @@ public class AllEventsFragment extends Fragment implements RecyclerClickListener
         binding.aAlllistTitleText.setText(R.string.all_events_title);
 
         return root;
-    }
-
-    @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        navController = new AppNavController(useNavigation, Navigation.findNavController(view));
-
-        // Initialize the handler and get all the events
-        handler = new EventDB(useFirebase);
-        handler.getEvents(1000, this);
     }
 
     @Override

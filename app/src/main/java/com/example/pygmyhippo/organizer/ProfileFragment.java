@@ -23,6 +23,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.PickVisualMediaRequest;
@@ -30,11 +31,11 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
 import com.example.pygmyhippo.R;
 import com.example.pygmyhippo.common.Account;
-import com.example.pygmyhippo.common.AppNavController;
 import com.example.pygmyhippo.common.Facility;
 import com.example.pygmyhippo.common.Image;
 import com.example.pygmyhippo.database.AccountDB;
@@ -47,6 +48,7 @@ import com.squareup.picasso.Picasso;
 
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.Objects;
 
 
 /**
@@ -64,10 +66,9 @@ public class ProfileFragment extends Fragment implements AdapterView.OnItemSelec
     private String uploadType = "avatar";
     private Account signedInAccount;
     private String currentRole;
-    private boolean useNavigation, useFirebase;
 
     private OrganiserFragmentProfileBinding binding;
-    private AppNavController navController;
+    private NavController navController;
     private AccountDB handler;
     private ImageStorage imageHandler;
 
@@ -112,24 +113,9 @@ public class ProfileFragment extends Fragment implements AdapterView.OnItemSelec
     }
 
     @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            ProfileFragmentArgs args = ProfileFragmentArgs.fromBundle(getArguments());
-            signedInAccount = args.getSignedInAccount();
-            currentRole = args.getCurrentRole();
-            useNavigation = args.getUseNavigation();
-            useFirebase = args.getUseFirebase();
-        }
-    }
-
-    @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        navController = new AppNavController(useNavigation, Navigation.findNavController(view));
-        handler = new AccountDB(useFirebase);
-        imageHandler = new ImageStorage(useFirebase);
-        setProfile();
+        navController = Navigation.findNavController(view);
     }
 
     /**
@@ -185,6 +171,12 @@ public class ProfileFragment extends Fragment implements AdapterView.OnItemSelec
         Button deleteIm_btn = root.findViewById(R.id.O_profile_deleteImageBtn);
         Button facility_uploadIm_btn = root.findViewById(R.id.O_Profile_facilityUploadImagebtn);
         profileImage = root.findViewById(R.id.O_profile_image);
+
+        // Get the account and initialize the db and storage handlers
+        handler = new AccountDB();
+        imageHandler = new ImageStorage();
+        setProfile();
+
 
         // Allows te page elements to be edited by the user if the edit button is clicked
         View.OnClickListener edit = new View.OnClickListener() {
@@ -395,6 +387,9 @@ public class ProfileFragment extends Fragment implements AdapterView.OnItemSelec
      * This method will retrieve the signed in account and call for the details to be populated
      */
     private void setProfile() {
+        signedInAccount = ProfileFragmentArgs.fromBundle(getArguments()).getSignedInAccount();
+        currentRole = ProfileFragmentArgs.fromBundle(getArguments()).getCurrentRole();
+
         Log.d("ProfileFragment", String.format("signedInAccount %s", signedInAccount));
         if (signedInAccount != null) {
             // An account was

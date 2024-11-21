@@ -25,6 +25,7 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
@@ -32,10 +33,10 @@ import androidx.activity.result.PickVisualMediaRequest;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.NavController;
 
 import com.example.pygmyhippo.R;
 import com.example.pygmyhippo.common.Account;
-import com.example.pygmyhippo.common.AppNavController;
 import com.example.pygmyhippo.common.Event;
 import com.example.pygmyhippo.common.Image;
 import com.example.pygmyhippo.database.DBOnCompleteFlags;
@@ -59,7 +60,7 @@ import java.util.ArrayList;
 public class EditEventFragment extends Fragment implements DBOnCompleteListener<Event>, StorageOnCompleteListener<Image> {
 
     private OrganiserEditEventBinding binding;
-    private AppNavController navController;
+    private NavController navController;
 
     private EditText eventNameEdit, eventDateTimeEdit, eventPriceEdit, eventLocationEdit, eventDescriptionEdit, eventLimitEdit, eventWinnersEdit;
     private CheckBox eventGeolocation;
@@ -69,12 +70,8 @@ public class EditEventFragment extends Fragment implements DBOnCompleteListener<
     private ImageStorage ImageHandler;
 
     private Account signedInAccount;
-    private boolean useFirebase, useNavigation;
-
     private Event updatedEvent;
     private Button editEventButton;
-
-
 
 
     /**
@@ -95,6 +92,10 @@ public class EditEventFragment extends Fragment implements DBOnCompleteListener<
         binding = OrganiserEditEventBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
+        handler = new EventDB();
+        ImageHandler = new ImageStorage();
+        updatedEvent = new Event();
+
         // Get the current account and event that was passed to this fragment
         if (getArguments() != null) {
             signedInAccount = EditEventFragmentArgs.fromBundle(getArguments()).getSignedInAccount();
@@ -107,11 +108,7 @@ public class EditEventFragment extends Fragment implements DBOnCompleteListener<
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        navController = new AppNavController(useNavigation, findNavController(view));
-
-        handler = new EventDB(useFirebase);
-        ImageHandler = new ImageStorage(useFirebase);
-        updatedEvent = new Event();
+        navController = findNavController(view);
 
         // Get all the fields we want to get event data from
         eventNameEdit = view.findViewById(R.id.o_editEvent_name_edit);

@@ -22,6 +22,7 @@ import com.example.pygmyhippo.common.BaseViewHolder;
 import com.example.pygmyhippo.common.Image;
 import com.example.pygmyhippo.common.RecyclerClickListener;
 import com.example.pygmyhippo.database.DBOnCompleteFlags;
+import com.example.pygmyhippo.database.DBOnCompleteListener;
 import com.example.pygmyhippo.database.ImageStorage;
 import com.example.pygmyhippo.database.StorageOnCompleteListener;
 import com.squareup.picasso.Picasso;
@@ -39,10 +40,10 @@ public class AllImagesAdapter extends BaseRecyclerAdapter<Image, AllImagesAdapte
         private final ImageView imageView;
         private final ImageStorage handler;
 
-        public ImageViewHolder(@NonNull View itemView, boolean useFirebase) {
+        public ImageViewHolder(@NonNull View itemView) {
             super(itemView);
             imageView = itemView.findViewById(R.id.a_alllist_image);
-            handler = new ImageStorage(useFirebase);
+            handler = new ImageStorage();
         }
 
         @Override
@@ -68,11 +69,8 @@ public class AllImagesAdapter extends BaseRecyclerAdapter<Image, AllImagesAdapte
         }
     }
 
-    private boolean useFirebase;
-
-    public AllImagesAdapter(ArrayList<Image> dataList, RecyclerClickListener listener, boolean useFirebase) {
+    public AllImagesAdapter(ArrayList<Image> dataList, RecyclerClickListener listener) {
         super(dataList, listener);
-        this.useFirebase = useFirebase;
     }
 
     @NonNull
@@ -82,7 +80,7 @@ public class AllImagesAdapter extends BaseRecyclerAdapter<Image, AllImagesAdapte
                 .inflate(R.layout.admin_all_list_image_item, parent, false);
 
         // Initialize the image holder
-        AllImagesAdapter.ImageViewHolder viewHolder = new ImageViewHolder(view, useFirebase);
+        AllImagesAdapter.ImageViewHolder viewHolder = new ImageViewHolder(view);
 
         view.setOnClickListener(v -> {
             listener.onItemClick(viewHolder.getAdapterPosition());

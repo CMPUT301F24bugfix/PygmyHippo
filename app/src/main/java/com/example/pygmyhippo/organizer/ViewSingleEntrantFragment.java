@@ -29,10 +29,10 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
 import com.example.pygmyhippo.common.Account;
-import com.example.pygmyhippo.common.AppNavController;
 import com.example.pygmyhippo.common.Entrant;
 import com.example.pygmyhippo.common.Event;
 import com.example.pygmyhippo.database.AccountDB;
@@ -50,58 +50,17 @@ import java.util.ArrayList;
  * TODO: Notification sending can also be done when one of the buttons are pressed (just one possible idea)
  */
 public class ViewSingleEntrantFragment extends Fragment {
-    private Account signedInAccount;
-    private String accountID;
+    private Account account;
     private String status;
     private String eventID;
-    private boolean useNavigation, useFirebase;
     private EventDB dbHandler;
     private AccountDB dbProfileHandler;
-    private AppNavController navController;
-
-    private ImageButton backButton;
-    private TextView userNameView;
-    private TextView pronounsTextView;
-    private TextView emailTextView;
-    private TextView phoneTextView;
-    private TextView statusTextView;
-    private Button statusButton;
-
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            ViewSingleEntrantFragmentArgs args = ViewSingleEntrantFragmentArgs.fromBundle(getArguments());
-            signedInAccount = args.getSignedInAccount();
-            accountID = args.getAccountID();
-            status = args.getStatus();
-            eventID = args.getEventID();
-        }
-    }
+    private NavController navController;
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        navController = new AppNavController(useNavigation, Navigation.findNavController(view));
-
-        // Get the account from the database
-        dbHandler = new EventDB(useFirebase);
-        dbProfileHandler = new AccountDB(useFirebase);
-        dbProfileHandler.getAccountByID(accountID, (docs, queryID, flags) -> {
-            if (flags == DBOnCompleteFlags.SINGLE_DOCUMENT.value) {
-                // Get the event for this list of entrants and initialize the list
-                Account account = docs.get(0);
-
-                // Set the text views once we get the data
-                userNameView.setText(account.getName());
-                pronounsTextView.setText(account.getPronouns());
-                emailTextView.setText(account.getEmailAddress());
-                phoneTextView.setText(account.getPhoneNumber());
-            } else {
-                // Should only ever expect 1 document, otherwise there must be an error
-                handleDBError();
-            }
-        });
+        navController = Navigation.findNavController(view);
     }
 
     /**
@@ -122,15 +81,21 @@ public class ViewSingleEntrantFragment extends Fragment {
         OrganiserViewSingleEntrantBinding binding = OrganiserViewSingleEntrantBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
+        // Get the account and entrant status passed from the ViewEntrantsFragment
+        String accountID = getArguments().getString("accountID");
+        status = getArguments().getString("status");
+        eventID = getArguments().getString("eventID");
+        dbHandler = new EventDB();
+
         // Get the textviews and buttons
         // TODO: Would also get for image here
-        backButton = binding.entrantViewBackButton;
-        userNameView = binding.eUsername;
-        pronounsTextView = binding.entrantProunouns;
-        emailTextView = binding.entrantEmail;
-        phoneTextView = binding.entrantPhone;
-        statusTextView = binding.entrantStatus;
-        statusButton = binding.eStatusButton;
+        ImageButton backButton = binding.entrantViewBackButton;
+        TextView userNameView = binding.eUsername;
+        TextView pronounsTextView = binding.entrantProunouns;
+        TextView emailTextView = binding.entrantEmail;
+        TextView phoneTextView = binding.entrantPhone;
+        TextView statusTextView = binding.entrantStatus;
+        Button statusButton = binding.eStatusButton;
 
         // Set the status indication
         statusTextView.setText(status);
@@ -143,36 +108,62 @@ public class ViewSingleEntrantFragment extends Fragment {
             statusButton.setVisibility(View.VISIBLE);
 
             // Set the listener so it'll change the status of the entrant to cancelled
-            statusButton.setOnClickListener(view -> {
-                // First change the display manually
-                statusTextView.setText("cancelled");
+            statusButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    // First change the display manually
+                    statusTextView.setText("cancelled");
 
-                // Get the event from the database and change the status of the entrant there
-                dbHandler.getEventByID(eventID, new DBOnCompleteListener<Event>() {
-                    @Override
-                    public void OnCompleteDB(@NonNull ArrayList<Event> docs, int queryID, int flags) {
-                        if (flags == DBOnCompleteFlags.SINGLE_DOCUMENT.value) {
-                            // Get the event for this list of entrants
-                            Event event = docs.get(0);
-                            ArrayList<Entrant> entrants = event.getEntrants();
+                    // Get the event from the database and change the status of the entrant there
+                    dbHandler.getEventByID(eventID, new DBOnCompleteListener<Event>() {
+                        @Override
+                        public void OnCompleteDB(@NonNull ArrayList<Event> docs, int queryID, int flags) {
+                            if (flags == DBOnCompleteFlags.SINGLE_DOCUMENT.value) {
+                                // Get the event for this list of entrants
+                                Event event = docs.get(0);
+                                ArrayList<Entrant> entrants = event.getEntrants();
 
-                            // Find the entrant in the list and update their status
-                            findAndUpdateEntrant(accountID, event, "cancelled");
-                        } else {
-                            // Should only ever expect 1 document, otherwise there must be an error
-                            handleDBError();
+                                // Find the entrant in the list and update their status
+                                findAndUpdateEntrant(accountID, event, "cancelled");
+                            } else {
+                                // Should only ever expect 1 document, otherwise there must be an error
+                                handleDBError();
+                            }
                         }
-                    }
-                });
+                    });
 
-                // Make the button disappear after the click
-                statusButton.setClickable(false);
-                statusButton.setVisibility(View.GONE);
+                    // Make the button disappear after the click
+                    statusButton.setClickable(false);
+                    statusButton.setVisibility(View.GONE);
+                }
             });
         }
 
         // Set up an onclick listener to go back to the list
+        Bundle navArgs = new Bundle();
+        navArgs.putString("eventID", eventID);
         backButton.setOnClickListener(view -> navController.popBackStack());
+
+        // Get the account from the database
+        dbProfileHandler = new AccountDB();
+        dbProfileHandler.getAccountByID(accountID, new DBOnCompleteListener<Account>() {
+            @Override
+            public void OnCompleteDB(@NonNull ArrayList<Account> docs, int queryID, int flags) {
+                if (flags == DBOnCompleteFlags.SINGLE_DOCUMENT.value) {
+                    // Get the event for this list of entrants and initialize the list
+                    account = docs.get(0);
+
+                    // Set the text views once we get the data
+                    userNameView.setText(account.getName());
+                    pronounsTextView.setText(account.getPronouns());
+                    emailTextView.setText(account.getEmailAddress());
+                    phoneTextView.setText(account.getPhoneNumber());
+                } else {
+                    // Should only ever expect 1 document, otherwise there must be an error
+                    handleDBError();
+                }
+            }
+        });
 
         return root;
     }

@@ -10,7 +10,7 @@ Issues:
     - Constructors can get large and hard to read (so could look into builders for better initialization)
     - Nothing is done with location yet
  */
-
+import android.os.Build;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Log;
@@ -257,19 +257,6 @@ public class Account implements Parcelable {
         public final String value;
         AccountRole(String value) {
             this.value = value;
-        }
-
-        public static AccountRole fromString(@Nullable String role) {
-            if (role == null) return AccountRole.user;
-
-            switch (role) {
-                case "organiser":
-                    return AccountRole.organiser;
-                case "admin":
-                    return AccountRole.admin;
-                default:
-                    return AccountRole.user;
-            }
         }
     }
 

@@ -13,6 +13,8 @@ package com.example.pygmyhippo.organizer;
  *   - really similar idea can be applied to editing an event
  * */
 
+import static androidx.navigation.Navigation.findNavController;
+
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -29,13 +31,11 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.PickVisualMediaRequest;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.navigation.Navigation;
+import androidx.navigation.NavController;
 
 import com.example.pygmyhippo.R;
 import com.example.pygmyhippo.common.Account;
-import com.example.pygmyhippo.common.AppNavController;
 import com.example.pygmyhippo.common.Event;
 import com.example.pygmyhippo.common.Image;
 import com.example.pygmyhippo.database.DBOnCompleteFlags;
@@ -57,7 +57,7 @@ import java.util.ArrayList;
 public class PostEventFragment extends Fragment implements DBOnCompleteListener<Event>, StorageOnCompleteListener<Image> {
 
     private OrganiserPostEventBinding binding;
-    private AppNavController navController;
+    private NavController navController;
 
     private EditText eventNameEdit, eventDateTimeEdit, eventPriceEdit, eventLocationEdit, eventDescriptionEdit, eventLimitEdit, eventWinnersEdit;
     private CheckBox eventGeolocation;
@@ -67,19 +67,7 @@ public class PostEventFragment extends Fragment implements DBOnCompleteListener<
     private ImageStorage ImageHandler;
 
     private Account signedInAccount;
-    private boolean useNavigation, useFirebase;
 
-
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            PostEventFragmentArgs args = PostEventFragmentArgs.fromBundle(getArguments());
-            signedInAccount = args.getSignedInAccount();
-            useNavigation = args.getUseNavigation();
-            useFirebase = args.getUseFirebase();
-        }
-    }
 
     /**
      * Creates the view
@@ -99,17 +87,32 @@ public class PostEventFragment extends Fragment implements DBOnCompleteListener<
         binding = OrganiserPostEventBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
+        handler = new EventDB();
+        ImageHandler = new ImageStorage();
+
+        // Get the current account that was passed to this fragment
+        if (getArguments() != null) {
+            signedInAccount = PostEventFragmentArgs.fromBundle(getArguments()).getSignedInAccount();
+        }
+
+        return root;
+    }
+
+    @Override
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        navController = findNavController(view);
 
         // Get all the fields we want to get event data from
-        eventNameEdit = root.findViewById(R.id.o_postEvent_name_edit);
-        eventDateTimeEdit = root.findViewById(R.id.o_postEvent_dataTime_edit);
-        eventPriceEdit = root.findViewById(R.id.o_postEvent_price_edit);
-        eventLocationEdit = root.findViewById(R.id.o_postEvent_location_edit);
-        eventDescriptionEdit = root.findViewById(R.id.o_postEvent_description_edit);
-        eventLimitEdit = root.findViewById(R.id.o_postEvent_limit_edit);
-        eventWinnersEdit = root.findViewById(R.id.o_postEvent_winners_edit);
-        eventGeolocation = root.findViewById(R.id.o_postEvent_geolocation_check);
-        Button postEventButton = root.findViewById(R.id.o_postEvent_post_button);
+        eventNameEdit = view.findViewById(R.id.o_postEvent_name_edit);
+        eventDateTimeEdit = view.findViewById(R.id.o_postEvent_dataTime_edit);
+        eventPriceEdit = view.findViewById(R.id.o_postEvent_price_edit);
+        eventLocationEdit = view.findViewById(R.id.o_postEvent_location_edit);
+        eventDescriptionEdit = view.findViewById(R.id.o_postEvent_description_edit);
+        eventLimitEdit = view.findViewById(R.id.o_postEvent_limit_edit);
+        eventWinnersEdit = view.findViewById(R.id.o_postEvent_winners_edit);
+        eventGeolocation = view.findViewById(R.id.o_postEvent_geolocation_check);
+        Button postEventButton = view.findViewById(R.id.o_postEvent_post_button);
 
         Event myEvent = new Event();
 
@@ -125,11 +128,11 @@ public class PostEventFragment extends Fragment implements DBOnCompleteListener<
             Boolean eventGeolocaion = eventGeolocation.isChecked();
             if (
                     eventName.isEmpty() ||
-                            eventDateTime.isEmpty() ||
-                            eventPrice.isEmpty() ||
-                            eventLocation.isEmpty() ||
-                            eventDescription.isEmpty() ||
-                            eventWinners.isEmpty())
+                    eventDateTime.isEmpty() ||
+                    eventPrice.isEmpty() ||
+                    eventLocation.isEmpty() ||
+                    eventDescription.isEmpty() ||
+                    eventWinners.isEmpty())
             {
                 // Toast alerts organiser that event is missing feilds
                 Toast.makeText(getContext(), "Required fields missing!", Toast.LENGTH_SHORT).show();
@@ -151,22 +154,17 @@ public class PostEventFragment extends Fragment implements DBOnCompleteListener<
         });
 
         // image picking section of onview created
-        eventImageBtn = root.findViewById(R.id.o_postEvent_addImage);
+        eventImageBtn = view.findViewById(R.id.o_postEvent_addImage);
 
         // this code was taken from Jens upload avatar profile code
-        eventImageBtn.setOnClickListener(v -> pickMedia.launch(new PickVisualMediaRequest.Builder()
-                .setMediaType(ActivityResultContracts.PickVisualMedia.ImageOnly.INSTANCE)
-                .build()));
-
-        return root;
-    }
-
-    @Override
-    public void onViewCreated(View view, Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        navController = new AppNavController(useNavigation, Navigation.findNavController(view));
-        handler = new EventDB(useFirebase);
-        ImageHandler = new ImageStorage(useFirebase);
+        eventImageBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                pickMedia.launch(new PickVisualMediaRequest.Builder()
+                        .setMediaType(ActivityResultContracts.PickVisualMedia.ImageOnly.INSTANCE)
+                        .build());
+            }
+        });
     }
 
     /**
