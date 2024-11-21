@@ -1,7 +1,7 @@
 package com.example.pygmyhippo.user;
 
 /*
-This Fragment will display one of the events that a User can see after scanning its QR code
+This fragment will display one of the events that a User can see after scanning its QR code
 Will be used by users and admins
 Purposes:
         - Let the User view the details of the event
@@ -50,9 +50,9 @@ import com.squareup.picasso.Picasso;
 import java.util.ArrayList;
 
 /**
- * This fragment will hold a single events
+ * This fragment will hold a single events from scanning the QR code
  * @author Katharine
- * @version 1.0
+ * @version 2.0
  * No returns and no parameters
  */
 public class EventFragment extends Fragment implements DBOnCompleteListener<Event> {
@@ -117,7 +117,7 @@ public class EventFragment extends Fragment implements DBOnCompleteListener<Even
 
         // Get the eventID that was passed by scanning the QR code
         String navigationEventID = EventFragmentArgs.fromBundle(getArguments()).getEventID();
-        getEvent(navigationEventID);
+        DBhandler.getEventByID(navigationEventID, this);
 
         // Make the entrant equivalent using the account info (for if they join the waitlist)
         entrant = new Entrant(
@@ -158,11 +158,7 @@ public class EventFragment extends Fragment implements DBOnCompleteListener<Even
                 populateTextFields();
             }
             else {
-                // TODO: popback here
-                // TODO: toast for bad dabatas
-                Toast badEvent = Toast.makeText(getActivity(), "No such event exists", Toast.LENGTH_SHORT);
-                badEvent.show();
-                // should lead back to the qr code scanner
+                Log.d("EventFragment", "Database error in getting event");
                 navController.popBackStack();
             }
         } else if (queryID == 4) {
@@ -182,22 +178,6 @@ public class EventFragment extends Fragment implements DBOnCompleteListener<Even
                 // If not the success flag, then there was an error
                 Log.d("EventFragment", "Error in updating event.");
             }
-        }
-    }
-
-    /**
-     * Tries to query for event by eventID.
-     *
-     * If there is no event ID then mock data is loaded in.
-     * @param eventID ID of the event to query for.
-     */
-    private void getEvent(@Nullable String eventID) {
-        if (eventID == null) {
-            Log.d("EventFragment", "No Event ID was passed via navigation to EventFragment, go back...");
-            navController.popBackStack();
-        } else {
-            Log.d("EventFragment", String.format("Non-null eventID, attempting to retrieve Event with ID %s", eventID));
-            DBhandler.getEventByID(eventID, this);
         }
     }
 

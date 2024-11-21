@@ -43,6 +43,12 @@ import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
+/**
+ * This fragment will hold a single events from my list of events that I have already signed up for
+ * @author Katharine
+ * @version 1.0
+ * No returns and no parameters
+ */
 public class ViewMyEventFragment extends Fragment implements DBOnCompleteListener<Event>{
     private UserFragmentViewMyeventBinding binding;
     private NavController navController;
@@ -112,7 +118,7 @@ public class ViewMyEventFragment extends Fragment implements DBOnCompleteListene
         acceptWaitlistButton = view.findViewById(R.id.u_acceptWaitlistButton);
         declineWaitlistButton = view.findViewById(R.id.u_declineWaitlistButton);
 
-        // TODO: should set buttons to invisible
+        // set buttons to invisible
         leaveWaitlistButton.setVisibility(View.GONE);
         acceptWaitlistButton.setVisibility(View.GONE);
         declineWaitlistButton.setVisibility(View.GONE);
@@ -247,8 +253,6 @@ public class ViewMyEventFragment extends Fragment implements DBOnCompleteListene
             declineWaitlistButton.setVisibility(View.GONE);
         });
 
-        // TODO: add decline waitlist button funtionality here
-        // use removeEntrant from list and update DB
         declineWaitlistButton.setOnClickListener(view -> {
             event.getEntrants()
                     .stream()

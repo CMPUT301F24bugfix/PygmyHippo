@@ -5,13 +5,13 @@ This fragment gives the ability to scan QR codes
 Purposes:
     - Lets the user scan QR codes so that the can view event details and join if they want
 Issues:
-    - No server connection
     - Nothing to stop the navigation if the QR code doesn't actually have the encoded event ID
  */
 
 import android.Manifest;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,24 +27,33 @@ import androidx.navigation.Navigation;
 
 import com.example.pygmyhippo.R;
 import com.example.pygmyhippo.common.Account;
+import com.example.pygmyhippo.common.Event;
+import com.example.pygmyhippo.database.DBOnCompleteFlags;
+import com.example.pygmyhippo.database.DBOnCompleteListener;
+import com.example.pygmyhippo.database.EventDB;
 import com.example.pygmyhippo.databinding.UserFragmentQrBinding;
 import com.journeyapps.barcodescanner.BarcodeCallback;
 import com.journeyapps.barcodescanner.DecoratedBarcodeView;
 
+import java.util.ArrayList;
+
 /**
  * This fragment will hold the QR scanner
  * @author Katharine
- * @version 1.0
+ * @version 2.0
  * No returns and no parameters
  */
-public class QRFragment extends Fragment {
+public class QRFragment extends Fragment implements DBOnCompleteListener<Event> {
 
     private UserFragmentQrBinding binding;
     private NavController navController;
     private DecoratedBarcodeView QRScannerView;
     private static final int CAMERA_PERMISSION_REQUEST_CODE = 0;
 
+    private String eventID;
     private Account signedInAccount;
+
+    private EventDB DBhandler;
 
     /**
      *
@@ -63,6 +72,8 @@ public class QRFragment extends Fragment {
 
         binding = UserFragmentQrBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
+
+        DBhandler = new EventDB();
 
         // Get the current account
         signedInAccount = QRFragmentArgs.fromBundle(getArguments()).getSignedInAccount();
@@ -104,18 +115,8 @@ public class QRFragment extends Fragment {
      */
     private final BarcodeCallback callback = result -> {
         if (result != null && result.getText() != null) {
-            String eventID = result.getText();
-
-            // FIXME: For testing
-            Toast testShowBarcode = Toast.makeText(getActivity(), eventID, Toast.LENGTH_LONG);
-            // testShowBarcode.show();
-
-            // TODO: if evenID doesnt correpond to anything in database, restart using startSingleScan()
-            Bundle navArgs = new Bundle();
-            navArgs.putParcelable("signedInAccount", signedInAccount);
-            navArgs.putString("eventID", eventID);
-            navController.navigate(R.id.u_eventFragment, navArgs);
-//            Navigation.findNavController(requireView()).navigate(R.id.action_scanQRcodeFragment_to_eventFragment);
+            eventID = result.getText();
+            DBhandler.getEventByID(eventID, this);
         }
     };
 
@@ -133,6 +134,22 @@ public class QRFragment extends Fragment {
         super.onPause();
         if (QRScannerView != null) {
             QRScannerView.pause();
+        }
+    }
+
+    @Override
+    public void OnCompleteDB(@NonNull ArrayList<Event> docs, int queryID, int flags) {
+        if (queryID == 1) {
+            if (flags == DBOnCompleteFlags.SINGLE_DOCUMENT.value) {
+                Bundle navArgs = new Bundle();
+                navArgs.putParcelable("signedInAccount", signedInAccount);
+                navArgs.putString("eventID", eventID);
+                navController.navigate(R.id.u_eventFragment, navArgs);
+            } else {
+                Toast badEvent = Toast.makeText(getActivity(), "No event is associated with this QR Code", Toast.LENGTH_SHORT);
+                badEvent.show();
+                startSingleScan();
+            }
         }
     }
     
