@@ -37,7 +37,7 @@ public class ImageStorage extends DBHandler {
      * @param listener
      * @author Griffin
      */
-    public void uploadImageToFirebase(Uri imageUri, StorageOnCompleteListener<Image> listener) {
+    public void uploadEventImageToFirebase(Uri imageUri, StorageOnCompleteListener<Image> listener) {
         if (useFirebase) {
             StorageReference storageRef = storage.getReference();
             String imageName = "events/" + UUID.randomUUID().toString();
