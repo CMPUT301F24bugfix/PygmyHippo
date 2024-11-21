@@ -102,6 +102,12 @@ app:startDestination="@+id/o_loadingFragment">
         <action
             android:id="@+id/action_organiser_eventFragment_to_view_entrants_fragment"
             app:destination="@id/view_entrants_fragment" />
+        <action
+            android:id="@+id/action_organiser_eventFragment_to_view_qr_fragment"
+            app:destination="@id/view_eventqr_fragment" />
+        <action
+            android:id="@+id/action_organiser_eventFragment_to_view_my_events"
+            app:destination="@id/organiser_myEvents_page" />
     </fragment>
 
     <fragment
@@ -166,4 +172,21 @@ app:startDestination="@+id/o_loadingFragment">
             app:nullable="true"
             android:defaultValue="admin" />
     </activity>
+
+    <fragment
+        android:id="@+id/organiser_editEvent_page"
+        android:name="com.example.pygmyhippo.organizer.EditEventFragment"
+        android:label="Edit Event"
+        tools:layout="@layout/organiser_edit_event"
+        android:background="@color/dark_purple">
+        <argument
+            android:name="signedInAccount"
+            app:argType="com.example.pygmyhippo.common.Account" />
+        <argument
+            android:name="eventID"
+            app:argType="string" />
+        <action
+            android:id="@+id/organiser_editEvent_to_organiser_eventView_page"
+            app:destination="@id/organiser_eventFragment" />
+    </fragment>
 </navigation>
