@@ -23,14 +23,6 @@
         <action
             android:id="@+id/myevents_menu_to_viewMyEventFragment"
             app:destination="@id/u_viewMyEventFragment" />
-        <argument
-            android:name="useNavigation"
-            app:argType="boolean"
-            android:defaultValue="true" />
-        <argument
-            android:name="useFirebase"
-            app:argType="boolean"
-            android:defaultValue="true" />
     </fragment>
 
     <fragment
@@ -45,14 +37,6 @@
         <action
             android:id="@+id/action_u_scanQR_menu_item_to_eventFragment2"
             app:destination="@id/u_eventFragment" />
-        <argument
-            android:name="useNavigation"
-            app:argType="boolean"
-            android:defaultValue="true" />
-        <argument
-            android:name="useFirebase"
-            app:argType="boolean"
-            android:defaultValue="true" />
     </fragment>
 
     <fragment
@@ -79,14 +63,6 @@
             android:name="currentRole"
             app:argType="string"
             android:defaultValue="user" />
-        <argument
-            android:name="useNavigation"
-            app:argType="boolean"
-            android:defaultValue="true" />
-        <argument
-            android:name="useFirebase"
-            app:argType="boolean"
-            android:defaultValue="true" />
     </fragment>
     <fragment
         android:id="@+id/u_eventFragment"
@@ -104,18 +80,6 @@
         <action
             android:id="@+id/user_event_fragment_to_list"
             app:destination="@id/u_my_events_menu_item" />
-        <argument
-            android:name="useNavigation"
-            app:argType="boolean"
-            android:defaultValue="true" />
-        <argument
-            android:name="useFirebase"
-            app:argType="boolean"
-            android:defaultValue="true" />
-        <argument
-            android:name="isAdmin"
-            app:argType="boolean"
-            android:defaultValue="false" />
     </fragment>
 
     <fragment
