@@ -161,14 +161,14 @@
                 app:layout_constraintTop_toBottomOf="@+id/entrant_phone" />
 
 
-            <!-- map is attributed to Strebe - Own work, CC BY-SA 3.0, https://commons.wikimedia.org/w/index.php?curid=16115228 -->
+            <!-- map is attributed to By Strebe - Own work, CC BY-SA 3.0, https://commons.wikimedia.org/w/index.php?curid=17700069 -->
             <FrameLayout
                 android:id="@+id/e_map"
                 android:layout_marginTop="10dp"
                 android:layout_width="match_parent"
                 android:layout_marginBottom="100dp"
                 android:layout_height="230dp"
-                android:background="@drawable/equirectangular_map"
+                android:background="@drawable/mercator_projection_map"
                 android:scaleType="fitCenter"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"

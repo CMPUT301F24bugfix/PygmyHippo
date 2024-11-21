@@ -240,7 +240,7 @@ public class ViewSingleEntrantFragment extends Fragment implements DBOnCompleteL
     }
 
     /**
-     * This method will find the width of the map displayed, and calculate the proportional height.
+     * This method will find the width of the map displayed set the height as the same (because its a square)
      * After it will make the map visible
      * @author Kori
      */
