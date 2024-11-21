@@ -25,6 +25,9 @@ import java.util.ArrayList;
  * TODO: Replace this with registration page when that is done.
  */
 public class MainActivityDB extends DBHandler {
+    public MainActivityDB() {
+        super(true);
+    }
 
     /**
      * Searches for accounts associated with a device ID.

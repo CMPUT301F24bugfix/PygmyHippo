@@ -17,6 +17,14 @@
         <action
             android:id="@+id/action_admin_navigation_all_events_to_admin_navigation_event_page"
             app:destination="@id/admin_navigation_event_page" />
+        <argument
+            android:name="useNavigation"
+            app:argType="boolean"
+            android:defaultValue="true" />
+        <argument
+            android:name="useFirebase"
+            app:argType="boolean"
+            android:defaultValue="true" />
     </fragment>
 
     <fragment
@@ -31,6 +39,14 @@
         <action
             android:id="@+id/action_admin_navigation_all_users_to_admin_navigation_profile_page2"
             app:destination="@id/admin_navigation_profile_page" />
+        <argument
+            android:name="useNavigation"
+            app:argType="boolean"
+            android:defaultValue="true" />
+        <argument
+            android:name="useFirebase"
+            app:argType="boolean"
+            android:defaultValue="true" />
     </fragment>
 
     <fragment
@@ -42,6 +58,14 @@
         <argument
             android:name="signedInAccount"
             app:argType="com.example.pygmyhippo.common.Account" />
+        <argument
+            android:name="useNavigation"
+            app:argType="boolean"
+            android:defaultValue="true" />
+        <argument
+            android:name="useFirebase"
+            app:argType="boolean"
+            android:defaultValue="true" />
     </fragment>
 
     <fragment
@@ -60,6 +84,18 @@
         <action
             android:id="@+id/action_admin_navigation_event_page_to_admin_navigation_all_events"
             app:destination="@id/admin_navigation_all_events" />
+        <argument
+            android:name="useNavigation"
+            app:argType="boolean"
+            android:defaultValue="true" />
+        <argument
+            android:name="useFirebase"
+            app:argType="boolean"
+            android:defaultValue="true" />
+        <argument
+            android:name="isAdmin"
+            app:argType="boolean"
+            android:defaultValue="false" />
     </fragment>
 
     <fragment
@@ -87,6 +123,14 @@
             android:name="currentRole"
             app:argType="string"
             android:defaultValue="admin" />
+        <argument
+            android:name="useNavigation"
+            app:argType="boolean"
+            android:defaultValue="true" />
+        <argument
+            android:name="useFirebase"
+            app:argType="boolean"
+            android:defaultValue="true" />
     </fragment>
 
     <fragment
