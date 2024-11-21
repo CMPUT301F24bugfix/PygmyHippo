@@ -29,7 +29,6 @@ import com.example.pygmyhippo.MainActivity;
 import com.example.pygmyhippo.R;
 import com.example.pygmyhippo.common.Account;
 
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -79,11 +78,6 @@ public class AllEventsFragmentTest {
             navArgs.putBoolean("useNavigation", false);
             navcontroller.navigate(R.id.admin_navigation_all_events, navArgs);
         });
-    }
-
-    @After
-    public void cleanup() {
-
     }
 
     @Test

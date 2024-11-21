@@ -11,11 +11,7 @@ package com.example.pygmyhippo.database;
 
 import android.util.Log;
 
-import androidx.annotation.NonNull;
-
 import com.example.pygmyhippo.common.Account;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
@@ -106,40 +102,6 @@ public class AccountDB extends DBHandler {
     }
 
     /**
-     * This method just updates the current role of an account
-     * @param accountID The account being updated
-     * @param newRole The new role to replace the old
-     * @param listener What gets notified of query results
-     */
-    public void changeCurrentRole(String accountID, Account.AccountRole newRole, DBOnCompleteListener<Account> listener) {
-        if (useFirebase) {
-            db.collection("Accounts")
-                .document(accountID)
-                .update("currentRole", newRole)
-                .addOnCompleteListener(task -> {
-                    if (task.isSuccessful()) {
-                        Log.d("DB", String.format("Successfully updated current role to %s for account %s", newRole, accountID));
-                        ArrayList<Account> accountList = new ArrayList<>();
-                        Account newAccount = new Account();
-                        newAccount.setAccountID(accountID);
-                        newAccount.setCurrentRole(newRole);
-                        accountList.add(newAccount);
-                        listener.OnCompleteDB(accountList, 2, DBOnCompleteFlags.SUCCESS.value);
-                    } else {
-                        Log.d("DB", String.format("Could not update current role for account %s", accountID));
-                        listener.OnCompleteDB(new ArrayList<>(), 2, DBOnCompleteFlags.SUCCESS.value);
-                    }
-                });
-        } else {
-            Log.d("DB", "Using offline data for changeCurrentRole()");
-            Account newAccount = new Account();
-            newAccount.setAccountID(accountID);
-            newAccount.setCurrentRole(newRole);
-            listener.OnCompleteDB(new ArrayList<>(Arrays.asList(newAccount)), 2, DBOnCompleteFlags.SUCCESS.value);
-        }
-    }
-
-    /**
      * This method will set the currently existing account to the new one with updated values
      * @author Kori
      * @param account The account we want to update
@@ -150,16 +112,13 @@ public class AccountDB extends DBHandler {
             db.collection("Accounts")
                 .document(account.getAccountID())
                 .set(account)
-                .addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        if (task.isSuccessful()) {
-                            Log.d("DB", String.format("Successfully updated account with ID (%s).", account.getAccountID()));
-                            listener.OnCompleteDB(new ArrayList<>(), 3, DBOnCompleteFlags.SUCCESS.value);
-                        } else {
-                            Log.d("DB", String.format("Error: Could not update account with ID (%s).", account.getAccountID()));
-                            listener.OnCompleteDB(new ArrayList<>(), 3, DBOnCompleteFlags.ERROR.value);
-                        }
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        Log.d("DB", String.format("Successfully updated account with ID (%s).", account.getAccountID()));
+                        listener.OnCompleteDB(new ArrayList<>(), 3, DBOnCompleteFlags.SUCCESS.value);
+                    } else {
+                        Log.d("DB", String.format("Error: Could not update account with ID (%s).", account.getAccountID()));
+                        listener.OnCompleteDB(new ArrayList<>(), 3, DBOnCompleteFlags.ERROR.value);
                     }
                 });
         } else {
