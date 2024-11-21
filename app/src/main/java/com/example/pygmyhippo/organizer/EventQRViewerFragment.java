@@ -21,11 +21,11 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
 import com.example.pygmyhippo.R;
 import com.example.pygmyhippo.common.Account;
+import com.example.pygmyhippo.common.AppNavController;
 import com.example.pygmyhippo.common.Event;
 import com.example.pygmyhippo.database.DBOnCompleteFlags;
 import com.example.pygmyhippo.database.DBOnCompleteListener;
@@ -54,15 +54,33 @@ public class EventQRViewerFragment extends Fragment implements DBOnCompleteListe
     private Event myevent;
     private TextView eventTitle, eventDate;
 
-    private NavController navController;
+    private AppNavController navController;
     private Account signedInAccount;
     private String eventID;
+    private boolean useNavigation, useFirebase;
+
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        if (getArguments() != null) {
+            EventQRViewerFragmentArgs args = EventQRViewerFragmentArgs.fromBundle(getArguments());
+            signedInAccount = args.getSignedInAccount();
+            eventID = args.getEventID();
+            useNavigation = args.getUseNavigation();
+            useFirebase = args.getUseFirebase();
+            myEventIDString = args.getEventID();
+        }
+    }
 
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        navController = Navigation.findNavController(view);
+        navController = new AppNavController(useNavigation, Navigation.findNavController(view));
+
+        handler = new EventDB(useFirebase);
+        handler.getEventByID(myEventIDString, this);
     }
 
     /**
@@ -83,16 +101,9 @@ public class EventQRViewerFragment extends Fragment implements DBOnCompleteListe
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         View view = inflater.inflate(R.layout.organiser_event_qrcode_view, container, false);
-        handler = new EventDB();
         eventTitle = view.findViewById(R.id.o_eventqr_eventTitle);
         eventDate = view.findViewById(R.id.o_eventqr_eventDate);
         QRCodeImage = view.findViewById(R.id.o_eventqr_view);
-
-
-        if (getArguments() != null) {
-            signedInAccount = EventQRViewerFragmentArgs.fromBundle(getArguments()).getSignedInAccount();
-            eventID = EventQRViewerFragmentArgs.fromBundle(getArguments()).getEventID();
-        }
 
         // code for button was copied from Kori's work in viewEntantsFragments
 
@@ -110,9 +121,6 @@ public class EventQRViewerFragment extends Fragment implements DBOnCompleteListe
             navController.navigate(R.id.organiser_eventFragment, navArgs);
         });
 
-        Bundle bundle = this.getArguments();
-        myEventIDString = bundle.getString("eventID");
-        handler.getEventByID(myEventIDString, this);
         return view;
     }
 

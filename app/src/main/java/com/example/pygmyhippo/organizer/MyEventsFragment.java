@@ -14,7 +14,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -22,11 +21,11 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
 import com.example.pygmyhippo.R;
 import com.example.pygmyhippo.common.Account;
+import com.example.pygmyhippo.common.AppNavController;
 import com.example.pygmyhippo.common.Event;
 import com.example.pygmyhippo.database.DBOnCompleteFlags;
 import com.example.pygmyhippo.database.DBOnCompleteListener;
@@ -42,10 +41,10 @@ import java.util.ArrayList;
  * No returns and no parameters
  */
 public class MyEventsFragment extends Fragment implements DBOnCompleteListener<Event> {
-
     private OrganiserFragmentMyeventsBinding binding;
-    private NavController navController;
+    private AppNavController navController;
     private Account signedInAccount;
+    private boolean useNavigation, useFirebase;
     private ArrayList<Event> eventDataList;
     private ArrayAdapter<Event> eventArrayAdapter;
     private ListView eventListView;
@@ -53,14 +52,25 @@ public class MyEventsFragment extends Fragment implements DBOnCompleteListener<E
 
 
     @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        if (getArguments() != null) {
+            MyEventsFragmentArgs args = MyEventsFragmentArgs.fromBundle(getArguments());
+            signedInAccount = args.getSignedInAccount();
+            useNavigation = args.getUseNavigation();
+            useFirebase = args.getUseFirebase();
+        }
+    }
+
+    @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
         // Set up nav controller
-        navController = Navigation.findNavController(view);
+        navController = new AppNavController(useNavigation, Navigation.findNavController(view));
 
         // Get the data for the list
-        dbHandler = new EventDB();
+        dbHandler = new EventDB(useFirebase);
         dbHandler.getOrganiserEvents(signedInAccount.getAccountID(), this);
     }
 
@@ -82,28 +92,21 @@ public class MyEventsFragment extends Fragment implements DBOnCompleteListener<E
         binding = OrganiserFragmentMyeventsBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
-        if (getArguments() != null) {
-            signedInAccount = MyEventsFragmentArgs.fromBundle(getArguments()).getSignedInAccount();
-        }
-
         // Get the list view, and initialize the data list
         eventListView = binding.oEventListview;
         eventDataList = new ArrayList<>();
 
         // Set up our array adapter and connect it to our listView
-        eventArrayAdapter = new com.example.pygmyhippo.organizer.EventArrayAdapter(root.getContext(), eventDataList);
+        eventArrayAdapter = new com.example.pygmyhippo.organizer.EventArrayAdapter(root.getContext(), eventDataList, useFirebase);
         eventListView.setAdapter(eventArrayAdapter);
 
         // Set up the onClickListener
-        eventListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                // Create a bundle to pass to the next fragment (viewing an event)
-                Bundle navArgs = new Bundle();
-                navArgs.putParcelable("signedInAccount", signedInAccount);
-                navArgs.putString("eventID", eventDataList.get(i).getEventID());
-                navController.navigate(R.id.organiser_eventFragment, navArgs);
-            }
+        eventListView.setOnItemClickListener((adapterView, view, i, l) -> {
+            // Create a bundle to pass to the next fragment (viewing an event)
+            Bundle navArgs = new Bundle();
+            navArgs.putParcelable("signedInAccount", signedInAccount);
+            navArgs.putString("eventID", eventDataList.get(i).getEventID());
+            navController.navigate(R.id.organiser_eventFragment, navArgs);
         });
 
         return root;

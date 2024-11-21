@@ -35,7 +35,6 @@ import com.example.pygmyhippo.databinding.UserMainActivityNagivationBinding;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 
 /**
  * Main Activity for our android app
@@ -73,7 +72,6 @@ public class MainActivity extends AppCompatActivity implements DBOnCompleteListe
             }
         }
     }
-
 
     /**
      * Dialog pop up asking for notification preference
@@ -306,52 +304,16 @@ public class MainActivity extends AppCompatActivity implements DBOnCompleteListe
         signedInAccount = getIntent().getParcelableExtra("signedInAccount");
 
         Log.d("MainActivity", String.format("Received %s as current role.", receivedRole));
-        if (receivedRole == null) {
-            // If the account didn't exist, they get automatically set as a user for now
-            // TODO: Allow user to decide the role they want
-            currentRole = Account.AccountRole.user;
-        } else {
-            // Actually set the role of the incoming account
-            switch (receivedRole) {
-                case "organiser":
-                    currentRole = Account.AccountRole.organiser;
-                    break;
-                case "admin":
-                    currentRole = Account.AccountRole.admin;
-                    break;
-                default:
-                    currentRole = Account.AccountRole.user;
-            }
-        }
+        currentRole = Account.AccountRole.fromString(receivedRole);
 
         if (signedInAccount == null) {
-            if (useDB) {
-                // Makes a new account in the database if there wasn't one matching the device ID
-                Log.d("MainActivity", "Fetching account from DB based on DeviceID");
-                dbHandler = new MainActivityDB();
-                dbHandler.getDeviceAccount(getDeviceID(), this);
-            } else {
-                // FIXME: For initial testing
-                Log.d("MainActivity", "Using mock data");
-                signedInAccount = new Account(
-                        "1",  // accountID
-                        "Moo Deng",  // name
-                        "She/Her",  // pronouns
-                        "7801234567",  // phoneNumber
-                        "MooDeng@ualberta.ca",  // emailAddress
-                        "1",  // deviceID
-                        "profilePic.png",  // profilePicture
-                        "Edmonton, Alberta",  // location
-                        true,  // receiveNotifications
-                        true,  // enableGeolocation
-                        new ArrayList<>(Arrays.asList(Account.AccountRole.user, Account.AccountRole.organiser)),  // roles
-                        Account.AccountRole.organiser,  // CHANGE EITHER ORANIZER OR USER FOR ROLE currentRole (TODO: Change this if you want to test with user)
-                        null  // facilityProfile
-                );
-                setupNavController();
-            }
+            // Makes a new account in the database if there wasn't one matching the device ID
+            Log.d("MainActivity", "Fetching account from DB based on DeviceID");
+            dbHandler = new MainActivityDB();
+            dbHandler.getDeviceAccount(getDeviceID(), this);
         } else {
-            // TODO: Keep integrity of signedInAccount with Firestore (make sure fields match).
+            // TODO: Check integrity of signedInAccount with Firestore? (make sure fields match).
+            //  ^ may break tests if firebase cannot be disabled.
             setupNavController();
         }
     }

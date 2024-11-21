@@ -27,6 +27,10 @@ import java.util.UUID;
  * Adds image to Firestore storage when an organiser uploads it from PostEventFragment.
  */
 public class ImageStorage extends DBHandler {
+    public ImageStorage(boolean useFirebase) {
+        super(useFirebase);
+    }
+
     /**
      * This posts image to database
      * @param imageUri
@@ -34,16 +38,17 @@ public class ImageStorage extends DBHandler {
      * @author Griffin
      */
     public void uploadEventImageToFirebase(Uri imageUri, StorageOnCompleteListener<Image> listener) {
-        StorageReference storageRef = storage.getReference();
-        String imageName = "events/" + UUID.randomUUID().toString();
-        StorageReference imageRef = storageRef.child(imageName);
-        ArrayList<Image> images = new ArrayList<>();
+        if (useFirebase) {
+            StorageReference storageRef = storage.getReference();
+            String imageName = "events/" + UUID.randomUUID().toString();
+            StorageReference imageRef = storageRef.child(imageName);
+            ArrayList<Image> images = new ArrayList<>();
 
-        imageRef.putFile(imageUri)
+            imageRef.putFile(imageUri)
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
                         imageRef.getDownloadUrl().addOnSuccessListener(uri -> {
-                            Log.d("FirebaseStorage", "Image uploaded successfully. URL: " +  uri.toString());
+                            Log.d("FirebaseStorage", "Image uploaded successfully. URL: " + uri.toString());
                             Image newImage = new Image();
                             newImage.setUrl(uri.toString());
                             newImage.setType(Image.ImageType.Event);
@@ -51,12 +56,14 @@ public class ImageStorage extends DBHandler {
                             images.add(newImage);
                             listener.OnCompleteStorage(images, 0, DBOnCompleteFlags.SUCCESS.value);
                         });
-                    }
-                    else{
+                    } else {
                         Log.e("FirebaseStorage:", "Image uploaded Error.");
-                        listener.OnCompleteStorage(images, 0,DBOnCompleteFlags.ERROR.value);
+                        listener.OnCompleteStorage(images, 0, DBOnCompleteFlags.ERROR.value);
                     }
                 });
+        } else {
+            Log.d("DB", "Using offline data for uploadImageToFirebase()");
+        }
     }
 
     /**
@@ -66,26 +73,30 @@ public class ImageStorage extends DBHandler {
      * @param listener DBOnCompleteListener to call when query completes.
      */
     public void getImageDownloadUrl(String url, StorageOnCompleteListener<Uri> listener) {
-        Log.d("DB", String.format("Getting storage reference for image url %s", url));
-        try {
-            // Try to get an image
-            StorageReference ref = storage.getReferenceFromUrl(url);
-            ref.getDownloadUrl().addOnCompleteListener(task -> {
-                if (task.isSuccessful()) {
-                    // Add the result to an array list and notify the listener
-                    Log.d("DB", String.format("Found image at %s", url));
-                    Uri uri = task.getResult();
-                    ArrayList<Uri> results = new ArrayList<>();
-                    results.add(uri);
-                    listener.OnCompleteStorage(results, 1, DBOnCompleteFlags.SUCCESS.value);
-                } else {
-                    Log.d("DB", String.format("Image download failed for %s", url));
-                }
-            });
-        } catch (IllegalArgumentException e) {
-            // Notify the listener with an error flag raised
-            Log.d("DB", String.format("IllegalArgumentException for url %s", url));
-            listener.OnCompleteStorage(new ArrayList<>(), 1, DBOnCompleteFlags.ERROR.value);
+        if (useFirebase) {
+            Log.d("DB", String.format("Getting storage reference for image url %s", url));
+            try {
+                // Try to get an image
+                StorageReference ref = storage.getReferenceFromUrl(url);
+                ref.getDownloadUrl().addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        // Add the result to an array list and notify the listener
+                        Log.d("DB", String.format("Found image at %s", url));
+                        Uri uri = task.getResult();
+                        ArrayList<Uri> results = new ArrayList<>();
+                        results.add(uri);
+                        listener.OnCompleteStorage(results, 1, DBOnCompleteFlags.SUCCESS.value);
+                    } else {
+                        Log.d("DB", String.format("Image download failed for %s", url));
+                    }
+                });
+            } catch (IllegalArgumentException e) {
+                // Notify the listener with an error flag raised
+                Log.d("DB", String.format("IllegalArgumentException for url %s", url));
+                listener.OnCompleteStorage(new ArrayList<>(), 1, DBOnCompleteFlags.ERROR.value);
+            }
+        } else {
+            Log.d("DB", "Using offline data for getImageDownloadUrl()");
         }
     }
 
@@ -95,7 +106,8 @@ public class ImageStorage extends DBHandler {
      * @param listener DBOnCompleteListener to call when query completes.
      */
     public void getAccountsWithImage(int limit, StorageOnCompleteListener<Object> listener) {
-        db.collection("Accounts")
+        if (useFirebase) {
+            db.collection("Accounts")
                 .whereNotEqualTo("profilePicture", "")
                 .limit(limit)
                 .get()
@@ -113,6 +125,10 @@ public class ImageStorage extends DBHandler {
                         listener.OnCompleteStorage(new ArrayList<>(), 2, DBOnCompleteFlags.ERROR.value);
                     }
                 });
+        } else {
+            Log.d("DB", "Using offline data for getAccountsWithImage()");
+            listener.OnCompleteStorage(new ArrayList<>(), 3, DBOnCompleteFlags.SUCCESS.value);
+        }
     }
 
     /**
@@ -121,7 +137,8 @@ public class ImageStorage extends DBHandler {
      * @param listener DBOnCompleteListener to call when query completes.
      */
     public void getEventsWithImage(int limit, StorageOnCompleteListener<Object> listener) {
-        db.collection("Events")
+        if (useFirebase) {
+            db.collection("Events")
                 .whereNotEqualTo("eventPoster", "")
                 .limit(limit)
                 .get()
@@ -139,6 +156,10 @@ public class ImageStorage extends DBHandler {
                         listener.OnCompleteStorage(new ArrayList<>(), 3, DBOnCompleteFlags.ERROR.value);
                     }
                 });
+        } else {
+            Log.d("DB", "Using offline data for getEventsWithImage()");
+            listener.OnCompleteStorage(new ArrayList<>(), 3, DBOnCompleteFlags.SUCCESS.value);
+        }
     }
 
     /**

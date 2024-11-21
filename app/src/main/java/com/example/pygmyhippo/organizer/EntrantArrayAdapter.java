@@ -38,9 +38,11 @@ import java.util.ArrayList;
 public class EntrantArrayAdapter extends ArrayAdapter<Entrant> {
     private AccountDB dbHandler;
     private Account account;
+    private boolean useFirebase;
 
-    public EntrantArrayAdapter(Context context, ArrayList<Entrant> entrantListData) {
+    public EntrantArrayAdapter(Context context, ArrayList<Entrant> entrantListData, boolean useFirebase) {
         super(context, 0, entrantListData);
+        this.useFirebase = useFirebase;
     }
 
     /**
@@ -82,7 +84,7 @@ public class EntrantArrayAdapter extends ArrayAdapter<Entrant> {
         accountStatus.setText("Status: " + entrant.getEntrantStatus().value);
 
         // From the database, get the entrant's account info
-        dbHandler = new AccountDB();
+        dbHandler = new AccountDB(useFirebase);
         dbHandler.getAccountByID(entrant.getAccountID(), new DBOnCompleteListener<Account>() {
             @Override
             public void OnCompleteDB(@NonNull ArrayList<Account> docs, int queryID, int flags) {

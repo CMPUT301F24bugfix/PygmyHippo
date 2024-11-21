@@ -8,7 +8,6 @@ Issues:
     - No spinner functionality yet
  */
 
-import com.example.pygmyhippo.common.RecyclerClickListener;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -20,12 +19,12 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.example.pygmyhippo.R;
 import com.example.pygmyhippo.common.Account;
+import com.example.pygmyhippo.common.AppNavController;
 import com.example.pygmyhippo.common.RecyclerClickListener;
 import com.example.pygmyhippo.database.AccountDB;
 import com.example.pygmyhippo.database.DBOnCompleteFlags;
@@ -43,14 +42,15 @@ import java.util.ArrayList;
  */
 public class AllUsersFragment extends Fragment implements RecyclerClickListener, DBOnCompleteListener<Account> {
 
-    AdminFragmentAllListBinding binding;
-    NavController navController;
+    private AdminFragmentAllListBinding binding;
+    private AppNavController navController;
 
-    AllUsersAdapter adapter;
-    AccountDB handler;
+    private AllUsersAdapter adapter;
+    private AccountDB handler;
 
-    ArrayList<Account> allListData;
-    Account signedInAccount;
+    private ArrayList<Account> allListData;
+    private Account signedInAccount;
+    private boolean useNavigation, useFirebase;
 
     @Override
     public void onItemClick(int position) {
@@ -65,9 +65,24 @@ public class AllUsersFragment extends Fragment implements RecyclerClickListener,
     }
 
     @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        if (getArguments() != null) {
+            AllUsersFragmentArgs args = AllUsersFragmentArgs.fromBundle(getArguments());
+            signedInAccount = args.getSignedInAccount();
+            useNavigation = args.getUseNavigation();
+            useFirebase = args.getUseFirebase();
+        }
+    }
+
+    @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        navController = Navigation.findNavController(view);
+        navController = new AppNavController(useNavigation, Navigation.findNavController(view));
+
+        handler = new AccountDB(useFirebase);
+        // FIXME: Redesign so it works better with REcyclerView pagination.
+        handler.getUsers(1000, this);
     }
 
     @Override
@@ -76,14 +91,7 @@ public class AllUsersFragment extends Fragment implements RecyclerClickListener,
         binding = AdminFragmentAllListBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
-        handler = new AccountDB();
         allListData = new ArrayList<>();
-
-        // Get the account of the current user
-        signedInAccount = AllUsersFragmentArgs.fromBundle(getArguments()).getSignedInAccount();
-
-        // FIXME: Redesign so it works better with REcyclerView pagination.
-        handler.getUsers(1000, this);
 
         adapter = new AllUsersAdapter(allListData, this);
         binding.aAlllistRecycler.setLayoutManager(new LinearLayoutManager(getContext()));

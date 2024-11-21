@@ -37,9 +37,11 @@ import java.util.ArrayList;
 public class EventArrayAdapter extends ArrayAdapter<Event> {
     private ImageStorage imageHandler;
     private Event event;
+    private boolean useFirebase;
 
-    public EventArrayAdapter(Context context, ArrayList<Event> eventListData) {
+    public EventArrayAdapter(Context context, ArrayList<Event> eventListData, boolean useFirebase) {
         super(context, 0, eventListData);
+        this.useFirebase = useFirebase;
     }
 
     /**
@@ -63,7 +65,7 @@ public class EventArrayAdapter extends ArrayAdapter<Event> {
             view = convertView;
         }
 
-        imageHandler = new ImageStorage();
+        imageHandler = new ImageStorage(useFirebase);
         event = getItem(position);
         Log.d("DB", String.format("Finding %s Event", event.getEventID()));
 

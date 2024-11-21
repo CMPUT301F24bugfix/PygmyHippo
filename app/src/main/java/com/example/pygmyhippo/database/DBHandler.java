@@ -17,8 +17,10 @@ import com.google.firebase.storage.FirebaseStorage;
 public abstract class DBHandler {
     protected FirebaseFirestore db;
     protected FirebaseStorage storage;
+    protected boolean useFirebase;
 
-    public DBHandler() {
+    public DBHandler(boolean useFirebase) {
+        this.useFirebase = useFirebase;
         this.db = FirebaseFirestore.getInstance();
         this.storage = FirebaseStorage.getInstance();
     }
