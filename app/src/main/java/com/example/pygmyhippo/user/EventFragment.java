@@ -96,6 +96,37 @@ public class EventFragment extends Fragment implements DBOnCompleteListener<Even
     private ConstraintLayout adminConstraint;
     private ImageView eventImageView;
 
+    /*
+        Code is from https://developer.android.com/develop/sensors-and-location/location/permissions#:~:text=ACCESS_FINE_LOCATION%20must%20be%20requested%20with,to%20only%20approximate%20location%20information.
+        Accessed on 2024-11-17
+        It sets up the permission launcher to ask for location permissions, and then launches it
+        TODO: Remove check box for geolocation, permissions handle it
+         */
+    ActivityResultLauncher<String> locationPermissionRequest =
+            registerForActivityResult(new ActivityResultContracts
+                            .RequestPermission(), isGranted -> {
+
+                        if (isGranted) {
+                            // Approximate location access granted, set that in the user's profile
+                            Log.d("Profile", "Location permissions granted");
+                            signedInAccount.setEnableGeolocation(true);
+                        } else {
+                            // No location access granted.
+                            Log.d("Profile", "No location permissions granted");
+                            Toast.makeText(getContext(), "Error joining waitlist: Must have geolocation enabled!", Toast.LENGTH_LONG).show();
+                            signedInAccount.setEnableGeolocation(false);
+                        }
+
+                        // Regardless of choice, update the profile
+                        profileDBHandler.updateProfile(signedInAccount, new DBOnCompleteListener<Account>() {
+                            @Override
+                            public void OnCompleteDB(@NonNull ArrayList<Account> docs, int queryID, int flags) {
+                                Log.d("DB", "Profile has been updated");
+                            }
+                        });
+                    }
+            );
+
     // populate single event page with hardcoded event information
     public Event hardcodeEvent() {
         entrants = new ArrayList<>();
@@ -123,36 +154,6 @@ public class EventFragment extends Fragment implements DBOnCompleteListener<Even
         navController = Navigation.findNavController(view);
 
         profileDBHandler = new AccountDB();
-        /*
-        Code is from https://developer.android.com/develop/sensors-and-location/location/permissions#:~:text=ACCESS_FINE_LOCATION%20must%20be%20requested%20with,to%20only%20approximate%20location%20information.
-        Accessed on 2024-11-17
-        It sets up the permission launcher to ask for location permissions, and then launches it
-        TODO: Remove check box for geolocation, permissions handle it
-         */
-        ActivityResultLauncher<String> locationPermissionRequest =
-                registerForActivityResult(new ActivityResultContracts
-                                .RequestPermission(), isGranted -> {
-                            if (isGranted) {
-                                // Approximate location access granted, set that in the user's profile
-                                Log.d("Profile", "Location permissions granted");
-                                signedInAccount.setEnableGeolocation(true);
-                            } else {
-                                // No location access granted.
-                                Log.d("Profile", "No location permissions granted");
-                                signedInAccount.setEnableGeolocation(false);
-                            }
-
-                            // Regardless of choice, update the profile
-                            profileDBHandler.updateProfile(signedInAccount, new DBOnCompleteListener<Account>() {
-                                @Override
-                                public void OnCompleteDB(@NonNull ArrayList<Account> docs, int queryID, int flags) {
-                                    Log.d("DB", "Profile has been updated");
-                                }
-                            });
-                        }
-                );
-        // Launch the permission request
-        locationPermissionRequest.launch(Manifest.permission.ACCESS_COARSE_LOCATION);
     }
 
     @Override
@@ -330,29 +331,31 @@ public class EventFragment extends Fragment implements DBOnCompleteListener<Even
                 builder.setMessage("This event requires geolocation. Continue registering?");
                 builder.setCancelable(true);
                 builder.setPositiveButton("Yes", (DialogInterface.OnClickListener) (dialog, which) -> {
-                    // Add the user if they wish to continue only if they have geolocation enabled (and update button looks)
-                    if (signedInAccount.isEnableGeolocation()) {
+                    // Get the user's location
+                    // Must check permission before getting location
+                    if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                        // Request for permission if there is none
+                        // Request will handle if the user granted permission or not
+                        locationPermissionRequest.launch(Manifest.permission.ACCESS_COARSE_LOCATION);
+                    } else {
+                        // Do a double check on geolocation status here
+                        if (!signedInAccount.isEnableGeolocation()) {
+                            // Permission is granted but geolocation is false. So we need to update this
+                            signedInAccount.setEnableGeolocation(true);
+                            profileDBHandler.updateProfile(signedInAccount, new DBOnCompleteListener<Account>() {
+                                @Override
+                                public void OnCompleteDB(@NonNull ArrayList<Account> docs, int queryID, int flags) {
+                                    Log.d("DB", "Updated account geolocation");
+                                }
+                            });
+                        }
+                        // Change the views of the buttons
                         registerButton.setBackgroundColor(0xFF808080);
                         registerButton.setText("✔");
 
-                        // Get the user's location
-                        if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                            // TODO: Consider calling
-                            //    ActivityCompat#requestPermissions
-                            // here to request the missing permissions, and then overriding
-                            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                            //                                          int[] grantResults)
-                            // to handle the case where the user grants the permission. See the documentation
-                            // for ActivityCompat#requestPermissions for more details.
-                            Toast.makeText(getContext(), "No location permission?", Toast.LENGTH_LONG).show();
-                        }
                         // https://stackoverflow.com/questions/16898675/how-does-it-work-requestlocationupdates-locationrequest-listener
                         // Accessed on 2024-11-19, used to help understand when the listener is called
                         locationManager.requestLocationUpdates(locationManager.NETWORK_PROVIDER, 1000, 0, this);
-
-                    } else {
-                        // Don't sign the user up for the event
-                        Toast.makeText(getContext(), "Error joining waitlist: Must have geolocation enabled!", Toast.LENGTH_LONG).show();
                     }
                 });
                 builder.setNegativeButton("No", (DialogInterface.OnClickListener) (dialog, which) -> {

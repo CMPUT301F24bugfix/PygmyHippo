@@ -347,4 +347,27 @@ public class EventTest {
         testEvent.removeEntrant(new Entrant("account7", Entrant.EntrantStatus.accepted));
         assertEquals(1, (int) testEvent.getNumberWaitlisted());
     }
+
+    @Test
+    public void testGetEntrant() {
+        Entrant gottenEntrant = testEvent.getEntrant("account1");
+        assertEquals("account1", gottenEntrant.getAccountID());
+        assertEquals("invited", gottenEntrant.getEntrantStatus().value);
+
+        gottenEntrant = testEvent.getEntrant("account2");
+        assertEquals("account2", gottenEntrant.getAccountID());
+        assertEquals("waitlisted", gottenEntrant.getEntrantStatus().value);
+
+        gottenEntrant = testEvent.getEntrant("account3");
+        assertEquals("account3", gottenEntrant.getAccountID());
+        assertEquals("cancelled", gottenEntrant.getEntrantStatus().value);
+
+        gottenEntrant = testEvent.getEntrant("account4");
+        assertEquals("account4", gottenEntrant.getAccountID());
+        assertEquals("accepted", gottenEntrant.getEntrantStatus().value);
+
+        // Test getting entrant that doesn't exist
+        gottenEntrant = testEvent.getEntrant("account5");
+        assertEquals(null, gottenEntrant);
+    }
 }

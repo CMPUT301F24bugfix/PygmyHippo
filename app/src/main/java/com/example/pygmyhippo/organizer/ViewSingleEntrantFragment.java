@@ -33,6 +33,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
@@ -71,8 +72,7 @@ public class ViewSingleEntrantFragment extends Fragment implements DBOnCompleteL
 
     private FrameLayout mapView;
     private FrameLayout mapMarker;
-    private int mapWidth;
-    private int mapHeight;
+    private int mapSideLength;
     private Button statusButton;
     private TextView locationTextView, statusTextView, userNameView, pronounsTextView, emailTextView, phoneTextView;
     private Integer falseEasting = 180;             // Used in the map projection
@@ -136,14 +136,13 @@ public class ViewSingleEntrantFragment extends Fragment implements DBOnCompleteL
             public void onGlobalLayout() {
                 if (!mapDimensionsGotten) {         // Only want to utilize this listener once
                     // Get the layout fields
-                    mapWidth = mapView.getWidth();
-                    mapHeight = mapView.getHeight();
+                    mapSideLength = mapView.getWidth();
 
                     // Get the event
                     dbHandler.getEventByID(eventID, ViewSingleEntrantFragment.this::OnCompleteDB);
 
                     // Set the flag if the values aren't zero
-                    if (mapWidth != 0 && mapHeight != 0) {
+                    if (mapSideLength != 0) {
                         mapDimensionsGotten = true;
                     }
                 }
@@ -174,10 +173,10 @@ public class ViewSingleEntrantFragment extends Fragment implements DBOnCompleteL
                     phoneTextView.setText(account.getPhoneNumber());
 
                     // Check if geolocation is set, if it is display the map and location
-                    if (account.isEnableGeolocation()) {
+                    if (account.isEnableGeolocation() && event.getEnableGeolocation()) {
                         Log.d("Location", "Account has geolocation, begin map formatting");
 
-                        formatMap();        // Display map
+                        formatMap(mapSideLength);        // Display map
                         displayLocation(entrant.getLatitude(), entrant.getLongitude());
                     }
                 } else {
@@ -240,19 +239,19 @@ public class ViewSingleEntrantFragment extends Fragment implements DBOnCompleteL
     }
 
     /**
-     * This method will find the width of the map displayed set the height as the same (because its a square)
+     * This method will set the height of the map depending on its width
      * After it will make the map visible
      * @author Kori
      */
-    public void formatMap() {
-        mapWidth = mapView.getWidth();
-        double ratio = (double) mapWidth / 2058;         // Get the ratio by dividing by the original width
+    public void formatMap(int mapSideLength) {
+        Log.d("Location", String.format("Displaying SideLength: %d", mapSideLength));
 
-        // Get the proportional height
-        mapHeight = (int) (ratio * 1036);                   // 1036 being the original map height
-        mapView.setMinimumHeight(mapHeight);
+        // Get the layout params of the map and set the height
+        ConstraintLayout.LayoutParams mapLayoutParams = (ConstraintLayout.LayoutParams) mapView.getLayoutParams();
+        mapLayoutParams.height = mapSideLength;
 
-        Log.d("Location", String.format("Displaying width: %d height: %d", mapWidth, mapHeight));
+        // Apply the new height to the map
+        mapView.setLayoutParams(mapLayoutParams);
 
         // Make the map visible and its label
         mapView.setVisibility(View.VISIBLE);
@@ -270,19 +269,21 @@ public class ViewSingleEntrantFragment extends Fragment implements DBOnCompleteL
         Log.d("Location", String.format("Displaying longitude: %f latitude: %f", longitude, latitude));
 
         // First get the radius of our map
-        double radius = mapWidth / (Math.PI * 2);
+        double radius = mapSideLength / (Math.PI * 2);
 
         // Convert longitude to its respective x-coordinate given the formula from the cite
+        // False Easting is used to parameterize the x coordinate to go off the top edge
         double xCoordinate = degreesToRadians(longitude + falseEasting) * radius;
 
         // Calculate the vertical offset given the formula from the cite mentioned
+        // Vertical offset will allow us to use the top left corner as reference
         double latitudeRadians = degreesToRadians(latitude);
         double verticalOffsetFromEquator = radius * Math.log(Math.tan((Math.PI / 4) + (latitudeRadians / 2)));
 
         Log.d("Location", String.format("Vertical offset = %f", verticalOffsetFromEquator));
 
         // Convert the latitude to its y-coordinate given the formula from the cite
-        double yCoordinate = ((float) mapHeight / 2) - verticalOffsetFromEquator;
+        double yCoordinate = ((float) mapSideLength / 2) - verticalOffsetFromEquator;
 
         // Now format the marker on the map to these coordinates accounting for its center (want the bottom tip on the point)
         // Layout params was gotten on 2024-11-19 on the cite:
