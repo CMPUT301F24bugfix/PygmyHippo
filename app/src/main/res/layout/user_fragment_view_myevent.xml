@@ -231,6 +231,8 @@
             android:textSize="12sp"
             android:visibility="visible"
             android:text="you are officially accepted into the event" />
+
+<!--        PENDING WAITLIST BUTTON -->
         <Button
             android:id="@+id/u_leaveWaitlistButton"
             android:layout_width="match_parent"
@@ -246,6 +248,7 @@
             android:layout_marginBottom = "13dp"
             android:orientation="horizontal">
 
+<!--            INVITED WAITLIST BUTTONS-->
             <Button
                 android:id="@+id/u_acceptWaitlistButton"
                 android:layout_width="150dp"

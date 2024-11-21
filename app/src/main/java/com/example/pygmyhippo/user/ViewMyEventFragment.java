@@ -48,10 +48,7 @@ public class ViewMyEventFragment extends Fragment implements DBOnCompleteListene
     private NavController navController;
 
     private Event event;
-
-    // this is the current user who is trying to join the event
     private Entrant entrant;
-    private ArrayList<Entrant> entrants;
     private String eventID;
     private Account signedInAccount;
 
@@ -60,13 +57,12 @@ public class ViewMyEventFragment extends Fragment implements DBOnCompleteListene
 
     private TextView eventNameView, eventDateView, eventTimeView, eventOrganizerView,
             eventLocationView, eventCostView, eventAboutDescriptionView;
-    private ConstraintLayout adminConstraint;
     private ImageView eventPoster;
 
     private TextView userWaitlistStatus, userStatusDescription;
     private Button leaveWaitlistButton;
 
-    // ACCEPTED WAITLIST
+    // INVITED WAITLIST
     private Button acceptWaitlistButton, declineWaitlistButton;
 
     // TODO: need to do something with getEvent (ie in user, by eventID passed...)
@@ -116,9 +112,9 @@ public class ViewMyEventFragment extends Fragment implements DBOnCompleteListene
         acceptWaitlistButton = view.findViewById(R.id.u_acceptWaitlistButton);
         declineWaitlistButton = view.findViewById(R.id.u_declineWaitlistButton);
 
-        // TODO: should set buttons to invisible
+        // TODO: should set buttons to invisible, when all the buttons have been made
 
-        // TODO: fix back button
+
         // Set up navigation for the back button to return to last fragment
         FloatingActionButton backButton = view.findViewById(R.id.u_backButtonToMyEvents);
         backButton.setOnClickListener(view1 -> {
@@ -126,28 +122,12 @@ public class ViewMyEventFragment extends Fragment implements DBOnCompleteListene
             navController.popBackStack();
         });
 
-        // TODO: do stuff here for buttons... and stuff
-
-
         return view;
-    }
-
-    /**
-     * Tries to query for event by eventID.
-     * eventID should never be null...
-     *
-     * @param eventID ID of the event to query for.
-     */
-    private void getEvent(@Nullable String eventID) {
-        Log.d("EventFragment", String.format("Non-null eventID, attempting to retrieve Event with ID %s", eventID));
-        dbHandler.getEventByID(eventID, this);
     }
 
     /**
      * Updates text views and buttons in the fragment to reflect the same info in event.
      */
-    // TODO: this is probably where to do the button and text changing for population
-    // check the entrant status...
     private void populateAllFields() {
         eventNameView.setText(event.getEventTitle());
         eventDateView.setText(event.getDate());
@@ -196,8 +176,6 @@ public class ViewMyEventFragment extends Fragment implements DBOnCompleteListene
                 event = docs.get(0);
                 populateAllFields();
 
-                // based on user status in waitlist
-                // TODO: figure out if this is the event clicked
                 if (event.getEventStatus().value.equals("ongoing")) {
                     pendingWaitlist();
                 } else if (event.getEntrants().stream().anyMatch(e -> e.getAccountID().equals(entrant.getAccountID()) && e.getEntrantStatus() == Entrant.EntrantStatus.invited)) {
@@ -217,10 +195,13 @@ public class ViewMyEventFragment extends Fragment implements DBOnCompleteListene
         }
     }
 
+    /**
+     * If the event is still open, the user is able to leave the waitlist.
+     */
     public void pendingWaitlist() {
         userWaitlistStatus.setText("PENDING");
         userStatusDescription.setVisibility(View.VISIBLE);
-        userStatusDescription.setText("The waitlist is still open/your status for this event is pending. Do you want to leave this event?");
+        userStatusDescription.setText("The waitlist is still open. Do you want to leave this event?");
         leaveWaitlistButton.setVisibility(View.VISIBLE);
 
         leaveWaitlistButton.setOnClickListener(view -> {
@@ -233,6 +214,9 @@ public class ViewMyEventFragment extends Fragment implements DBOnCompleteListene
     }
 
 
+    /**
+     * If the user has been invited to the event, the user will have the option to accept or decline the offer.
+     */
     public void wonWaitlistSelection() {
         // populate the views, make sure to make buttons visible,
         // when button is clicked, either set user status to accepted or just remove the user entirely from the waitlist
@@ -242,9 +226,8 @@ public class ViewMyEventFragment extends Fragment implements DBOnCompleteListene
         acceptWaitlistButton.setVisibility(View.VISIBLE);
         declineWaitlistButton.setVisibility(View.VISIBLE);
 
-        // https://hellokoding.com/query-an-arraylist-in-java/
         acceptWaitlistButton.setOnClickListener(view -> {
-
+            // https://hellokoding.com/query-an-arraylist-in-java/
             event.getEntrants()
                     .stream()
                     .filter(e -> (e.getAccountID().equals(entrant.getAccountID())))
@@ -252,14 +235,12 @@ public class ViewMyEventFragment extends Fragment implements DBOnCompleteListene
                     .ifPresent(e -> e.setEntrantStatus(Entrant.EntrantStatus.accepted));
             dbHandler.updateEvent(event, this);
             userWaitlistStatus.setText("ACCEPTED");
+            userStatusDescription.setText("You are officially accepted into this event!");
             acceptWaitlistButton.setVisibility(View.GONE);
             declineWaitlistButton.setVisibility(View.GONE);
-            userStatusDescription.setText("You are officially accepted into this event!");
         });
 
         // TODO: add decline waitlist button funtionality here
         // use removeEntrant from list and update DB
-
-
     }
 }
