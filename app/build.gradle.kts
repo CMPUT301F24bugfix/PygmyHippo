@@ -51,6 +51,7 @@ dependencies {
     implementation(libs.navigation.fragment)
     implementation(libs.navigation.ui)
     implementation(libs.firebase.firestore)
+    implementation(libs.rules)
 
     // qr code scanner
     implementation("com.google.mlkit:barcode-scanning:17.0.3")
@@ -61,23 +62,25 @@ dependencies {
     implementation("com.journeyapps:zxing-android-embedded:4.3.0")
     implementation("com.google.zxing:core:3.3.3")
 
+    testImplementation(libs.junit)
+    androidTestImplementation(libs.ext.junit)
+    androidTestImplementation(libs.espresso.core)
     // added for testing
     testImplementation("junit:junit:4.13.2")
-    androidTestImplementation("junit:junit:4.13.2")
-    androidTestImplementation("androidx.test.ext:junit:1.2.1")
-    androidTestImplementation("androidx.test:runner:1.6.1")
-    androidTestImplementation("androidx.test:rules:1.6.1")
-    androidTestImplementation("androidx.test.espresso:espresso-core:3.3.0")
-    androidTestImplementation("androidx.test.espresso:espresso-contrib:3.3.0")
-    androidTestImplementation("org.hamcrest:hamcrest-library:1.3")
-    androidTestImplementation("org.hamcrest:hamcrest-core:1.3")
+    androidTestImplementation("androidx.test.ext:junit:1.1.5")
+    androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
 
-//    debugImplementation("androidx.fragment:fragment-testing-manifest:1.8.5")
-//    androidTestImplementation("androidx.fragment:fragment-testing:1.8.5")
-//    androidTestImplementation("androidx.test.uiautomator:uiautomator:2.2.0") // this is for clicking in an arbitrary location
-
+    androidTestImplementation("androidx.test.espresso:espresso-contrib:3.5.1") {
+        exclude(group = "com.google.protobuf", module = "protobuf-lite")
+    }
+    androidTestImplementation("androidx.test:rules:1.6.0")
+    androidTestImplementation("androidx.test.uiautomator:uiautomator:2.2.0") // this is for clicking in an arbitrary location
     // Added for database
     implementation(platform("com.google.firebase:firebase-bom:32.7.1"))
     implementation("com.google.firebase:firebase-firestore")
+    implementation("com.google.firebase:firebase-storage")
+    testImplementation("org.hamcrest:hamcrest-library:3.0")
+    debugImplementation("androidx.fragment:fragment-testing-manifest:1.8.5")
+    androidTestImplementation("androidx.fragment:fragment-testing:1.8.5")
     implementation("com.google.firebase:firebase-storage:20.1.0")
 }

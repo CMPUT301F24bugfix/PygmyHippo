@@ -10,6 +10,10 @@ Issues: Doesn't have updatable fields yet
         - Need to separate database queries from code
  */
 
+import com.example.pygmyhippo.common.Entrant;
+
+import java.util.ArrayList;
+
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -25,12 +29,11 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
 import com.example.pygmyhippo.R;
 import com.example.pygmyhippo.common.Account;
-import com.example.pygmyhippo.common.AppNavController;
-import com.example.pygmyhippo.common.Entrant;
 import com.example.pygmyhippo.common.Event;
 import com.example.pygmyhippo.database.DBOnCompleteFlags;
 import com.example.pygmyhippo.database.DBOnCompleteListener;
@@ -40,7 +43,6 @@ import com.example.pygmyhippo.database.StorageOnCompleteListener;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.squareup.picasso.Picasso;
 
-import java.util.ArrayList;
 import java.util.Random;
 
 /**
@@ -52,23 +54,19 @@ import java.util.Random;
  */
 public class EventFragment extends Fragment implements DBOnCompleteListener<Event> {
 
+    private NavController navController;
+    private Event event;
     private ArrayList<Entrant> entrants;
+    private EventDB dbHandler;
+    private ImageStorage imageHandler;
+    private String eventID;
+    private Account signedInAccount;
     private TextView eventNameView, eventDateView, eventTimeView, eventOrganizerView, eventLocationView,
             eventCostView, eventAboutDescriptionView;
     private ImageView eventPoster;
     private ImageButton editEvent;
     private Button lotteryButton, viewQrButton;
     com.example.pygmyhippo.organizer.EventFragmentArgs Args;
-
-    private Event event;
-    private EventDB dbHandler;
-    private ImageStorage imageHandler;
-
-    private AppNavController navController;
-    private String eventID;
-    private Account signedInAccount;
-    private boolean useNavigation, useFirebase;
-
 
     // populate single event page with hardcoded event information
     public Event hardcodeEvent() {
@@ -97,29 +95,14 @@ public class EventFragment extends Fragment implements DBOnCompleteListener<Even
     }
 
     @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            EventFragmentArgs args = EventFragmentArgs.fromBundle(getArguments());
-            signedInAccount = args.getSignedInAccount();
-            eventID = args.getEventID();
-            useNavigation = args.getUseNavigation();
-            useFirebase = args.getUseFirebase();
-        } else {
-            eventID = "IaMdwyQpHDh6GdZF025k";
-            signedInAccount = new Account();
-        }
-    }
-
-    @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         Args = com.example.pygmyhippo.organizer.EventFragmentArgs.fromBundle(getArguments());
         super.onViewCreated(view, savedInstanceState);
-        navController = new AppNavController(useNavigation, Navigation.findNavController(view));
+        navController = Navigation.findNavController(view);
 
         // Initialize the handlers
-        dbHandler = new EventDB(useFirebase);
-        imageHandler = new ImageStorage(useFirebase);
+        dbHandler = new EventDB();
+        imageHandler = new ImageStorage();
 
         // Get the actual event data to populate this view
         dbHandler.getEventByID(eventID, this);
@@ -129,6 +112,14 @@ public class EventFragment extends Fragment implements DBOnCompleteListener<Even
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.organiser_fragment_event, container, false);
+
+        if (getArguments() != null) {
+            signedInAccount = EventFragmentArgs.fromBundle(getArguments()).getSignedInAccount();
+            eventID = EventFragmentArgs.fromBundle(getArguments()).getEventID();
+        } else {
+            eventID = "IaMdwyQpHDh6GdZF025k";
+            signedInAccount = new Account();
+        }
 
         // Get all the textViews we want to populate
         eventNameView = view.findViewById(R.id.u_eventNameView);
@@ -182,41 +173,44 @@ public class EventFragment extends Fragment implements DBOnCompleteListener<Even
         });
 
         // Add functionality to the lottery event button
-        lotteryButton.setOnClickListener(view12 -> {
-            // Only do the draw if the event hasn't already been closed
-            if (event.getEventStatus().value.equals("ongoing") && !event.getEntrants().isEmpty()) {
-                // Change the view of the button
-                lotteryButton.setBackgroundColor(0xFFA4A8C3);
-                lotteryButton.setText("Lottery closed");
-                lotteryButton.setClickable(false);
-                lotteryButton.setTextColor(0xFF3A5983);
-                lotteryButton.setTextSize(20);
+        lotteryButton.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View view) {
+                // Only do the draw if the event hasn't already been closed
+                if (event.getEventStatus().value.equals("ongoing") && !event.getEntrants().isEmpty()) {
+                    // Change the view of the button
+                    lotteryButton.setBackgroundColor(0xFFA4A8C3);
+                    lotteryButton.setText("Lottery closed");
+                    lotteryButton.setClickable(false);
+                    lotteryButton.setTextColor(0xFF3A5983);
+                    lotteryButton.setTextSize(20);
 
-                // Update the status of the event to closed
-                event.setEventStatus(Event.EventStatus.cancelled);
+                    // Update the status of the event to closed
+                    event.setEventStatus(Event.EventStatus.cancelled);
 
-                // Draw the lottery winners and change their statuses
-                drawWinners(event);
+                    // Draw the lottery winners and change their statuses
+                    drawWinners(event);
 
-                // After the draw, update the event in the database
-                dbHandler.updateEvent(event, EventFragment.this::OnCompleteDB);
-            } else if (event.getEventStatus().value.equals("ongoing") && event.getEntrants().isEmpty()) {
-                // There are no entrants so the lottery should not be drawn
-                Toast.makeText(getContext(), "No entrants to run the lottery on!", Toast.LENGTH_SHORT).show();
-            } else if (event.getEventStatus().value.equals("cancelled") && event.hasAvailability()) {
-                // There are available spots to do a redraw
-                // Change the view of the button
-                lotteryButton.setBackgroundColor(0xFFA4A8C3);
-                lotteryButton.setText("Lottery closed");
-                lotteryButton.setClickable(false);
-                lotteryButton.setTextColor(0xFF3A5983);
-                lotteryButton.setTextSize(20);
+                    // After the draw, update the event in the database
+                    dbHandler.updateEvent(event, EventFragment.this::OnCompleteDB);
+                } else if (event.getEventStatus().value.equals("ongoing") && event.getEntrants().isEmpty()) {
+                    // There are no entrants so the lottery should not be drawn
+                    Toast.makeText(getContext(), "No entrants to run the lottery on!", Toast.LENGTH_SHORT).show();
+                } else if (event.getEventStatus().value.equals("cancelled") && event.hasAvailability()) {
+                    // There are available spots to do a redraw
+                    // Change the view of the button
+                    lotteryButton.setBackgroundColor(0xFFA4A8C3);
+                    lotteryButton.setText("Lottery closed");
+                    lotteryButton.setClickable(false);
+                    lotteryButton.setTextColor(0xFF3A5983);
+                    lotteryButton.setTextSize(20);
 
-                // Redraw the lottery to fill all the available spots
-                drawWinners(event);
+                    // Redraw the lottery to fill all the available spots
+                    drawWinners(event);
 
-                // After the redraw, update the event in the database
-                dbHandler.updateEvent(event, EventFragment.this::OnCompleteDB);
+                    // After the redraw, update the event in the database
+                    dbHandler.updateEvent(event, EventFragment.this::OnCompleteDB);
+                }
             }
         });
         return view;

@@ -30,17 +30,17 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
 import com.example.pygmyhippo.R;
 import com.example.pygmyhippo.common.Account;
-import com.example.pygmyhippo.common.AppNavController;
 import com.example.pygmyhippo.common.Entrant;
 import com.example.pygmyhippo.common.Event;
 import com.example.pygmyhippo.database.DBOnCompleteFlags;
 import com.example.pygmyhippo.database.DBOnCompleteListener;
-import com.example.pygmyhippo.database.EventDB;
 import com.example.pygmyhippo.database.ImageStorage;
+import com.example.pygmyhippo.database.EventDB;
 import com.example.pygmyhippo.database.StorageOnCompleteListener;
 import com.example.pygmyhippo.databinding.UserFragmentEventBinding;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -57,7 +57,7 @@ import java.util.ArrayList;
 public class EventFragment extends Fragment implements DBOnCompleteListener<Event> {
 
     private UserFragmentEventBinding binding;
-    private AppNavController navController;
+    private NavController navController;
 
     private Event event;
 
@@ -65,8 +65,6 @@ public class EventFragment extends Fragment implements DBOnCompleteListener<Even
     private Entrant entrant;
     private ArrayList<Entrant> entrants;
     private Account signedInAccount;
-    private boolean useNavigation, useFirebase, isAdmin;
-    private String eventID;
 
     private EventDB DBhandler;
     private ImageStorage imageHandler;
@@ -99,25 +97,9 @@ public class EventFragment extends Fragment implements DBOnCompleteListener<Even
     }
 
     @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            EventFragmentArgs args = EventFragmentArgs.fromBundle(getArguments());
-            signedInAccount = args.getSignedInAccount();
-            useNavigation = args.getUseNavigation();
-            useFirebase = args.getUseFirebase();
-            eventID = args.getEventID();
-            isAdmin = args.getIsAdmin();
-        }
-    }
-
-    @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        navController = new AppNavController(useFirebase, Navigation.findNavController(view));
-        DBhandler = new EventDB(useFirebase);
-        imageHandler = new ImageStorage(useFirebase);
-        getEvent(eventID);
+        navController = Navigation.findNavController(view);
     }
 
     @Override
@@ -146,11 +128,16 @@ public class EventFragment extends Fragment implements DBOnCompleteListener<Even
         // Container Layouts
         adminConstraint = binding.aActionsConstraint;
 
+        DBhandler = new EventDB();
+        imageHandler = new ImageStorage();
 
         // Get current user account
-
+        signedInAccount = EventFragmentArgs.fromBundle(getArguments()).getSignedInAccount();
         setPermissions();
 
+        // Get the eventID that was passed by scanning the QR code
+        String navigationEventID = EventFragmentArgs.fromBundle(getArguments()).getEventID();
+        getEvent(navigationEventID);
 
         // Make the entrant equivalent using the account info (for if they join the waitlist)
         entrant = new Entrant(
@@ -185,7 +172,7 @@ public class EventFragment extends Fragment implements DBOnCompleteListener<Even
 
     @Override
     public void OnCompleteDB(@NonNull ArrayList<Event> docs, int queryID, int flags) {
-        if (queryID == 1) {
+        if (queryID == 0) {
             if (flags == DBOnCompleteFlags.SINGLE_DOCUMENT.value) {
                 // Get the event from the database and populate the fragment
                 event = docs.get(0);
@@ -316,7 +303,7 @@ public class EventFragment extends Fragment implements DBOnCompleteListener<Even
      * Toggles visibility of certain buttons depending on role of signedInAccount.
      */
     private void setPermissions() {
-        if (isAdmin) {
+        if (signedInAccount.getCurrentRole() == Account.AccountRole.admin) {
             Log.d("EventFragment", "Admin user detected. Setting Admin permissions");
             adminConstraint.setVisibility(View.VISIBLE);
             registerButton.setVisibility(View.GONE);

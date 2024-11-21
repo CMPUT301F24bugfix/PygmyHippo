@@ -26,11 +26,11 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
 import com.example.pygmyhippo.R;
 import com.example.pygmyhippo.common.Account;
-import com.example.pygmyhippo.common.AppNavController;
 import com.example.pygmyhippo.common.Entrant;
 import com.example.pygmyhippo.common.Event;
 import com.example.pygmyhippo.database.DBOnCompleteFlags;
@@ -46,7 +46,7 @@ import java.util.ArrayList;
  *  - Add image handling from database
  */
 public class ViewEntrantsFragment extends Fragment implements DBOnCompleteListener<Event> {
-    private ArrayList<Entrant> entrantListData = new ArrayList<>();
+    private ArrayList<Entrant> entrantListData = new ArrayList<Entrant>();
     private ArrayAdapter<Entrant> entrantListAdapter;
     private ListView entrantListView;
     private Spinner statusSpinner;
@@ -54,26 +54,9 @@ public class ViewEntrantsFragment extends Fragment implements DBOnCompleteListen
     private Event event = new Event();
     private EventDB dbHandler;
 
-    private AppNavController navController;
+    private NavController navController;
     private String eventID;
     private Account signedInAccount;
-    private boolean useNavigation, useFirebase;
-
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            ViewEntrantsFragmentArgs args = ViewEntrantsFragmentArgs.fromBundle(getArguments());
-            eventID = args.getEventID();
-            signedInAccount = args.getSignedInAccount();
-            useNavigation = args.getUseNavigation();
-            useFirebase = args.getUseFirebase();
-        } else {
-            // FIXME think of another solution for getting mock data that wont break things.
-            eventID = "37Pm3bM0Z0xBjwWLGTqD";
-            signedInAccount = new Account();
-        }
-    }
 
     /**
      * OnCreateView sets up the interactables on viewEntrants page and deals with the list data
@@ -92,6 +75,20 @@ public class ViewEntrantsFragment extends Fragment implements DBOnCompleteListen
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.o_view_entrants, container, false);
 
+        // Get the event ID that was passed from the last fragment
+        if (getArguments() != null) {
+            eventID = ViewEntrantsFragmentArgs.fromBundle(getArguments()).getEventID();
+            signedInAccount = ViewEntrantsFragmentArgs.fromBundle(getArguments()).getSignedInAccount();
+        } else {
+            // FIXME think of another solution for getting mock data that wont break things.
+            eventID = "37Pm3bM0Z0xBjwWLGTqD";
+            signedInAccount = new Account();
+        }
+
+        // Get the event from the database
+        dbHandler = new EventDB();
+        dbHandler.getEventByID(eventID, this);
+
         // Get the spinner view
         statusSpinner = view.findViewById(R.id.o_entrant_list_spinner);
 
@@ -106,11 +103,25 @@ public class ViewEntrantsFragment extends Fragment implements DBOnCompleteListen
         o_spinner_adapter.setDropDownViewResource(R.layout.e_p_role_dropdown);
         statusSpinner.setAdapter(o_spinner_adapter);
 
+        return view;
+    }
+
+    /**
+     * on View created we want to set up most of our click listeners (especially for the spinner)
+     * @param view The View returned by {@link #onCreateView(LayoutInflater, ViewGroup, Bundle)}.
+     * @param savedInstanceState If non-null, this fragment is being re-constructed
+     * from a previous saved state as given here.
+     */
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        navController = Navigation.findNavController(view);
+
         // Initialize our ListView
         entrantListView = view.findViewById(R.id.o_entrant_listview);
 
         // Set up our array adapter and connect it to our listView
-        entrantListAdapter = new EntrantArrayAdapter(view.getContext(), entrantListData, useFirebase);
+        entrantListAdapter = new com.example.pygmyhippo.organizer.EntrantArrayAdapter(view.getContext(), entrantListData);
         entrantListView.setAdapter(entrantListAdapter);
 
         // Get and set up navigation for the back button
@@ -179,23 +190,6 @@ public class ViewEntrantsFragment extends Fragment implements DBOnCompleteListen
                 // Do nothing
             }
         });
-
-        return view;
-    }
-
-    /**
-     * on View created we want to set up most of our click listeners (especially for the spinner)
-     * @param view The View returned by {@link #onCreateView(LayoutInflater, ViewGroup, Bundle)}.
-     * @param savedInstanceState If non-null, this fragment is being re-constructed
-     * from a previous saved state as given here.
-     */
-    @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        navController = new AppNavController(useNavigation, Navigation.findNavController(view));
-
-        dbHandler = new EventDB(useFirebase);
-        dbHandler.getEventByID(eventID, this);
     }
 
     /**
