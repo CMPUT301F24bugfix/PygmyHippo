@@ -243,13 +243,8 @@ public class Event {
      */
     public void removeEntrant(Entrant entrant) {
         if (entrants != null) {
-            // Go through the list of entrants to find a one with matching attributes
-            for (int index = 0; index < entrants.size(); index++) {
-                if (entrant.getAccountID().equals(entrants.get(index).getAccountID()) && entrants.get(index).getEntrantStatus().value.equals(entrant.getEntrantStatus().value)) {
-                    // If the attributes are equal, then the list has the entrant, so remove it
-                    this.entrants.remove(index);
-                }
-            }
+            // If the attributes are in the entrants list, then the list has the entrant, so remove it
+            this.entrants.removeIf(i -> (entrant.getAccountID().equals(i.getAccountID()) && i.getEntrantStatus().value.equals(entrant.getEntrantStatus().value)));
         }
     }
 
