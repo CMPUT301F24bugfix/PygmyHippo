@@ -3,6 +3,10 @@ package com.example.pygmyhippo.user;
 /*
 This fragment will display one of the events that a User can see after scanning its QR code
 Will be used by users and admins
+Citations:
+        - ALL Location handling was researched on https://stackoverflow.com/questions/21085497/how-to-use-android-locationmanager-and-listener
+          * Code referring to location is sourced from this cite and modified
+          Accessed on 2024-11-17 and answered by nisarg parekh
 Purposes:
         - Let the User view the details of the event
         - Let the User join the event if they wish
@@ -14,9 +18,18 @@ Issues:
         - Needs to stop user from joining or leaving waitlist if the event is closed
  */
 
+import static androidx.core.content.ContextCompat.getSystemService;
+
+import android.Manifest;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
+import android.location.Criteria;
 import android.net.Uri;
+import android.content.pm.PackageManager;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -27,9 +40,12 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
@@ -38,6 +54,7 @@ import com.example.pygmyhippo.R;
 import com.example.pygmyhippo.common.Account;
 import com.example.pygmyhippo.common.Entrant;
 import com.example.pygmyhippo.common.Event;
+import com.example.pygmyhippo.database.AccountDB;
 import com.example.pygmyhippo.database.DBOnCompleteFlags;
 import com.example.pygmyhippo.database.DBOnCompleteListener;
 import com.example.pygmyhippo.database.ImageStorage;
@@ -55,7 +72,7 @@ import java.util.ArrayList;
  * @version 2.0
  * No returns and no parameters
  */
-public class EventFragment extends Fragment implements DBOnCompleteListener<Event> {
+public class EventFragment extends Fragment implements DBOnCompleteListener<Event>, LocationListener {
 
     private UserFragmentEventBinding binding;
     private NavController navController;
@@ -71,12 +88,46 @@ public class EventFragment extends Fragment implements DBOnCompleteListener<Even
 
     private EventDB DBhandler;
     private ImageStorage imageHandler;
+    private AccountDB profileDBHandler;
+    // For getting current location
+    private LocationManager locationManager;
 
     private TextView eventNameView, eventDateView, eventTimeView, eventOrganizerView,
             eventLocationView, eventCostView, eventAboutDescriptionView;
     private Button registerButton, deleteEventButton, deleteQRCodeButton;
     private ConstraintLayout adminConstraint;
     private ImageView eventImageView;
+
+    /*
+        Code is from https://developer.android.com/develop/sensors-and-location/location/permissions#:~:text=ACCESS_FINE_LOCATION%20must%20be%20requested%20with,to%20only%20approximate%20location%20information.
+        Accessed on 2024-11-17
+        It sets up the permission launcher to ask for location permissions, and then launches it
+        TODO: Remove check box for geolocation, permissions handle it
+         */
+    ActivityResultLauncher<String> locationPermissionRequest =
+            registerForActivityResult(new ActivityResultContracts
+                            .RequestPermission(), isGranted -> {
+
+                        if (isGranted) {
+                            // Approximate location access granted, set that in the user's profile
+                            Log.d("Profile", "Location permissions granted");
+                            signedInAccount.setEnableGeolocation(true);
+                        } else {
+                            // No location access granted.
+                            Log.d("Profile", "No location permissions granted");
+                            Toast.makeText(getContext(), "Error joining waitlist: Must have geolocation enabled!", Toast.LENGTH_LONG).show();
+                            signedInAccount.setEnableGeolocation(false);
+                        }
+
+                        // Regardless of choice, update the profile
+                        profileDBHandler.updateProfile(signedInAccount, new DBOnCompleteListener<Account>() {
+                            @Override
+                            public void OnCompleteDB(@NonNull ArrayList<Account> docs, int queryID, int flags) {
+                                Log.d("DB", "Profile has been updated");
+                            }
+                        });
+                    }
+            );
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -93,6 +144,8 @@ public class EventFragment extends Fragment implements DBOnCompleteListener<Even
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         navController = Navigation.findNavController(view);
+
+        profileDBHandler = new AccountDB();
     }
 
     @Override
@@ -123,6 +176,7 @@ public class EventFragment extends Fragment implements DBOnCompleteListener<Even
 
         DBhandler = new EventDB();
         imageHandler = new ImageStorage();
+        locationManager = (LocationManager) requireContext().getSystemService(Context.LOCATION_SERVICE);
 
         // Get current user account
         setPermissions();
@@ -255,11 +309,25 @@ public class EventFragment extends Fragment implements DBOnCompleteListener<Even
                 builder.setMessage("This event requires geolocation. Continue registering?");
                 builder.setCancelable(true);
                 builder.setPositiveButton("Yes", (DialogInterface.OnClickListener) (dialog, which) -> {
-                    // Add the user if they wish to continue (and update button looks)
-                    registerButton.setBackgroundColor(0xFF808080);
-                    event.addEntrant(entrant);
-                    DBhandler.updateEvent(event, this);       // Update the database
-                    registerButton.setText("✔");
+                    // Get the user's location
+                    // Must check permission before getting location
+                    if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                        // Request for permission if there is none
+                        // Request will handle if the user granted permission or not
+                        locationPermissionRequest.launch(Manifest.permission.ACCESS_COARSE_LOCATION);
+                    } else {
+                        // Do a double check on geolocation status here because its possible user will update the checkbox
+                        // Without the permission actually getting changed. So reflect their desire not to share location
+                        if (signedInAccount.isEnableGeolocation()) {
+                            // Change the views of the buttons
+                            registerButton.setBackgroundColor(0xFF808080);
+                            registerButton.setText("✔");
+
+                            // https://stackoverflow.com/questions/16898675/how-does-it-work-requestlocationupdates-locationrequest-listener
+                            // Accessed on 2024-11-19, used to help understand when the listener is called
+                            locationManager.requestLocationUpdates(locationManager.NETWORK_PROVIDER, 1000, 0, this);
+                        }
+                    }
                 });
                 builder.setNegativeButton("No", (DialogInterface.OnClickListener) (dialog, which) -> {
                     // Don't add the user to the waitlist
@@ -276,6 +344,29 @@ public class EventFragment extends Fragment implements DBOnCompleteListener<Even
                 registerButton.setText("✔");
             }
         }
+    }
+
+    /**
+     * This method implements the LocationListener. Used to update the user's location when registering for an event
+     * @param location The retrieved location
+     */
+    @Override
+    public void onLocationChanged(Location location) {
+        if (location != null) {
+            double longitude = location.getLongitude();
+            double latitude = location.getLatitude();
+            Log.d("Location", String.format("latitude: %f, longitude: %f", latitude, longitude));
+
+            // With the location retrieved, note that in the entrant class and update the event data
+            entrant.setLatitude(latitude);
+            entrant.setLongitude(longitude);
+            event.addEntrant(entrant);
+            DBhandler.updateEvent(event, this);       // Update the database
+        } else {
+            Log.d("Location", "Error location is null");
+        }
+
+        locationManager.removeUpdates(this);
     }
 
     /**

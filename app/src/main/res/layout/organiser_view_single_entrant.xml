@@ -27,7 +27,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:fontFamily="@font/roboto_mono_bold"
-        android:text="User Name"
+        android:text="..."
         android:textAlignment="textStart"
         android:textColor="@color/dark_purple"
         android:textSize="34sp"
@@ -38,7 +38,7 @@
 
     <ScrollView
         android:id="@+id/E_profile_form"
-        android:layout_width="533dp"
+        android:layout_width="match_parent"
         android:layout_height="708dp"
         android:layout_marginTop="16dp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -55,7 +55,7 @@
                 android:id="@+id/E_profile_profileImg"
                 android:layout_width="210dp"
                 android:layout_height="210dp"
-                android:src="@drawable/dog"
+                android:src="@drawable/loading_profile"
                 app:civ_border_color="#FF000000"
                 app:civ_border_width="0dp"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -73,8 +73,7 @@
                 android:text="Pronouns:"
                 android:textColor="@color/dark_purple"
                 android:textSize="20sp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.275"
+                app:layout_constraintEnd_toStartOf="@+id/E_profile_role"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/E_profile_role" />
 
@@ -83,12 +82,10 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/roboto_mono_medium"
-                android:text="she/they"
+                android:text="..."
                 android:textColor="@color/dark_purple"
                 android:textSize="20sp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.503"
-                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintStart_toStartOf="@+id/entrant_email"
                 app:layout_constraintTop_toBottomOf="@+id/E_profile_pronounsLabel" />
 
             <TextView
@@ -100,9 +97,7 @@
                 android:text="Phone:"
                 android:textColor="@color/dark_purple"
                 android:textSize="20sp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.255"
-                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintStart_toStartOf="@+id/E_profile_emailLabel"
                 app:layout_constraintTop_toBottomOf="@+id/entrant_email" />
 
             <TextView
@@ -110,12 +105,10 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/roboto_mono_medium"
-                android:text="111 222 3333"
+                android:text="..."
                 android:textColor="@color/dark_purple"
                 android:textSize="20sp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.503"
-                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintStart_toStartOf="@+id/entrant_email"
                 app:layout_constraintTop_toBottomOf="@+id/E_profile_phoneLabel" />
 
             <TextView
@@ -127,9 +120,7 @@
                 android:text="Email:"
                 android:textColor="@color/dark_purple"
                 android:textSize="20sp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.255"
-                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintStart_toStartOf="@+id/E_profile_pronounsLabel"
                 app:layout_constraintTop_toBottomOf="@+id/entrant_prounouns" />
 
             <TextView
@@ -137,7 +128,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/roboto_mono_medium"
-                android:text="moodeng@ualberta.ca"
+                android:text="..."
                 android:textSize="20sp"
                 android:textColor="@color/dark_purple"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -150,10 +141,48 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
-                android:layout_marginEnd="228dp"
                 android:text="⭐ Entrant"
                 app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/E_profile_profileImg" />
+
+            <TextView
+                android:id="@+id/E_location_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="35dp"
+                android:fontFamily="@font/roboto_bold"
+                android:text="Location:"
+                android:textColor="@color/dark_purple"
+                android:textSize="25sp"
+                android:visibility="gone"
+                app:layout_constraintEnd_toEndOf="@+id/E_profile_profileImg"
+                app:layout_constraintStart_toStartOf="@+id/E_profile_profileImg"
+                app:layout_constraintTop_toBottomOf="@+id/entrant_phone" />
+
+
+            <!-- map is attributed to By Strebe - Own work, CC BY-SA 3.0, https://commons.wikimedia.org/w/index.php?curid=17700069 -->
+            <FrameLayout
+                android:id="@+id/e_map"
+                android:layout_marginTop="10dp"
+                android:layout_width="match_parent"
+                android:layout_marginBottom="100dp"
+                android:layout_height="wrap_content"
+                android:background="@drawable/mercator_projection_map"
+                android:scaleType="fitCenter"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/E_location_label"
+                android:visibility="gone">
+                    <FrameLayout
+                        android:id="@+id/map_marker"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:scaleType="fitCenter"
+                        android:background="@drawable/map_marker">
+                    </FrameLayout>
+            </FrameLayout>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>
