@@ -305,24 +305,17 @@ public class EventFragment extends Fragment implements DBOnCompleteListener<Even
                         // Request will handle if the user granted permission or not
                         locationPermissionRequest.launch(Manifest.permission.ACCESS_COARSE_LOCATION);
                     } else {
-                        // Do a double check on geolocation status here
-                        if (!signedInAccount.isEnableGeolocation()) {
-                            // Permission is granted but geolocation is false. So we need to update this
-                            signedInAccount.setEnableGeolocation(true);
-                            profileDBHandler.updateProfile(signedInAccount, new DBOnCompleteListener<Account>() {
-                                @Override
-                                public void OnCompleteDB(@NonNull ArrayList<Account> docs, int queryID, int flags) {
-                                    Log.d("DB", "Updated account geolocation");
-                                }
-                            });
-                        }
-                        // Change the views of the buttons
-                        registerButton.setBackgroundColor(0xFF808080);
-                        registerButton.setText("✔");
+                        // Do a double check on geolocation status here because its possible user will update the checkbox
+                        // Without the permission actually getting changed. So reflect their desire not to share location
+                        if (signedInAccount.isEnableGeolocation()) {
+                            // Change the views of the buttons
+                            registerButton.setBackgroundColor(0xFF808080);
+                            registerButton.setText("✔");
 
-                        // https://stackoverflow.com/questions/16898675/how-does-it-work-requestlocationupdates-locationrequest-listener
-                        // Accessed on 2024-11-19, used to help understand when the listener is called
-                        locationManager.requestLocationUpdates(locationManager.NETWORK_PROVIDER, 1000, 0, this);
+                            // https://stackoverflow.com/questions/16898675/how-does-it-work-requestlocationupdates-locationrequest-listener
+                            // Accessed on 2024-11-19, used to help understand when the listener is called
+                            locationManager.requestLocationUpdates(locationManager.NETWORK_PROVIDER, 1000, 0, this);
+                        }
                     }
                 });
                 builder.setNegativeButton("No", (DialogInterface.OnClickListener) (dialog, which) -> {

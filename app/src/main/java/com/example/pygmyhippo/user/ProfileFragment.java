@@ -87,6 +87,33 @@ public class ProfileFragment extends Fragment  implements AdapterView.OnItemSele
     private Spinner roleSpinner;
     private CircleImageView profileImage;
 
+    /*
+        Code is from https://developer.android.com/develop/sensors-and-location/location/permissions#:~:text=ACCESS_FINE_LOCATION%20must%20be%20requested%20with,to%20only%20approximate%20location%20information.
+        Accessed on 2024-11-17
+        It sets up the permission launcher to ask for location permissions, and then launches it
+        TODO: Remove check box for geolocation, permissions handle it
+         */
+    ActivityResultLauncher<String> locationPermissionRequest =
+            registerForActivityResult(new ActivityResultContracts
+                            .RequestPermission(), isGranted -> {
+
+                        // Ensure that the geolocation value matches the permission request
+                        if (isGranted) {
+                            // Approximate location access granted, set that in the user's profile
+                            Log.d("Profile", "Location permissions granted");
+                            signedInAccount.setEnableGeolocation(true);
+                        } else {
+                            // No location access granted.
+                            Log.d("Profile", "No location permissions granted");
+                            signedInAccount.setEnableGeolocation(false);
+                            decGeo.setChecked(false);
+                        }
+
+                        // Make sure this info gets updated if its changed
+                        handler.updateProfile(signedInAccount, this);
+                    }
+            );
+
     // initialized the listener
     public void setOnRoleSelectedListener() {
         Log.d("ProfileFragment", "Role selected");
@@ -244,8 +271,7 @@ public class ProfileFragment extends Fragment  implements AdapterView.OnItemSele
 
         /*
          * Exit edit mode the submit
-         * TODO: Need to store the profile picture in the database
-         *      Add restrictions on certain fields
+         * TODO: Add restrictions on certain fields
          * author Jennifer
          */
         View.OnClickListener updateUser = new View.OnClickListener() {
@@ -282,6 +308,11 @@ public class ProfileFragment extends Fragment  implements AdapterView.OnItemSele
                 signedInAccount.setEmailAddress(emailField.getText().toString());
                 signedInAccount.setReceiveNotifications(decNotify.isChecked());
                 signedInAccount.setEnableGeolocation(decGeo.isChecked());
+
+                // Check if geolocation was enabled and actually ask the device for permission
+                if (signedInAccount.isEnableGeolocation()) {
+                    locationPermissionRequest.launch(Manifest.permission.ACCESS_COARSE_LOCATION);
+                }
 
                 // Update to reflect in the database
                 handler.updateProfile(signedInAccount, ProfileFragment.this::OnCompleteDB);
