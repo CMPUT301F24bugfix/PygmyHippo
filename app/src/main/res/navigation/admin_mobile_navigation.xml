@@ -60,6 +60,10 @@
         <action
             android:id="@+id/action_admin_navigation_event_page_to_admin_navigation_all_events"
             app:destination="@id/admin_navigation_all_events" />
+        <argument
+            android:name="isAdmin"
+            app:argType="boolean"
+            android:defaultValue="false" />
     </fragment>
 
     <fragment
