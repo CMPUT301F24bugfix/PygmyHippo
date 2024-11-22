@@ -11,13 +11,10 @@ Purposes:
     - Let them see the entrant status and give them the option to cancel them if they are invited (updated in database)
     - Give them the option to draw a replacement winner on entrants with cancelled status
 Issues:
-    - No Image handling
     - Notifications haven't been dealt with yet
  */
 
-import static java.lang.Math.abs;
-import static java.lang.Math.round;
-
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -45,17 +42,20 @@ import com.example.pygmyhippo.database.AccountDB;
 import com.example.pygmyhippo.database.DBOnCompleteFlags;
 import com.example.pygmyhippo.database.DBOnCompleteListener;
 import com.example.pygmyhippo.database.EventDB;
+import com.example.pygmyhippo.database.ImageStorage;
+import com.example.pygmyhippo.database.StorageOnCompleteListener;
 import com.example.pygmyhippo.databinding.OrganiserViewSingleEntrantBinding;
+import com.squareup.picasso.Picasso;
 
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 
 /**
  * Fragment to see a user profile from navigating from an organiser's list of entrants
- * TODO: Add image handling
  * TODO: Add functions for the other status conditions (accepted and such)
  * TODO: Notification sending can also be done when one of the buttons are pressed (just one possible idea)
  */
-public class ViewSingleEntrantFragment extends Fragment implements DBOnCompleteListener<Event> {
+public class ViewSingleEntrantFragment extends Fragment implements DBOnCompleteListener<Event>, StorageOnCompleteListener<Uri> {
     private Account account;
     private String accountID;
     private String status;
@@ -66,6 +66,7 @@ public class ViewSingleEntrantFragment extends Fragment implements DBOnCompleteL
 
     private EventDB dbHandler;
     private AccountDB dbProfileHandler;
+    private ImageStorage imageHandler;
     private NavController navController;
 
     private boolean mapDimensionsGotten = false;     // A flag
@@ -75,6 +76,7 @@ public class ViewSingleEntrantFragment extends Fragment implements DBOnCompleteL
     private int mapSideLength;
     private Button statusButton;
     private TextView locationTextView, statusTextView, userNameView, pronounsTextView, emailTextView, phoneTextView;
+    private ImageView profileImage;
     private Integer falseEasting = 180;             // Used in the map projection
 
     @Override
@@ -105,10 +107,14 @@ public class ViewSingleEntrantFragment extends Fragment implements DBOnCompleteL
         accountID = getArguments().getString("accountID");
         status = getArguments().getString("status");
         eventID = getArguments().getString("eventID");
+
+        // Initialize the handlers
         dbHandler = new EventDB();
+        dbProfileHandler = new AccountDB();
+        imageHandler = new ImageStorage();
 
         // Get the textviews and buttons
-        // TODO: Would also get for image here
+        profileImage = binding.EProfileProfileImg;
         ImageButton backButton = binding.entrantViewBackButton;
         userNameView = binding.eUsername;
         pronounsTextView = binding.entrantProunouns;
@@ -153,12 +159,30 @@ public class ViewSingleEntrantFragment extends Fragment implements DBOnCompleteL
     }
 
     /**
+     * If a user has no uploaded image, then the avatar will be made
+     * and set the image view to the URI
+     * @author Jennifer
+     * @param name the name the user has entered
+     * @return void
+     * @version 1.0
+     */
+    public void generateAvatar (String name) throws URISyntaxException {
+        if (name.isEmpty()) name = "null";
+        String url = "https://api.multiavatar.com/";
+        Uri avatarURI = Uri.parse(url+name+".png");
+
+        // Retrieve the generated profile picture
+        Picasso.get()
+                .load(avatarURI)
+                .into(profileImage);
+    }
+
+    /**
      * This method will populate the account fields and initiate the map if geolocation is on
      * @author Kori
      */
     public void populateAccountFields() {
         // Get the account from the database
-        dbProfileHandler = new AccountDB();
         dbProfileHandler.getAccountByID(accountID, new DBOnCompleteListener<Account>() {
             @Override
             public void OnCompleteDB(@NonNull ArrayList<Account> docs, int queryID, int flags) {
@@ -171,6 +195,18 @@ public class ViewSingleEntrantFragment extends Fragment implements DBOnCompleteL
                     pronounsTextView.setText(account.getPronouns());
                     emailTextView.setText(account.getEmailAddress());
                     phoneTextView.setText(account.getPhoneNumber());
+
+                    // Set up the image if the account has
+                    if (!account.getProfilePicture().isEmpty()) {
+                        imageHandler.getImageDownloadUrl(account.getProfilePicture(), ViewSingleEntrantFragment.this::OnCompleteStorage);
+                    } else {
+                        // The account hasn't uploaded an image so generate the avatar
+                        try {
+                            generateAvatar(account.getName());
+                        } catch (URISyntaxException e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
 
                     // Check if geolocation is set, if it is display the map and location
                     if (account.isEnableGeolocation() && event.getEnableGeolocation()) {
@@ -318,6 +354,12 @@ public class ViewSingleEntrantFragment extends Fragment implements DBOnCompleteL
         return (degrees * Math.PI) / 180;
     }
 
+    /**
+     * The callback when data is retrieved
+     * @param docs - Documents retrieved from DB (if it was a get query).
+     * @param queryID - ID of query completed.
+     * @param flags - Flags to indicate query status/set how to process query result.
+     */
     @Override
     public void OnCompleteDB(@NonNull ArrayList<Event> docs, int queryID, int flags) {
         if (queryID == 1) {
@@ -338,6 +380,38 @@ public class ViewSingleEntrantFragment extends Fragment implements DBOnCompleteL
             } else {
                 // If not the success flag, then there was an error
                 handleDBError();
+            }
+        }
+    }
+
+    /**
+     * The callback that handles image queries
+     * @param docs - Documents retrieved from DB (if it was a get query).
+     * @param queryID - ID of query completed.
+     * @param flags - Flags to indicate query status/set how to process query result.
+     */
+    @Override
+    public void OnCompleteStorage(@NonNull ArrayList<Uri> docs, int queryID, int flags) {
+        if (queryID == 1) {
+            // Author of this code segment is James
+            if (flags == DBOnCompleteFlags.SUCCESS.value) {
+                // Get the image and format it
+                Uri downloadUri = docs.get(0);
+                int imageSideLength = profileImage.getWidth() / 2;
+                Picasso.get()
+                        .load(downloadUri)
+                        .resize(imageSideLength, imageSideLength)
+                        .centerCrop()
+                        .into(profileImage);
+            } else {
+                // There was some error so fallback on avatar
+                handleDBError();
+
+                try {
+                    generateAvatar(account.getName());
+                } catch (URISyntaxException e) {
+                    throw new RuntimeException(e);
+                }
             }
         }
     }
