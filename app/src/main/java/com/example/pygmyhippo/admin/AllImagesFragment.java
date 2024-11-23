@@ -30,6 +30,7 @@ import com.example.pygmyhippo.common.Account;
 import com.example.pygmyhippo.common.Event;
 import com.example.pygmyhippo.common.Image;
 import com.example.pygmyhippo.common.RecyclerClickListener;
+import com.example.pygmyhippo.database.DBOnCompleteFlags;
 import com.example.pygmyhippo.database.DBOnCompleteListener;
 import com.example.pygmyhippo.database.ImageStorage;
 import com.example.pygmyhippo.database.StorageOnCompleteListener;
@@ -100,8 +101,8 @@ public class AllImagesFragment extends Fragment implements RecyclerClickListener
 
     @Override
     public void OnCompleteStorage(@NonNull ArrayList<Object> docs, int queryID, int flags) {
-        switch (queryID) {
-            case 2:
+        if (flags == DBOnCompleteFlags.SUCCESS.value) {
+            if (queryID == 2) {
                 // Go through obtained documents
                 docs.forEach(obj -> {
                     // Get the account and obtain the profile image from it to add to the list
@@ -110,8 +111,8 @@ public class AllImagesFragment extends Fragment implements RecyclerClickListener
                     imageList.add(image);
                     adapter.notifyItemInserted(imageList.size() - 1);
                 });
-                break;
-            case 3:
+            }
+            else if (queryID == 3) {
                 docs.forEach(obj -> {
                     // Get the event poster from the obtained object and convert it to an image class
                     Event event = (Event) obj;
@@ -119,9 +120,10 @@ public class AllImagesFragment extends Fragment implements RecyclerClickListener
                     imageList.add(image);
                     adapter.notifyItemInserted(imageList.size() - 1);
                 });
-                break;
-            default:
+            }
+            else{
                 Log.d("AllImagesFragment", String.format("Received OnComplete call from unknown queryID %d", queryID));
+            }
         }
     }
 }

@@ -90,6 +90,9 @@ public class AllEventsFragment extends Fragment implements RecyclerClickListener
         // Fill the fields of the recycle view
         adapter = new AllEventsAdapter(allEvents, this);
         binding.aAlllistRecycler.setLayoutManager(new LinearLayoutManager(getContext()));
+        binding.aAlllistFilterByText.setVisibility(View.INVISIBLE);
+        binding.aAlllistCategorySpinner.setVisibility(View.INVISIBLE);
+        binding.aAlllistOrderSpinner.setVisibility(View.INVISIBLE);
         binding.aAlllistRecycler.setAdapter(adapter);
 
         // Initialize the 1st spinner

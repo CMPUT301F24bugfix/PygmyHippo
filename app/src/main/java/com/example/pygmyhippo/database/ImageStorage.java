@@ -121,6 +121,7 @@ public class ImageStorage extends DBHandler {
      * @param listener DBOnCompleteListener to call when query completes.
      */
     public void getEventsWithImage(int limit, StorageOnCompleteListener<Object> listener) {
+        Log.d("DB", "Events with image queried");
         db.collection("Events")
                 .whereNotEqualTo("eventPoster", "")
                 .limit(limit)
