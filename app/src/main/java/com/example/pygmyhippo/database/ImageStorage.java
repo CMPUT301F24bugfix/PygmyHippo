@@ -196,4 +196,36 @@ public class ImageStorage extends DBHandler {
                     }
                 });
     }
+
+    /**
+     * This posts a facility image to the database
+     * @param imageUri
+     * @param listener
+     * @author Griffin (Kori modified this)
+     */
+    public void uploadFacilityImageToFirebase(Uri imageUri, StorageOnCompleteListener<Image> listener) {
+        StorageReference storageRef = storage.getReference();
+        String imageName = "facilities/" + UUID.randomUUID().toString();
+        StorageReference imageRef = storageRef.child(imageName);
+        ArrayList<Image> images = new ArrayList<>();
+
+        imageRef.putFile(imageUri)
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        imageRef.getDownloadUrl().addOnSuccessListener(uri -> {
+                            Log.d("FirebaseStorage", "Image uploaded successfully. URL: " +  uri.toString());
+                            Image newImage = new Image();
+                            newImage.setUrl(uri.toString());
+                            newImage.setType(Image.ImageType.Event);
+
+                            images.add(newImage);
+                            listener.OnCompleteStorage(images, 6, DBOnCompleteFlags.SUCCESS.value);
+                        });
+                    }
+                    else{
+                        Log.e("FirebaseStorage:", "Image uploaded Error.");
+                        listener.OnCompleteStorage(images, 6,DBOnCompleteFlags.ERROR.value);
+                    }
+                });
+    }
 }
