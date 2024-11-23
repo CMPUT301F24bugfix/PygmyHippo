@@ -1,8 +1,12 @@
 package com.example.pygmyhippo.user;
 
 /*
-This Fragment will display one of the events that a User can see after scanning its QR code
+This fragment will display one of the events that a User can see after scanning its QR code
 Will be used by users and admins
+Citations:
+        - ALL Location handling was researched on https://stackoverflow.com/questions/21085497/how-to-use-android-locationmanager-and-listener
+          * Code referring to location is sourced from this cite and modified
+          Accessed on 2024-11-17 and answered by nisarg parekh
 Purposes:
         - Let the User view the details of the event
         - Let the User join the event if they wish
@@ -14,9 +18,18 @@ Issues:
         - Needs to stop user from joining or leaving waitlist if the event is closed
  */
 
+import static androidx.core.content.ContextCompat.getSystemService;
+
+import android.Manifest;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
+import android.location.Criteria;
 import android.net.Uri;
+import android.content.pm.PackageManager;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -25,10 +38,14 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
@@ -37,6 +54,7 @@ import com.example.pygmyhippo.R;
 import com.example.pygmyhippo.common.Account;
 import com.example.pygmyhippo.common.Entrant;
 import com.example.pygmyhippo.common.Event;
+import com.example.pygmyhippo.database.AccountDB;
 import com.example.pygmyhippo.database.DBOnCompleteFlags;
 import com.example.pygmyhippo.database.DBOnCompleteListener;
 import com.example.pygmyhippo.database.ImageStorage;
@@ -49,12 +67,12 @@ import com.squareup.picasso.Picasso;
 import java.util.ArrayList;
 
 /**
- * This fragment will hold a single events
+ * This fragment will hold a single events from scanning the QR code
  * @author Katharine
- * @version 1.0
+ * @version 2.0
  * No returns and no parameters
  */
-public class EventFragment extends Fragment implements DBOnCompleteListener<Event> {
+public class EventFragment extends Fragment implements DBOnCompleteListener<Event>, LocationListener {
 
     private UserFragmentEventBinding binding;
     private NavController navController;
@@ -65,9 +83,14 @@ public class EventFragment extends Fragment implements DBOnCompleteListener<Even
     private Entrant entrant;
     private ArrayList<Entrant> entrants;
     private Account signedInAccount;
+    private boolean isAdmin;
+    private String eventID;
 
     private EventDB DBhandler;
     private ImageStorage imageHandler;
+    private AccountDB profileDBHandler;
+    // For getting current location
+    private LocationManager locationManager;
 
     private TextView eventNameView, eventDateView, eventTimeView, eventOrganizerView,
             eventLocationView, eventCostView, eventAboutDescriptionView;
@@ -75,35 +98,58 @@ public class EventFragment extends Fragment implements DBOnCompleteListener<Even
     private ConstraintLayout adminConstraint;
     private ImageView eventImageView;
 
-    // populate single event page with hardcoded event information
-    public Event hardcodeEvent() {
-        entrants = new ArrayList<>();
+    /*
+        Code is from https://developer.android.com/develop/sensors-and-location/location/permissions#:~:text=ACCESS_FINE_LOCATION%20must%20be%20requested%20with,to%20only%20approximate%20location%20information.
+        Accessed on 2024-11-17
+        It sets up the permission launcher to ask for location permissions, and then launches it
+        TODO: Remove check box for geolocation, permissions handle it
+         */
+    ActivityResultLauncher<String> locationPermissionRequest =
+            registerForActivityResult(new ActivityResultContracts
+                            .RequestPermission(), isGranted -> {
 
-        return event = new Event(
-                "Hippo Party",
-                "1",
-                "The Hippopotamus Society",
-                entrants,
-                "The Swamp",
-                "2024-10-31",
-                // TODO: there is a bit of an issue with aligning the time when it is shorter on the xml
-                "4:00 PM MST - 4:00 AM MST",
-                "Love hippos and a party? Love a party! Join a party!",
-                "$150.00",
-                "hippoparty.png",
-                Event.EventStatus.ongoing,
-                true
-        );
+                        if (isGranted) {
+                            // Approximate location access granted, set that in the user's profile
+                            Log.d("Profile", "Location permissions granted");
+                            signedInAccount.setEnableGeolocation(true);
+                        } else {
+                            // No location access granted.
+                            Log.d("Profile", "No location permissions granted");
+                            Toast.makeText(getContext(), "Error joining waitlist: Must have geolocation enabled!", Toast.LENGTH_LONG).show();
+                            signedInAccount.setEnableGeolocation(false);
+                        }
+
+                        // Regardless of choice, update the profile
+                        profileDBHandler.updateProfile(signedInAccount, new DBOnCompleteListener<Account>() {
+                            @Override
+                            public void OnCompleteDB(@NonNull ArrayList<Account> docs, int queryID, int flags) {
+                                Log.d("DB", "Profile has been updated");
+                            }
+                        });
+                    }
+            );
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        if (getArguments() != null) {
+            EventFragmentArgs args = EventFragmentArgs.fromBundle(getArguments());
+            isAdmin = args.getIsAdmin();
+            signedInAccount = args.getSignedInAccount();
+            eventID = args.getEventID();
+        }
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         navController = Navigation.findNavController(view);
+
+        profileDBHandler = new AccountDB();
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         binding = UserFragmentEventBinding.inflate(inflater, container, false);
         View view = binding.getRoot();
@@ -130,14 +176,13 @@ public class EventFragment extends Fragment implements DBOnCompleteListener<Even
 
         DBhandler = new EventDB();
         imageHandler = new ImageStorage();
+        locationManager = (LocationManager) requireContext().getSystemService(Context.LOCATION_SERVICE);
 
         // Get current user account
-        signedInAccount = EventFragmentArgs.fromBundle(getArguments()).getSignedInAccount();
         setPermissions();
 
         // Get the eventID that was passed by scanning the QR code
-        String navigationEventID = EventFragmentArgs.fromBundle(getArguments()).getEventID();
-        getEvent(navigationEventID);
+        DBhandler.getEventByID(eventID, this);
 
         // Make the entrant equivalent using the account info (for if they join the waitlist)
         entrant = new Entrant(
@@ -149,7 +194,6 @@ public class EventFragment extends Fragment implements DBOnCompleteListener<Even
         FloatingActionButton backButton = view.findViewById(R.id.u_backButtonToQRView);
         backButton.setOnClickListener(view1 -> {
             navController.popBackStack();
-//            Navigation.findNavController(view1).navigate(R.id.action_eventFragment_to_scanQRcodeFragment);
         });
 
         registerButton.setOnClickListener(buttonView -> {
@@ -172,11 +216,15 @@ public class EventFragment extends Fragment implements DBOnCompleteListener<Even
 
     @Override
     public void OnCompleteDB(@NonNull ArrayList<Event> docs, int queryID, int flags) {
-        if (queryID == 0) {
+        if (queryID == 1) {
             if (flags == DBOnCompleteFlags.SINGLE_DOCUMENT.value) {
                 // Get the event from the database and populate the fragment
                 event = docs.get(0);
                 populateTextFields();
+            }
+            else {
+                Log.d("EventFragment", "Database error in getting event");
+                navController.popBackStack();
             }
         } else if (queryID == 4) {
             if (flags == DBOnCompleteFlags.SUCCESS.value) {
@@ -195,23 +243,6 @@ public class EventFragment extends Fragment implements DBOnCompleteListener<Even
                 // If not the success flag, then there was an error
                 Log.d("EventFragment", "Error in updating event.");
             }
-        }
-    }
-
-    /**
-     * Tries to query for event by eventID.
-     *
-     * If there is no event ID then mock data is loaded in.
-     * @param eventID ID of the event to query for.
-     */
-    private void getEvent(@Nullable String eventID) {
-        if (eventID == null) {
-            Log.d("EventFragment", "No Event ID was passed via navigation to EventFragment, using mock data...");
-            event = hardcodeEvent();
-            populateTextFields();
-        } else {
-            Log.d("EventFragment", String.format("Non-null eventID, attempting to retrieve Event with ID %s", eventID));
-            DBhandler.getEventByID(eventID, this);
         }
     }
 
@@ -260,8 +291,10 @@ public class EventFragment extends Fragment implements DBOnCompleteListener<Even
      *
      * Button is only visible when the signedInAccount is a user.
      */
+    // TODO: check to see if number of entrants have been exceeded (can limit number of people joining waitlist)
     private void registerUser() {
         // if the even already has the user, remove the user upon clicking
+        // TODO: rescanning the qr code doesn't make options actually change
         if (event.hasEntrant(entrant)) {
             registerButton.setBackgroundColor(0xFF35B35D);
             event.removeEntrant(entrant);
@@ -276,11 +309,25 @@ public class EventFragment extends Fragment implements DBOnCompleteListener<Even
                 builder.setMessage("This event requires geolocation. Continue registering?");
                 builder.setCancelable(true);
                 builder.setPositiveButton("Yes", (DialogInterface.OnClickListener) (dialog, which) -> {
-                    // Add the user if they wish to continue (and update button looks)
-                    registerButton.setBackgroundColor(0xFF808080);
-                    event.addEntrant(entrant);
-                    DBhandler.updateEvent(event, this);       // Update the database
-                    registerButton.setText("✔");
+                    // Get the user's location
+                    // Must check permission before getting location
+                    if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                        // Request for permission if there is none
+                        // Request will handle if the user granted permission or not
+                        locationPermissionRequest.launch(Manifest.permission.ACCESS_COARSE_LOCATION);
+                    } else {
+                        // Do a double check on geolocation status here because its possible user will update the checkbox
+                        // Without the permission actually getting changed. So reflect their desire not to share location
+                        if (signedInAccount.isEnableGeolocation()) {
+                            // Change the views of the buttons
+                            registerButton.setBackgroundColor(0xFF808080);
+                            registerButton.setText("✔");
+
+                            // https://stackoverflow.com/questions/16898675/how-does-it-work-requestlocationupdates-locationrequest-listener
+                            // Accessed on 2024-11-19, used to help understand when the listener is called
+                            locationManager.requestLocationUpdates(locationManager.NETWORK_PROVIDER, 1000, 0, this);
+                        }
+                    }
                 });
                 builder.setNegativeButton("No", (DialogInterface.OnClickListener) (dialog, which) -> {
                     // Don't add the user to the waitlist
@@ -300,10 +347,33 @@ public class EventFragment extends Fragment implements DBOnCompleteListener<Even
     }
 
     /**
+     * This method implements the LocationListener. Used to update the user's location when registering for an event
+     * @param location The retrieved location
+     */
+    @Override
+    public void onLocationChanged(Location location) {
+        if (location != null) {
+            double longitude = location.getLongitude();
+            double latitude = location.getLatitude();
+            Log.d("Location", String.format("latitude: %f, longitude: %f", latitude, longitude));
+
+            // With the location retrieved, note that in the entrant class and update the event data
+            entrant.setLatitude(latitude);
+            entrant.setLongitude(longitude);
+            event.addEntrant(entrant);
+            DBhandler.updateEvent(event, this);       // Update the database
+        } else {
+            Log.d("Location", "Error location is null");
+        }
+
+        locationManager.removeUpdates(this);
+    }
+
+    /**
      * Toggles visibility of certain buttons depending on role of signedInAccount.
      */
     private void setPermissions() {
-        if (signedInAccount.getCurrentRole() == Account.AccountRole.admin) {
+        if (isAdmin) {
             Log.d("EventFragment", "Admin user detected. Setting Admin permissions");
             adminConstraint.setVisibility(View.VISIBLE);
             registerButton.setVisibility(View.GONE);

@@ -102,7 +102,7 @@ public class MyEventsFragment extends Fragment implements DBOnCompleteListener<E
                 Bundle navArgs = new Bundle();
                 navArgs.putParcelable("signedInAccount", signedInAccount);
                 navArgs.putString("eventID", eventDataList.get(i).getEventID());
-                navController.navigate(R.id.user_to_event_fragment, navArgs);
+                navController.navigate(R.id.myevents_menu_to_viewMyEventFragment, navArgs);
             }
         });
         return root;

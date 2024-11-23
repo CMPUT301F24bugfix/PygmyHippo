@@ -1,0 +1,273 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/light_purple"
+    tools:context=".user.ViewMyEventFragment">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <!--  event image  -->
+            <ImageView
+                android:id="@+id/u_myEventImageView"
+                android:layout_width="0dp"
+                android:layout_height="230dp"
+                android:scaleType="centerCrop"
+                android:src="@drawable/default_poster"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHeight_percent="0.3"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.0" />
+
+            <!--    text fields - date -->
+            <TextView
+                android:id="@+id/u_myEventDateView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="24dp"
+                android:text="October 21, 2024"
+                android:textSize="16sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/u_myEventImageView"
+                app:layout_constraintVertical_bias="0.02" />
+
+            <!--    text fields - event name -->
+            <TextView
+                android:id="@+id/u_myEventNameView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="24dp"
+                android:text="Hippo Party"
+                android:textSize="36sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/u_myEventDateView"
+                app:layout_constraintVertical_bias="0.01" />
+
+            <!--    text fields - organizer -->
+            <TextView
+                android:id="@+id/u_myOrganizerNameView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="24dp"
+                android:background="@drawable/mid_light_rounded_corners"
+                android:drawableStart="@drawable/organizer_profile_picture"
+                android:drawablePadding="20dp"
+                android:gravity="center_vertical"
+                android:paddingStart="30dp"
+                android:paddingTop="10dp"
+                android:paddingEnd="30dp"
+                android:paddingBottom="10dp"
+                android:text="The Hippopotamus Society"
+                android:textSize="20sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/u_myEventNameView"
+                app:layout_constraintVertical_bias="0.04" />
+
+            <TextView
+                android:id="@+id/u_myEventTimeView"
+                android:layout_width="244dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="24dp"
+                android:drawableStart="@drawable/icon_time"
+                android:drawablePadding="5dp"
+                android:gravity="center_vertical"
+                android:text="4:00 PM MST - 4:00 AM MST"
+                android:textSize="16sp"
+                app:layout_constraintBottom_toTopOf="@+id/u_myEventLocationView"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/u_myOrganizerNameView"
+                app:layout_constraintVertical_bias="1.0" />
+
+            <TextView
+                android:id="@+id/u_myEventLocationView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="24dp"
+                android:drawableStart="@drawable/icon_location"
+                android:drawablePadding="5dp"
+                android:gravity="center_vertical"
+                android:text="The Swamp"
+                android:textSize="16sp"
+                app:layout_constraintBottom_toTopOf="@+id/u_myEventCostView"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/u_myOrganizerNameView"
+                app:layout_constraintVertical_bias="0.968" />
+
+            <TextView
+                android:id="@+id/u_myEventCostView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="24dp"
+                android:drawableStart="@drawable/icon_card"
+                android:drawablePadding="5dp"
+                android:gravity="center_vertical"
+                android:text="$150.00 CAD"
+                android:textSize="16sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/u_myOrganizerNameView"
+                app:layout_constraintVertical_bias="0.221" />
+
+            <TextView
+                android:id="@+id/u_aboutEventTitleView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="24dp"
+                android:text="About This Event:"
+                android:textSize="18sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/u_myEventCostView"
+                app:layout_constraintVertical_bias="0.1" />
+
+            <TextView
+                android:id="@+id/u_aboutMyEventDescriptionView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="190dp"
+                android:background="@drawable/light_rounded_corners"
+                android:paddingStart="30dp"
+                android:paddingTop="10dp"
+                android:paddingEnd="30dp"
+                android:paddingBottom="10dp"
+                android:text="@string/filler_long"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/u_aboutEventTitleView"
+                app:layout_constraintVertical_bias="0.05" />
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </ScrollView>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/u_backButtonToMyEvents"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:tint="@color/dark_purple"
+        app:backgroundTint="@color/light_purple"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.005"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.005"
+        app:srcCompat="@drawable/left_arrow"
+        android:contentDescription="Back" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="190dp"
+        android:layout_gravity="bottom|center_horizontal"
+        android:background="@drawable/rounded_top_corners"
+        android:orientation="vertical"
+
+        android:padding="16dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart = "15dp"
+            android:layout_marginBottom = "5dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:text="Waitlist Status:"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="18sp"/>
+
+            <TextView
+                android:id="@+id/u_userStatus"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="15dp"
+                android:text="You have left this event"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/u_userStatusDescription"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom = "3dp"
+            android:textSize="12sp"
+            android:visibility="visible"
+            android:text="you are officially accepted into the event" />
+
+<!--        PENDING WAITLIST BUTTON -->
+        <Button
+            android:id="@+id/u_leaveWaitlistButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/red"
+            android:text="Leave Waitlist"
+            android:visibility="gone"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart = "15dp"
+            android:layout_marginBottom = "13dp"
+            android:orientation="horizontal">
+
+<!--            INVITED WAITLIST BUTTONS-->
+            <Button
+                android:id="@+id/u_acceptWaitlistButton"
+                android:layout_width="150dp"
+                android:layout_height="wrap_content"
+                android:backgroundTint="@color/green"
+                android:text="Accept"
+                android:visibility="visible"/>
+
+            <Button
+                android:id="@+id/u_declineWaitlistButton"
+                android:layout_width="150dp"
+                android:layout_height="wrap_content"
+                android:backgroundTint="@color/red"
+                android:layout_marginStart = "20dp"
+                android:text="Decline"
+                android:visibility="visible"/>
+
+
+        </LinearLayout>
+
+    </LinearLayout>
+</FrameLayout>

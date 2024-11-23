@@ -16,9 +16,13 @@
             android:name="currentRole"
             app:argType="string"
             android:defaultValue="user" />
+        <argument
+            android:name="eventID"
+            app:argType="string"
+            app:nullable="true" />
         <action
-            android:id="@+id/user_to_event_fragment"
-            app:destination="@id/u_eventFragment" />
+            android:id="@+id/myevents_menu_to_viewMyEventFragment"
+            app:destination="@id/u_viewMyEventFragment" />
     </fragment>
 
     <fragment
@@ -76,6 +80,10 @@
         <action
             android:id="@+id/user_event_fragment_to_list"
             app:destination="@id/u_my_events_menu_item" />
+        <argument
+            android:name="isAdmin"
+            app:argType="boolean"
+            android:defaultValue="false" />
     </fragment>
 
     <fragment
@@ -116,5 +124,14 @@
             app:argType="string"
             android:defaultValue="admin" />
     </activity>
+    <fragment
+        android:id="@+id/u_viewMyEventFragment"
+        android:name="com.example.pygmyhippo.user.ViewMyEventFragment"
+        android:label="user_fragment_view_myevent"
+        tools:layout="@layout/user_fragment_view_myevent" >
+        <action
+            android:id="@+id/viewMyEventFragment_to_myevents_menu"
+            app:destination="@id/u_my_events_menu_item" />
+    </fragment>
 
 </navigation>

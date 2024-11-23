@@ -9,11 +9,6 @@ Issues:
  */
 
 
-
-import androidx.navigation.NavController;
-
-import com.example.pygmyhippo.common.RecyclerClickListener;
-
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -64,6 +59,7 @@ public class AllEventsFragment extends Fragment implements RecyclerClickListener
         Bundle navArgs = new Bundle();
         navArgs.putParcelable("signedInAccount", signedInAccount);
         navArgs.putString("eventID", allEvents.get(position).getEventID());
+        navArgs.putBoolean("isAdmin", true);
         navController.navigate(R.id.action_admin_navigation_all_events_to_admin_navigation_event_page, navArgs);
     }
 
