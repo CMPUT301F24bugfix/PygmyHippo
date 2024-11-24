@@ -8,7 +8,7 @@ Purposes:
     - Allows organiser to make a facility profile
     - Spinner allows for user to change their account role
 Issues:
-    - Decide to keep notifications and geolocation checkboxes when permissions do that anyways
+    - Add option to delete facility image
  */
 
 import android.net.Uri;
@@ -30,6 +30,8 @@ import androidx.activity.result.PickVisualMediaRequest;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
@@ -46,6 +48,7 @@ import com.example.pygmyhippo.database.StorageOnCompleteListener;
 import com.example.pygmyhippo.databinding.OrganiserFragmentProfileBinding;
 import com.squareup.picasso.Picasso;
 
+import java.io.File;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Objects;
@@ -57,7 +60,7 @@ import java.util.Objects;
  * - Facility profile page
  *
  * Allows the organiser to edit or view their current provided information.
- * @author Jennifer, Griffin
+ * @author Jennifer, Griffin, Kori
  * @version 1.3
  * No returns and no parameters
  */
@@ -73,7 +76,9 @@ public class ProfileFragment extends Fragment implements AdapterView.OnItemSelec
     private ImageStorage imageHandler;
 
     private EditText name_f, pronoun_f, phone_f, email_f, facilityName_f, facilityLocation_f;
-    private ImageView profileImage;
+    private ImageView profileImage, facilityImage;
+    private ConstraintLayout facilityLayout;
+    private Button createFacilityButton;
 
 
      // Registers a photo picker activity launcher in single-select mode and sets the profile image to the new URI
@@ -82,16 +87,31 @@ public class ProfileFragment extends Fragment implements AdapterView.OnItemSelec
                 // Callback is invoked after the user selects a media item or closes the
                 // photo picker.
                 if (uri != null) {
-                    // Set the profile image
-                    binding.OProfileImage.setImageURI(uri);
+                    // Check if avatar or facility is being updated
+                    if (uploadType.equals("avatar")) {
+                        // Set the profile image
+                        binding.OProfileImage.setImageURI(uri);
 
-                    // If the user already had a profile picture, make sure to delete the old one first
-                    if (!signedInAccount.getProfilePicture().isEmpty()) {
-                        imageHandler.DeleteImageByURL(signedInAccount.getProfilePicture(), this);
+                        // If the user already had a profile picture, make sure to delete the old one first
+                        if (!signedInAccount.getProfilePicture().isEmpty()) {
+                            imageHandler.DeleteImageByURL(signedInAccount.getProfilePicture(), this);
+                        }
+
+                        // Save the image in the database
+                        imageHandler.uploadProfileImageToFirebase(uri, this);
+                    } else if (uploadType.equals("facility")) {
+                        // Set the facility image
+                        binding.OProfileFacilityImg.setImageURI(uri);
+
+                        // If the user already had a profile picture, make sure to delete the old one first
+                        if (signedInAccount.getFacilityProfile().getFacilityPicture() != null
+                                && !signedInAccount.getFacilityProfile().getFacilityPicture().isEmpty()) {
+                            imageHandler.DeleteImageByURL(signedInAccount.getFacilityProfile().getFacilityPicture(), this);
+                        }
+
+                        // Save the image in the database
+                        imageHandler.uploadFacilityImageToFirebase(uri, this);
                     }
-
-                    // Save the new image in the database
-                    imageHandler.uploadProfileImageToFirebase(uri, this);
                 }
             });
 
@@ -170,7 +190,14 @@ public class ProfileFragment extends Fragment implements AdapterView.OnItemSelec
         Button uploadIm_btn = root.findViewById(R.id.O_profile_uploadImageBtn);
         Button deleteIm_btn = root.findViewById(R.id.O_profile_deleteImageBtn);
         Button facility_uploadIm_btn = root.findViewById(R.id.O_Profile_facilityUploadImagebtn);
+        createFacilityButton = root.findViewById(R.id.O_create_facility_button);
+
+        // Images
         profileImage = root.findViewById(R.id.O_profile_image);
+        facilityImage = root.findViewById(R.id.O_profile_facilityImg);
+
+        // Get the layout
+        facilityLayout = root.findViewById(R.id.facility_layout);
 
         // Get the account and initialize the db and storage handlers
         handler = new AccountDB();
@@ -206,6 +233,7 @@ public class ProfileFragment extends Fragment implements AdapterView.OnItemSelec
                 // set visibility
                 updateButton.setVisibility(View.VISIBLE);
                 editButton.setVisibility(View.GONE);
+                createFacilityButton.setVisibility(View.GONE);
                 uploadIm_btn.setVisibility(View.VISIBLE);
                 deleteIm_btn.setVisibility(View.VISIBLE);
                 facility_uploadIm_btn.setVisibility(View.VISIBLE);
@@ -215,7 +243,6 @@ public class ProfileFragment extends Fragment implements AdapterView.OnItemSelec
         View.OnClickListener update = new View.OnClickListener() {
             /**
              * Tell which elements to become unfocusable, and stores the new user info in the database
-             * TODO: Store the images in the database as well
              * @author Jennifer, Kori
              * @param view the fragment view
              */
@@ -243,15 +270,20 @@ public class ProfileFragment extends Fragment implements AdapterView.OnItemSelec
                 uploadIm_btn.setVisibility(View.GONE);
                 deleteIm_btn.setVisibility(View.GONE);
                 facility_uploadIm_btn.setVisibility(View.GONE);
+                if (!signedInAccount.getFacilityProfile().facilityExists()) {
+                    createFacilityButton.setVisibility(View.VISIBLE);
+                }
 
                 // Update the corresponding fields of the account
                 signedInAccount.setName(name_f.getText().toString());
                 signedInAccount.setPronouns(pronoun_f.getText().toString());
                 signedInAccount.setPhoneNumber(phone_f.getText().toString());
                 signedInAccount.setEmailAddress(email_f.getText().toString());
+
                 String facilityName = facilityName_f.getText().toString();
                 String facilityLocation = facilityLocation_f.getText().toString();
-                signedInAccount.setFacilityProfile(new Facility("", facilityName, facilityLocation));
+                signedInAccount.getFacilityProfile().setName(facilityName);
+                signedInAccount.getFacilityProfile().setLocation(facilityLocation);
 
                 // Update to reflect in the database
                 handler.updateProfile(signedInAccount, new DBOnCompleteListener<Account>() {
@@ -318,6 +350,10 @@ public class ProfileFragment extends Fragment implements AdapterView.OnItemSelec
                     imageHandler.DeleteImageByURL(signedInAccount.getProfilePicture(), ProfileFragment.this::OnCompleteStorage);
                 }
 
+                // Update the profile
+                signedInAccount.setProfilePicture("");
+                handler.updateProfile(signedInAccount, ProfileFragment.this::OnCompleteDB);
+
                 // Next, replace the old image with a generated avatar
                 try {
                     generateAvatar(name_f.getText().toString());
@@ -327,11 +363,22 @@ public class ProfileFragment extends Fragment implements AdapterView.OnItemSelec
             }
         };
 
+        View.OnClickListener createFacility = new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // Make the Facility text views visible and the create button invisible
+                // Note: The layout won't stay visible unless the user enters in at least one value
+                createFacilityButton.setVisibility(View.GONE);
+                facilityLayout.setVisibility(View.VISIBLE);
+            }
+        };
+
         facility_uploadIm_btn.setOnClickListener(uploadFacility);
         uploadIm_btn.setOnClickListener(uploadAvatar);
         deleteIm_btn.setOnClickListener(deleteAvatar);
         editButton.setOnClickListener(edit);
         updateButton.setOnClickListener(update);
+        createFacilityButton.setOnClickListener(createFacility);
         return root;
     }
 
@@ -347,12 +394,6 @@ public class ProfileFragment extends Fragment implements AdapterView.OnItemSelec
             phone_f.setText(account.getPhoneNumber());
         }
         email_f.setText(account.getEmailAddress());
-
-        if (account.getFacilityProfile() != null) {
-            // Populate the facility fields if the account has one
-            facilityName_f.setText(account.getFacilityProfile().getName());
-            facilityLocation_f.setText(account.getFacilityProfile().getLocation());
-        }
 
         // Get the profile picture if it has already been set
         if (!signedInAccount.getProfilePicture().isEmpty()) {
@@ -380,6 +421,53 @@ public class ProfileFragment extends Fragment implements AdapterView.OnItemSelec
             } catch (URISyntaxException e) {
                 throw new RuntimeException(e);
             }
+        }
+
+        // Check if the account has a facility
+        if (signedInAccount.getFacilityProfile().facilityExists()) {
+            // Change and populate the views to display the facility
+            populateFacilityViews(account);
+        }
+    }
+
+    /**
+     * This method will set the fields for facility visible with their respective existing values
+     * @author Kori
+     * @param account The account with the facility we want to display
+     */
+    public void populateFacilityViews(Account account) {
+        // Make the layout visible
+        facilityLayout.setVisibility(View.VISIBLE);
+        createFacilityButton.setVisibility(View.GONE);
+
+        if (signedInAccount.getFacilityProfile().getName() != null) {
+            // Set the name
+            facilityName_f.setText(account.getFacilityProfile().getName());
+        }
+        if (signedInAccount.getFacilityProfile().getLocation() != null) {
+            // Set the location
+            facilityLocation_f.setText(account.getFacilityProfile().getLocation());
+        }
+
+        // Get the facility picture if it has already been set
+        if (signedInAccount.getFacilityProfile().getFacilityPicture() != null) {
+            // Get the profile picture
+            imageHandler.getImageDownloadUrl(signedInAccount.getFacilityProfile().getFacilityPicture(), new StorageOnCompleteListener<Uri>() {
+                @Override
+                public void OnCompleteStorage(@NonNull ArrayList<Uri> docs, int queryID, int flags) {
+                    if (flags == DBOnCompleteFlags.SUCCESS.value) {
+                        // Get the image and format it
+                        Uri downloadUri = docs.get(0);
+                        int imageWidth = facilityImage.getWidth();
+                        int imageHeight = facilityImage.getHeight();
+                        Picasso.get()
+                                .load(downloadUri)
+                                .resize(imageWidth, imageHeight)
+                                .centerCrop()
+                                .into(facilityImage);
+                    }
+                }
+            });
         }
     }
 
@@ -493,12 +581,22 @@ public class ProfileFragment extends Fragment implements AdapterView.OnItemSelec
             // Log the results of the deletion
             if (flags == DBOnCompleteFlags.SUCCESS.value) {
                 Log.d("FirebaseStorage", "Profile image deleted successfully");
-
-                // Update this result to the account database
-                signedInAccount.setProfilePicture("");
-                handler.updateProfile(signedInAccount, this);
             } else {
                 Log.d("FirebaseStorage", "Profile image deletion unsuccessful");
+            }
+        } else if (queryID == 6) {      // uploadFacilityImage
+            if (flags == DBOnCompleteFlags.SUCCESS.value) {
+                Log.d("FirebaseStorage", "Facility image uploaded successfully");
+
+                // Get the image and get its url
+                Image facilityImage = docs.get(0);
+                imagePath = facilityImage.getUrl();
+
+                // Update the user profile
+                signedInAccount.getFacilityProfile().setFacilityPicture(imagePath);
+                handler.updateProfile(signedInAccount, this);
+            } else {
+                Log.d("FirebaseStorage", "Profile image upload unsuccessful");
             }
         }
     }
