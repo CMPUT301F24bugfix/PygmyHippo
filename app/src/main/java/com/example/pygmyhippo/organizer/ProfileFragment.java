@@ -233,6 +233,7 @@ public class ProfileFragment extends Fragment implements AdapterView.OnItemSelec
                 // set visibility
                 updateButton.setVisibility(View.VISIBLE);
                 editButton.setVisibility(View.GONE);
+                createFacilityButton.setVisibility(View.GONE);
                 uploadIm_btn.setVisibility(View.VISIBLE);
                 deleteIm_btn.setVisibility(View.VISIBLE);
                 facility_uploadIm_btn.setVisibility(View.VISIBLE);
@@ -269,6 +270,9 @@ public class ProfileFragment extends Fragment implements AdapterView.OnItemSelec
                 uploadIm_btn.setVisibility(View.GONE);
                 deleteIm_btn.setVisibility(View.GONE);
                 facility_uploadIm_btn.setVisibility(View.GONE);
+                if (!signedInAccount.getFacilityProfile().facilityExists()) {
+                    createFacilityButton.setVisibility(View.VISIBLE);
+                }
 
                 // Update the corresponding fields of the account
                 signedInAccount.setName(name_f.getText().toString());
