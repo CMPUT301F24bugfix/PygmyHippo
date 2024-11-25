@@ -15,6 +15,7 @@ package com.example.pygmyhippo.organizer;
 
 import static androidx.navigation.Navigation.findNavController;
 
+import android.app.DatePickerDialog;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -22,6 +23,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -34,6 +36,7 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 
+import com.example.pygmyhippo.MainActivity;
 import com.example.pygmyhippo.R;
 import com.example.pygmyhippo.common.Account;
 import com.example.pygmyhippo.common.Event;
@@ -46,6 +49,7 @@ import com.example.pygmyhippo.database.StorageOnCompleteListener;
 import com.example.pygmyhippo.databinding.OrganiserPostEventBinding;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 
 
 /**
@@ -115,6 +119,29 @@ public class PostEventFragment extends Fragment implements DBOnCompleteListener<
         Button postEventButton = view.findViewById(R.id.o_postEvent_post_button);
 
         Event myEvent = new Event();
+
+        eventDateTimeEdit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                final Calendar c = Calendar.getInstance();
+
+                int year = c.get(Calendar.YEAR);
+                int month = c.get(Calendar.MONTH);
+                int day = c.get(Calendar.DAY_OF_MONTH);
+
+                DatePickerDialog datePicker = new DatePickerDialog(
+                        getActivity(),
+                        new DatePickerDialog.OnDateSetListener() {
+                            @Override
+                            public void onDateSet(DatePicker datePicker, int year, int month, int day) {
+                                eventDateTimeEdit.setText(day + "/" + (month + 1) + "/" + year);
+                            }
+                        },
+                year, month, day);
+
+                datePicker.show();
+            }
+        });
 
         postEventButton.setOnClickListener(v -> {
             // Get the inputs from the textViews

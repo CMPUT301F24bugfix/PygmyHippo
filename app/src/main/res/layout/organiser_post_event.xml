@@ -75,9 +75,11 @@
                 android:layout_height="60dp"
                 android:ems="10"
                 android:fontFamily="@font/roboto_mono_medium"
-                android:hint="Event Data &amp; Time"
+                android:hint="Event Date &amp; Time"
                 android:inputType="text"
                 android:textColor="@color/dark_purple"
+                android:clickable="false"
+                android:focusable="false"
                 android:textSize="18sp" />
 
             <TextView
@@ -201,7 +203,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="12dp"
-                android:layout_marginBottom="120dp"
                 android:backgroundTint="@color/main_buton"
                 android:text="Create Event"
                 android:textColor="@color/main_button_text" />
@@ -211,7 +212,8 @@
             <TextView
                 android:id="@+id/o_postEvent_bottom_scroll"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="120dp"/>
 
         </LinearLayout>
     </ScrollView>
