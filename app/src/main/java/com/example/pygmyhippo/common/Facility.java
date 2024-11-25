@@ -6,13 +6,12 @@ Purposes:
     - Holds the data to represent the facility profile
     - Is contained inside the Account class, never outside of it
 Issues:
-    - Image handling
+    - None
  */
 import android.os.Parcel;
 import android.os.Parcelable;
 
 /**
- * TODO: Decide how images are gonna be stored and set the appropriate datatype for facilityPicture.
  *
  * Facility Dataclass
  * Organizers can have a facility profile attached to their accounts which they may modify. This
@@ -95,7 +94,6 @@ public class Facility implements Parcelable {
 
     /**
      * This method returns the facility's profile picture
-     * TODO: Figure out image handling
      * @return facilityPicture
      */
     public String getFacilityPicture() {
@@ -104,10 +102,24 @@ public class Facility implements Parcelable {
 
     /**
      * This method updates the facility's picture
-     * TODO: Figure out image handling
      * @param facilityPicture The new picture
      */
     public void setFacilityPicture(String facilityPicture) {
         this.facilityPicture = facilityPicture;
+    }
+
+    /**
+     * This method will return if a facility has been initialized to have values other than null
+     * @return true it it exists, false if all attributes are null
+     */
+    public boolean facilityExists() {
+        if (name == null) {
+            if (location == null) {
+                if (facilityPicture == null) {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 }
