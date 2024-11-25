@@ -60,4 +60,6 @@ public class MyEventsTest {
             navcontroller.navigate(R.id.organiser_myEvents_page, navArgs);
         });
     }
+
+
 }
