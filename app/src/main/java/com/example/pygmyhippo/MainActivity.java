@@ -10,11 +10,15 @@ Issues:
  */
 
 import android.Manifest;
+import android.app.AlertDialog;
+import android.content.Context;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -219,6 +223,13 @@ public class MainActivity extends AppCompatActivity implements DBOnCompleteListe
                     toast.show();
                     setupNavController();
                 } else if (flags == DBOnCompleteFlags.NO_DOCUMENTS.value) {
+                    // First make a dialog builder that the user must to fill out important initial details
+                    AlertDialog.Builder builder = formatBuilder();
+
+                    // Show the builder
+                    AlertDialog createAccount = builder.create();
+                    createAccount.show();
+
                     dbHandler.addNewDevice(getDeviceID(), this);
                 } else {
                     handleDBError();
@@ -244,6 +255,31 @@ public class MainActivity extends AppCompatActivity implements DBOnCompleteListe
                 Log.i("DB", String.format("Unknown query ID (%d)", queryID));
                 handleDBError();
         }
+    }
+
+    /**
+     * This method will format the builder used for the user to enter in their profile details
+     * @author Kori
+     * @return The builder once its formatted
+     */
+    public AlertDialog.Builder formatBuilder() {
+        // Set the title and message
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Create Account");
+        builder.setMessage("Fill in the required details to continue:");
+        builder.setCancelable(false);
+
+        // Get the layout and set that to the builder
+        // This code snippet is from https://stackoverflow.com/questions/10226740/get-linearlayout-from-another-xml-android
+        // Accessed on 2024-11-24
+        LayoutInflater inflater;
+        inflater = (LayoutInflater) this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        LinearLayout builderLayout = (LinearLayout) inflater.inflate(R.layout.create_user_dialog_content , null);
+
+        // Set the retrieved layout view
+        builder.setView(builderLayout);
+
+        return builder;
     }
 
     /**
