@@ -60,19 +60,16 @@ public class MainActivityDB extends DBHandler {
     }
 
     /**
-     * Creates a new account and adds it to Accounts collection.
+     * Takes a new account and adds it to Accounts collection.
      *
      * Query ID: 1.
-     * @param deviceID - device ID to use for the new account.
+     * @param newAccount - new account with preset deviceID
      * @param listener - onCompleteListener to call after query completes.
      */
-    public void addNewDevice(String deviceID, DBOnCompleteListener<Account> listener) {
-        Log.d("DB", String.format("Adding new account with device ID (%s)", deviceID));
+    public void addNewDevice(Account newAccount, DBOnCompleteListener<Account> listener) {
+        Log.d("DB", String.format("Adding new account with device ID (%s)", newAccount.getDeviceID()));
         DocumentReference docRef = db.collection("Accounts").document();
-        Account newAccount = new Account();
         newAccount.setAccountID(docRef.getId());
-        newAccount.setDeviceID(deviceID);
-        newAccount.setCurrentRole(Account.AccountRole.user);
         docRef.set(newAccount).addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
                 ArrayList<Account> accounts = new ArrayList<>();

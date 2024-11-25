@@ -9,15 +9,20 @@ Issues:
     - Double account creation when a new device tries to open the app.
  */
 
+
 import android.Manifest;
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.CheckBox;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
@@ -56,6 +61,11 @@ public class MainActivity extends AppCompatActivity implements DBOnCompleteListe
     private UserMainActivityNagivationBinding userBinder;
     private AdminMainActivityNavigationBinding adminBinding;
     private MainActivityDB dbHandler;
+
+    // Views used in create user builder
+    private LinearLayout builderLayout;
+    private EditText newNameView, newEmailView, newPhoneView;
+    private CheckBox userCheck, organiserCheck;
 
     private Account signedInAccount;
     private Account.AccountRole currentRole;
@@ -223,14 +233,70 @@ public class MainActivity extends AppCompatActivity implements DBOnCompleteListe
                     toast.show();
                     setupNavController();
                 } else if (flags == DBOnCompleteFlags.NO_DOCUMENTS.value) {
-                    // First make a dialog builder that the user must to fill out important initial details
+                    // Make the new signed in account with the recorded device ID
+                    signedInAccount = new Account();
+                    signedInAccount.setDeviceID(getDeviceID());
+
+                    // Make a dialog builder that the user must to fill out important initial details
                     AlertDialog.Builder builder = formatBuilder();
 
                     // Show the builder
                     AlertDialog createAccount = builder.create();
                     createAccount.show();
 
-                    dbHandler.addNewDevice(getDeviceID(), this);
+                    // Set the onclick listener for the positive button here so it won't always close
+                    // Got this idea from https://stackoverflow.com/questions/2620444/how-to-prevent-a-dialog-from-closing-when-a-button-is-clicked
+                    // Accessed on 2024-11-24
+                    createAccount.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener()
+                    {
+                        @Override
+                        public void onClick(View v)
+                        {
+                            // Get all the entered values
+                            String newName = newNameView.getText().toString();
+                            String newEmail = newEmailView.getText().toString();
+                            String newPhone = newPhoneView.getText().toString();
+                            boolean isUser = userCheck.isChecked();
+                            boolean isOrganiser = organiserCheck.isChecked();
+
+                            if (newName.isEmpty() || newEmail.isEmpty()) {
+                                // One of the required fields weren't filled so don't continue
+                                Toast toast = Toast.makeText(getBaseContext(),
+                                        "Error: You must enter both name and email to continue. Try again",
+                                        Toast.LENGTH_SHORT);
+                                toast.show();
+                            } else if (!isUser && !isOrganiser) {
+                                // No roles were selected so don't continue
+                                Toast toast = Toast.makeText(getBaseContext(),
+                                        "Error: No role selected. Try again",
+                                        Toast.LENGTH_SHORT);
+                                toast.show();
+                            } else {
+                                // All required fields are entered, so add that to the new account class
+                                signedInAccount.setName(newName);
+                                signedInAccount.setEmailAddress(newEmail);
+                                signedInAccount.setPhoneNumber(newPhone);
+                                if (isUser) {
+                                    signedInAccount.getRoles().add(Account.AccountRole.user);
+
+                                    // Set the current account role
+                                    signedInAccount.setCurrentRole(Account.AccountRole.user);
+                                }
+                                if (isOrganiser) {
+                                    signedInAccount.getRoles().add(Account.AccountRole.organiser);
+                                    if (!isUser) {
+                                        // If account isn't also a user, then set this as current role
+                                        signedInAccount.setCurrentRole(Account.AccountRole.organiser);
+                                    }
+                                }
+                                // Add the new account to the database with these new fields
+                                dbHandler.addNewDevice(signedInAccount, MainActivity.this::OnCompleteDB);
+
+                                // Finally close the dialog
+                                createAccount.dismiss();
+                            }
+                        }
+                    });
                 } else {
                     handleDBError();
                 }
@@ -274,10 +340,26 @@ public class MainActivity extends AppCompatActivity implements DBOnCompleteListe
         // Accessed on 2024-11-24
         LayoutInflater inflater;
         inflater = (LayoutInflater) this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        LinearLayout builderLayout = (LinearLayout) inflater.inflate(R.layout.create_user_dialog_content , null);
+        builderLayout = (LinearLayout) inflater.inflate(R.layout.create_user_dialog_content , null);
 
         // Set the retrieved layout view
         builder.setView(builderLayout);
+
+        // Initialize our editable views from the layout
+        newNameView = builderLayout.findViewById(R.id.new_name_txt);
+        newEmailView = builderLayout.findViewById(R.id.new_email_txt);
+        newPhoneView = builderLayout.findViewById(R.id.new_phone_txt);
+        userCheck = builderLayout.findViewById(R.id.new_role_user);
+        organiserCheck = builderLayout.findViewById(R.id.new_role_organiser);
+
+        // Set the positive button
+        builder.setPositiveButton("Create", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                // For now nothing is set. Or else clicking it will instantly close the dialog
+                // So we want to set it after the dialog is shown so that it won't close unless the condition is matched
+            }
+        });
 
         return builder;
     }
