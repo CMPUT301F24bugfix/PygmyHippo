@@ -431,7 +431,6 @@ public class MainActivity extends AppCompatActivity implements DBOnCompleteListe
         Log.d("MainActivity", String.format("Received %s as current role.", receivedRole));
         if (receivedRole == null) {
             // If the account didn't exist, they get automatically set as a user for now
-            currentRole = Account.AccountRole.user;
         } else {
             // Actually set the role of the incoming account
             switch (receivedRole) {
