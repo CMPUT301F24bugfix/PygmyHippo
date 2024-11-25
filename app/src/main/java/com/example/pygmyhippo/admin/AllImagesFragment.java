@@ -13,6 +13,8 @@ package com.example.pygmyhippo.admin;
  */
 
 
+import static androidx.navigation.Navigation.findNavController;
+
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.util.Log;
@@ -22,6 +24,7 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.NavController;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -46,11 +49,16 @@ public class AllImagesFragment extends Fragment implements RecyclerClickListener
     AllImagesAdapter adapter;
     ArrayList<Image> imageList;
     ImageStorage handler;
+    private Account signedInAccount;
+    private NavController navController;
 
     @Override
     public void onItemClick(int position) {
-        // TODO: add functionality here
+        Bundle navArgs = new Bundle();
+        navArgs.putParcelable("signedInAccount", signedInAccount);
+        navArgs.putParcelable("Image", imageList.get(position));
         Log.d("Admin", String.format("Image at position (%d) clicked.", position));
+        navController.navigate(R.id.admin_navigation_delete_image, navArgs);
     }
 
     @Override
@@ -58,6 +66,7 @@ public class AllImagesFragment extends Fragment implements RecyclerClickListener
                              ViewGroup container, Bundle savedInstanceState) {
         binding =  AdminFragmentAllListBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
+        signedInAccount = AllImagesFragmentArgs.fromBundle(getArguments()).getSignedInAccount();
         handler = new ImageStorage();
 
         // Set up the views for this fragment and hide the spinners
@@ -91,6 +100,11 @@ public class AllImagesFragment extends Fragment implements RecyclerClickListener
         });
 
         return root;
+    }
+    @Override
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        navController = findNavController(view);
     }
 
     @Override

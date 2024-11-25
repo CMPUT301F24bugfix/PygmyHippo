@@ -7,26 +7,64 @@ Issues:
     - Need to implement image handling in the project
  */
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 /**
  * Image Data class
  */
-public class Image {
+public class Image implements Parcelable {
     private String url;
     private String ID;
     private ImageType type;
 
     public enum ImageType {
         Account,
-        Event,
+        Event;
+        public static ImageType fromOrdinal(int ordinal) {
+            return values()[ordinal];
+        }
     }
 
+    // Constructor
     public Image(String url, String ID, ImageType type) {
         this.url = url;
         this.ID = ID;
         this.type = type;
     }
 
-    public Image(){}
+    public Image() {}
+
+    // Parcelable implementation
+    protected Image(Parcel in) {
+        url = in.readString();
+        ID = in.readString();
+        type = ImageType.fromOrdinal(in.readInt());
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(url);
+        dest.writeString(ID);
+        dest.writeInt(type.ordinal());
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    public static final Creator<Image> CREATOR = new Creator<Image>() {
+        @Override
+        public Image createFromParcel(Parcel in) {
+            return new Image(in);
+        }
+
+        @Override
+        public Image[] newArray(int size) {
+            return new Image[size];
+        }
+    };
 
     /**
      * Returns the Image ID
