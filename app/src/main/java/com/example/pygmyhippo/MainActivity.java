@@ -6,7 +6,7 @@ Purposes:
     - Sets up the navbar for navigating between the three fragments (for any role)
     - Signs an account in based on device ID
 Issues:
-    - Double account creation when a new device tries to open the app.
+    - Decide where to put notification permission handler
  */
 
 
@@ -49,7 +49,6 @@ import java.util.Arrays;
 /**
  * Main Activity for our android app
  *
- * FIXME: Double account creation when a new device tries to open the app.
  * @author Jennifer, Griffin
  */
 public class MainActivity extends AppCompatActivity implements DBOnCompleteListener<Account> {
@@ -231,6 +230,9 @@ public class MainActivity extends AppCompatActivity implements DBOnCompleteListe
                             String.format("Got account (%s)", signedInAccount.getAccountID()),
                             Toast.LENGTH_SHORT);
                     toast.show();
+
+                    // Set up the current role navigation
+                    currentRole = signedInAccount.getCurrentRole();
                     setupNavController();
                 } else if (flags == DBOnCompleteFlags.NO_DOCUMENTS.value) {
                     // Make the new signed in account with the recorded device ID
@@ -309,6 +311,9 @@ public class MainActivity extends AppCompatActivity implements DBOnCompleteListe
                             Toast.LENGTH_SHORT);
                     toast.show();
                     signedInAccount = docs.get(0);
+
+                    // Set up the current role navigation
+                    currentRole = signedInAccount.getCurrentRole();
                     setupNavController();
                 } else {
                     Toast toast = Toast.makeText(this,
@@ -426,7 +431,6 @@ public class MainActivity extends AppCompatActivity implements DBOnCompleteListe
         Log.d("MainActivity", String.format("Received %s as current role.", receivedRole));
         if (receivedRole == null) {
             // If the account didn't exist, they get automatically set as a user for now
-            // TODO: Allow user to decide the role they want
             currentRole = Account.AccountRole.user;
         } else {
             // Actually set the role of the incoming account

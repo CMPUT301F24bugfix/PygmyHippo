@@ -51,6 +51,7 @@ import com.squareup.picasso.Picasso;
 import java.io.File;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Objects;
 
 
@@ -157,22 +158,6 @@ public class ProfileFragment extends Fragment implements AdapterView.OnItemSelec
         binding = OrganiserFragmentProfileBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
-        // Initialize the role spinner
-        Spinner role_dropdown = binding.oRoleSpinner;
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(
-                root.getContext(),
-                R.array.role,
-                R.layout.e_p_role_dropdown
-        );
-
-        adapter.setDropDownViewResource(R.layout.e_p_role_dropdown);
-        role_dropdown.setSelection(adapter.getPosition("organiser"));
-
-        role_dropdown.setAdapter(adapter);
-
-        // need to do this so the listener is connected
-        role_dropdown.setOnItemSelectedListener(this);
-
         // Get buttons
         ImageView editButton = root.findViewById(R.id.O_profile_editBtn);
         Button updateButton = root.findViewById(R.id.O_profile_updateBtn);
@@ -203,6 +188,39 @@ public class ProfileFragment extends Fragment implements AdapterView.OnItemSelec
         handler = new AccountDB();
         imageHandler = new ImageStorage();
         setProfile();
+
+        Spinner roleSpinner = binding.oRoleSpinner;
+
+        // Set up the spinner for assigned roles (only if the account has more than one role)
+        if (signedInAccount.getRoles().size() > 1) {
+            // Make the string array depending on the roles of the account
+            ArrayList<String> rolesList = new ArrayList<String>();
+            rolesList.add("-- select role --");         // For display
+
+            // Add each role to the array
+            for (int index = 0; index < signedInAccount.getRoles().size(); index++) {
+                rolesList.add(signedInAccount.getRoles().get(index).value);
+            }
+
+            // Convert the ArrayList to a String[]
+            // From https://www.geeksforgeeks.org/convert-an-arraylist-of-string-to-a-string-array-in-java/
+            // Accessed on 2024-11-24
+            String[] roles = Arrays.copyOf(rolesList.toArray(),
+                    rolesList.size(), String[].class);
+
+            // https://stackoverflow.com/questions/2505207/how-to-add-item-to-spinners-arrayadapter
+            // Helped understand this. Accessed on 2024-11-24
+            ArrayAdapter<CharSequence> roleAdapter = new ArrayAdapter<>(getContext(),
+                    R.layout.e_p_role_dropdown,
+                    roles);
+
+            roleSpinner.setAdapter(roleAdapter);
+
+            roleSpinner.setOnItemSelectedListener(this);
+        } else {
+            // Make the spinner gone since the user can't change roles
+            roleSpinner.setVisibility(View.GONE);
+        }
 
 
         // Allows te page elements to be edited by the user if the edit button is clicked
