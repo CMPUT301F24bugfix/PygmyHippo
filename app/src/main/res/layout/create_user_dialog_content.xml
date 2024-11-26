@@ -56,7 +56,7 @@
         android:layout_gravity="center"
         android:checked="false"
         android:fontFamily="@font/roboto_mono_medium"
-        android:text="User"
+        android:text="Entrant"
         android:textColor="@color/dark_purple"/>
     <CheckBox
         android:id="@+id/new_role_organiser"
