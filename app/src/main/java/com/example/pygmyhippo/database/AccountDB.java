@@ -158,4 +158,50 @@ public class AccountDB extends DBHandler {
                     }
                 });
     }
+
+    /**
+     * This query delete the reference to an image of a profile picture
+     * Query ID
+     * @param AccountID
+     * @param listener
+     */
+    public void deleteAccountProfileImageReference(String AccountID, DBOnCompleteListener<Object> listener){
+        db.collection("Accounts")
+                .document(AccountID)
+                .update("profilePicture", "")
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()){
+                        Log.d("DB", "Image deleted successfully. AccountID:" + AccountID );
+                        listener.OnCompleteDB(new ArrayList<>(), 5, DBOnCompleteFlags.SUCCESS.value);
+                    }
+                    else{
+                        Log.e("DB", "Image deleted unsuccessfully. AccountID:" + AccountID );
+                        listener.OnCompleteDB(new ArrayList<>(), 5, DBOnCompleteFlags.ERROR.value);
+                    }
+                });
+
+    }
+
+    /**
+     * This query delete the reference to an image of a profile picture
+     * Query ID
+     * @param AccountID
+     * @param listener
+     */
+    public void deleteFacilityProfileImageReference(String AccountID, DBOnCompleteListener<Object> listener){
+        db.collection("Accounts")
+                .document(AccountID)
+                .update("facilityProfile\\facilityPicture", "")
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()){
+                        Log.d("DB", "Image deleted successfully. AccountID:" + AccountID );
+                        listener.OnCompleteDB(new ArrayList<>(), 6, DBOnCompleteFlags.SUCCESS.value);
+                    }
+                    else{
+                        Log.e("DB", "Image deleted unsuccessfully. AccountID:" + AccountID );
+                        listener.OnCompleteDB(new ArrayList<>(), 6, DBOnCompleteFlags.ERROR.value);
+                    }
+                });
+
+    }
 }
