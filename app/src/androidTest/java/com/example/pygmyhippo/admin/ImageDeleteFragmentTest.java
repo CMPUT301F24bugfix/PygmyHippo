@@ -31,9 +31,9 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 /**
- * Testing for AllEventsFragment.
+ * Testing of image delete fragment
  *
- * Currently only testing spinners selection and ability to click on first item of list.
+ * Currently only testing if pag displays
  */
 @RunWith(AndroidJUnit4.class)
 @LargeTest
