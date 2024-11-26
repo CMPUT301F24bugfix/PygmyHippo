@@ -89,25 +89,10 @@ public class AllUsersFragment extends Fragment implements RecyclerClickListener,
         binding.aAlllistRecycler.setLayoutManager(new LinearLayoutManager(getContext()));
         binding.aAlllistRecycler.setAdapter(adapter);
 
-        // Initialize first spinner
-        ArrayAdapter<CharSequence> categoryAdapter = ArrayAdapter.createFromResource(
-                this.requireContext(),
-                R.array.all_users_category_spinner,
-                android.R.layout.simple_spinner_item
-        );
-
-        categoryAdapter.setDropDownViewResource(android.R.layout.simple_spinner_item);
-        binding.aAlllistCategorySpinner.setAdapter(categoryAdapter);
-
-        // Initialize second spinner
-        ArrayAdapter<CharSequence> orderAdapter = ArrayAdapter.createFromResource(
-                this.requireContext(),
-                R.array.order_spinner,
-                android.R.layout.simple_spinner_item
-        );
-
-        orderAdapter.setDropDownViewResource(android.R.layout.simple_spinner_item);
-        binding.aAlllistOrderSpinner.setAdapter(orderAdapter);
+        //removed filtering
+        binding.aAlllistFilterByText.setVisibility(View.INVISIBLE);
+        binding.aAlllistCategorySpinner.setVisibility(View.INVISIBLE);
+        binding.aAlllistOrderSpinner.setVisibility(View.INVISIBLE);
 
         // Initialize the Title of the fragment to be viewed
         binding.aAlllistTitleText.setText(R.string.all_users_title);

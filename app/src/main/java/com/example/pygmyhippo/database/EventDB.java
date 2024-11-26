@@ -238,4 +238,27 @@ public class EventDB extends DBHandler {
                     }
                 });
     }
+
+    /**
+     * This query delete the reference to an image of a profile picture
+     * Query ID
+     * @param EventID
+     * @param listener
+     */
+    public void deleteEventImageReference(String EventID, DBOnCompleteListener<Object> listener){
+        db.collection("Events")
+                .document(EventID)
+                .update("eventPoster", "")
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()){
+                        Log.d("DB", "Image deleted successfully. EventID:" + EventID );
+                        listener.OnCompleteDB(new ArrayList<>(), 7, DBOnCompleteFlags.SUCCESS.value);
+                    }
+                    else{
+                        Log.e("DB", "Image deleted unsuccessfully. EventID:" + EventID );
+                        listener.OnCompleteDB(new ArrayList<>(), 7, DBOnCompleteFlags.ERROR.value);
+                    }
+                });
+
+    }
 }
