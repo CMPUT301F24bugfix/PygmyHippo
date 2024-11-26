@@ -171,7 +171,7 @@ public class NotificationCenter implements DBOnCompleteListener<EventEntrant> {
     @Override
     public void OnCompleteDB(@NonNull ArrayList<EventEntrant> docs, int queryID, int flags) {
         switch (queryID) {
-            case 7: // addAccountNotificationsSnapshotListener()
+            case 100: // addAccountNotificationsSnapshotListener()
                 if (flags == DBOnCompleteFlags.SUCCESS.value) {
                     docs.forEach(eventEntrant -> {
                         Event event = eventEntrant.getEvent();

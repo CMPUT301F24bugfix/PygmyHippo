@@ -36,13 +36,13 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 /**
- * Testing for AllEventsFragment.
+ * Testing for AllImagesFragment.
  *
  * Currently only testing if the fragment appears.
  */
 @RunWith(AndroidJUnit4.class)
 @LargeTest
-public class AllEventsFragmentTest {
+public class AllImagesFragmentTest {
     @Rule
     public ActivityScenarioRule<MainActivity> scenario = new ActivityScenarioRule<>(createIntent());
 
@@ -77,12 +77,12 @@ public class AllEventsFragmentTest {
             navArgs.putParcelable("signedInAccount", account);
             navArgs.putBoolean("useFirebase", false);
             navArgs.putBoolean("useNavigation", false);
-            navcontroller.navigate(R.id.admin_navigation_all_events, navArgs);
+            navcontroller.navigate(R.id.admin_navigation_all_images, navArgs);
         });
     }
 
     @Test
     public void checkFragmentAppears(){
-        onView(withId(R.id.a_alllist_title_text)).check(matches(withText("All Events")));
+        onView(withId(R.id.a_alllist_title_text)).check(matches(withText("All Images")));
     }
 }

@@ -121,6 +121,7 @@ public class ImageStorage extends DBHandler {
      * @param listener DBOnCompleteListener to call when query completes.
      */
     public void getEventsWithImage(int limit, StorageOnCompleteListener<Object> listener) {
+        Log.d("DB", "Events with image queried");
         db.collection("Events")
                 .whereNotEqualTo("eventPoster", "")
                 .limit(limit)
@@ -225,6 +226,32 @@ public class ImageStorage extends DBHandler {
                     else{
                         Log.e("FirebaseStorage:", "Image uploaded Error.");
                         listener.OnCompleteStorage(images, 6,DBOnCompleteFlags.ERROR.value);
+                    }
+                });
+    }
+
+    /**
+     * Gets accounts from Firestore with non-empty string in facility picture field.
+     * @param limit Limit on number of accounts to get in query.
+     * @param listener DBOnCompleteListener to call when query completes.
+     */
+    public void getFacilitiesWithImage(int limit, StorageOnCompleteListener<Object> listener) {
+        db.collection("Accounts")
+                .whereNotEqualTo("facilityProfile.facilityPicture",  "")
+                .limit(limit)
+                .get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        // Convert each document to an account, add it to a list, and notify the listener with success flag raised
+                        QuerySnapshot queryResult = task.getResult();
+                        Log.d("DB", String.format("%d Accounts with non-empty facility picutres are fetched.", queryResult.size()));
+                        ArrayList<Account> accountList = new ArrayList<>();
+                        queryResult.forEach(doc -> accountList.add(doc.toObject(Account.class)));
+                        listener.OnCompleteStorage(new ArrayList<>(accountList), 7, DBOnCompleteFlags.SUCCESS.value);
+                    } else {
+                        // Notify the listener with the Error flag raised
+                        Log.d("DB", "Error in getting facility account ");
+                        listener.OnCompleteStorage(new ArrayList<>(), 7, DBOnCompleteFlags.ERROR.value);
                     }
                 });
     }
