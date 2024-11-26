@@ -208,7 +208,9 @@ public class EventFragment extends Fragment implements DBOnCompleteListener<Even
         // For admin to delete the event's QR code
         deleteQRCodeButton.setOnClickListener(buttonView -> {
             Log.d("EventFragment", "Delete QR Code Button pressed");
-            // TODO: Delete QR Code.
+            DBhandler.deleteQRHashData(event.getEventID(), this);
+            deleteQRCodeButton.setBackgroundColor(0xFF808080);
+            deleteQRCodeButton.setClickable(false);
         });
 
         return view;
@@ -244,6 +246,12 @@ public class EventFragment extends Fragment implements DBOnCompleteListener<Even
                 Log.d("EventFragment", "Error in updating event.");
             }
         }
+        else if (queryID == 8){
+            if (flags == DBOnCompleteFlags.SUCCESS.value) {
+                Log.d("EventFragment", "Successfully deleted QR hashcode");
+                Toast.makeText(getContext(), "Event hashqr", Toast.LENGTH_LONG).show();
+            }
+        }
     }
 
     /**
@@ -262,6 +270,11 @@ public class EventFragment extends Fragment implements DBOnCompleteListener<Even
         if (event.hasEntrant(entrant)) {
             registerButton.setBackgroundColor(0xFF808080);
             registerButton.setText("✔");
+        }
+
+        if (!event.isValidHashcode()){
+            deleteQRCodeButton.setBackgroundColor(0xFF808080);
+            deleteQRCodeButton.setClickable(false);
         }
 
         // Get the poster for the event
