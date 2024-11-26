@@ -4,7 +4,8 @@ package com.example.pygmyhippo.user;
 UI Testing for the create user alert dialog
 These tests check that the alert dialog only closes when the required fields are set
 Issues:
-    - Consider testing navigation to the right role
+    - Testing can only be done with an emulator whose device ID is not in the database
+    - Test data is deleted by name, so could potentially delete an account with the same name
  */
 
 import static androidx.test.espresso.Espresso.onView;
@@ -18,7 +19,7 @@ import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import android.Manifest;
 import android.content.Intent;
 import android.os.Bundle;
-import android.provider.Settings;
+import android.util.Log;
 
 
 import androidx.annotation.NonNull;
@@ -33,6 +34,7 @@ import com.example.pygmyhippo.MainActivity;
 import com.example.pygmyhippo.R;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 
@@ -270,14 +272,31 @@ public class NewUserTest {
         scenario.getScenario().onActivity(activity -> {
             FirebaseFirestore db = FirebaseFirestore.getInstance();
 
-            // Get rid of the account with the test name
+            // Find the account with the name in the database
             db.collection("Accounts")
                     .whereEqualTo("name", "This is hopefully a very specific test name")
                     .get()
                     .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                         @Override
                         public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                            if (task.isSuccessful()) {
+                                QuerySnapshot queryResult = task.getResult();
 
+                                // Add results to a list, this gets passed to the listener
+                                if (queryResult.size() == 1) {
+                                    DocumentSnapshot doc = queryResult.getDocuments().get(0);
+                                    db.collection("Accounts").document(doc.getId()).delete().addOnCompleteListener(new OnCompleteListener<Void>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<Void> task) {
+                                            if (task.isSuccessful()) {
+                                                Log.d("UI Testing", "Cleaned up test data");
+                                            }
+                                        }
+                                    });
+                                }
+
+                                // Only delete the data if there is one reference. Or else we risk deleting actual data
+                            }
                         }
                     });
         });
