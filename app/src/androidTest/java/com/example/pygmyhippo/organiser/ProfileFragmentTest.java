@@ -3,13 +3,15 @@ package com.example.pygmyhippo.organiser;
 /*
 UI tests for the organiser profile fragment
 Issues:
-    - Needs spinner testing when navigation gets updated
+    - Test spinner in other profile fragment with more than one role
  */
 
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.action.ViewActions.scrollTo;
+import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
+import static androidx.test.espresso.matcher.ViewMatchers.withEffectiveVisibility;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 
@@ -21,6 +23,7 @@ import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.test.espresso.action.ViewActions;
 import androidx.test.espresso.assertion.ViewAssertions;
+import androidx.test.espresso.matcher.ViewMatchers;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.filters.LargeTest;
@@ -54,6 +57,7 @@ public class ProfileFragmentTest {
         Account account = new Account();
         account.setAccountID("0");
         account.setName("Testing account");
+        account.getRoles().add(Account.AccountRole.user);
         account.setCurrentRole(Account.AccountRole.user);
         intent.putExtra("signedInAccount", account);
 
@@ -181,5 +185,11 @@ public class ProfileFragmentTest {
         onView(withId(R.id.O_profile_facilityImg)).check(ViewAssertions.matches(isDisplayed()));
         onView(withText("University of Alberta")).check(ViewAssertions.matches(isDisplayed()));
         onView(withText("Whyte Ave")).check(ViewAssertions.matches(isDisplayed()));
+    }
+
+    @Test
+    public void testUserSpinner() {
+        // The beginning account only has one role, so the spinner should not show up
+        onView(withId(R.id.o_roleSpinner)).check(matches(withEffectiveVisibility(ViewMatchers.Visibility.GONE)));
     }
 }

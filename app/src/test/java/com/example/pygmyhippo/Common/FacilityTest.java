@@ -67,11 +67,11 @@ public class FacilityTest {
         newFacility.setName("Some Facility");
         assertTrue(newFacility.facilityExists());
 
-        newFacility.setName(null);
+        newFacility.setName("");
         newFacility.setLocation("88 St. 45 Ave");
         assertTrue(newFacility.facilityExists());
 
-        newFacility.setLocation(null);
+        newFacility.setLocation("");
         newFacility.setFacilityPicture("https//:image/url");
         assertTrue(newFacility.facilityExists());
 

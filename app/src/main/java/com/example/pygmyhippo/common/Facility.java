@@ -23,7 +23,11 @@ public class Facility implements Parcelable {
     private String name;
     private String location;
 
-    public Facility() {}
+    public Facility() {
+        this.facilityPicture = "";
+        this.name = "";
+        this.location = "";
+    }
     public Facility(String facilityPicture, String name, String location) {
         this.facilityPicture = facilityPicture;
         this.name = name;
@@ -113,9 +117,9 @@ public class Facility implements Parcelable {
      * @return true it it exists, false if all attributes are null
      */
     public boolean facilityExists() {
-        if (name == null) {
-            if (location == null) {
-                if (facilityPicture == null) {
+        if (name.isEmpty()) {
+            if (location.isEmpty()) {
+                if (facilityPicture.isEmpty()) {
                     return false;
                 }
             }

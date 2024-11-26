@@ -14,6 +14,7 @@ Issues:
  */
 
 import android.Manifest;
+import android.content.res.Resources;
 import android.widget.AdapterView;
 import android.widget.CheckBox;
 
@@ -54,6 +55,7 @@ import com.squareup.picasso.Picasso;
 
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Objects;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -218,16 +220,38 @@ public class ProfileFragment extends Fragment  implements AdapterView.OnItemSele
 
         roleSpinner = binding.uRoleSpinner;
 
-        ArrayAdapter<CharSequence> roleAdapter = ArrayAdapter.createFromResource(
-                root.getContext(),
-                R.array.role,
-                R.layout.e_p_role_dropdown
-        );
-        roleSpinner.setAdapter(roleAdapter);
-
-        roleSpinner.setOnItemSelectedListener(this);
-
         setProfile();
+
+        // Set up the spinner for assigned roles (only if the account has more than one role)
+        if (signedInAccount.getRoles().size() > 1) {
+            // Make the string array depending on the roles of the account
+            ArrayList<String> rolesList = new ArrayList<String>();
+            rolesList.add("-- select role --");         // For display
+
+            // Add each role to the array
+            for (int index = 0; index < signedInAccount.getRoles().size(); index++) {
+                rolesList.add(signedInAccount.getRoles().get(index).value);
+            }
+
+            // Convert the ArrayList to a String[]
+            // From https://www.geeksforgeeks.org/convert-an-arraylist-of-string-to-a-string-array-in-java/
+            // Accessed on 2024-11-24
+            String[] roles = Arrays.copyOf(rolesList.toArray(),
+                    rolesList.size(), String[].class);
+
+            // https://stackoverflow.com/questions/2505207/how-to-add-item-to-spinners-arrayadapter
+            // Helped understand this. Accessed on 2024-11-24
+            ArrayAdapter<CharSequence> roleAdapter = new ArrayAdapter<>(getContext(),
+                    R.layout.e_p_role_dropdown,
+                    roles);
+
+            roleSpinner.setAdapter(roleAdapter);
+
+            roleSpinner.setOnItemSelectedListener(this);
+        } else {
+            // Make the spinner gone since the user can't change roles
+            roleSpinner.setVisibility(View.GONE);
+        }
 
 
         /*
