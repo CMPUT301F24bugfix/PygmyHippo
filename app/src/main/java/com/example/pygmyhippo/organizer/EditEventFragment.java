@@ -180,15 +180,41 @@ public class EditEventFragment extends Fragment implements DBOnCompleteListener<
                 if (uri != null) {
                     // center cropped can be changed if we want to scale the picture differently
                     Toast.makeText(getContext(), "Image uploading to database", Toast.LENGTH_LONG).show();
-                    ImageHandler.uploadEventImageToFirebase(uri, this);
                     editEventButton.setClickable(false);
+                    handler.deleteEventImageReference(updatedEvent.getEventID(), new DBOnCompleteListener<Object>() {
+
+                        /**
+                         * @param docs    - Documents retrieved from DB (if it was a get query).
+                         * @param queryID - ID of query completed.
+                         * @param flags   - Flags to indicate query status/set how to process query result.
+                         */
+                        @Override
+                        public void OnCompleteDB(@NonNull ArrayList<Object> docs, int queryID, int flags) {
+                            if (flags == DBOnCompleteFlags.SUCCESS.value) {
+                                Log.d("FirebaseStorage", "Event image deleted successfully");
+                                updateEventImage(uri);
+                            } else {
+                                Log.e("FirebaseStorage", "Event image not deleted");
+                                editEventButton.setClickable(true);
+                            }
+                        }
+                    });
+
                     // set update event clickable till image is uploaded
                 }
                 else{
                     // sets image path to null if no image is selected
-                    updatedEvent.setEventPoster(null);
+                    updatedEvent.setEventPoster("");
                 }
             });
+
+    /**
+     * This is only called when the original event image is deleted
+     * @param uri the new uri of the event image
+     */
+    private void updateEventImage(Uri uri){
+        ImageHandler.uploadEventImageToFirebase(uri, this);
+    }
 
 
     /**
