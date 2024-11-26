@@ -3,6 +3,7 @@ package com.example.pygmyhippo.admin;
 import static androidx.test.espresso.Espresso.onData;
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
+import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
@@ -37,7 +38,7 @@ import org.junit.runner.RunWith;
 /**
  * Testing for AllEventsFragment.
  *
- * Currently only testing spinners selection and ability to click on first item of list.
+ * Currently only testing if the fragment appears.
  */
 @RunWith(AndroidJUnit4.class)
 @LargeTest
@@ -79,36 +80,9 @@ public class AllEventsFragmentTest {
             navcontroller.navigate(R.id.admin_navigation_all_events, navArgs);
         });
     }
-// These tests done run since I deleted teh spinners
-//    @Test
-//    public void testEventCategorySpinner() {
-//        final Context context = InstrumentationRegistry.getInstrumentation().getTargetContext();
-//        final String[] userCategories = context.getResources().getStringArray(R.array.all_events_category_spinner);
-//
-//        for (String category : userCategories) {
-//            onView(withId(R.id.a_alllist_category_spinner)).perform(click());
-//            onData(allOf(is(instanceOf(CharSequence.class)), is(category))).perform(click());
-//            onView(withText(category)).check(ViewAssertions.matches(isDisplayed()));
-//        }
-//    }
-//
-//
-//    @Test
-//    public void testOrderSpinner() {
-//        final Context context = InstrumentationRegistry.getInstrumentation().getTargetContext();
-//        final String[] spinnerOrders = context.getResources().getStringArray(R.array.order_spinner);
-//
-//        for (String order : spinnerOrders) {
-//            onView(withId(R.id.a_alllist_order_spinner)).perform(click());
-//            onData(allOf(is(instanceOf(CharSequence.class)), is(order))).perform(click());
-//            onView(withText(order)).check(ViewAssertions.matches(isDisplayed()));
-//        }
-//    }
-//
-//    @Test
-//    public void testAllEventList() {
-//        // TODO: Add more thorough testing for items in all list after navigation is figured out.
-//        onView(withId(R.id.a_alllist_recycler))
-//                .perform(RecyclerViewActions.actionOnItemAtPosition(0, click()));
-//    }
+
+    @Test
+    public void checkFragmentAppears(){
+        onView(withId(R.id.a_alllist_title_text)).check(matches(withText("All Events")));
+    }
 }

@@ -1,4 +1,14 @@
 package com.example.pygmyhippo.admin;
+
+/*
+ * DeleteImageFragment
+ *
+ * Purposes:
+ * Displays selected image to Admin with the option to delete said image
+ *
+ * Issues:
+ * NA (at the moment)
+ */
 import static androidx.navigation.Navigation.findNavController;
 
 import android.net.Uri;
@@ -90,7 +100,7 @@ public class DeleteImageFragment extends Fragment implements StorageOnCompleteLi
         // set up the delete button
         DeleteButton = view.findViewById(R.id.a_deleteImage_deleteBtn);
         DeleteButton.setOnClickListener(view1 -> {
-            Log.d("EventFragment", "Back button pressed");
+            Log.d("EventFragment", "Delete image button pressed");
 
             if (currentImage.getType() == Image.ImageType.Event) {
                 // delete the image reference
