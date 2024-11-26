@@ -6,6 +6,7 @@ These tests check that the alert dialog only closes when the required fields are
 Issues:
     - Testing can only be done with an emulator whose device ID is not in the database
     - Test data is deleted by name, so could potentially delete an account with the same name
+            Tried to handle this by only deleting if one account with such name exists
  */
 
 import static androidx.test.espresso.Espresso.onView;
