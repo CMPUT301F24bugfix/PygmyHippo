@@ -165,7 +165,43 @@ public class DeleteImageFragment extends Fragment implements StorageOnCompleteLi
                     }
                 });
             }
+            else if (currentImage.getType() == Image.ImageType.Facility){
+                // delete the image reference
+                AccountDbHandler.deleteFacilityProfileImageReference(currentImage.getID(), new DBOnCompleteListener<Object>() {
 
+                    /**
+                     * @param docs    - Documents retrieved from DB (if it was a get query).
+                     * @param queryID - ID of query completed.
+                     * @param flags   - Flags to indicate query status/set how to process query result.
+                     */
+                    @Override
+                    public void OnCompleteDB(@NonNull ArrayList<Object> docs, int queryID, int flags) {
+                        if (flags == DBOnCompleteFlags.SUCCESS.value) {
+                            Log.d("FirebaseStorage", "Facility image deleted successfully");
+                        } else {
+                            Log.e("FirebaseStorage", "Facility image not deleted");
+                        }
+                    }
+                });
+
+                // delete the image in firebase
+                ImageHandler.DeleteImageByURL(currentImage.getUrl(), new StorageOnCompleteListener<Image>() {
+                    /**
+                     * @param docs    - Documents retrieved from DB (if it was a get query).
+                     * @param queryID - ID of query completed.
+                     * @param flags   - Flags to indicate query status/set how to process query result.
+                     */
+                    @Override
+                    public void OnCompleteStorage(@NonNull ArrayList<Image> docs, int queryID, int flags) {
+                        if (flags == DBOnCompleteFlags.SUCCESS.value) {
+                            Log.d("FirebaseStorage", "Facility image deleted successfully");
+                            Toast.makeText(getContext(), "Facility Image Deleted", Toast.LENGTH_LONG).show();
+                        } else {
+                            Log.e("FirebaseStorage", "Facility image not deleted");
+                        }
+                    }
+                });
+            }
         });
     }
 

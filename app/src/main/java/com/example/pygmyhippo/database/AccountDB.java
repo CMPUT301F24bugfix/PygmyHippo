@@ -191,7 +191,7 @@ public class AccountDB extends DBHandler {
     public void deleteFacilityProfileImageReference(String AccountID, DBOnCompleteListener<Object> listener){
         db.collection("Accounts")
                 .document(AccountID)
-                .update("facilityProfile\\facilityPicture", "")
+                .update("facilityProfile.facilityPicture", "")
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()){
                         Log.d("DB", "Image deleted successfully. AccountID:" + AccountID );

@@ -82,6 +82,7 @@ public class AllImagesFragment extends Fragment implements RecyclerClickListener
         // Get the accounts and events for their images
         handler.getAccountsWithImage(1000, this);
         handler.getEventsWithImage(1000, this);
+        handler.getFacilitiesWithImage(1000, this);
 
         // Format the recycler list
         binding.aAlllistRecycler.setAdapter(adapter);
@@ -131,6 +132,16 @@ public class AllImagesFragment extends Fragment implements RecyclerClickListener
                     // Get the event poster from the obtained object and convert it to an image class
                     Event event = (Event) obj;
                     Image image = new Image(event.getEventPoster(), event.getEventID(), Image.ImageType.Event);
+                    imageList.add(image);
+                    adapter.notifyItemInserted(imageList.size() - 1);
+                });
+            }
+            else if (queryID == 7){
+                // Go through obtained documents
+                docs.forEach(obj -> {
+                    // Get the account and obtain the profile image from it to add to the list
+                    Account account = (Account) obj;
+                    Image image = new Image(account.getFacilityProfile().getFacilityPicture(), account.getAccountID(), Image.ImageType.Facility);
                     imageList.add(image);
                     adapter.notifyItemInserted(imageList.size() - 1);
                 });

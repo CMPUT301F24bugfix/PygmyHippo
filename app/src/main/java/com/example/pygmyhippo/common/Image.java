@@ -20,6 +20,7 @@ public class Image implements Parcelable {
 
     public enum ImageType {
         Account,
+        Facility,
         Event;
         public static ImageType fromOrdinal(int ordinal) {
             return values()[ordinal];
