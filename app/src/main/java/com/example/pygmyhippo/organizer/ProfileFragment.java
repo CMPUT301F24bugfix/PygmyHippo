@@ -105,8 +105,7 @@ public class ProfileFragment extends Fragment implements AdapterView.OnItemSelec
                         binding.OProfileFacilityImg.setImageURI(uri);
 
                         // If the user already had a profile picture, make sure to delete the old one first
-                        if (signedInAccount.getFacilityProfile().getFacilityPicture() != null
-                                && !signedInAccount.getFacilityProfile().getFacilityPicture().isEmpty()) {
+                        if (!signedInAccount.getFacilityProfile().getFacilityPicture().isEmpty()) {
                             imageHandler.DeleteImageByURL(signedInAccount.getFacilityProfile().getFacilityPicture(), this);
                         }
 
@@ -288,9 +287,6 @@ public class ProfileFragment extends Fragment implements AdapterView.OnItemSelec
                 uploadIm_btn.setVisibility(View.GONE);
                 deleteIm_btn.setVisibility(View.GONE);
                 facility_uploadIm_btn.setVisibility(View.GONE);
-                if (!signedInAccount.getFacilityProfile().facilityExists()) {
-                    createFacilityButton.setVisibility(View.VISIBLE);
-                }
 
                 // Update the corresponding fields of the account
                 signedInAccount.setName(name_f.getText().toString());
@@ -302,6 +298,14 @@ public class ProfileFragment extends Fragment implements AdapterView.OnItemSelec
                 String facilityLocation = facilityLocation_f.getText().toString();
                 signedInAccount.getFacilityProfile().setName(facilityName);
                 signedInAccount.getFacilityProfile().setLocation(facilityLocation);
+
+                if (facilityName.isEmpty()
+                        && facilityLocation.isEmpty()
+                        && signedInAccount.getFacilityProfile().getFacilityPicture().isEmpty()) {
+                    createFacilityButton.setVisibility(View.VISIBLE);
+                } else {
+                    createFacilityButton.setVisibility(View.GONE);
+                }
 
                 // Update to reflect in the database
                 handler.updateProfile(signedInAccount, new DBOnCompleteListener<Account>() {
@@ -468,7 +472,7 @@ public class ProfileFragment extends Fragment implements AdapterView.OnItemSelec
         }
 
         // Get the facility picture if it has already been set
-        if (signedInAccount.getFacilityProfile().getFacilityPicture() != null) {
+        if (!signedInAccount.getFacilityProfile().getFacilityPicture().isEmpty()) {
             // Get the profile picture
             imageHandler.getImageDownloadUrl(signedInAccount.getFacilityProfile().getFacilityPicture(), new StorageOnCompleteListener<Uri>() {
                 @Override
