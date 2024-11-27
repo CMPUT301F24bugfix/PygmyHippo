@@ -105,7 +105,7 @@ public class NotificationCenter implements DBOnCompleteListener<Event> {
 
             CharSequence name = context.getString(R.string.notification_channel_name);
             String description = context.getString(R.string.notification_channel_description);
-            int importance = NotificationManager.IMPORTANCE_DEFAULT;
+            int importance = NotificationManager.IMPORTANCE_HIGH;
             String channel_id = context.getString(R.string.notification_channel_ID);
 
             NotificationChannel channel = new NotificationChannel(channel_id, name, importance);
