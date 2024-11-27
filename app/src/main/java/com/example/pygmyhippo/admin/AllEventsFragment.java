@@ -9,11 +9,6 @@ Issues:
  */
 
 
-
-import androidx.navigation.NavController;
-
-import com.example.pygmyhippo.common.RecyclerClickListener;
-
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -34,6 +29,7 @@ import com.example.pygmyhippo.common.Event;
 import com.example.pygmyhippo.common.RecyclerClickListener;
 import com.example.pygmyhippo.database.DBOnCompleteFlags;
 import com.example.pygmyhippo.database.DBOnCompleteListener;
+import com.example.pygmyhippo.database.EventDB;
 import com.example.pygmyhippo.databinding.AdminFragmentAllListBinding;
 
 import java.util.ArrayList;
@@ -51,7 +47,7 @@ public class AllEventsFragment extends Fragment implements RecyclerClickListener
 
     ArrayList<Event> allEvents;
     AllEventsAdapter adapter;
-    AllEventsDB handler;
+    EventDB handler;
     Account signedInAccount;
 
 
@@ -63,6 +59,7 @@ public class AllEventsFragment extends Fragment implements RecyclerClickListener
         Bundle navArgs = new Bundle();
         navArgs.putParcelable("signedInAccount", signedInAccount);
         navArgs.putString("eventID", allEvents.get(position).getEventID());
+        navArgs.putBoolean("isAdmin", true);
         navController.navigate(R.id.action_admin_navigation_all_events_to_admin_navigation_event_page, navArgs);
     }
 
@@ -83,12 +80,15 @@ public class AllEventsFragment extends Fragment implements RecyclerClickListener
         allEvents = new ArrayList<>();
 
         // Initialize the handler and get all the events
-        handler = new AllEventsDB();
+        handler = new EventDB();
         handler.getEvents(1000, this);
 
         // Fill the fields of the recycle view
         adapter = new AllEventsAdapter(allEvents, this);
         binding.aAlllistRecycler.setLayoutManager(new LinearLayoutManager(getContext()));
+        binding.aAlllistFilterByText.setVisibility(View.INVISIBLE);
+        binding.aAlllistCategorySpinner.setVisibility(View.INVISIBLE);
+        binding.aAlllistOrderSpinner.setVisibility(View.INVISIBLE);
         binding.aAlllistRecycler.setAdapter(adapter);
 
         // Initialize the 1st spinner
@@ -124,8 +124,8 @@ public class AllEventsFragment extends Fragment implements RecyclerClickListener
     }
 
     @Override
-    public void OnComplete(@NonNull ArrayList<Event> docs, int queryID, int flags) {
-        if (queryID == 0) {
+    public void OnCompleteDB(@NonNull ArrayList<Event> docs, int queryID, int flags) {
+        if (queryID == 6) {
             if (flags == DBOnCompleteFlags.SUCCESS.value) {
                 // Add each retrieved event to the list
                 docs.forEach(doc -> {

@@ -63,7 +63,7 @@
                 android:id="@+id/E_profile_profileImg"
                 android:layout_width="210dp"
                 android:layout_height="210dp"
-                android:src="@drawable/dog"
+                android:src="@drawable/loading_profile"
                 app:civ_border_color="#FF000000"
                 app:civ_border_width="0dp"
                 app:layout_constraintBottom_toTopOf="@id/E_profile_nameLabel"
@@ -237,7 +237,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/E_profile_emailLabel" />
 
-            <RadioButton
+            <CheckBox
                 android:id="@+id/E_profile_gps_dec"
                 android:layout_width="203dp"
                 android:layout_height="48dp"
@@ -245,6 +245,7 @@
                 android:fontFamily="@font/roboto_mono_medium"
                 android:text="Allow Geolocation"
                 android:textColor="@color/dark_purple"
+                android:layout_marginBottom="135dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.342"
@@ -252,7 +253,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/E_profile_notification_dec"
                 app:layout_constraintVertical_bias="0.0" />
 
-            <RadioButton
+            <CheckBox
                 android:id="@+id/E_profile_notification_dec"
                 android:layout_width="216dp"
                 android:layout_height="48dp"
@@ -268,98 +269,6 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/E_profile_textPhone" />
 
-            <RadioGroup
-                android:id="@+id/E_profile_notify_setting"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
-                android:visibility="gone"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.381"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/E_profile_textPhone">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="@font/roboto_mono_medium"
-                    android:text="Allow Notifications?:"
-                    android:textColor="@color/dark_purple"
-                    android:textSize="16sp" />
-
-                <RadioButton
-                    android:id="@+id/E_profile_notifications_yes"
-                    android:layout_width="216dp"
-                    android:layout_height="29dp"
-                    android:layout_marginTop="8dp"
-                    android:checked="true"
-                    android:fontFamily="@font/roboto_mono_medium"
-                    android:text="Allow"
-                    android:textColor="@color/dark_purple"
-                    app:layout_constraintEnd_toStartOf="@id/E_profile_notifications_no"
-                    app:layout_constraintStart_toStartOf="parent" />
-
-                <RadioButton
-                    android:id="@+id/E_profile_notifications_no"
-                    android:layout_width="216dp"
-                    android:layout_height="29dp"
-                    android:layout_marginTop="8dp"
-                    android:checked="true"
-                    android:fontFamily="@font/roboto_mono_medium"
-                    android:text="Don't Allow"
-                    android:textColor="@color/dark_purple"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.356"
-                    app:layout_constraintStart_toEndOf="@+id/E_profile_notifications_yes" />
-
-            </RadioGroup>
-
-            <RadioGroup
-                android:id="@+id/E_profile_geo_setting"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:visibility="gone"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.381"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/E_profile_notify_setting">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="@font/roboto_mono_medium"
-                    android:text="Allow Geolocation?:"
-                    android:textColor="@color/dark_purple"
-                    android:textSize="16sp" />
-
-                <RadioButton
-                    android:id="@+id/E_profile_geo_yes"
-                    android:layout_width="216dp"
-                    android:layout_height="29dp"
-                    android:layout_marginTop="8dp"
-                    android:checked="true"
-                    android:fontFamily="@font/roboto_mono_medium"
-                    android:text="Allow"
-                    android:textColor="@color/dark_purple"
-                    app:layout_constraintEnd_toStartOf="@id/E_profile_notifications_no"
-                    app:layout_constraintStart_toStartOf="parent" />
-
-                <RadioButton
-                    android:id="@+id/E_profile_geo_no"
-                    android:layout_width="216dp"
-                    android:layout_height="29dp"
-                    android:layout_marginTop="8dp"
-                    android:checked="true"
-                    android:fontFamily="@font/roboto_mono_medium"
-                    android:text="Don't Allow"
-                    android:textColor="@color/dark_purple"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.356"
-                    app:layout_constraintStart_toEndOf="@+id/e_P_notifications_yes" />
-
-            </RadioGroup>
-
             <Button
                 android:id="@+id/E_profile_create"
                 android:layout_width="wrap_content"
@@ -369,9 +278,10 @@
                 android:text="Update"
                 android:textColor="@color/light_purple"
                 android:visibility="gone"
+                android:layout_marginBottom="135dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/E_profile_geo_setting" />
+                app:layout_constraintTop_toBottomOf="@+id/E_profile_gps_dec" />
 
             <TextView
                 android:layout_width="wrap_content"

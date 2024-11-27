@@ -27,6 +27,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import com.example.pygmyhippo.R;
 import com.example.pygmyhippo.common.Account;
 import com.example.pygmyhippo.common.RecyclerClickListener;
+import com.example.pygmyhippo.database.AccountDB;
 import com.example.pygmyhippo.database.DBOnCompleteFlags;
 import com.example.pygmyhippo.database.DBOnCompleteListener;
 import com.example.pygmyhippo.databinding.AdminFragmentAllListBinding;
@@ -46,7 +47,7 @@ public class AllUsersFragment extends Fragment implements RecyclerClickListener,
     NavController navController;
 
     AllUsersAdapter adapter;
-    AllUsersDB handler;
+    AccountDB handler;
 
     ArrayList<Account> allListData;
     Account signedInAccount;
@@ -75,7 +76,7 @@ public class AllUsersFragment extends Fragment implements RecyclerClickListener,
         binding = AdminFragmentAllListBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
-        handler = new AllUsersDB();
+        handler = new AccountDB();
         allListData = new ArrayList<>();
 
         // Get the account of the current user
@@ -88,25 +89,10 @@ public class AllUsersFragment extends Fragment implements RecyclerClickListener,
         binding.aAlllistRecycler.setLayoutManager(new LinearLayoutManager(getContext()));
         binding.aAlllistRecycler.setAdapter(adapter);
 
-        // Initialize first spinner
-        ArrayAdapter<CharSequence> categoryAdapter = ArrayAdapter.createFromResource(
-                this.requireContext(),
-                R.array.all_users_category_spinner,
-                android.R.layout.simple_spinner_item
-        );
-
-        categoryAdapter.setDropDownViewResource(android.R.layout.simple_spinner_item);
-        binding.aAlllistCategorySpinner.setAdapter(categoryAdapter);
-
-        // Initialize second spinner
-        ArrayAdapter<CharSequence> orderAdapter = ArrayAdapter.createFromResource(
-                this.requireContext(),
-                R.array.order_spinner,
-                android.R.layout.simple_spinner_item
-        );
-
-        orderAdapter.setDropDownViewResource(android.R.layout.simple_spinner_item);
-        binding.aAlllistOrderSpinner.setAdapter(orderAdapter);
+        //removed filtering
+        binding.aAlllistFilterByText.setVisibility(View.INVISIBLE);
+        binding.aAlllistCategorySpinner.setVisibility(View.INVISIBLE);
+        binding.aAlllistOrderSpinner.setVisibility(View.INVISIBLE);
 
         // Initialize the Title of the fragment to be viewed
         binding.aAlllistTitleText.setText(R.string.all_users_title);
@@ -121,8 +107,8 @@ public class AllUsersFragment extends Fragment implements RecyclerClickListener,
     }
 
     @Override
-    public void OnComplete(@NonNull ArrayList<Account> docs, int queryID, int flags) {
-        if (queryID == 0) {
+    public void OnCompleteDB(@NonNull ArrayList<Account> docs, int queryID, int flags) {
+        if (queryID == 4) {
             if (flags == DBOnCompleteFlags.SUCCESS.value) {
                 docs.forEach(doc -> {
                     // Add the retrieved accounts to the list

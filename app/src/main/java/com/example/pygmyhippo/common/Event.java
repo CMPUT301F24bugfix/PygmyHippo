@@ -18,8 +18,6 @@
 package com.example.pygmyhippo.common;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Our event class
@@ -46,6 +44,9 @@ public class Event {
     private int eventLimitCount;
     private int eventWinnersCount;
     private Boolean enableGeolocation;
+
+
+    private int hashcode;
 
     private EventStatus eventStatus;
 
@@ -86,6 +87,59 @@ public class Event {
         this.cost = cost;
         this.eventPoster = eventPoster;
         this.eventStatus = eventStatus;
+        this.enableGeolocation = enableGeolocation;
+    }
+
+    /**
+     * This method will generate the hashcode of the Event.
+     * returns boolean of if successful
+     *
+     * @return boolean
+     */
+    public boolean tryGenerateHashcode(){
+        if(!eventID.isEmpty()){
+            hashcode = eventID.hashCode();
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * This method will validate the hashcode of the Event.
+     *
+     * @return boolean
+     */
+    public boolean isValidHashcode(){
+        if(!eventID.isEmpty()){
+            int comphashcode = eventID.hashCode();
+            if(comphashcode == hashcode){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * This method will return the hashcode of the Event
+     * @return hashcode
+     */
+    public int getHashcode() {
+        return hashcode;
+    }
+
+    /**
+     * This method will return the enableGeolocation of the Event
+     * @return enableGeolocation
+     */
+    public Boolean getEnableGeolocation() {
+        return enableGeolocation;
+    }
+
+    /**
+     * This method will set the enableGeolocation of the Event
+     * @param enableGeolocation
+     */
+    public void setEnableGeolocation(Boolean enableGeolocation) {
         this.enableGeolocation = enableGeolocation;
     }
 
@@ -146,7 +200,8 @@ public class Event {
     }
 
     /**
-     * This method will check if an event has a certain entrant
+     * This method will check if an event has a certain entrant (based on accountID ONLY,
+     * because there should not be the same entrant with different statuses in an event)
      * @param entrant The entrant to check for
      * @return true if the entrant is in the event, false otherwise
      */
@@ -154,7 +209,7 @@ public class Event {
         if (this.entrants != null) {
             // Go through the whole list of entrants until you find one with matching attributes
             for (int index = 0; index < entrants.size(); index++) {
-                if (entrant.getAccountID().equals(entrants.get(index).getAccountID()) && entrants.get(index).getEntrantStatus().value.equals(entrant.getEntrantStatus().value)) {
+                if (entrant.getAccountID().equals(entrants.get(index).getAccountID())) {
                     // If the attributes are equal, then the list has the entrant
                     return true;
                 }
@@ -188,13 +243,8 @@ public class Event {
      */
     public void removeEntrant(Entrant entrant) {
         if (entrants != null) {
-            // Go through the list of entrants to find a one with matching attributes
-            for (int index = 0; index < entrants.size(); index++) {
-                if (entrant.getAccountID().equals(entrants.get(index).getAccountID()) && entrants.get(index).getEntrantStatus().value.equals(entrant.getEntrantStatus().value)) {
-                    // If the attributes are equal, then the list has the entrant, so remove it
-                    this.entrants.remove(index);
-                }
-            }
+            // If the attributes are in the entrants list, then the list has the entrant, so remove it
+            this.entrants.removeIf(i -> (entrant.getAccountID().equals(i.getAccountID()) && i.getEntrantStatus().value.equals(entrant.getEntrantStatus().value)));
         }
     }
 
@@ -360,6 +410,65 @@ public class Event {
      */
     public void setEventStatus(EventStatus eventStatus) {
         this.eventStatus = eventStatus;
+    }
+
+    /**
+     * This method will count all the entrants that are invited or accepted an invitation and return it.
+     * Used to check if there are still open spots available for a lottery redraw
+     * @return The number of event spots already taken
+     */
+    public Integer getCurrentWinners() {
+        Integer count = 0;
+
+        // Go through the list of entrants
+        for (int index = 0; index < entrants.size(); index++) {
+            if (entrants.get(index).getEntrantStatus().value.equals("invited") || entrants.get(index).getEntrantStatus().value.equals("accepted")) {
+                // Increase the count if the entrant status is invited or accepted
+                count++;
+            }
+        }
+        return count;
+    }
+
+    /**
+     * This method will check if the event has open positions for a lottery redraw or not
+     * @return true if there are open spots, false otherwise
+     */
+    public Boolean hasAvailability() {
+        if (getCurrentWinners() < eventWinnersCount) {
+            // Open spots available
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * This method will return the number of entrants in the event that are waitlisted
+     * @return The number of waitlisted entrants
+     */
+    public Integer getNumberWaitlisted() {
+        Integer waitlistCount = 0;
+        for (int index = 0; index < entrants.size(); index++) {
+            if (entrants.get(index).getEntrantStatus().value.equals("waitlisted")) {
+                waitlistCount++;
+            }
+        }
+        return waitlistCount;
+    }
+
+    /**
+     * This method will return the entrant with the given ID
+     * @param accountID The Id of the entrant we want
+     * @return The entrant with the matching ID, return null otherwise
+     */
+    public Entrant getEntrant(String accountID) {
+        for (int index = 0; index < entrants.size(); index++) {
+            if (entrants.get(index).getAccountID().equals(accountID)) {
+                // Found the entrant, so return it
+                return entrants.get(index);
+            }
+        }
+        return null;
     }
 
 }

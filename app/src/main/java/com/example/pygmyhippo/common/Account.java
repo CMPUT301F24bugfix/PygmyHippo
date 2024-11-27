@@ -6,9 +6,8 @@ Purposes:
     - Hold the attributes to get or set account info
     - Allow different permissions depending on the role (right now this is done for admin)
 Issues:
-    - No Image handling
     - Constructors can get large and hard to read (so could look into builders for better initialization)
-    - Nothing is done with location yet
+    - Nothing is done with location yet (This class doesn't need/use it)
  */
 import android.os.Build;
 import android.os.Parcel;
@@ -22,7 +21,6 @@ import java.util.ArrayList;
 
 
 /**
- * TODO: Decide how images are gonna be stored and set the appropriate datatype for profilePicture.
  * TODO:
  *  - Use a builder for initialization
  * Account Dataclass
@@ -42,7 +40,7 @@ public class Account implements Parcelable {
     private String emailAddress;
     private String deviceID;
     private String profilePicture;
-    private String location; // TODO: revaluate once we have a location API
+    private String location; // TODO: Remove
     private boolean receiveNotifications;
     private boolean enableGeolocation;
 
@@ -68,7 +66,6 @@ public class Account implements Parcelable {
         this.enableGeolocation = false;
 
         this.roles = new ArrayList<>();
-        this.roles.add(AccountRole.user);
 
         this.facilityProfile = new Facility();
     }

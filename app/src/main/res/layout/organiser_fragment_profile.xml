@@ -66,7 +66,7 @@
                 android:id="@+id/O_profile_image"
                 android:layout_width="210dp"
                 android:layout_height="210dp"
-                android:src="@drawable/dog"
+                android:src="@drawable/loading_profile"
                 app:civ_border_color="#FF000000"
                 app:civ_border_width="0dp"
                 app:layout_constraintBottom_toTopOf="@id/O_profile_nameLabel"
@@ -249,105 +249,6 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/O_profile_image" />
 
-            <TextView
-                android:id="@+id/O_profile_facilityheader"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
-                android:layout_marginBottom="8dp"
-                android:fontFamily="@font/roboto_mono_medium"
-                android:text="Facility"
-                android:textColor="@color/dark_purple"
-                android:textSize="22sp"
-                app:layout_constraintBottom_toTopOf="@+id/O_profile_facilityImg"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/O_profile_textPhone" />
-
-            <ImageView
-                android:id="@+id/O_profile_facilityImg"
-                android:layout_width="300dp"
-                android:layout_height="220dp"
-                android:layout_marginTop="8dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/O_profile_facilityheader"
-                app:srcCompat="@drawable/rec_centre"
-                tools:srcCompat="@drawable/rec_centre" />
-
-            <Button
-                android:id="@+id/O_Profile_facilityUploadImagebtn"
-                android:layout_width="wrap_content"
-                android:layout_height="48dp"
-                android:layout_marginTop="8dp"
-                android:backgroundTint="@color/dark_purple"
-                android:text="Upload Image"
-                android:textColor="@color/light_purple"
-                android:visibility="gone"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/O_profile_facilityImg" />
-
-            <TextView
-                android:id="@+id/O_Profile_facilityNameLabel"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
-                android:fontFamily="@font/roboto_mono_medium"
-                android:text="Facility Name:"
-                android:textColor="@color/dark_purple"
-                android:textSize="20sp"
-                android:inputType="textPostalAddress"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.325"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/O_Profile_facilityUploadImagebtn" />
-
-            <EditText
-                android:id="@+id/O_Profile_facilityNameText"
-                android:layout_width="wrap_content"
-                android:layout_height="48dp"
-                android:ems="13"
-                android:focusable="false"
-                android:focusableInTouchMode="false"
-                android:fontFamily="@font/roboto_mono_medium"
-                android:hint="Johnson Recreation Centre"
-                android:textColor="@color/dark_purple"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.503"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/O_Profile_facilityNameLabel" />
-
-            <TextView
-                android:id="@+id/O_Profile_facilityLocationLabel"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
-                android:fontFamily="@font/roboto_mono_medium"
-                android:text="Facility Location:"
-                android:textColor="@color/dark_purple"
-                android:textSize="20sp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.375"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/O_Profile_facilityNameText" />
-
-            <EditText
-                android:id="@+id/O_Profile_facilityLocationText"
-                android:layout_width="wrap_content"
-                android:layout_height="48dp"
-                android:ems="13"
-                android:focusable="false"
-                android:focusableInTouchMode="false"
-                android:fontFamily="@font/roboto_mono_medium"
-                android:hint="10323 112 Ave Edmonton"
-                android:textColor="@color/dark_purple"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.503"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/O_Profile_facilityLocationLabel" />
-
-
             <Button
                 android:id="@+id/O_profile_updateBtn"
                 android:layout_width="wrap_content"
@@ -358,8 +259,120 @@
                 android:visibility="gone"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/O_Profile_facilityLocationText" />
+                app:layout_constraintTop_toBottomOf="@+id/facility_layout" />
 
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/facility_layout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/O_profile_textPhone">
+
+                <TextView
+                    android:id="@+id/O_profile_facilityheader"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/roboto_mono_medium"
+                    android:text="Facility"
+                    android:textColor="@color/dark_purple"
+                    android:textSize="22sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <ImageView
+                    android:id="@+id/O_profile_facilityImg"
+                    android:layout_width="300dp"
+                    android:layout_height="220dp"
+                    android:layout_marginTop="8dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/O_profile_facilityheader"
+                    app:srcCompat="@drawable/default_poster"
+                    tools:srcCompat="@drawable/rec_centre" />
+
+                <TextView
+                    android:id="@+id/O_Profile_facilityNameLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:fontFamily="@font/roboto_mono_medium"
+                    android:inputType="textPostalAddress"
+                    android:text="Facility Name:"
+                    android:textColor="@color/dark_purple"
+                    android:textSize="20sp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/O_Profile_facilityUploadImagebtn" />
+
+                <EditText
+                    android:id="@+id/O_Profile_facilityNameText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="48dp"
+                    android:ems="13"
+                    android:focusable="false"
+                    android:focusableInTouchMode="false"
+                    android:fontFamily="@font/roboto_mono_medium"
+                    android:hint="Facility name"
+                    android:textColor="@color/dark_purple"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.503"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/O_Profile_facilityNameLabel" />
+
+                <TextView
+                    android:id="@+id/O_Profile_facilityLocationLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:fontFamily="@font/roboto_mono_medium"
+                    android:text="Facility Location:"
+                    android:textColor="@color/dark_purple"
+                    android:textSize="20sp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/O_Profile_facilityNameText" />
+
+                <EditText
+                    android:id="@+id/O_Profile_facilityLocationText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="48dp"
+                    android:ems="13"
+                    android:focusable="false"
+                    android:focusableInTouchMode="false"
+                    android:fontFamily="@font/roboto_mono_medium"
+                    android:hint="Address"
+                    android:textColor="@color/dark_purple"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.503"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/O_Profile_facilityLocationLabel" />
+
+                <Button
+                    android:id="@+id/O_Profile_facilityUploadImagebtn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="48dp"
+                    android:layout_marginTop="8dp"
+                    android:backgroundTint="@color/dark_purple"
+                    android:text="Upload Image"
+                    android:textColor="@color/light_purple"
+                    android:visibility="gone"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/O_profile_facilityImg" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+            <Button
+                android:id="@+id/O_create_facility_button"
+                android:layout_width="wrap_content"
+                android:layout_height="48dp"
+                android:layout_marginTop="8dp"
+                android:backgroundTint="@color/dark_purple"
+                android:text="Create Facility"
+                android:textColor="@color/light_purple"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/O_profile_textPhone" />
 
 
 

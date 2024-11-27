@@ -8,6 +8,8 @@ Issues:
     - Should test if parsable is working
  */
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import com.example.pygmyhippo.common.Facility;
 
@@ -53,5 +55,26 @@ public class FacilityTest {
     public void testSetPicture() {
         facility.setFacilityPicture("https//:new");
         assertEquals("https//:new", facility.getFacilityPicture());
+    }
+
+    @Test
+    public void testFacilityExists() {
+        // Exits but in our circumstances none of the fields have been made. So should not exist
+        Facility newFacility = new Facility();
+        assertFalse(newFacility.facilityExists());
+
+        // Change one fields and it should "exist" ie there is something to display
+        newFacility.setName("Some Facility");
+        assertTrue(newFacility.facilityExists());
+
+        newFacility.setName("");
+        newFacility.setLocation("88 St. 45 Ave");
+        assertTrue(newFacility.facilityExists());
+
+        newFacility.setLocation("");
+        newFacility.setFacilityPicture("https//:image/url");
+        assertTrue(newFacility.facilityExists());
+
+        assertTrue(facility.facilityExists());
     }
 }

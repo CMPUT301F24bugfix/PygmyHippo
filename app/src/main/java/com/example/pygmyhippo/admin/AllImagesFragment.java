@@ -13,6 +13,8 @@ package com.example.pygmyhippo.admin;
  */
 
 
+import static androidx.navigation.Navigation.findNavController;
+
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.util.Log;
@@ -22,6 +24,7 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.NavController;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -30,7 +33,10 @@ import com.example.pygmyhippo.common.Account;
 import com.example.pygmyhippo.common.Event;
 import com.example.pygmyhippo.common.Image;
 import com.example.pygmyhippo.common.RecyclerClickListener;
+import com.example.pygmyhippo.database.DBOnCompleteFlags;
 import com.example.pygmyhippo.database.DBOnCompleteListener;
+import com.example.pygmyhippo.database.ImageStorage;
+import com.example.pygmyhippo.database.StorageOnCompleteListener;
 import com.example.pygmyhippo.databinding.AdminFragmentAllListBinding;
 
 import java.util.ArrayList;
@@ -38,16 +44,21 @@ import java.util.ArrayList;
 /**
  * Fragment for displaying all images for admins.
  */
-public class AllImagesFragment extends Fragment implements RecyclerClickListener, DBOnCompleteListener<Object> {
+public class AllImagesFragment extends Fragment implements RecyclerClickListener, StorageOnCompleteListener<Object> {
     AdminFragmentAllListBinding binding;
     AllImagesAdapter adapter;
     ArrayList<Image> imageList;
-    AllImagesDB handler;
+    ImageStorage handler;
+    private Account signedInAccount;
+    private NavController navController;
 
     @Override
     public void onItemClick(int position) {
-        // TODO: add functionality here
+        Bundle navArgs = new Bundle();
+        navArgs.putParcelable("signedInAccount", signedInAccount);
+        navArgs.putParcelable("Image", imageList.get(position));
         Log.d("Admin", String.format("Image at position (%d) clicked.", position));
+        navController.navigate(R.id.admin_navigation_delete_image, navArgs);
     }
 
     @Override
@@ -55,7 +66,8 @@ public class AllImagesFragment extends Fragment implements RecyclerClickListener
                              ViewGroup container, Bundle savedInstanceState) {
         binding =  AdminFragmentAllListBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
-        handler = new AllImagesDB();
+        signedInAccount = AllImagesFragmentArgs.fromBundle(getArguments()).getSignedInAccount();
+        handler = new ImageStorage();
 
         // Set up the views for this fragment and hide the spinners
         binding.aAlllistTitleText.setText(R.string.all_images_title);
@@ -68,8 +80,9 @@ public class AllImagesFragment extends Fragment implements RecyclerClickListener
         adapter = new AllImagesAdapter(imageList, this);
 
         // Get the accounts and events for their images
-        handler.getAccounts(1000, this);
-        handler.getEvents(1000, this);
+        handler.getAccountsWithImage(1000, this);
+        handler.getEventsWithImage(1000, this);
+        handler.getFacilitiesWithImage(1000, this);
 
         // Format the recycler list
         binding.aAlllistRecycler.setAdapter(adapter);
@@ -89,6 +102,11 @@ public class AllImagesFragment extends Fragment implements RecyclerClickListener
 
         return root;
     }
+    @Override
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        navController = findNavController(view);
+    }
 
     @Override
     public void onDestroyView() {
@@ -97,9 +115,9 @@ public class AllImagesFragment extends Fragment implements RecyclerClickListener
     }
 
     @Override
-    public void OnComplete(@NonNull ArrayList<Object> docs, int queryID, int flags) {
-        switch (queryID) {
-            case 1:
+    public void OnCompleteStorage(@NonNull ArrayList<Object> docs, int queryID, int flags) {
+        if (flags == DBOnCompleteFlags.SUCCESS.value) {
+            if (queryID == 2) {
                 // Go through obtained documents
                 docs.forEach(obj -> {
                     // Get the account and obtain the profile image from it to add to the list
@@ -108,8 +126,8 @@ public class AllImagesFragment extends Fragment implements RecyclerClickListener
                     imageList.add(image);
                     adapter.notifyItemInserted(imageList.size() - 1);
                 });
-                break;
-            case 2:
+            }
+            else if (queryID == 3) {
                 docs.forEach(obj -> {
                     // Get the event poster from the obtained object and convert it to an image class
                     Event event = (Event) obj;
@@ -117,9 +135,20 @@ public class AllImagesFragment extends Fragment implements RecyclerClickListener
                     imageList.add(image);
                     adapter.notifyItemInserted(imageList.size() - 1);
                 });
-                break;
-            default:
+            }
+            else if (queryID == 7){
+                // Go through obtained documents
+                docs.forEach(obj -> {
+                    // Get the account and obtain the profile image from it to add to the list
+                    Account account = (Account) obj;
+                    Image image = new Image(account.getFacilityProfile().getFacilityPicture(), account.getAccountID(), Image.ImageType.Facility);
+                    imageList.add(image);
+                    adapter.notifyItemInserted(imageList.size() - 1);
+                });
+            }
+            else{
                 Log.d("AllImagesFragment", String.format("Received OnComplete call from unknown queryID %d", queryID));
+            }
         }
     }
 }

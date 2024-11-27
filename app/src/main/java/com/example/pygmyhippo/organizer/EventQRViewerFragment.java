@@ -4,8 +4,6 @@ package com.example.pygmyhippo.organizer;
  * This fragment will display the qr code
  * Purposes:
  *      - Provides the organiser with their generated QR code
- * TODO:
- *  navigate to event details page
  * */
 
 import android.graphics.Bitmap;
@@ -28,10 +26,10 @@ import androidx.navigation.Navigation;
 
 import com.example.pygmyhippo.R;
 import com.example.pygmyhippo.common.Account;
-import com.example.pygmyhippo.common.Entrant;
 import com.example.pygmyhippo.common.Event;
 import com.example.pygmyhippo.database.DBOnCompleteFlags;
 import com.example.pygmyhippo.database.DBOnCompleteListener;
+import com.example.pygmyhippo.database.EventDB;
 import com.google.zxing.EncodeHintType;
 
 import net.glxn.qrgen.android.QRCode;
@@ -88,6 +86,7 @@ public class EventQRViewerFragment extends Fragment implements DBOnCompleteListe
         handler = new EventDB();
         eventTitle = view.findViewById(R.id.o_eventqr_eventTitle);
         eventDate = view.findViewById(R.id.o_eventqr_eventDate);
+        QRCodeImage = view.findViewById(R.id.o_eventqr_view);
 
 
         if (getArguments() != null) {
@@ -113,16 +112,7 @@ public class EventQRViewerFragment extends Fragment implements DBOnCompleteListe
 
         Bundle bundle = this.getArguments();
         myEventIDString = bundle.getString("eventID");
-        if (getArguments() != null && !myEventIDString.isEmpty()) {
-            // searches for the event details
-            handler.getEvent(myEventIDString, this);
-            QRCodeImage = view.findViewById(R.id.o_eventqr_view);
-            Bitmap bitmap = QRCode.from(eventID)
-                    .withSize(500, 500)
-                    .withHint(EncodeHintType.MARGIN, "1")
-                    .bitmap();
-            QRCodeImage.setImageBitmap(bitmap);
-        }
+        handler.getEventByID(myEventIDString, this);
         return view;
     }
 
@@ -130,6 +120,11 @@ public class EventQRViewerFragment extends Fragment implements DBOnCompleteListe
      * Updates the event details on screen
      */
     private void setScreenDetails(){
+        Bitmap bitmap = QRCode.from(myevent.getEventID())
+                .withSize(500, 500)
+                .withHint(EncodeHintType.MARGIN, "1")
+                .bitmap();
+        QRCodeImage.setImageBitmap(bitmap);
         eventDate.setText(myevent.getDate());
         eventTitle.setText(myevent.getEventTitle());
     }
@@ -141,13 +136,22 @@ public class EventQRViewerFragment extends Fragment implements DBOnCompleteListe
      * @param flags - Flags to indicate query status/set how to process query result.
      */
     @Override
-    public void OnComplete(@NonNull ArrayList<Event> docs, int queryID, int flags) {
+    public void OnCompleteDB(@NonNull ArrayList<Event> docs, int queryID, int flags) {
         if (queryID == 1) {
             if (flags == DBOnCompleteFlags.SINGLE_DOCUMENT.value) {
                 myevent = docs.get(0);
-                setScreenDetails();
+                if(myevent.isValidHashcode()){
+                    Log.i("QR Viewer", "Valid hashcode, displaying info");
+                    setScreenDetails();
+                }
+                else{
+                    Log.e("QR Viewer", "Invalid hashcode");
+                    Toast.makeText(getContext(), "Hashcode not valid", Toast.LENGTH_LONG).show();
+                }
             } else {
                 // expect 1 document, else there must be an error
+                Log.e("QR Viewer", "Database Error");
+                Toast.makeText(getContext(), "Hashcode not valid", Toast.LENGTH_LONG).show();
                 handleDBError();
             }
         }

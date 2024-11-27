@@ -8,7 +8,7 @@ Purposes:
     - Allows organiser to make a facility profile
     - Spinner allows for user to change their account role
 Issues:
-    - String fields get added to the database but images don't yet.
+    - Add option to delete facility image
  */
 
 import android.net.Uri;
@@ -23,12 +23,15 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.PickVisualMediaRequest;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
@@ -36,14 +39,19 @@ import androidx.navigation.Navigation;
 import com.example.pygmyhippo.R;
 import com.example.pygmyhippo.common.Account;
 import com.example.pygmyhippo.common.Facility;
+import com.example.pygmyhippo.common.Image;
+import com.example.pygmyhippo.database.AccountDB;
 import com.example.pygmyhippo.database.DBOnCompleteFlags;
 import com.example.pygmyhippo.database.DBOnCompleteListener;
+import com.example.pygmyhippo.database.ImageStorage;
+import com.example.pygmyhippo.database.StorageOnCompleteListener;
 import com.example.pygmyhippo.databinding.OrganiserFragmentProfileBinding;
-import com.example.pygmyhippo.user.ProfileDB;
 import com.squareup.picasso.Picasso;
 
+import java.io.File;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Objects;
 
 
@@ -52,25 +60,26 @@ import java.util.Objects;
  * To be Implemented:
  * - Facility profile page
  *
- * Issues:
- * - Profile picture doesn't get stored in database
- *
  * Allows the organiser to edit or view their current provided information.
- * @author Jennifer, Griffin
- * @version 1.2
+ * @author Jennifer, Griffin, Kori
+ * @version 1.3
  * No returns and no parameters
  */
-public class ProfileFragment extends Fragment implements AdapterView.OnItemSelectedListener {
-    private Uri imagePath;
+public class ProfileFragment extends Fragment implements AdapterView.OnItemSelectedListener, DBOnCompleteListener<Account>, StorageOnCompleteListener<Image> {
+    private String imagePath = null;
     private String uploadType = "avatar";
     private Account signedInAccount;
     private String currentRole;
 
     private OrganiserFragmentProfileBinding binding;
     private NavController navController;
-    private ProfileDB handler;
+    private AccountDB handler;
+    private ImageStorage imageHandler;
 
     private EditText name_f, pronoun_f, phone_f, email_f, facilityName_f, facilityLocation_f;
+    private ImageView profileImage, facilityImage;
+    private ConstraintLayout facilityLayout;
+    private Button createFacilityButton;
 
 
      // Registers a photo picker activity launcher in single-select mode and sets the profile image to the new URI
@@ -79,12 +88,30 @@ public class ProfileFragment extends Fragment implements AdapterView.OnItemSelec
                 // Callback is invoked after the user selects a media item or closes the
                 // photo picker.
                 if (uri != null) {
-                    imagePath = uri;
-                    if (Objects.equals(uploadType, "avatar")) binding.OProfileImage.setImageURI(uri);
-                    else Picasso.get()
-                            .load(imagePath)
-                            .fit()
-                            .into(binding.OProfileFacilityImg);
+                    // Check if avatar or facility is being updated
+                    if (uploadType.equals("avatar")) {
+                        // Set the profile image
+                        binding.OProfileImage.setImageURI(uri);
+
+                        // If the user already had a profile picture, make sure to delete the old one first
+                        if (!signedInAccount.getProfilePicture().isEmpty()) {
+                            imageHandler.DeleteImageByURL(signedInAccount.getProfilePicture(), this);
+                        }
+
+                        // Save the image in the database
+                        imageHandler.uploadProfileImageToFirebase(uri, this);
+                    } else if (uploadType.equals("facility")) {
+                        // Set the facility image
+                        binding.OProfileFacilityImg.setImageURI(uri);
+
+                        // If the user already had a profile picture, make sure to delete the old one first
+                        if (!signedInAccount.getFacilityProfile().getFacilityPicture().isEmpty()) {
+                            imageHandler.DeleteImageByURL(signedInAccount.getFacilityProfile().getFacilityPicture(), this);
+                        }
+
+                        // Save the image in the database
+                        imageHandler.uploadFacilityImageToFirebase(uri, this);
+                    }
                 }
             });
 
@@ -97,10 +124,10 @@ public class ProfileFragment extends Fragment implements AdapterView.OnItemSelec
     public void generateAvatar(String name) throws URISyntaxException {
         if (name.isEmpty()) name = "null";
         String url = "https://api.multiavatar.com/";
-        imagePath = Uri.parse(url+name+"pot.png");
+        Uri avatarURI = Uri.parse(url+name+".png");
 
         Picasso.get()
-                .load(imagePath)
+                .load(avatarURI)
                 .into(binding.OProfileImage);
 
     }
@@ -130,22 +157,6 @@ public class ProfileFragment extends Fragment implements AdapterView.OnItemSelec
         binding = OrganiserFragmentProfileBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
-        // Initialize the role spinner
-        Spinner role_dropdown = binding.oRoleSpinner;
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(
-                root.getContext(),
-                R.array.role,
-                R.layout.e_p_role_dropdown
-        );
-
-        adapter.setDropDownViewResource(R.layout.e_p_role_dropdown);
-        role_dropdown.setSelection(adapter.getPosition("organiser"));
-
-        role_dropdown.setAdapter(adapter);
-
-        // need to do this so the listener is connected
-        role_dropdown.setOnItemSelectedListener(this);
-
         // Get buttons
         ImageView editButton = root.findViewById(R.id.O_profile_editBtn);
         Button updateButton = root.findViewById(R.id.O_profile_updateBtn);
@@ -163,10 +174,53 @@ public class ProfileFragment extends Fragment implements AdapterView.OnItemSelec
         Button uploadIm_btn = root.findViewById(R.id.O_profile_uploadImageBtn);
         Button deleteIm_btn = root.findViewById(R.id.O_profile_deleteImageBtn);
         Button facility_uploadIm_btn = root.findViewById(R.id.O_Profile_facilityUploadImagebtn);
+        createFacilityButton = root.findViewById(R.id.O_create_facility_button);
 
-        // Get the account and initialize the db handler
+        // Images
+        profileImage = root.findViewById(R.id.O_profile_image);
+        facilityImage = root.findViewById(R.id.O_profile_facilityImg);
+
+        // Get the layout
+        facilityLayout = root.findViewById(R.id.facility_layout);
+
+        // Get the account and initialize the db and storage handlers
+        handler = new AccountDB();
+        imageHandler = new ImageStorage();
         setProfile();
-        handler = new ProfileDB();
+
+        Spinner roleSpinner = binding.oRoleSpinner;
+
+        // Set up the spinner for assigned roles (only if the account has more than one role)
+        if (signedInAccount.getRoles().size() > 1) {
+            // Make the string array depending on the roles of the account
+            ArrayList<String> rolesList = new ArrayList<String>();
+            rolesList.add("-- select role --");         // For display
+
+            // Add each role to the array
+            for (int index = 0; index < signedInAccount.getRoles().size(); index++) {
+                rolesList.add(signedInAccount.getRoles().get(index).value);
+            }
+
+            // Convert the ArrayList to a String[]
+            // From https://www.geeksforgeeks.org/convert-an-arraylist-of-string-to-a-string-array-in-java/
+            // Accessed on 2024-11-24
+            String[] roles = Arrays.copyOf(rolesList.toArray(),
+                    rolesList.size(), String[].class);
+
+            // https://stackoverflow.com/questions/2505207/how-to-add-item-to-spinners-arrayadapter
+            // Helped understand this. Accessed on 2024-11-24
+            ArrayAdapter<CharSequence> roleAdapter = new ArrayAdapter<>(getContext(),
+                    R.layout.e_p_role_dropdown,
+                    roles);
+
+            roleSpinner.setAdapter(roleAdapter);
+
+            roleSpinner.setOnItemSelectedListener(this);
+        } else {
+            // Make the spinner gone since the user can't change roles
+            roleSpinner.setVisibility(View.GONE);
+        }
+
 
         // Allows te page elements to be edited by the user if the edit button is clicked
         View.OnClickListener edit = new View.OnClickListener() {
@@ -196,6 +250,7 @@ public class ProfileFragment extends Fragment implements AdapterView.OnItemSelec
                 // set visibility
                 updateButton.setVisibility(View.VISIBLE);
                 editButton.setVisibility(View.GONE);
+                createFacilityButton.setVisibility(View.GONE);
                 uploadIm_btn.setVisibility(View.VISIBLE);
                 deleteIm_btn.setVisibility(View.VISIBLE);
                 facility_uploadIm_btn.setVisibility(View.VISIBLE);
@@ -205,7 +260,6 @@ public class ProfileFragment extends Fragment implements AdapterView.OnItemSelec
         View.OnClickListener update = new View.OnClickListener() {
             /**
              * Tell which elements to become unfocusable, and stores the new user info in the database
-             * TODO: Store the images in the database as well
              * @author Jennifer, Kori
              * @param view the fragment view
              */
@@ -239,14 +293,24 @@ public class ProfileFragment extends Fragment implements AdapterView.OnItemSelec
                 signedInAccount.setPronouns(pronoun_f.getText().toString());
                 signedInAccount.setPhoneNumber(phone_f.getText().toString());
                 signedInAccount.setEmailAddress(email_f.getText().toString());
+
                 String facilityName = facilityName_f.getText().toString();
                 String facilityLocation = facilityLocation_f.getText().toString();
-                signedInAccount.setFacilityProfile(new Facility("", facilityName, facilityLocation));
+                signedInAccount.getFacilityProfile().setName(facilityName);
+                signedInAccount.getFacilityProfile().setLocation(facilityLocation);
+
+                if (facilityName.isEmpty()
+                        && facilityLocation.isEmpty()
+                        && signedInAccount.getFacilityProfile().getFacilityPicture().isEmpty()) {
+                    createFacilityButton.setVisibility(View.VISIBLE);
+                } else {
+                    createFacilityButton.setVisibility(View.GONE);
+                }
 
                 // Update to reflect in the database
                 handler.updateProfile(signedInAccount, new DBOnCompleteListener<Account>() {
                     @Override
-                    public void OnComplete(@NonNull ArrayList<Account> docs, int queryID, int flags) {
+                    public void OnCompleteDB(@NonNull ArrayList<Account> docs, int queryID, int flags) {
                         // Log when the data is updated or catch if there was an error
                         if (flags == DBOnCompleteFlags.SUCCESS.value) {
                             Log.d("DB", "Successfully finished updating account");
@@ -298,11 +362,21 @@ public class ProfileFragment extends Fragment implements AdapterView.OnItemSelec
         View.OnClickListener deleteAvatar = new View.OnClickListener() {
             /**
              * Sends the users name to the method getAvatar
-             * @author Jennifer
+             * @author Jennifer, Kori
              * @param view the fragment view
              */
             @Override
             public void onClick(View view) {
+                // First delete the image from the user, and the firebase storage
+                if (!signedInAccount.getProfilePicture().isEmpty()) {
+                    imageHandler.DeleteImageByURL(signedInAccount.getProfilePicture(), ProfileFragment.this::OnCompleteStorage);
+                }
+
+                // Update the profile
+                signedInAccount.setProfilePicture("");
+                handler.updateProfile(signedInAccount, ProfileFragment.this::OnCompleteDB);
+
+                // Next, replace the old image with a generated avatar
                 try {
                     generateAvatar(name_f.getText().toString());
                 } catch (URISyntaxException e) {
@@ -311,11 +385,22 @@ public class ProfileFragment extends Fragment implements AdapterView.OnItemSelec
             }
         };
 
+        View.OnClickListener createFacility = new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // Make the Facility text views visible and the create button invisible
+                // Note: The layout won't stay visible unless the user enters in at least one value
+                createFacilityButton.setVisibility(View.GONE);
+                facilityLayout.setVisibility(View.VISIBLE);
+            }
+        };
+
         facility_uploadIm_btn.setOnClickListener(uploadFacility);
         uploadIm_btn.setOnClickListener(uploadAvatar);
         deleteIm_btn.setOnClickListener(deleteAvatar);
         editButton.setOnClickListener(edit);
         updateButton.setOnClickListener(update);
+        createFacilityButton.setOnClickListener(createFacility);
         return root;
     }
 
@@ -323,7 +408,7 @@ public class ProfileFragment extends Fragment implements AdapterView.OnItemSelec
      * This method just populates the profile details with the current account
      * @param account The account of the current user
      */
-    private void populateTextViews(Account account) {
+    private void populateAllViews(Account account) {
         name_f.setText(account.getName());
         pronoun_f.setText(account.getPronouns());
         if (account.getPhoneNumber() != null) {
@@ -332,10 +417,79 @@ public class ProfileFragment extends Fragment implements AdapterView.OnItemSelec
         }
         email_f.setText(account.getEmailAddress());
 
-        if (account.getFacilityProfile() != null) {
-            // Populate the facility fields if the account has one
+        // Get the profile picture if it has already been set
+        if (!signedInAccount.getProfilePicture().isEmpty()) {
+            // Get the profile picture
+            imageHandler.getImageDownloadUrl(signedInAccount.getProfilePicture(), new StorageOnCompleteListener<Uri>() {
+                @Override
+                public void OnCompleteStorage(@NonNull ArrayList<Uri> docs, int queryID, int flags) {
+                    // Author of this code segment is James
+                    if (flags == DBOnCompleteFlags.SUCCESS.value) {
+                        // Get the image and format it
+                        Uri downloadUri = docs.get(0);
+                        int imageSideLength = profileImage.getWidth() / 2;
+                        Picasso.get()
+                                .load(downloadUri)
+                                .resize(imageSideLength, imageSideLength)
+                                .centerCrop()
+                                .into(profileImage);
+                    }
+                }
+            });
+        } else {
+            // There is no image, so generate the avatar
+            try {
+                generateAvatar(signedInAccount.getName());
+            } catch (URISyntaxException e) {
+                throw new RuntimeException(e);
+            }
+        }
+
+        // Check if the account has a facility
+        if (signedInAccount.getFacilityProfile().facilityExists()) {
+            // Change and populate the views to display the facility
+            populateFacilityViews(account);
+        }
+    }
+
+    /**
+     * This method will set the fields for facility visible with their respective existing values
+     * @author Kori
+     * @param account The account with the facility we want to display
+     */
+    public void populateFacilityViews(Account account) {
+        // Make the layout visible
+        facilityLayout.setVisibility(View.VISIBLE);
+        createFacilityButton.setVisibility(View.GONE);
+
+        if (signedInAccount.getFacilityProfile().getName() != null) {
+            // Set the name
             facilityName_f.setText(account.getFacilityProfile().getName());
+        }
+        if (signedInAccount.getFacilityProfile().getLocation() != null) {
+            // Set the location
             facilityLocation_f.setText(account.getFacilityProfile().getLocation());
+        }
+
+        // Get the facility picture if it has already been set
+        if (!signedInAccount.getFacilityProfile().getFacilityPicture().isEmpty()) {
+            // Get the profile picture
+            imageHandler.getImageDownloadUrl(signedInAccount.getFacilityProfile().getFacilityPicture(), new StorageOnCompleteListener<Uri>() {
+                @Override
+                public void OnCompleteStorage(@NonNull ArrayList<Uri> docs, int queryID, int flags) {
+                    if (flags == DBOnCompleteFlags.SUCCESS.value) {
+                        // Get the image and format it
+                        Uri downloadUri = docs.get(0);
+                        int imageWidth = facilityImage.getWidth();
+                        int imageHeight = facilityImage.getHeight();
+                        Picasso.get()
+                                .load(downloadUri)
+                                .resize(imageWidth, imageHeight)
+                                .centerCrop()
+                                .into(facilityImage);
+                    }
+                }
+            });
         }
     }
 
@@ -350,7 +504,7 @@ public class ProfileFragment extends Fragment implements AdapterView.OnItemSelec
         if (signedInAccount != null) {
             // An account was
             Log.d("ProfileFragment", String.format("Populating text views with %s %s", signedInAccount.getAccountID(), signedInAccount.getName()));
-            populateTextViews(signedInAccount);
+            populateAllViews(signedInAccount);
         } else {
             Log.d("ProfileFragment", "ERROR!");
         }
@@ -402,5 +556,70 @@ public class ProfileFragment extends Fragment implements AdapterView.OnItemSelec
     public void onDestroyView() {
         super.onDestroyView();
         binding = null;
+    }
+
+    /**
+     * Data callback for account data
+     * @param docs - Documents retrieved from DB (if it was a get query).
+     * @param queryID - ID of query completed.
+     * @param flags - Flags to indicate query status/set how to process query result.
+     */
+    @Override
+    public void OnCompleteDB(@NonNull ArrayList<Account> docs, int queryID, int flags) {
+        if (queryID == 3) {      // Update account
+            // Log when the data is updated or catch if there was an error
+            if (flags == DBOnCompleteFlags.SUCCESS.value) {
+                Log.d("DB", "Successfully finished updating account");
+            } else {
+                // If not the success flag, then there was an error
+                Log.d("Profile", "Error in updating account.");
+            }
+        }
+    }
+
+    /**
+     * Callback for image handling
+     * @param docs - Documents retrieved from DB (if it was a get query).
+     * @param queryID - ID of query completed.
+     * @param flags - Flags to indicate query status/set how to process query result.
+     */
+    @Override
+    public void OnCompleteStorage(@NonNull ArrayList<Image> docs, int queryID, int flags) {
+        if (queryID == 4) {      // uploadProfileImageToFirebase
+            if (flags == DBOnCompleteFlags.SUCCESS.value) {
+                Log.d("FirebaseStorage", "Profile image uploaded successfully");
+
+                // Get the image and get its url
+                Image profileImage = docs.get(0);
+                imagePath = profileImage.getUrl();
+
+                // Update the user profile
+                signedInAccount.setProfilePicture(imagePath);
+                handler.updateProfile(signedInAccount, this);
+            } else {
+                Log.d("FirebaseStorage", "Profile image upload unsuccessful");
+            }
+        } else if (queryID == 5) {      // Delete image
+            // Log the results of the deletion
+            if (flags == DBOnCompleteFlags.SUCCESS.value) {
+                Log.d("FirebaseStorage", "Profile image deleted successfully");
+            } else {
+                Log.d("FirebaseStorage", "Profile image deletion unsuccessful");
+            }
+        } else if (queryID == 6) {      // uploadFacilityImage
+            if (flags == DBOnCompleteFlags.SUCCESS.value) {
+                Log.d("FirebaseStorage", "Facility image uploaded successfully");
+
+                // Get the image and get its url
+                Image facilityImage = docs.get(0);
+                imagePath = facilityImage.getUrl();
+
+                // Update the user profile
+                signedInAccount.getFacilityProfile().setFacilityPicture(imagePath);
+                handler.updateProfile(signedInAccount, this);
+            } else {
+                Log.d("FirebaseStorage", "Profile image upload unsuccessful");
+            }
+        }
     }
 }

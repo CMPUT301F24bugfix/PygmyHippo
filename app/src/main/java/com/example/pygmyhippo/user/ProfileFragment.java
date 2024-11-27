@@ -10,12 +10,18 @@ Purposes:
     - Allows admin functionality to delete the profile (given the permissions)
     - Let's user delete profile pic, which generates a new one
 Issues:
-    - Only text fields are updated in database, It doesn't have image handling yet
+    - Decide to keep notifications and geolocation checkboxes when permissions do that anyways
  */
 
+import android.Manifest;
+import android.content.res.Resources;
 import android.widget.AdapterView;
-import android.widget.RadioButton;
+import android.widget.CheckBox;
 
+import com.example.pygmyhippo.common.Image;
+import com.example.pygmyhippo.database.AccountDB;
+import com.example.pygmyhippo.database.ImageStorage;
+import com.example.pygmyhippo.database.StorageOnCompleteListener;
 import com.example.pygmyhippo.databinding.UserFragmentProfileBinding;
 import android.net.Uri;
 import android.os.Bundle;
@@ -23,13 +29,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.RadioButton;
-import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.Toast;
 
@@ -47,43 +50,71 @@ import com.example.pygmyhippo.R;
 import com.example.pygmyhippo.common.Account;
 import com.example.pygmyhippo.database.DBOnCompleteFlags;
 import com.example.pygmyhippo.database.DBOnCompleteListener;
-import com.example.pygmyhippo.databinding.UserFragmentProfileBinding;
+import com.example.pygmyhippo.organizer.EventFragment;
 import com.squareup.picasso.Picasso;
 
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Objects;
+
+import de.hdodenhof.circleimageview.CircleImageView;
 
 /**
  * This fragment holds most of the information about a user which is returned from a call to the database
  * Purpose: To allow the user to update their profile and change their role
  *
- * Issues:
- * - Profile Images not stored in the database yet
- *
  * Allows the user to edit or view their current provided information.
- * @author Jennifer, Griffin
- * @version 1.1
+ * @author Jennifer, Griffin, Kori
+ * @version 1.3
  * No returns and no parameters
  */
-public class ProfileFragment extends Fragment  implements AdapterView.OnItemSelectedListener, DBOnCompleteListener<Account> {
-    private Uri imagePath;
+public class ProfileFragment extends Fragment  implements AdapterView.OnItemSelectedListener, DBOnCompleteListener<Account>, StorageOnCompleteListener<Image> {
+    private String imagePath = null;
+    private ImageStorage imageHandler;
     private UserFragmentProfileBinding binding;
     private NavController navController;
-    private ProfileDB handler;
+    private AccountDB handler;
 
     private Account signedInAccount;
     private String adminViewAccountID;
     private String currentRole;
 
     private EditText nameField, pronounField, phoneField, emailField;
-    private RadioButton decGeo, decNotify;
-    private RadioGroup notifyRGroup, geolocationRGroup;
+    private CheckBox decGeo, decNotify;
     private Button uploadImgBtn, deleteImgBtn;
     private ImageView editButton;
     private Button updateButton, deleteUserButton;
     private ConstraintLayout adminConstraintLayout;
     private Spinner roleSpinner;
+    private CircleImageView profileImage;
+
+    /*
+        Code is from https://developer.android.com/develop/sensors-and-location/location/permissions#:~:text=ACCESS_FINE_LOCATION%20must%20be%20requested%20with,to%20only%20approximate%20location%20information.
+        Accessed on 2024-11-17
+        It sets up the permission launcher to ask for location permissions, and then launches it
+        TODO: Remove check box for geolocation, permissions handle it
+         */
+    ActivityResultLauncher<String> locationPermissionRequest =
+            registerForActivityResult(new ActivityResultContracts
+                            .RequestPermission(), isGranted -> {
+
+                        // Ensure that the geolocation value matches the permission request
+                        if (isGranted) {
+                            // Approximate location access granted, set that in the user's profile
+                            Log.d("Profile", "Location permissions granted");
+                            signedInAccount.setEnableGeolocation(true);
+                        } else {
+                            // No location access granted.
+                            Log.d("Profile", "No location permissions granted");
+                            signedInAccount.setEnableGeolocation(false);
+                            decGeo.setChecked(false);
+                        }
+
+                        // Make sure this info gets updated if its changed
+                        handler.updateProfile(signedInAccount, this);
+                    }
+            );
 
     // initialized the listener
     public void setOnRoleSelectedListener() {
@@ -92,16 +123,24 @@ public class ProfileFragment extends Fragment  implements AdapterView.OnItemSele
 
     /**
      * Registers a photo picker activity launcher in single-select mode and sets the profile image to the new URI
-     * @author Jennifer
-     * @version 1.0
+     * @author Jennifer, Kori
+     * @version 2.0
      */
     ActivityResultLauncher<PickVisualMediaRequest> pickMedia =
             registerForActivityResult(new ActivityResultContracts.PickVisualMedia(), uri -> {
                 // Callback is invoked after the user selects a media item or closes the
                 // photo picker.
                 if (uri != null) {
-                    imagePath = uri;
+                    // Set the profile image
                     binding.EProfileProfileImg.setImageURI(uri);
+
+                    // If the user already had a profile picture, make sure to delete the old one first
+                    if (!signedInAccount.getProfilePicture().isEmpty()) {
+                        imageHandler.DeleteImageByURL(signedInAccount.getProfilePicture(), this);
+                    }
+
+                    // Save the new image in the database
+                    imageHandler.uploadProfileImageToFirebase(uri, this);
                 }
             });
 
@@ -116,13 +155,12 @@ public class ProfileFragment extends Fragment  implements AdapterView.OnItemSele
     public void generateAvatar (String name) throws URISyntaxException {
         if (name.isEmpty()) name = "null";
         String url = "https://api.multiavatar.com/";
-        imagePath = Uri.parse(url+name+".png");
+        Uri avatarURI = Uri.parse(url+name+".png");
 
         // Retrieve the generated profile picture
         Picasso.get()
-                .load(imagePath)
+                .load(avatarURI)
                 .into(binding.EProfileProfileImg);
-
     }
 
 
@@ -152,7 +190,9 @@ public class ProfileFragment extends Fragment  implements AdapterView.OnItemSele
         binding = UserFragmentProfileBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
-        handler = new ProfileDB();
+        // Initialize database handlers
+        handler = new AccountDB();
+        imageHandler = new ImageStorage();
 
         editButton = root.findViewById(R.id.E_profile_editBtn);
         updateButton = root.findViewById(R.id.E_profile_create);
@@ -164,33 +204,54 @@ public class ProfileFragment extends Fragment  implements AdapterView.OnItemSele
         phoneField = root.findViewById(R.id.E_profile_textPhone);
         emailField = root.findViewById(R.id.E_profile_textEmail);
 
-        // Decorator radio buttons
+        // Decorator checkboxes
         decGeo = root.findViewById(R.id.E_profile_gps_dec);
         decNotify = root.findViewById(R.id.E_profile_notification_dec);
-
-        // Functional Radio Groups
-        notifyRGroup = root.findViewById(R.id.E_profile_notify_setting);
-        geolocationRGroup = root.findViewById(R.id.E_profile_geo_setting);
+        decGeo.setEnabled(false);
+        decNotify.setEnabled(false);
 
         // Image Buttons
         uploadImgBtn = root.findViewById(R.id.E_profile_uploadImageBtn);
         deleteImgBtn = root.findViewById(R.id.E_profile_deleteAvatarbtn);
+        profileImage = root.findViewById(R.id.E_profile_profileImg);
 
         // Constraint Layout
         adminConstraintLayout = binding.aDeleteUserConstraint;
 
         roleSpinner = binding.uRoleSpinner;
 
-        ArrayAdapter<CharSequence> roleAdapter = ArrayAdapter.createFromResource(
-                root.getContext(),
-                R.array.role,
-                R.layout.e_p_role_dropdown
-        );
-        roleSpinner.setAdapter(roleAdapter);
-
-        roleSpinner.setOnItemSelectedListener(this);
-
         setProfile();
+
+        // Set up the spinner for assigned roles (only if the account has more than one role)
+        if (signedInAccount.getRoles().size() > 1) {
+            // Make the string array depending on the roles of the account
+            ArrayList<String> rolesList = new ArrayList<String>();
+            rolesList.add("-- select role --");         // For display
+
+            // Add each role to the array
+            for (int index = 0; index < signedInAccount.getRoles().size(); index++) {
+                rolesList.add(signedInAccount.getRoles().get(index).value);
+            }
+
+            // Convert the ArrayList to a String[]
+            // From https://www.geeksforgeeks.org/convert-an-arraylist-of-string-to-a-string-array-in-java/
+            // Accessed on 2024-11-24
+            String[] roles = Arrays.copyOf(rolesList.toArray(),
+                    rolesList.size(), String[].class);
+
+            // https://stackoverflow.com/questions/2505207/how-to-add-item-to-spinners-arrayadapter
+            // Helped understand this. Accessed on 2024-11-24
+            ArrayAdapter<CharSequence> roleAdapter = new ArrayAdapter<>(getContext(),
+                    R.layout.e_p_role_dropdown,
+                    roles);
+
+            roleSpinner.setAdapter(roleAdapter);
+
+            roleSpinner.setOnItemSelectedListener(this);
+        } else {
+            // Make the spinner gone since the user can't change roles
+            roleSpinner.setVisibility(View.GONE);
+        }
 
 
         /*
@@ -205,6 +266,11 @@ public class ProfileFragment extends Fragment  implements AdapterView.OnItemSele
              */
             @Override
             public void onClick(View view) {
+                // enable checkboxes
+                decGeo.setEnabled(true);
+                decNotify.setEnabled(true);
+
+                // Change the text visibilities
                 nameField.setFocusable(true);
                 pronounField.setFocusable(true);
                 phoneField.setFocusable(true);
@@ -214,21 +280,22 @@ public class ProfileFragment extends Fragment  implements AdapterView.OnItemSele
                 phoneField.setFocusableInTouchMode(true);
                 emailField.setFocusableInTouchMode(true);
                 updateButton.setVisibility(View.VISIBLE);
-                decNotify.setVisibility(View.GONE);
-                decGeo.setVisibility(View.GONE);
-                notifyRGroup.setVisibility(View.VISIBLE);
-                geolocationRGroup.setVisibility(View.VISIBLE);
                 editButton.setVisibility(View.GONE);
                 uploadImgBtn.setVisibility(View.VISIBLE);
                 deleteImgBtn.setVisibility(View.VISIBLE);
+
+                // edit margins
+                // https://stackoverflow.com/questions/34266057/android-viewgroup-marginlayoutparams-not-working
+                ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) decGeo.getLayoutParams();
+                params.bottomMargin = 550;
+                decGeo.setLayoutParams(params);
 
             }
         };
 
         /*
          * Exit edit mode the submit
-         * TODO: Need to store the profile picture in the database
-         *      Add restrictions on certain fields
+         * TODO: Add restrictions on certain fields
          * author Jennifer
          */
         View.OnClickListener updateUser = new View.OnClickListener() {
@@ -240,6 +307,10 @@ public class ProfileFragment extends Fragment  implements AdapterView.OnItemSele
              */
             @Override
             public void onClick(View view) {
+                // disable checkboxes
+                decGeo.setEnabled(false);
+                decNotify.setEnabled(false);
+
                 // Change the text visibilities
                 nameField.setFocusable(false);
                 pronounField.setFocusable(false);
@@ -250,10 +321,6 @@ public class ProfileFragment extends Fragment  implements AdapterView.OnItemSele
                 phoneField.setFocusableInTouchMode(false);
                 emailField.setFocusableInTouchMode(false);
                 updateButton.setVisibility(View.GONE);
-                decNotify.setVisibility(View.VISIBLE);
-                decGeo.setVisibility(View.VISIBLE);
-                notifyRGroup.setVisibility(View.GONE);
-                geolocationRGroup.setVisibility(View.GONE);
                 editButton.setVisibility(View.VISIBLE);
                 uploadImgBtn.setVisibility(View.GONE);
                 deleteImgBtn.setVisibility(View.GONE);
@@ -266,19 +333,18 @@ public class ProfileFragment extends Fragment  implements AdapterView.OnItemSele
                 signedInAccount.setReceiveNotifications(decNotify.isChecked());
                 signedInAccount.setEnableGeolocation(decGeo.isChecked());
 
+                // Check if geolocation was enabled and actually ask the device for permission
+                if (signedInAccount.isEnableGeolocation()) {
+                    locationPermissionRequest.launch(Manifest.permission.ACCESS_COARSE_LOCATION);
+                }
+
                 // Update to reflect in the database
-                handler.updateProfile(signedInAccount, new DBOnCompleteListener<Account>() {
-                    @Override
-                    public void OnComplete(@NonNull ArrayList<Account> docs, int queryID, int flags) {
-                        // Log when the data is updated or catch if there was an error
-                        if (flags == DBOnCompleteFlags.SUCCESS.value) {
-                            Log.d("DB", "Successfully finished updating account");
-                        } else {
-                            // If not the success flag, then there was an error
-                            Log.d("Profile", "Error in updating account.");
-                        }
-                    }
-                });
+                handler.updateProfile(signedInAccount, ProfileFragment.this::OnCompleteDB);
+
+                // edit margins
+                ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) decGeo.getLayoutParams();
+                params.bottomMargin = 350;
+                decGeo.setLayoutParams(params);
             }
         };
 
@@ -306,16 +372,22 @@ public class ProfileFragment extends Fragment  implements AdapterView.OnItemSele
 
         /*
          * On click Listener for the deleteImage image button
-         * @author Jennifer
+         * @author Jennifer, Kori
          */
         View.OnClickListener deleteImage = new View.OnClickListener() {
             /**
-             * Sends the users name to the method getAvatar
-             * @author Jennifer
+             * Sends the users name to the method getAvatar and deletes the old image
+             * @author Jennifer, Kori
              * @param view the fragment view
              */
             @Override
             public void onClick(View view) {
+                // First delete the image from the user, and the firebase storage
+                if (!signedInAccount.getProfilePicture().isEmpty()) {
+                    imageHandler.DeleteImageByURL(signedInAccount.getProfilePicture(), ProfileFragment.this::OnCompleteStorage);
+                }
+
+                // Next, replace the old image with a generated avatar
                 try {
                     generateAvatar(nameField.getText().toString());
                 } catch (URISyntaxException e) {
@@ -340,7 +412,7 @@ public class ProfileFragment extends Fragment  implements AdapterView.OnItemSele
      * Populate the profile fields
      * @param account The current account whose data gets displayed
      */
-    private void populateTextViews(Account account) {
+    private void populateAllViews(Account account) {
         nameField.setText(account.getName());
         pronounField.setText(account.getPronouns());
         if (account.getPhoneNumber() != null) {
@@ -348,8 +420,36 @@ public class ProfileFragment extends Fragment  implements AdapterView.OnItemSele
             phoneField.setText(account.getPhoneNumber());
         }
         emailField.setText(account.getEmailAddress());
-        decGeo.setActivated(account.isEnableGeolocation());
-        decNotify.setActivated(account.isReceiveNotifications());
+        decGeo.setChecked(account.isEnableGeolocation());
+        decNotify.setChecked(account.isReceiveNotifications());
+
+        // Get the profile picture if it has already been set
+        if (!signedInAccount.getProfilePicture().isEmpty()) {
+            // Get the profile picture
+            imageHandler.getImageDownloadUrl(signedInAccount.getProfilePicture(), new StorageOnCompleteListener<Uri>() {
+                @Override
+                public void OnCompleteStorage(@NonNull ArrayList<Uri> docs, int queryID, int flags) {
+                    // Author of this code segment is James
+                    if (flags == DBOnCompleteFlags.SUCCESS.value) {
+                        // Get the image and format it
+                        Uri downloadUri = docs.get(0);
+                        int imageSideLength = profileImage.getWidth() / 2;
+                        Picasso.get()
+                                .load(downloadUri)
+                                .resize(imageSideLength, imageSideLength)
+                                .centerCrop()
+                                .into(profileImage);
+                    }
+                }
+            });
+        } else {
+            // There is no image, so generate the avatar
+            try {
+                generateAvatar(signedInAccount.getName());
+            } catch (URISyntaxException e) {
+                throw new RuntimeException(e);
+            }
+        }
     }
 
     /**
@@ -373,7 +473,7 @@ public class ProfileFragment extends Fragment  implements AdapterView.OnItemSele
         } else if (signedInAccount != null) {
             // Setting the views for users
             Log.d("ProfileFragment", String.format("Populating text views with %s %s", signedInAccount.getAccountID(), signedInAccount.getName()));
-            populateTextViews(signedInAccount);
+            populateAllViews(signedInAccount);
         } else {
             Log.d("ProfileFragment", "ERROR!");
         }
@@ -429,11 +529,11 @@ public class ProfileFragment extends Fragment  implements AdapterView.OnItemSele
     }
 
     @Override
-    public void OnComplete(@NonNull ArrayList<Account> docs, int queryID, int flags) {
+    public void OnCompleteDB(@NonNull ArrayList<Account> docs, int queryID, int flags) {
         if (queryID == 0) {
-            if (flags == DBOnCompleteFlags.SUCCESS.value) {
+            if (flags != DBOnCompleteFlags.ERROR.value) {
                 Account retrievedAccount = docs.get(0);
-                populateTextViews(retrievedAccount);
+                populateAllViews(retrievedAccount);
             } else {
                 Toast.makeText(getContext(), "Could not get account from Firestore.", Toast.LENGTH_LONG).show();
             }
@@ -453,6 +553,50 @@ public class ProfileFragment extends Fragment  implements AdapterView.OnItemSele
                 }
             } else {
                 Toast.makeText(getContext(), "Could not change current role", Toast.LENGTH_LONG).show();
+            }
+        } else if (queryID == 3) {      // Update account
+            // Log when the data is updated or catch if there was an error
+            if (flags == DBOnCompleteFlags.SUCCESS.value) {
+                Log.d("DB", "Successfully finished updating account");
+            } else {
+                // If not the success flag, then there was an error
+                Log.d("Profile", "Error in updating account.");
+            }
+        }
+    }
+
+    /**
+     * The data callback once image handling is done
+     * @param docs - Documents retrieved from DB (if it was a get query).
+     * @param queryID - ID of query completed.
+     * @param flags - Flags to indicate query status/set how to process query result.
+     */
+    @Override
+    public void OnCompleteStorage(@NonNull ArrayList<Image> docs, int queryID, int flags) {
+        if (queryID == 4) {      // uploadProfileImageToFirebase
+            if (flags == DBOnCompleteFlags.SUCCESS.value) {
+                Log.d("FirebaseStorage", "Profile image uploaded successfully");
+
+                // Get the image and get its url
+                Image profileImage = docs.get(0);
+                imagePath = profileImage.getUrl();
+
+                // Update the user profile
+                signedInAccount.setProfilePicture(imagePath);
+                handler.updateProfile(signedInAccount, this);
+            } else {
+                Log.d("FirebaseStorage", "Profile image upload unsuccessful");
+            }
+        } else if (queryID == 5) {      // Delete image
+            // Log the results of the deletion
+            if (flags == DBOnCompleteFlags.SUCCESS.value) {
+                Log.d("FirebaseStorage", "Profile image deleted successfully");
+
+                // Update this result to the account database
+                signedInAccount.setProfilePicture("");
+                handler.updateProfile(signedInAccount, this);
+            } else {
+                Log.d("FirebaseStorage", "Profile image deletion unsuccessful");
             }
         }
     }
