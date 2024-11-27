@@ -48,7 +48,7 @@ public class AllEventsAdapter extends BaseRecyclerAdapter<Event, AllEventsAdapte
 
         public EventViewHolder(@NonNull View itemView) {
             super(itemView);
-            EventImage = itemView.findViewById(R.id.a_entrant_image_view);
+            EventImage = itemView.findViewById(R.id.a_allList_image);
             nameTextView = itemView.findViewById(R.id.a_alllist_event_name_text);
             occurrenceTextView = itemView.findViewById(R.id.a_alllist_event_occurence_text);
             locationTextView = itemView.findViewById(R.id.a_alllist_event_location_text);

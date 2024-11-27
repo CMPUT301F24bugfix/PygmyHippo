@@ -10,7 +10,7 @@
     android:layout_marginStart="14dp">
 
     <com.google.android.material.imageview.ShapeableImageView
-        android:id="@+id/a_entrant_image_view"
+        android:id="@+id/a_allList_image"
         android:layout_width="140dp"
         android:layout_height="140dp"
         android:layout_marginEnd="25dp"

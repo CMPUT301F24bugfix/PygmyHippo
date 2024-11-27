@@ -424,9 +424,9 @@ public class ProfileFragment extends Fragment  implements AdapterView.OnItemSele
         decNotify.setChecked(account.isReceiveNotifications());
 
         // Get the profile picture if it has already been set
-        if (!signedInAccount.getProfilePicture().isEmpty()) {
+        if (!account.getProfilePicture().isEmpty()) {
             // Get the profile picture
-            imageHandler.getImageDownloadUrl(signedInAccount.getProfilePicture(), new StorageOnCompleteListener<Uri>() {
+            imageHandler.getImageDownloadUrl(account.getProfilePicture(), new StorageOnCompleteListener<Uri>() {
                 @Override
                 public void OnCompleteStorage(@NonNull ArrayList<Uri> docs, int queryID, int flags) {
                     // Author of this code segment is James
@@ -445,7 +445,7 @@ public class ProfileFragment extends Fragment  implements AdapterView.OnItemSele
         } else {
             // There is no image, so generate the avatar
             try {
-                generateAvatar(signedInAccount.getName());
+                generateAvatar(account.getName());
             } catch (URISyntaxException e) {
                 throw new RuntimeException(e);
             }
