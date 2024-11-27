@@ -80,12 +80,12 @@ public class ProfileFragment extends Fragment  implements AdapterView.OnItemSele
     private String adminViewAccountID;
     private String currentRole;
 
-    private EditText nameField, pronounField, phoneField, emailField;
+    private EditText nameField, pronounField, phoneField, emailField, facilityName, facilityLocation;
     private CheckBox decGeo, decNotify;
-    private Button uploadImgBtn, deleteImgBtn;
-    private ImageView editButton;
+    private Button uploadImgBtn, deleteImgBtn, deleteFacilityBtn;
+    private ImageView editButton, facilityImage;
     private Button updateButton, deleteUserButton;
-    private ConstraintLayout adminConstraintLayout;
+    private ConstraintLayout adminConstraintLayout, facilityLayout;
     private Spinner roleSpinner;
     private CircleImageView profileImage;
 
@@ -219,6 +219,14 @@ public class ProfileFragment extends Fragment  implements AdapterView.OnItemSele
         adminConstraintLayout = binding.aDeleteUserConstraint;
 
         roleSpinner = binding.uRoleSpinner;
+
+        // Facility layout
+        facilityLayout = root.findViewById(R.id.facility_layout);
+        facilityImage = root.findViewById(R.id.O_profile_facilityImg);
+        facilityName = root.findViewById(R.id.O_Profile_facilityNameText);
+        facilityLocation = root.findViewById(R.id.O_Profile_facilityLocationText);
+        deleteFacilityBtn = root.findViewById(R.id.a_deleteFacilityButton);
+
 
         setProfile();
 
@@ -409,10 +417,30 @@ public class ProfileFragment extends Fragment  implements AdapterView.OnItemSele
     }
 
     /**
+     * This method just populates the profile details with the current account
+     * @param currentAccount The account of the current user
+     */
+    private void populateAllViews(Account currentAccount){
+        handler.getAccountByID(currentAccount.getAccountID(), new DBOnCompleteListener<Account>() {
+            @Override
+            public void OnCompleteDB(@NonNull ArrayList<Account> docs, int queryID, int flags) {
+                if (flags == DBOnCompleteFlags.SINGLE_DOCUMENT.value){
+                    Account account = docs.get(0);
+                    Log.d("Organizer Profile", "DB complete successful");
+                    populateAllViewsAfterDB(account);
+                }
+                else{
+                    Log.e("Organizer Profile", "DB complete NOT successful");
+                }
+            }
+        });
+    }
+
+    /**
      * Populate the profile fields
      * @param account The current account whose data gets displayed
      */
-    private void populateAllViews(Account account) {
+    private void populateAllViewsAfterDB(Account account) {
         nameField.setText(account.getName());
         pronounField.setText(account.getPronouns());
         if (account.getPhoneNumber() != null) {
@@ -449,6 +477,83 @@ public class ProfileFragment extends Fragment  implements AdapterView.OnItemSele
             } catch (URISyntaxException e) {
                 throw new RuntimeException(e);
             }
+        }
+
+        if (adminViewAccountID != null && !Objects.equals(adminViewAccountID, "null") && !Objects.equals(adminViewAccountID, signedInAccount.getAccountID())){
+            // enters only if in "admin" mode
+            editButton.setVisibility(View.GONE); // in admin we dont want to edit profiles
+
+            if (account.getFacilityProfile().facilityExists()){
+                // if facility exists populate the fields
+                facilityName.setText(account.getFacilityProfile().getName());
+                facilityLocation.setText(account.getFacilityProfile().getLocation());
+                // gets the facility image
+                imageHandler.getImageDownloadUrl(account.getFacilityProfile().getFacilityPicture(), new StorageOnCompleteListener<Uri>() {
+                    @Override
+                    public void OnCompleteStorage(@NonNull ArrayList<Uri> docs, int queryID, int flags) {
+                        // Author of this code segment is James
+                        if (flags == DBOnCompleteFlags.SUCCESS.value) {
+                            // Get the image and format it
+                            Uri downloadUri = docs.get(0);
+                            int imageSideLength = facilityImage.getWidth() / 2;
+                            Picasso.get()
+                                    .load(downloadUri)
+                                    .resize(imageSideLength, imageSideLength)
+                                    .centerCrop()
+                                    .into(facilityImage);
+                        }
+                    }
+                });
+
+                // facility delete button on click listener
+                deleteFacilityBtn.setOnClickListener(buttonView -> {
+                    // delete the facility references in account
+                    handler.deleteFacilityReference(account.getAccountID(), new DBOnCompleteListener<Object>() {
+
+                        /**
+                         * @param docs    - Documents retrieved from DB (if it was a get query).
+                         * @param queryID - ID of query completed.
+                         * @param flags   - Flags to indicate query status/set how to process query result.
+                         */
+                        @Override
+                        public void OnCompleteDB(@NonNull ArrayList<Object> docs, int queryID, int flags) {
+                            if (flags == DBOnCompleteFlags.SUCCESS.value) {
+                                Log.d("FirebaseStorage", "Facility references deleted successfully");
+                                Toast.makeText(getContext(), "Facility Deleted", Toast.LENGTH_LONG).show();
+                                deleteFacilityBtn.setClickable(false);
+                                deleteFacilityBtn.setBackgroundColor(0xFF808080);
+                                facilityLayout.setVisibility(View.INVISIBLE);
+                            } else {
+                                Log.e("FirebaseStorage", "Facility references NOT deleted");
+                            }
+                        }
+                    });
+                    if(!account.getFacilityProfile().getFacilityPicture().isEmpty()) {
+                        // delete the facility image in firebase
+                        imageHandler.DeleteImageByURL(account.getFacilityProfile().getFacilityPicture(), new StorageOnCompleteListener<Image>() {
+                            /**
+                             * @param docs    - Documents retrieved from DB (if it was a get query).
+                             * @param queryID - ID of query completed.
+                             * @param flags   - Flags to indicate query status/set how to process query result.
+                             */
+                            @Override
+                            public void OnCompleteStorage(@NonNull ArrayList<Image> docs, int queryID, int flags) {
+                                if (flags == DBOnCompleteFlags.SUCCESS.value) {
+                                    Log.d("FirebaseStorage", "Facility image deleted successfully");
+                                } else {
+                                    Log.e("FirebaseStorage", "Facility image not deleted");
+                                }
+                            }
+                        });
+                    }
+                });
+                facilityLayout.setVisibility(View.VISIBLE);
+            }
+            else{
+                deleteFacilityBtn.setClickable(false);
+                deleteFacilityBtn.setBackgroundColor(0xFF808080);
+            }
+
         }
     }
 
