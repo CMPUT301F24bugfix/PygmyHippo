@@ -252,7 +252,7 @@ public class EventFragment extends Fragment implements DBOnCompleteListener<Even
                 Toast.makeText(getContext(), "Delete QR Hashcode", Toast.LENGTH_LONG).show();
             }
             else{
-                Log.e("EventFragment", "Unsuccessfully to deleted QR hashcode");
+                Log.e("EventFragment", "Unsuccessfully to delete QR hashcode");
                 Toast.makeText(getContext(), "Failed to Delete QR Hashcode", Toast.LENGTH_LONG).show();
                 deleteQRCodeButton.setClickable(true);
                 deleteQRCodeButton.setBackgroundColor(0xFF747DBF); // revert to original colour
