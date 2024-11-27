@@ -7,8 +7,8 @@ Purposes:
     - Hold the current status for an event
 Issues: None
  */
-import java.util.ArrayList;
-import java.util.Collections;
+
+import androidx.annotation.Nullable;
 
 /**
  * Entrant is a dataclass which contains relevant information for relating an User account to an
@@ -21,9 +21,12 @@ import java.util.Collections;
  * @author James Fu, Griffin, Katharine
  */
 public class Entrant {
-
     private String accountID;
     private EntrantStatus entrantStatus;
+
+    @Nullable
+    private EntrantStatus notifiedStatus;
+
     private Double longitude;
     private Double latitude;
 
@@ -110,5 +113,14 @@ public class Entrant {
      */
     public void setLatitude(Double latitude) {
         this.latitude = latitude;
+    }
+
+    @Nullable
+    public EntrantStatus getNotifiedStatus() {
+        return notifiedStatus;
+    }
+
+    public void setNotifiedStatus(@Nullable EntrantStatus notifiedStatus) {
+        this.notifiedStatus = notifiedStatus;
     }
 }
