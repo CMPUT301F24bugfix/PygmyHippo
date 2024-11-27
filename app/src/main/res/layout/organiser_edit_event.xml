@@ -103,6 +103,8 @@
                 android:hint="Event Data &amp; Time"
                 android:inputType="text"
                 android:textColor="@color/dark_purple"
+                android:clickable="false"
+                android:focusable="false"
                 android:textSize="18sp" />
 
             <TextView
