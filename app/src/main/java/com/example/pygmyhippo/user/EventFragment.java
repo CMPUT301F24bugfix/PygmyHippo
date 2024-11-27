@@ -249,7 +249,7 @@ public class EventFragment extends Fragment implements DBOnCompleteListener<Even
         else if (queryID == 8){
             if (flags == DBOnCompleteFlags.SUCCESS.value) {
                 Log.d("EventFragment", "Successfully deleted QR hashcode");
-                Toast.makeText(getContext(), "Event hashqr", Toast.LENGTH_LONG).show();
+                Toast.makeText(getContext(), "Delete QR Hashcode", Toast.LENGTH_LONG).show();
             }
         }
     }

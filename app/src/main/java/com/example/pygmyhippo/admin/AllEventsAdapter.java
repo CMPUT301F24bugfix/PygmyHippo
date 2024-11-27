@@ -9,6 +9,8 @@ Issues:
     - None
  */
 
+import android.net.Uri;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -22,6 +24,11 @@ import android.view.View;
 import com.example.pygmyhippo.common.BaseRecyclerAdapter;
 import com.example.pygmyhippo.common.BaseViewHolder;
 import com.example.pygmyhippo.R;
+import com.example.pygmyhippo.database.DBOnCompleteFlags;
+import com.example.pygmyhippo.database.ImageStorage;
+import com.example.pygmyhippo.database.StorageOnCompleteListener;
+import com.google.android.material.imageview.ShapeableImageView;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
@@ -36,9 +43,12 @@ public class AllEventsAdapter extends BaseRecyclerAdapter<Event, AllEventsAdapte
      */
     public static class EventViewHolder extends BaseViewHolder<Event> {
         TextView nameTextView, occurrenceTextView, locationTextView, waitlistStatusTextView;
+        ShapeableImageView EventImage;
+        ImageStorage imageHandler = new ImageStorage();
 
         public EventViewHolder(@NonNull View itemView) {
             super(itemView);
+            EventImage = itemView.findViewById(R.id.a_entrant_image_view);
             nameTextView = itemView.findViewById(R.id.a_alllist_event_name_text);
             occurrenceTextView = itemView.findViewById(R.id.a_alllist_event_occurence_text);
             locationTextView = itemView.findViewById(R.id.a_alllist_event_location_text);
@@ -52,9 +62,28 @@ public class AllEventsAdapter extends BaseRecyclerAdapter<Event, AllEventsAdapte
         @Override
         public void setViews(Event event) {
             nameTextView.setText(event.getEventTitle());
-            occurrenceTextView.setText(""); // TODO: figure out how occurrence is stored then add it here.
+            occurrenceTextView.setText(event.getDate());
             locationTextView.setText(event.getLocation());
             waitlistStatusTextView.setText(event.getEventStatus() == Event.EventStatus.ongoing ? "Waitlist Open" : "Waitlist Closed");
+            imageHandler.getImageDownloadUrl(event.getEventPoster(), new StorageOnCompleteListener<Uri>() {
+                @Override
+                public void OnCompleteStorage(@NonNull ArrayList<Uri> docs, int queryID, int flags) {
+                    // Author of this code segment is James
+                    if (flags == DBOnCompleteFlags.SUCCESS.value) {
+                        // Get the image and format it
+                        Uri downloadUri = docs.get(0);
+                        int imageSideLength = EventImage.getWidth() / 2;
+                        Picasso.get()
+                                .load(downloadUri)
+                                .resize(imageSideLength, imageSideLength)
+                                .centerCrop()
+                                .into(EventImage);
+                    } else {
+                        // Event had no image, so it will stay as default image
+                        Log.d("DB", String.format("No image found, setting default"));
+                    }
+                }
+            });
         }
     }
 
