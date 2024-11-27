@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/create_user_layout"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <EditText
+        android:id="@+id/new_name_txt"
+        android:layout_width="wrap_content"
+        android:layout_height="48dp"
+        android:layout_gravity="center"
+        android:ems="13"
+        android:fontFamily="@font/roboto_mono_medium"
+        android:hint="Name"
+        android:inputType="text"
+        android:textColor="@color/dark_purple"/>
+
+    <EditText
+        android:id="@+id/new_email_txt"
+        android:layout_width="wrap_content"
+        android:layout_height="48dp"
+        android:layout_gravity="center"
+        android:ems="13"
+        android:fontFamily="@font/roboto_mono_medium"
+        android:hint="Email"
+        android:inputType="text"
+        android:textColor="@color/dark_purple"/>
+
+    <EditText
+        android:id="@+id/new_phone_txt"
+        android:layout_width="wrap_content"
+        android:layout_height="48dp"
+        android:ems="13"
+        android:layout_gravity="center"
+        android:fontFamily="@font/roboto_mono_medium"
+        android:hint="Phone Number (optional)"
+        android:inputType="phone"
+        android:textColor="@color/dark_purple"/>
+    <TextView
+        android:id="@+id/new_roles_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:layout_marginEnd="20dp"
+        android:layout_gravity="center"
+        android:fontFamily="@font/roboto_mono_medium"
+        android:text="Select Permanent Role(s):"
+        android:textColor="@color/dark_purple"
+        android:textSize="18sp"/>
+
+    <CheckBox
+        android:id="@+id/new_role_user"
+        android:layout_width="305dp"
+        android:layout_height="48dp"
+        android:layout_gravity="center"
+        android:checked="false"
+        android:fontFamily="@font/roboto_mono_medium"
+        android:text="Entrant"
+        android:textColor="@color/dark_purple"/>
+    <CheckBox
+        android:id="@+id/new_role_organiser"
+        android:layout_width="305dp"
+        android:layout_height="48dp"
+        android:layout_gravity="center"
+        android:checked="false"
+        android:fontFamily="@font/roboto_mono_medium"
+        android:text="Organiser"
+        android:textColor="@color/dark_purple"/>
+
+
+
+</LinearLayout>

@@ -146,12 +146,12 @@ public class EventQRViewerFragment extends Fragment implements DBOnCompleteListe
                 }
                 else{
                     Log.e("QR Viewer", "Invalid hashcode");
-                    Toast.makeText(getContext(), "Event not valid", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getContext(), "Hashcode not valid", Toast.LENGTH_LONG).show();
                 }
             } else {
                 // expect 1 document, else there must be an error
                 Log.e("QR Viewer", "Database Error");
-                Toast.makeText(getContext(), "Event not valid", Toast.LENGTH_LONG).show();
+                Toast.makeText(getContext(), "Hashcode not valid", Toast.LENGTH_LONG).show();
                 handleDBError();
             }
         }

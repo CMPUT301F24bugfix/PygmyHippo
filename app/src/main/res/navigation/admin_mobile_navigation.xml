@@ -42,6 +42,24 @@
         <argument
             android:name="signedInAccount"
             app:argType="com.example.pygmyhippo.common.Account" />
+        <action
+            android:id="@+id/action_admin_navigation_all_images_to_admin_nagivation_delete_image"
+            app:destination="@id/admin_navigation_delete_image" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/admin_navigation_delete_image"
+        android:name="com.example.pygmyhippo.admin.DeleteImageFragment"
+        android:label="Delete Image"
+        tools:layout="@layout/admin_delete_image"
+        android:background="@color/dark_purple">
+        <argument
+            android:name="signedInAccount"
+            app:argType="com.example.pygmyhippo.common.Account" />
+        <argument
+            android:name="Image"
+            app:argType="com.example.pygmyhippo.common.Image" />
+
     </fragment>
 
     <fragment
