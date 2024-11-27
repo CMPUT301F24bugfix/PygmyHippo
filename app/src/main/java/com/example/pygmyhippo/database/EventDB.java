@@ -17,6 +17,7 @@ import com.example.pygmyhippo.common.Event;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
@@ -257,6 +258,30 @@ public class EventDB extends DBHandler {
                     else{
                         Log.e("DB", "Image deleted unsuccessfully. EventID:" + EventID );
                         listener.OnCompleteDB(new ArrayList<>(), 7, DBOnCompleteFlags.ERROR.value);
+                    }
+                });
+
+    }
+
+    /**
+     * This query delete the hashcode and valid hashcode for an event
+     * Query ID
+     * @param EventID
+     * @param listener
+     */
+    public void deleteQRHashData(String EventID, DBOnCompleteListener<Event> listener){
+        db.collection("Events")
+                .document(EventID)
+                .update("hashcode", FieldValue.delete(),
+                        "validHashcode", FieldValue.delete())
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()){
+                        Log.d("DB", "Hashcode successfully deleted. EventID:" + EventID );
+                        listener.OnCompleteDB(new ArrayList<>(), 8, DBOnCompleteFlags.SUCCESS.value);
+                    }
+                    else{
+                        Log.e("DB", "Hashcode unsuccessfully deleted. EventID:" + EventID );
+                        listener.OnCompleteDB(new ArrayList<>(), 8, DBOnCompleteFlags.ERROR.value);
                     }
                 });
 

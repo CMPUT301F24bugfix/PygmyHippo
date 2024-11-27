@@ -31,7 +31,8 @@ public class Entrant {
         waitlisted("waitlisted"),
         cancelled("cancelled"),
         invited("invited"),
-        accepted("accepted");
+        accepted("accepted"),
+        rejected("rejected");
 
         public final String value;
 
