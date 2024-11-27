@@ -21,6 +21,10 @@
     <string name="user_nav_item_my_events">My Events</string>
     <string name="user_nav_item_qr_code">QR Code</string>
     <string name="user_nav_item_profile">Profile</string>
+    <string name="notification_channel_name">Entrant Notifications</string>
+    <string name="notification_channel_description">Notification channel dedicated to sending notifications to entrants when their status changes for events they signed up for.</string>
+    <string name="notification_channel_ID">entrant_notifications</string>
+
     <string-array name="entrant_status">
         <item>WaitList</item>
         <item>Invited</item>

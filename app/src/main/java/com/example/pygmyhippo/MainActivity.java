@@ -10,17 +10,13 @@ Issues:
  */
 
 
-import android.Manifest;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.pm.PackageManager;
-import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -28,15 +24,16 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
 import com.example.pygmyhippo.common.Account;
+import com.example.pygmyhippo.common.NotificationCenter;
 import com.example.pygmyhippo.database.DBOnCompleteFlags;
 import com.example.pygmyhippo.database.DBOnCompleteListener;
+import com.example.pygmyhippo.database.EventDB;
 import com.example.pygmyhippo.database.MainActivityDB;
 import com.example.pygmyhippo.databinding.AdminMainActivityNavigationBinding;
 import com.example.pygmyhippo.databinding.OrganiserMainActivityNagivationBinding;
@@ -52,7 +49,7 @@ import java.util.Arrays;
  * @author Jennifer, Griffin
  */
 public class MainActivity extends AppCompatActivity implements DBOnCompleteListener<Account> {
-    final int PERMISSION_REQUEST_CODE =112;
+
     final boolean useDB = true;
 
     // Get the nav bars for each role
@@ -60,6 +57,8 @@ public class MainActivity extends AppCompatActivity implements DBOnCompleteListe
     private UserMainActivityNagivationBinding userBinder;
     private AdminMainActivityNavigationBinding adminBinding;
     private MainActivityDB dbHandler;
+    private EventDB eventDBHandler;
+    private NotificationCenter notificationCenter;
 
     // Views used in create user builder
     private LinearLayout builderLayout;
@@ -72,7 +71,6 @@ public class MainActivity extends AppCompatActivity implements DBOnCompleteListe
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         getNavArguments();
         /* This code is from the stack overflow to fix an error I was having when trying to commit to github.
         It enables the app the app to prompt for user notifications... I don't know what was triggering the error.
@@ -80,47 +78,12 @@ public class MainActivity extends AppCompatActivity implements DBOnCompleteListe
         Posted: Feb 5, 2023 [ Accessed October 25, 2024 ]
         https://stackoverflow.com/questions/73940694/android-13-not-asking-for-post-notifications-permission
         */
-        if (Build.VERSION.SDK_INT > 32) {
-            if (!shouldShowRequestPermissionRationale("112")){
-                getNotificationPermission();
-            }
-        }
-    }
-
-
-    /**
-     * Dialog pop up asking for notification preference
-     * TODO: Decide to use this or the radio buttons in the profile
-     */
-    public void getNotificationPermission(){
-        try {
-            if (Build.VERSION.SDK_INT > 32) {
-                ActivityCompat.requestPermissions(this,
-                        new String[]{Manifest.permission.POST_NOTIFICATIONS},
-                        PERMISSION_REQUEST_CODE);
-            }
-        }catch (Exception e){
-
-        }
     }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-
-        switch (requestCode) {
-            case PERMISSION_REQUEST_CODE:
-                // If request is cancelled, the result arrays are empty.
-                if (grantResults.length > 0 &&
-                        grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    // allow
-
-                }  else {
-                    //deny
-                }
-                return;
-        }
-
+        notificationCenter.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 
     /**
@@ -215,6 +178,76 @@ public class MainActivity extends AppCompatActivity implements DBOnCompleteListe
     }
 
     /**
+     * Should be called after navigation arguments were retrieved to perform more initalization steps.
+     */
+    private void afterNavArgs() {
+        notificationCenter = new NotificationCenter(this, signedInAccount.getAccountID());
+        notificationCenter.init();
+        setupNavController();
+    }
+
+    /**
+     * Displays a dialog for creating a new account.
+     */
+    private void createAccountDialog() {
+        // Make a dialog builder that the user must to fill out important initial details
+        AlertDialog.Builder builder = formatBuilder();
+
+        // Show the builder
+        AlertDialog createAccount = builder.create();
+        createAccount.show();
+
+        // Set the onclick listener for the positive button here so it won't always close
+        // Got this idea from https://stackoverflow.com/questions/2620444/how-to-prevent-a-dialog-from-closing-when-a-button-is-clicked
+        // Accessed on 2024-11-24
+        createAccount.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(v -> {
+            // Get all the entered values
+            String newName = newNameView.getText().toString();
+            String newEmail = newEmailView.getText().toString();
+            String newPhone = newPhoneView.getText().toString();
+            boolean isUser = userCheck.isChecked();
+            boolean isOrganiser = organiserCheck.isChecked();
+
+            if (newName.isEmpty() || newEmail.isEmpty()) {
+                // One of the required fields weren't filled so don't continue
+                Toast toast = Toast.makeText(getBaseContext(),
+                        "Error: You must enter both name and email to continue. Try again",
+                        Toast.LENGTH_SHORT);
+                toast.show();
+            } else if (!isUser && !isOrganiser) {
+                // No roles were selected so don't continue
+                Toast toast = Toast.makeText(getBaseContext(),
+                        "Error: No role selected. Try again",
+                        Toast.LENGTH_SHORT);
+                toast.show();
+            } else {
+                // All required fields are entered, so add that to the new account class
+                signedInAccount.setName(newName);
+                signedInAccount.setEmailAddress(newEmail);
+                signedInAccount.setPhoneNumber(newPhone);
+                if (isUser) {
+                    signedInAccount.getRoles().add(Account.AccountRole.user);
+
+                    // Set the current account role
+                    signedInAccount.setCurrentRole(Account.AccountRole.user);
+                }
+                if (isOrganiser) {
+                    signedInAccount.getRoles().add(Account.AccountRole.organiser);
+                    if (!isUser) {
+                        // If account isn't also a user, then set this as current role
+                        signedInAccount.setCurrentRole(Account.AccountRole.organiser);
+                    }
+                }
+                // Add the new account to the database with these new fields
+                dbHandler.addNewDevice(signedInAccount, this);
+
+                // Finally close the dialog
+                createAccount.dismiss();
+            }
+        });
+    }
+
+    /**
      * Callback called when DB queries complete.
      * @param docs - Documents retrieved from DB (if it was a get query).
      * @param queryID - ID of query completed.
@@ -233,72 +266,12 @@ public class MainActivity extends AppCompatActivity implements DBOnCompleteListe
 
                     // Set up the current role navigation
                     currentRole = signedInAccount.getCurrentRole();
-                    setupNavController();
+                    afterNavArgs();
                 } else if (flags == DBOnCompleteFlags.NO_DOCUMENTS.value) {
                     // Make the new signed in account with the recorded device ID
                     signedInAccount = new Account();
                     signedInAccount.setDeviceID(getDeviceID());
-
-                    // Make a dialog builder that the user must to fill out important initial details
-                    AlertDialog.Builder builder = formatBuilder();
-
-                    // Show the builder
-                    AlertDialog createAccount = builder.create();
-                    createAccount.show();
-
-                    // Set the onclick listener for the positive button here so it won't always close
-                    // Got this idea from https://stackoverflow.com/questions/2620444/how-to-prevent-a-dialog-from-closing-when-a-button-is-clicked
-                    // Accessed on 2024-11-24
-                    createAccount.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener()
-                    {
-                        @Override
-                        public void onClick(View v)
-                        {
-                            // Get all the entered values
-                            String newName = newNameView.getText().toString();
-                            String newEmail = newEmailView.getText().toString();
-                            String newPhone = newPhoneView.getText().toString();
-                            boolean isUser = userCheck.isChecked();
-                            boolean isOrganiser = organiserCheck.isChecked();
-
-                            if (newName.isEmpty() || newEmail.isEmpty()) {
-                                // One of the required fields weren't filled so don't continue
-                                Toast toast = Toast.makeText(getBaseContext(),
-                                        "Error: You must enter both name and email to continue. Try again",
-                                        Toast.LENGTH_SHORT);
-                                toast.show();
-                            } else if (!isUser && !isOrganiser) {
-                                // No roles were selected so don't continue
-                                Toast toast = Toast.makeText(getBaseContext(),
-                                        "Error: No role selected. Try again",
-                                        Toast.LENGTH_SHORT);
-                                toast.show();
-                            } else {
-                                // All required fields are entered, so add that to the new account class
-                                signedInAccount.setName(newName);
-                                signedInAccount.setEmailAddress(newEmail);
-                                signedInAccount.setPhoneNumber(newPhone);
-                                if (isUser) {
-                                    signedInAccount.getRoles().add(Account.AccountRole.user);
-
-                                    // Set the current account role
-                                    signedInAccount.setCurrentRole(Account.AccountRole.user);
-                                }
-                                if (isOrganiser) {
-                                    signedInAccount.getRoles().add(Account.AccountRole.organiser);
-                                    if (!isUser) {
-                                        // If account isn't also a user, then set this as current role
-                                        signedInAccount.setCurrentRole(Account.AccountRole.organiser);
-                                    }
-                                }
-                                // Add the new account to the database with these new fields
-                                dbHandler.addNewDevice(signedInAccount, MainActivity.this::OnCompleteDB);
-
-                                // Finally close the dialog
-                                createAccount.dismiss();
-                            }
-                        }
-                    });
+                    createAccountDialog();
                 } else {
                     handleDBError();
                 }
@@ -314,7 +287,7 @@ public class MainActivity extends AppCompatActivity implements DBOnCompleteListe
 
                     // Set up the current role navigation
                     currentRole = signedInAccount.getCurrentRole();
-                    setupNavController();
+                    afterNavArgs();
                 } else {
                     Toast toast = Toast.makeText(this,
                             "Could not make new account for device",
@@ -469,11 +442,11 @@ public class MainActivity extends AppCompatActivity implements DBOnCompleteListe
                         Account.AccountRole.organiser,  // CHANGE EITHER ORANIZER OR USER FOR ROLE currentRole (TODO: Change this if you want to test with user)
                         null  // facilityProfile
                 );
-                setupNavController();
+                afterNavArgs();
             }
         } else {
             // TODO: Keep integrity of signedInAccount with Firestore (make sure fields match).
-            setupNavController();
+            afterNavArgs();
         }
     }
 }
