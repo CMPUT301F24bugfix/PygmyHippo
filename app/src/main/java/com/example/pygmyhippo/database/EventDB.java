@@ -14,7 +14,6 @@ import androidx.annotation.NonNull;
 
 import com.example.pygmyhippo.common.Entrant;
 import com.example.pygmyhippo.common.Event;
-import com.example.pygmyhippo.common.EventEntrant;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentReference;
@@ -246,22 +245,23 @@ public class EventDB extends DBHandler {
      * @param accountID - AccountID to filter entrants by.
      * @param listener - DB listener to be called.
      */
-    public void addAccountNotificationsSnapshotListener(String accountID, DBOnCompleteListener<EventEntrant> listener) {
+    public void addAccountNotificationsSnapshotListener(String accountID, DBOnCompleteListener<Event> listener) {
         db.collection("Events")
                 .addSnapshotListener((snapshot, exception) -> {
                     if (snapshot != null) {
                         snapshot.getDocuments().forEach(doc -> {
                             Log.d("DB", String.format("EventID %s in snapshot", doc.toObject(Event.class).getEventID()));
-                            ArrayList<EventEntrant> eventEntrants = new ArrayList<>();
+                            ArrayList<Event> events = new ArrayList<>();
                             Event event = doc.toObject(Event.class);
 
-                            event.getEntrants().forEach(entrant -> {
+                            for (Entrant entrant : event.getEntrants()) {
                                 if (Objects.equals(entrant.getAccountID(), accountID) &&
                                         entrant.getEntrantStatus() != entrant.getNotifiedStatus()) {
-                                    eventEntrants.add(new EventEntrant(event, entrant));
+                                    events.add(event);
+                                    break;
                                 }
-                            });
-                            listener.OnCompleteDB(eventEntrants, 100, DBOnCompleteFlags.SUCCESS.value);
+                            }
+                            listener.OnCompleteDB(events, 100, DBOnCompleteFlags.SUCCESS.value);
                         });
                     }
                 });

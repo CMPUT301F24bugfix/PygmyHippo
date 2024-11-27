@@ -50,7 +50,7 @@ import java.util.Objects;
  *
  * See MainActivity for example of usage.
  */
-public class NotificationCenter implements DBOnCompleteListener<EventEntrant> {
+public class NotificationCenter implements DBOnCompleteListener<Event> {
     private final int PERMISSION_REQUEST_CODE = 112;
     private Activity activity;
     private Context context;
@@ -169,27 +169,37 @@ public class NotificationCenter implements DBOnCompleteListener<EventEntrant> {
     }
 
     @Override
-    public void OnCompleteDB(@NonNull ArrayList<EventEntrant> docs, int queryID, int flags) {
+    public void OnCompleteDB(@NonNull ArrayList<Event> docs, int queryID, int flags) {
         switch (queryID) {
             case 100: // addAccountNotificationsSnapshotListener()
                 if (flags == DBOnCompleteFlags.SUCCESS.value) {
-                    docs.forEach(eventEntrant -> {
-                        Event event = eventEntrant.getEvent();
-                        Log.d("NotificationCenter", String.format("Retrieved Entrant %s in EventID %s in snapshot listener", eventEntrant.getEntrant().getAccountID(), event.getEventID()));
-                        String status = eventEntrant.getEntrant().getEntrantStatus().value;
-                        postNotification(String.format("%s", status), String.format("You have been %s for a Event (%s)!", eventEntrant.getEntrant().getEntrantStatus(), event.getEventID()));
-
-                        Entrant newEntrant = eventEntrant.getEntrant();
-                        newEntrant.setNotifiedStatus(newEntrant.getEntrantStatus());
-                        ArrayList<Entrant> newEntrants = event.getEntrants();
-                        for (int i = 0; i < event.getEntrants().size(); i++) {
-                            if (Objects.equals(newEntrants.get(i).getAccountID(), eventEntrant.getEntrant().getAccountID())) {
-                                newEntrants.set(i, newEntrant);
+                    docs.forEach(event -> {
+                        Log.d("NotificationCenter", String.format("Retrieved Entrant in EventID %s in snapshot listener", event.getEventID()));
+                        Entrant account_entrant = null;
+                        for (Entrant entrant : event.getEntrants()) {
+                            if (Objects.equals(entrant.getAccountID(), accountID)) {
+                                account_entrant = entrant;
                                 break;
                             }
                         }
-                        event.setEntrants(newEntrants);
-                        dbHandler.updateEvent(event, (docs1, queryID1, flags1) -> {});
+
+                        if (account_entrant != null) {
+                            Log.d("NotificationCenter", "Posting notification");
+                            String status = account_entrant.getEntrantStatus().value;
+                            postNotification(String.format("%s", status), String.format("You have been %s for a Event (%s)!", account_entrant.getEntrantStatus(), event.getEventID()));
+
+                            Entrant newEntrant = account_entrant;
+                            newEntrant.setNotifiedStatus(newEntrant.getEntrantStatus());
+                            ArrayList<Entrant> newEntrants = event.getEntrants();
+                            for (int i = 0; i < event.getEntrants().size(); i++) {
+                                if (Objects.equals(newEntrants.get(i).getAccountID(), newEntrant.getAccountID())) {
+                                    newEntrants.set(i, newEntrant);
+                                    break;
+                                }
+                            }
+                            event.setEntrants(newEntrants);
+                            dbHandler.updateEvent(event, (docs1, queryID1, flags1) -> {});
+                        }
                     });
                 }
                 break;
