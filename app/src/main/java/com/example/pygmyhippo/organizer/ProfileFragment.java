@@ -8,7 +8,7 @@ Purposes:
     - Allows organiser to make a facility profile
     - Spinner allows for user to change their account role
 Issues:
-    - Add option to delete facility image
+    - NA
  */
 
 import android.net.Uri;
@@ -406,9 +406,29 @@ public class ProfileFragment extends Fragment implements AdapterView.OnItemSelec
 
     /**
      * This method just populates the profile details with the current account
+     * @param currentAccount The account of the current user
+     */
+    private void populateAllViews(Account currentAccount){
+        handler.getAccountByID(currentAccount.getAccountID(), new DBOnCompleteListener<Account>() {
+            @Override
+            public void OnCompleteDB(@NonNull ArrayList<Account> docs, int queryID, int flags) {
+                if (flags == DBOnCompleteFlags.SINGLE_DOCUMENT.value){
+                    Account account = docs.get(0);
+                    Log.d("Organizer Profile", "DB complete successful");
+                    populateAllViewsAfterDB(account);
+                }
+                else{
+                    Log.e("Organizer Profile", "DB complete NOT successful");
+                }
+            }
+        });
+    }
+
+    /**
+     * This method just populates the profile details after the database is queried
      * @param account The account of the current user
      */
-    private void populateAllViews(Account account) {
+    private void populateAllViewsAfterDB(Account account) {
         name_f.setText(account.getName());
         pronoun_f.setText(account.getPronouns());
         if (account.getPhoneNumber() != null) {
@@ -418,9 +438,9 @@ public class ProfileFragment extends Fragment implements AdapterView.OnItemSelec
         email_f.setText(account.getEmailAddress());
 
         // Get the profile picture if it has already been set
-        if (!signedInAccount.getProfilePicture().isEmpty()) {
+        if (!account.getProfilePicture().isEmpty()) {
             // Get the profile picture
-            imageHandler.getImageDownloadUrl(signedInAccount.getProfilePicture(), new StorageOnCompleteListener<Uri>() {
+            imageHandler.getImageDownloadUrl(account.getProfilePicture(), new StorageOnCompleteListener<Uri>() {
                 @Override
                 public void OnCompleteStorage(@NonNull ArrayList<Uri> docs, int queryID, int flags) {
                     // Author of this code segment is James
@@ -439,16 +459,19 @@ public class ProfileFragment extends Fragment implements AdapterView.OnItemSelec
         } else {
             // There is no image, so generate the avatar
             try {
-                generateAvatar(signedInAccount.getName());
+                generateAvatar(account.getName());
             } catch (URISyntaxException e) {
                 throw new RuntimeException(e);
             }
         }
 
         // Check if the account has a facility
-        if (signedInAccount.getFacilityProfile().facilityExists()) {
+        if (account.getFacilityProfile().facilityExists()) {
             // Change and populate the views to display the facility
             populateFacilityViews(account);
+        }
+        else{
+            facilityLayout.setVisibility(View.INVISIBLE);
         }
     }
 

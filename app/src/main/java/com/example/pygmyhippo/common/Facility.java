@@ -29,9 +29,24 @@ public class Facility implements Parcelable {
         this.location = "";
     }
     public Facility(String facilityPicture, String name, String location) {
-        this.facilityPicture = facilityPicture;
-        this.name = name;
-        this.location = location;
+        if (facilityPicture != null){
+            this.facilityPicture = facilityPicture;
+        }
+        else{
+            this.facilityPicture = "";
+        }
+        if (name != null){
+            this.name = name;
+        }
+        else{
+            this.name = "";
+        }
+        if (location != null){
+            this.location = location;
+        }
+        else{
+            this.location = "";
+        }
     }
 
     protected Facility(Parcel in) {
@@ -77,7 +92,12 @@ public class Facility implements Parcelable {
      * @param location The new location of the facility
      */
     public void setLocation(String location) {
-        this.location = location;
+        if (location != null){
+            this.location = location;
+        }
+        else{
+            this.location = "";
+        }
     }
 
     /**
@@ -93,7 +113,12 @@ public class Facility implements Parcelable {
      * @param name The new name
      */
     public void setName(String name) {
-        this.name = name;
+        if (name != null){
+            this.name = name;
+        }
+        else {
+            this.name = "";
+        }
     }
 
     /**
@@ -109,7 +134,12 @@ public class Facility implements Parcelable {
      * @param facilityPicture The new picture
      */
     public void setFacilityPicture(String facilityPicture) {
-        this.facilityPicture = facilityPicture;
+        if (facilityPicture != null){
+            this.facilityPicture = facilityPicture;
+        }
+        else{
+            this.facilityPicture = "";
+        }
     }
 
     /**
