@@ -70,7 +70,6 @@ public class ViewMyEventFragment extends Fragment implements DBOnCompleteListene
     // INVITED WAITLIST
     private Button acceptWaitlistButton, declineWaitlistButton;
 
-    // TODO: need to do something with getEvent (ie in user, by eventID passed...)
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -252,12 +251,14 @@ public class ViewMyEventFragment extends Fragment implements DBOnCompleteListene
             declineWaitlistButton.setVisibility(View.GONE);
         });
 
+        // TODO: error here
+
         declineWaitlistButton.setOnClickListener(view -> {
             event.getEntrants()
                     .stream()
                     .filter(e -> (e.getAccountID().equals(entrant.getAccountID())))
                     .findFirst()
-                    .ifPresent(e -> e.setEntrantStatus(Entrant.EntrantStatus.cancelled));
+                    .ifPresent(e -> e.setEntrantStatus(Entrant.EntrantStatus.rejected)); // TODO; set to rejected?
             dbHandler.updateEvent(event, this);
             userWaitlistStatus.setText("DECLINED");
             userStatusDescription.setText("You have declined to join the event :(");
