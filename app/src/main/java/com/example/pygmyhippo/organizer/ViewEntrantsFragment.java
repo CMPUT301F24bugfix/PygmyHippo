@@ -8,7 +8,7 @@ Deals with user stories 02.06.01, 02.06.02, 02.06.03, and 02.02.01
 Author: Kori
 
 Issues:
-      No Image handling
+      None
  */
 
 import android.os.Bundle;
@@ -42,8 +42,6 @@ import java.util.ArrayList;
 /**
  * This fragment allows the Organizer to view the entrants who signed up for their event
  * @author Kori
- * TODO:
- *  - Add image handling from database
  */
 public class ViewEntrantsFragment extends Fragment implements DBOnCompleteListener<Event> {
     private ArrayList<Entrant> entrantListData = new ArrayList<Entrant>();
@@ -51,7 +49,7 @@ public class ViewEntrantsFragment extends Fragment implements DBOnCompleteListen
     private ListView entrantListView;
     private Spinner statusSpinner;
     private ImageButton backButton;
-    private Event event = new Event();
+    private Event event;
     private EventDB dbHandler;
 
     private NavController navController;
@@ -145,14 +143,21 @@ public class ViewEntrantsFragment extends Fragment implements DBOnCompleteListen
                 navController.navigate(R.id.single_entrant_fragment, navArgs);
             }
         });
+    }
 
+    /**
+     * This method will set up the status spinner when it is called (when the event was retrieved from the database)
+     * @author Kori
+     */
+    public void setUpStatusSpinner() {
         // Set up on click listeners for the spinner to filter the list
         statusSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
                 if (position == 0) {
+
                     // Waitlist was selected
-                    ArrayList<Entrant> filterList = setEntrantWaitList(event.getEntrants());
+                    ArrayList<Entrant> filterList = setEntrantWaitList(event.getEntrants(), event.getEventStatus().value);
 
                     // Set the new data and notify the adapter
                     entrantListAdapter.clear();
@@ -203,12 +208,13 @@ public class ViewEntrantsFragment extends Fragment implements DBOnCompleteListen
         switch (queryID) {
             case 1: // getEvent()
                 if (flags == DBOnCompleteFlags.SINGLE_DOCUMENT.value) {
-                    // Get the event for this list of entrants and initialize the list
+                    // Get the event for this list of entrants and initialize the list and spinner
                     event = docs.get(0);
                     entrantListData = event.getEntrants();
+                    setUpStatusSpinner();
 
                     // Initially set the filter to waitlist
-                    ArrayList<Entrant> filterList = setEntrantWaitList(entrantListData);
+                    ArrayList<Entrant> filterList = setEntrantWaitList(entrantListData, event.getEventStatus().value);
 
                     // Set the new data and notify the adapter
                     entrantListAdapter.clear();
@@ -234,26 +240,39 @@ public class ViewEntrantsFragment extends Fragment implements DBOnCompleteListen
     }
 
     /**
-     * This method takes the entrant list and returns the data list to contain only those with waitlist status
+     * This method takes the entrant list and returns the data list to contain only those with waitlist status.
+     * If the event is closed, then the entrants with "lost" status will fill this
      * @author Kori
      * @param allEntrants
      *          The complete unfiltered list of entrants
      * @return filterList
      */
-    public ArrayList<Entrant> setEntrantWaitList(ArrayList<Entrant> allEntrants) {
+    public ArrayList<Entrant> setEntrantWaitList(ArrayList<Entrant> allEntrants, String eventStatus) {
         Integer index = 0;
 
         // Make a new list that will hold our results
         ArrayList<Entrant> filterList = new ArrayList<>();
 
-        while (index < allEntrants.size()) {
-            // Check if the current entrant status is waitlisted
-            if (allEntrants.get(index).getEntrantStatus().value.equals("waitlisted")) {
-                // Add them to the list to display
-                filterList.add(allEntrants.get(index));
+        if (eventStatus.equals("ongoing")) {
+            // Event is still open. So get waitlisted entrants
+            while (index < allEntrants.size()) {
+                // Check if the current entrant status is waitlisted
+                if (allEntrants.get(index).getEntrantStatus().value.equals("waitlisted")) {
+                    // Add them to the list to display
+                    filterList.add(allEntrants.get(index));
+                }
+                index++;
             }
-
-            index++;
+        } else {
+            // Event is closed, so get the lost entrants
+            while (index < allEntrants.size()) {
+                // Check if the current entrant status is waitlisted
+                if (allEntrants.get(index).getEntrantStatus().value.equals("lost")) {
+                    // Add them to the list to display
+                    filterList.add(allEntrants.get(index));
+                }
+                index++;
+            }
         }
 
         // Return the filter list
