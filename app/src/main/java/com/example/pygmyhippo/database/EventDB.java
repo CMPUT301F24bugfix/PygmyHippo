@@ -257,7 +257,7 @@ public class EventDB extends DBHandler {
 
                             for (Entrant entrant : event.getEntrants()) {
                                 if (Objects.equals(entrant.getAccountID(), accountID) &&
-                                        entrant.getEntrantStatus() != entrant.getNotifiedStatus()) {
+                                        entrant.getNotifiedStatus() != null) {
                                     events.add(event);
                                     break;
                                 }
