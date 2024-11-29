@@ -36,13 +36,16 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 /**
- * Testing for AllEventsFragment.
+ * Testing for admin single event view fragment.
  *
  * Currently only testing if the fragment appears.
+ *
+ * Issues:
+ * - should be updated to Espresso Idle Resource instead of Thread.sleep()
  */
 @RunWith(AndroidJUnit4.class)
 @LargeTest
-public class AllEventsFragmentTest {
+public class ProfileViewFragmentTest {
     @Rule
     public ActivityScenarioRule<MainActivity> scenario = new ActivityScenarioRule<>(createIntent());
 
@@ -59,7 +62,7 @@ public class AllEventsFragmentTest {
         Account account = new Account();
         account.setAccountID("0");
         account.setName("Testing account");
-        account.setCurrentRole(Account.AccountRole.user);
+        account.setCurrentRole(Account.AccountRole.admin);
         intent.putExtra("signedInAccount", account);
 
         return intent;
@@ -75,14 +78,25 @@ public class AllEventsFragmentTest {
             account.setName("Testing account");
             account.setCurrentRole(Account.AccountRole.user);
             navArgs.putParcelable("signedInAccount", account);
+            navArgs.putBoolean("isAdmin", true);
+            navArgs.putString("eventID", "0"); // no event with this id exist therefor the default event is displayed
             navArgs.putBoolean("useFirebase", false);
             navArgs.putBoolean("useNavigation", false);
-            navcontroller.navigate(R.id.admin_navigation_all_events, navArgs);
+            navArgs.putString("adminViewAccountID", "0"); // this is a fake profile
+            navcontroller.navigate(R.id.admin_navigation_profile_page, navArgs);
         });
     }
 
     @Test
-    public void checkFragmentAppears(){
-        onView(withId(R.id.a_alllist_title_text)).check(matches(withText("All Events")));
+    public void checkFragmentAppears() throws InterruptedException {
+        Thread.sleep(20); // i know this is not best practice
+        onView(withId(R.id.E_profile_header)).check(matches(withText("My Profile")));
+    }
+
+    @Test
+    public void checkAdminButtonsAppear() throws InterruptedException{
+        Thread.sleep(20); // i know this is not best practice
+        onView(withId(R.id.a_deleteFacilityButton)).check(matches(withText("Delete Facility")));
+        onView(withId(R.id.a_deleteUserButton)).check(matches(withText("Delete User")));
     }
 }

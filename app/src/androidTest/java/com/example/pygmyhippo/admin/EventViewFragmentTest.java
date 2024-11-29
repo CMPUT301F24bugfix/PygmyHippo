@@ -36,13 +36,17 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 /**
- * Testing for AllEventsFragment.
+ * Testing for admin single event view fragment.
  *
  * Currently only testing if the fragment appears.
+ *
+ * Issues:
+ * - should be updated to Espresso Idle Resource instead of Thread.sleep()
+ * ^^ i cant figure this out
  */
 @RunWith(AndroidJUnit4.class)
 @LargeTest
-public class AllEventsFragmentTest {
+public class EventViewFragmentTest {
     @Rule
     public ActivityScenarioRule<MainActivity> scenario = new ActivityScenarioRule<>(createIntent());
 
@@ -59,7 +63,7 @@ public class AllEventsFragmentTest {
         Account account = new Account();
         account.setAccountID("0");
         account.setName("Testing account");
-        account.setCurrentRole(Account.AccountRole.user);
+        account.setCurrentRole(Account.AccountRole.admin);
         intent.putExtra("signedInAccount", account);
 
         return intent;
@@ -75,14 +79,25 @@ public class AllEventsFragmentTest {
             account.setName("Testing account");
             account.setCurrentRole(Account.AccountRole.user);
             navArgs.putParcelable("signedInAccount", account);
+            navArgs.putBoolean("isAdmin", true);
+            navArgs.putString("eventID", "0"); // no event with this id exist therefor the default event is displayed
             navArgs.putBoolean("useFirebase", false);
             navArgs.putBoolean("useNavigation", false);
-            navcontroller.navigate(R.id.admin_navigation_all_events, navArgs);
+            navcontroller.navigate(R.id.admin_navigation_event_page, navArgs);
+
         });
     }
 
     @Test
-    public void checkFragmentAppears(){
-        onView(withId(R.id.a_alllist_title_text)).check(matches(withText("All Events")));
+    public void checkFragmentAppears() throws InterruptedException {
+        Thread.sleep(20); // i know this is not best practice
+        onView(withId(R.id.u_eventNameView)).check(matches(withText("Hippo Party")));
+    }
+
+    @Test
+    public void checkAdminButtonsAppear() throws InterruptedException{
+        Thread.sleep(20); // i know this is not best practice
+        onView(withId(R.id.a_deleteQRCodeButton)).check(matches(withText("Delete Hash QR Data")));
+        onView(withId(R.id.a_deleteEventButton)).check(matches(withText("Delete Event")));
     }
 }

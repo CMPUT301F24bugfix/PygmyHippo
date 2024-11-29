@@ -66,7 +66,7 @@ public class PostEventFragment extends Fragment implements DBOnCompleteListener<
     private EditText eventNameEdit, eventDateTimeEdit, eventPriceEdit, eventLocationEdit, eventDescriptionEdit, eventLimitEdit, eventWinnersEdit;
     private CheckBox eventGeolocation;
     private ImageButton eventImageBtn;
-    private String imagePath = null;
+    private String imagePath = "";
     private EventDB handler;
     private ImageStorage ImageHandler;
 
@@ -170,7 +170,7 @@ public class PostEventFragment extends Fragment implements DBOnCompleteListener<
                 myEvent.setDate(eventDateTime);
                 myEvent.setDescription(eventDescription);
                 myEvent.setCost(eventPrice);
-                myEvent.setEventPoster(imagePath == null? "" : imagePath);
+                myEvent.setEventPoster(imagePath);
                 myEvent.setEventLimitCount(eventLimit.isEmpty() ? -1 : Integer.valueOf(eventLimit));
                 myEvent.setEventWinnersCount(Integer.valueOf(eventWinners));
                 myEvent.setEntrants(new ArrayList<>()); // no entrants of a newly created event
@@ -208,7 +208,7 @@ public class PostEventFragment extends Fragment implements DBOnCompleteListener<
                 }
                 else{
                     // sets image path to null if no image is selected
-                    imagePath = null;
+                    imagePath = "";
                 }
             });
 

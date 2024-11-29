@@ -66,7 +66,6 @@ public class Account implements Parcelable {
         this.enableGeolocation = false;
 
         this.roles = new ArrayList<>();
-        this.roles.add(AccountRole.user);
 
         this.facilityProfile = new Facility();
     }
@@ -464,6 +463,4 @@ public class Account implements Parcelable {
     public void setFacilityProfile(@Nullable Facility facilityProfile) {
         this.facilityProfile = facilityProfile;
     }
-
-
 }

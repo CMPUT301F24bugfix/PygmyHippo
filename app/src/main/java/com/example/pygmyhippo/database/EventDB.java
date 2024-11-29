@@ -17,9 +17,11 @@ import com.example.pygmyhippo.common.Event;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 /**
  * Post Event Database handler.
@@ -237,5 +239,78 @@ public class EventDB extends DBHandler {
                         listener.OnCompleteDB(new ArrayList<>(), 6, DBOnCompleteFlags.ERROR.value);
                     }
                 });
+    }
+
+    /**
+     * Add a snapshot listener on Events collection (used for NotificationCenter).
+     * @param accountID - AccountID to filter entrants by.
+     * @param listener - DB listener to be called.
+     */
+    public void addAccountNotificationsSnapshotListener(String accountID, DBOnCompleteListener<Event> listener) {
+        db.collection("Events")
+                .addSnapshotListener((snapshot, exception) -> {
+                    if (snapshot != null) {
+                        snapshot.getDocuments().forEach(doc -> {
+                            Log.d("DB", String.format("EventID %s in snapshot", doc.toObject(Event.class).getEventID()));
+                            ArrayList<Event> events = new ArrayList<>();
+                            Event event = doc.toObject(Event.class);
+
+                            for (Entrant entrant : event.getEntrants()) {
+                                if (Objects.equals(entrant.getAccountID(), accountID) &&
+                                        entrant.getNotifiedStatus() != null) {
+                                    events.add(event);
+                                    break;
+                                }
+                            }
+                            listener.OnCompleteDB(events, 100, DBOnCompleteFlags.SUCCESS.value);
+                        });
+                    }
+                });
+    }
+
+    /**
+     * This query delete the reference to an image of a profile picture
+     * Query ID
+     * @param EventID
+     * @param listener
+     */
+    public void deleteEventImageReference(String EventID, DBOnCompleteListener<Object> listener){
+        db.collection("Events")
+                .document(EventID)
+                .update("eventPoster", "")
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()){
+                        Log.d("DB", "Image deleted successfully. EventID:" + EventID );
+                        listener.OnCompleteDB(new ArrayList<>(), 7, DBOnCompleteFlags.SUCCESS.value);
+                    }
+                    else{
+                        Log.e("DB", "Image deleted unsuccessfully. EventID:" + EventID );
+                        listener.OnCompleteDB(new ArrayList<>(), 7, DBOnCompleteFlags.ERROR.value);
+                    }
+                });
+    }
+
+    /**
+     * This query delete the hashcode and valid hashcode for an event
+     * Query ID
+     * @param EventID
+     * @param listener
+     */
+    public void deleteQRHashData(String EventID, DBOnCompleteListener<Event> listener){
+        db.collection("Events")
+                .document(EventID)
+                .update("hashcode", FieldValue.delete(),
+                        "validHashcode", FieldValue.delete())
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()){
+                        Log.d("DB", "Hashcode successfully deleted. EventID:" + EventID );
+                        listener.OnCompleteDB(new ArrayList<>(), 8, DBOnCompleteFlags.SUCCESS.value);
+                    }
+                    else{
+                        Log.e("DB", "Hashcode unsuccessfully deleted. EventID:" + EventID );
+                        listener.OnCompleteDB(new ArrayList<>(), 8, DBOnCompleteFlags.ERROR.value);
+                    }
+                });
+
     }
 }

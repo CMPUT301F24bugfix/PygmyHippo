@@ -10,13 +10,13 @@
     android:layout_marginStart="14dp">
 
     <com.google.android.material.imageview.ShapeableImageView
-        android:id="@+id/o_entrant_image_view"
+        android:id="@+id/a_allList_image"
         android:layout_width="140dp"
         android:layout_height="140dp"
         android:layout_marginEnd="25dp"
         android:scaleType="centerCrop"
         app:shapeAppearanceOverlay="@style/RoundedSquare"
-        android:src="@drawable/moo_deng">
+        android:src="@drawable/default_poster">
     </com.google.android.material.imageview.ShapeableImageView>
 
     <LinearLayout
