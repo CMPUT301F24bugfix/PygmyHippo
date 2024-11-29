@@ -35,7 +35,8 @@ public class Entrant {
         cancelled("cancelled"),
         invited("invited"),
         accepted("accepted"),
-        rejected("rejected");
+        rejected("rejected"),
+        lost("lost");
 
         public final String value;
 
