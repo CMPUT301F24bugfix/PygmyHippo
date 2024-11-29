@@ -18,6 +18,10 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
+    testOptions {
+        animationsDisabled = true
+    }
+
     buildTypes {
         release {
             isMinifyEnabled = false
