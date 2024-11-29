@@ -151,6 +151,7 @@ public class ViewEntrantsFragment extends Fragment implements DBOnCompleteListen
      */
     public void setUpStatusSpinner() {
         // Set up on click listeners for the spinner to filter the list
+        statusSpinner.setSelection(0);
         statusSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {

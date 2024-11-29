@@ -33,7 +33,6 @@ public class ViewEntrantsFragmentTest {
                 new ArrayList<>(),
                 "The Swamp",
                 "2024-10-31",
-                // TODO: there is a bit of an issue with aligning the time when it is shorter on the xml
                 "4:00 PM MST - 4:00 AM MST",
                 "Love hippos and a party? Love a party! Join a party! We have lots of really cool hippos I'm sure you'd love to meet! There will be food, games, and all sorts of activities you could imagine! It's almost worth the price to see Moo Deng and his buddies!",
                 "$150.00",
@@ -160,7 +159,8 @@ public class ViewEntrantsFragmentTest {
 
     @Test
     public void MixedStatusesTest() {
-        // Fill the event with just waitlisted for now
+        // Simulate mixed list once event is closed
+        testEvent.setEventStatus(Event.EventStatus.cancelled);
         int id = 0;
         for (id = 0 ; id < 5 ; id++) {
             String accountID = "account" + id;
@@ -180,6 +180,13 @@ public class ViewEntrantsFragmentTest {
         for ( ; id < 26 ; id++) {
             String accountID = "account" + id;
             Entrant newEntrant = new Entrant(accountID, Entrant.EntrantStatus.accepted);
+            testEvent.addEntrant(newEntrant);
+        }
+
+        // Throw some rejected in there, they shouldn't show up in any of the filters
+        for ( ; id < 30 ; id++) {
+            String accountID = "account" + id;
+            Entrant newEntrant = new Entrant(accountID, Entrant.EntrantStatus.rejected);
             testEvent.addEntrant(newEntrant);
         }
 
@@ -215,5 +222,35 @@ public class ViewEntrantsFragmentTest {
         for (id = 0 ; id < 8 ; id++) {
             assertEquals("accepted", filterList.get(id).getEntrantStatus().value);
         }
+    }
+
+    @Test
+    public void testWaitlistOnClosedEvent() {
+        testEvent.setEventStatus(Event.EventStatus.cancelled);
+
+        // Fill the event with just lost for now
+        for (int id = 0 ; id < 150 ; id++) {
+            String accountID = "account" + id;
+            Entrant newEntrant = new Entrant(accountID, Entrant.EntrantStatus.lost);
+            testEvent.addEntrant(newEntrant);
+        }
+
+        // Test when only entrants should be in the waitlist filter (have lost status)
+        ArrayList<Entrant> filterList = new ArrayList<Entrant>();
+        filterList = viewEntrantsFragment.setEntrantWaitList(testEvent.getEntrants(), testEvent.getEventStatus().value);
+        assertEquals(150, filterList.size());
+        // Check that they are all actually lost
+        for (int id = 0 ; id < 150 ; id++) {
+            assertEquals("lost", filterList.get(id).getEntrantStatus().value);
+        }
+
+        filterList = viewEntrantsFragment.setEntrantInvited(testEvent.getEntrants());
+        assertEquals(0, filterList.size());
+
+        filterList = viewEntrantsFragment.setEntrantCancelled(testEvent.getEntrants());
+        assertEquals(0, filterList.size());
+
+        filterList = viewEntrantsFragment.setEntrantAccepted(testEvent.getEntrants());
+        assertEquals(0, filterList.size());
     }
 }
