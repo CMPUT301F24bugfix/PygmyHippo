@@ -463,6 +463,4 @@ public class Account implements Parcelable {
     public void setFacilityProfile(@Nullable Facility facilityProfile) {
         this.facilityProfile = facilityProfile;
     }
-
-
 }

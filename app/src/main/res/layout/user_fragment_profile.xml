@@ -49,10 +49,11 @@
         android:layout_width="533dp"
         android:layout_height="708dp"
         android:layout_marginTop="16dp"
+        android:paddingBottom="80dp"
+        android:clipToPadding="false"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/E_profile_header"
-        app:layout_constraintVertical_bias="1.0">
+        app:layout_constraintTop_toBottomOf="@+id/E_profile_header">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -241,11 +242,11 @@
                 android:id="@+id/E_profile_gps_dec"
                 android:layout_width="203dp"
                 android:layout_height="48dp"
+                android:layout_marginBottom="135dp"
                 android:checked="true"
                 android:fontFamily="@font/roboto_mono_medium"
                 android:text="Allow Geolocation"
                 android:textColor="@color/dark_purple"
-                android:layout_marginBottom="135dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.342"
@@ -259,8 +260,8 @@
                 android:layout_height="48dp"
                 android:layout_marginTop="8dp"
                 android:checked="true"
-                android:focusableInTouchMode="false"
                 android:focusable="false"
+                android:focusableInTouchMode="false"
                 android:fontFamily="@font/roboto_mono_medium"
                 android:text="Allow Notifications"
                 android:textColor="@color/dark_purple"
@@ -269,30 +270,112 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/E_profile_textPhone" />
 
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/facility_layout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/E_profile_gps_dec">
+
+                <TextView
+                    android:id="@+id/O_profile_facilityheader"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/roboto_mono_medium"
+                    android:text="Facility"
+                    android:textColor="@color/dark_purple"
+                    android:textSize="22sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <ImageView
+                    android:id="@+id/O_profile_facilityImg"
+                    android:layout_width="300dp"
+                    android:layout_height="220dp"
+                    android:layout_marginTop="8dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/O_profile_facilityheader"
+                    app:srcCompat="@drawable/default_poster"
+                    tools:srcCompat="@drawable/rec_centre" />
+
+                <TextView
+                    android:id="@+id/O_Profile_facilityNameLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:fontFamily="@font/roboto_mono_medium"
+                    android:inputType="textPostalAddress"
+                    android:text="Facility Name:"
+                    android:textColor="@color/dark_purple"
+                    android:textSize="20sp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/O_profile_facilityImg" />
+
+                <EditText
+                    android:id="@+id/O_Profile_facilityNameText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="48dp"
+                    android:ems="13"
+                    android:focusable="false"
+                    android:focusableInTouchMode="false"
+                    android:fontFamily="@font/roboto_mono_medium"
+                    android:hint="Facility name"
+                    android:textColor="@color/dark_purple"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.503"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/O_Profile_facilityNameLabel" />
+
+                <TextView
+                    android:id="@+id/O_Profile_facilityLocationLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:fontFamily="@font/roboto_mono_medium"
+                    android:text="Facility Location:"
+                    android:textColor="@color/dark_purple"
+                    android:textSize="20sp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/O_Profile_facilityNameText" />
+
+                <EditText
+                    android:id="@+id/O_Profile_facilityLocationText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="48dp"
+                    android:ems="13"
+                    android:focusable="false"
+                    android:focusableInTouchMode="false"
+                    android:fontFamily="@font/roboto_mono_medium"
+                    android:hint="Address"
+                    android:textColor="@color/dark_purple"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.503"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/O_Profile_facilityLocationLabel" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
             <Button
                 android:id="@+id/E_profile_create"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
+                android:layout_marginBottom="135dp"
                 android:backgroundTint="@color/dark_purple"
                 android:text="Update"
                 android:textColor="@color/light_purple"
                 android:visibility="gone"
-                android:layout_marginBottom="135dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/E_profile_gps_dec" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:layout_marginEnd="228dp"
-                android:text="⭐ Entrant"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/E_profile_profileImg" />
+                app:layout_constraintTop_toBottomOf="@+id/E_profile_gps_dec"
+                app:layout_marginBaseline="100dp" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
+
     </ScrollView>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -309,11 +392,24 @@
         android:visibility="gone">
 
         <Button
+            android:id="@+id/a_deleteFacilityButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="#747DBF"
+            android:text="Delete Facility"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintVertical_bias="0.15"
+            app:layout_constraintStart_toEndOf="@+id/a_deleteUserButton"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <Button
             android:id="@+id/a_deleteUserButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:backgroundTint="@color/red"
             android:text="Delete User"
+            app:layout_constraintEnd_toStartOf="@+id/a_deleteFacilityButton"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

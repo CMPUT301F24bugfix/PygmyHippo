@@ -22,10 +22,9 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
-import androidx.fragment.app.Fragment;
 
 import com.example.pygmyhippo.R;
 import com.example.pygmyhippo.common.Account;
@@ -189,7 +188,7 @@ public class ViewMyEventFragment extends Fragment implements DBOnCompleteListene
                 } else if (event.getEntrants().stream().anyMatch(e -> e.getAccountID().equals(entrant.getAccountID()) && e.getEntrantStatus() == Entrant.EntrantStatus.invited)) {
                     wonWaitlistSelection();
                 // this is the case where the user did not get picked and the event is no longer ongoing
-                } else if (event.getEntrants().stream().anyMatch(e -> e.getAccountID().equals(entrant.getAccountID()) && e.getEntrantStatus() == Entrant.EntrantStatus.waitlisted)) {
+                } else if (event.getEntrants().stream().anyMatch(e -> e.getAccountID().equals(entrant.getAccountID()) && e.getEntrantStatus() == Entrant.EntrantStatus.rejected)) {
                     lostWaitlistSelection();
                 }
 
