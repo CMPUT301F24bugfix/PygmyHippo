@@ -14,6 +14,9 @@ import com.example.pygmyhippo.common.Entrant;
 
 import java.util.ArrayList;
 
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.content.DialogInterface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -65,7 +68,7 @@ public class EventFragment extends Fragment implements DBOnCompleteListener<Even
             eventCostView, eventAboutDescriptionView;
     private ImageView eventPoster;
     private ImageButton editEvent;
-    private Button lotteryButton, viewQrButton;
+    private Button lotteryButton, viewQrButton, notificationButton;
     com.example.pygmyhippo.organizer.EventFragmentArgs Args;
 
     // populate single event page with hardcoded event information
@@ -131,6 +134,7 @@ public class EventFragment extends Fragment implements DBOnCompleteListener<Even
         eventAboutDescriptionView = view.findViewById(R.id.u_aboutEventDescriptionView);
         eventPoster = view.findViewById(R.id.u_eventImageView);
         lotteryButton = view.findViewById(R.id.close_event_button);
+        notificationButton = view.findViewById(R.id.send_notification_button);
         editEvent = view.findViewById(R.id.u_edit_event_button);
         viewQrButton = view.findViewById(R.id.o_button_view_QR);
 
@@ -213,6 +217,55 @@ public class EventFragment extends Fragment implements DBOnCompleteListener<Even
                 }
             }
         });
+
+        // Add functionality to the notifications button
+        notificationButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+
+                Entrant.EntrantStatus[] entrantStatus = {Entrant.EntrantStatus.invited, Entrant.EntrantStatus.accepted, Entrant.EntrantStatus.waitlisted, Entrant.EntrantStatus.cancelled};
+                String[] option = {Entrant.EntrantStatus.invited.toString(), Entrant.EntrantStatus.accepted.toString(), Entrant.EntrantStatus.waitlisted.toString(), Entrant.EntrantStatus.cancelled.toString()};
+                boolean[] checkedItems = {false, false, false, false};
+
+                builder.setTitle("Who do you want to notify?")
+                        .setMultiChoiceItems(option, checkedItems, new DialogInterface.OnMultiChoiceClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int checked, boolean isChecked) {
+                                checkedItems[checked] = isChecked;
+                            }
+                        })
+                        .setPositiveButton("Notify", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int id) {
+                                // Handle selected items
+                                for (int i = 0; i < option.length; i++) {
+                                    if (checkedItems[i]) {
+                                        if (!event.getEntrants().isEmpty()) {
+                                            for (Entrant entrant : event.getEntrants()) {
+                                                if (entrantStatus[i] == entrant.getEntrantStatus()) {
+                                                    entrant.setNotifiedStatus(entrantStatus[i]);
+                                                    dbHandler.updateEvent(event, EventFragment.this::OnCompleteDB);
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                                dialog.dismiss();
+                            }
+                        })
+                        .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int id) {
+                                dialog.dismiss();
+                            }
+                        });
+
+                AlertDialog dialog = builder.create();
+                dialog.show();
+            }
+        });
+
         return view;
     }
 
