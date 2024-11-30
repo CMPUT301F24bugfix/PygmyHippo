@@ -15,6 +15,7 @@ package com.example.pygmyhippo.organizer;
 
 import static androidx.navigation.Navigation.findNavController;
 
+import android.app.DatePickerDialog;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -23,6 +24,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -49,6 +51,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 
 
 /**
@@ -117,6 +120,29 @@ public class EditEventFragment extends Fragment implements DBOnCompleteListener<
         eventLocationEdit = view.findViewById(R.id.o_editEvent_location_edit);
         eventDescriptionEdit = view.findViewById(R.id.o_editEvent_description_edit);
         editEventButton = view.findViewById(R.id.o_editEvent_update_button);
+
+        eventDateTimeEdit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                final Calendar c = Calendar.getInstance();
+
+                int year = c.get(Calendar.YEAR);
+                int month = c.get(Calendar.MONTH);
+                int day = c.get(Calendar.DAY_OF_MONTH);
+
+                DatePickerDialog datePicker = new DatePickerDialog(
+                        getActivity(),
+                        new DatePickerDialog.OnDateSetListener() {
+                            @Override
+                            public void onDateSet(DatePicker datePicker, int year, int month, int day) {
+                                eventDateTimeEdit.setText(day + "/" + (month + 1) + "/" + year);
+                            }
+                        },
+                        year, month, day);
+
+                datePicker.show();
+            }
+        });
 
         editEventButton.setOnClickListener(v -> {
             // Get the inputs from the textViews

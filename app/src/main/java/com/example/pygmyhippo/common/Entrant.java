@@ -31,12 +31,12 @@ public class Entrant {
     private Double latitude;
 
     public enum EntrantStatus {
-        waitlisted("waitlisted"),       // Initial starting in waitlist
-        cancelled("cancelled"),         // Was invited but organiser cancels them
-        invited("invited"),             // "won" the lottery, acceptance is pending
-        accepted("accepted"),           // Won and accepted invite, they are in the final enrolled list
-        rejected("rejected"),           // Won but rejected invite
-        lost("lost");                   // The losers of the draw, waiting for a redraw
+        waitlisted("waitlisted"),
+        cancelled("cancelled"),
+        invited("invited"),
+        accepted("accepted"),
+        rejected("rejected"),
+        lost("lost");
 
         public final String value;
 

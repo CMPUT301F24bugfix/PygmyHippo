@@ -163,7 +163,6 @@ public class NotificationCenter implements DBOnCompleteListener<Event> {
                     dbHandler.addAccountNotificationsSnapshotListener(accountID, this);
                 }  else {
                     Log.d("NotificationCenter", "Permission denied by user");
-
                 }
         }
     }
@@ -183,13 +182,13 @@ public class NotificationCenter implements DBOnCompleteListener<Event> {
                             }
                         }
 
-                        if (account_entrant != null) {
+                        if (account_entrant != null && account_entrant.getNotifiedStatus() != null) {
                             Log.d("NotificationCenter", "Posting notification");
-                            String status = account_entrant.getEntrantStatus().value;
-                            postNotification(String.format("%s", status), String.format("You have been %s for a Event (%s)!", account_entrant.getEntrantStatus(), event.getEventID()));
+                            Entrant.EntrantStatus status = account_entrant.getNotifiedStatus();
+                            postNotification(String.format("%s", status.value), String.format("You have been %s for a Event (%s)!", account_entrant.getEntrantStatus(), event.getEventID()));
 
                             Entrant newEntrant = account_entrant;
-                            newEntrant.setNotifiedStatus(newEntrant.getEntrantStatus());
+                            newEntrant.setNotifiedStatus(null);
                             ArrayList<Entrant> newEntrants = event.getEntrants();
                             for (int i = 0; i < event.getEntrants().size(); i++) {
                                 if (Objects.equals(newEntrants.get(i).getAccountID(), newEntrant.getAccountID())) {
