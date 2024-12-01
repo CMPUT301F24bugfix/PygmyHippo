@@ -16,6 +16,7 @@ package com.example.pygmyhippo.organizer;
 import static androidx.navigation.Navigation.findNavController;
 
 import android.app.DatePickerDialog;
+import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -72,6 +73,8 @@ public class PostEventFragment extends Fragment implements DBOnCompleteListener<
 
     private Account signedInAccount;
 
+    private MainActivity mainActivity;
+
 
     /**
      * Creates the view
@@ -100,6 +103,12 @@ public class PostEventFragment extends Fragment implements DBOnCompleteListener<
         }
 
         return root;
+    }
+
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        mainActivity = (MainActivity) context;
     }
 
     @Override
