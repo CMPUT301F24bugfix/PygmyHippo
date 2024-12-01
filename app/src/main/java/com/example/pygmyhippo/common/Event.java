@@ -333,7 +333,6 @@ public class Event {
      * @return the poster link
      */
     public String getEventPoster() {
-        // FIXME: how are we going to handle images since this would have to return a link to image on firestore
         return eventPoster;
     }
 
@@ -342,7 +341,6 @@ public class Event {
      * @param eventPoster The new poster link
      */
     public void setEventPoster(String eventPoster) {
-        // FIXME: Need to think about how were going to upload images sicne they will be stored in Firestore
         this.eventPoster = eventPoster;
     }
 
@@ -454,6 +452,20 @@ public class Event {
             }
         }
         return waitlistCount;
+    }
+
+    /**
+     * This method will return the number of entrants in the event that are lost
+     * @return The number of waitlisted entrants
+     */
+    public Integer getNumberLost() {
+        Integer lostCount = 0;
+        for (int index = 0; index < entrants.size(); index++) {
+            if (entrants.get(index).getEntrantStatus().value.equals("lost")) {
+                lostCount++;
+            }
+        }
+        return lostCount;
     }
 
     /**
