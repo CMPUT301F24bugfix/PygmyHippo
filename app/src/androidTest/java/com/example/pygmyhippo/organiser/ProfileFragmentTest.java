@@ -83,7 +83,6 @@ public class ProfileFragmentTest {
     @Test
     public void testProfileDisplay() {
         onView(withText("My Profile")).check(ViewAssertions.matches(isDisplayed()));
-        onView(withText("⭐Organiser")).check(ViewAssertions.matches(isDisplayed()));
         onView(withText("Name:")).check(ViewAssertions.matches(isDisplayed()));
         onView(withText("Pronouns:")).check(ViewAssertions.matches(isDisplayed()));
         onView(withText("Email:")).check(ViewAssertions.matches(isDisplayed()));

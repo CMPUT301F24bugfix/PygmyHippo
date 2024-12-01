@@ -6,19 +6,25 @@ Purpose is to: Allow the organiser to update their event
                 - Let the organiser see the entrants for that event
                 - Let the organiser draw the lottery for that event
 Contributors: Katharine, Kori
-Issues: Doesn't have updatable fields yet
-        - Need to separate database queries from code
+Issues: Time display doesn't actually work and date is pretty ugly
  */
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.target.CustomTarget;
+import com.bumptech.glide.request.transition.Transition;
 import com.example.pygmyhippo.common.Entrant;
+
 
 import java.util.ArrayList;
 
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.DialogInterface;
+import android.graphics.Bitmap;
+
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
+
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -31,6 +37,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.graphics.drawable.RoundedBitmapDrawableFactory;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
@@ -38,6 +45,7 @@ import androidx.navigation.Navigation;
 import com.example.pygmyhippo.R;
 import com.example.pygmyhippo.common.Account;
 import com.example.pygmyhippo.common.Event;
+import com.example.pygmyhippo.database.AccountDB;
 import com.example.pygmyhippo.database.DBOnCompleteFlags;
 import com.example.pygmyhippo.database.DBOnCompleteListener;
 import com.example.pygmyhippo.database.EventDB;
@@ -60,8 +68,12 @@ public class EventFragment extends Fragment implements DBOnCompleteListener<Even
     private NavController navController;
     private Event event;
     private ArrayList<Entrant> entrants;
+
+    // Handlers
+    private AccountDB accountHandler;
     private EventDB dbHandler;
     private ImageStorage imageHandler;
+
     private String eventID;
     private Account signedInAccount;
     private TextView eventNameView, eventDateView, eventTimeView, eventOrganizerView, eventLocationView,
@@ -87,7 +99,6 @@ public class EventFragment extends Fragment implements DBOnCompleteListener<Even
                 entrants,
                 "The Swamp",
                 "2024-10-31",
-                // TODO: there is a bit of an issue with aligning the time when it is shorter on the xml
                 "4:00 PM MST - 4:00 AM MST",
                 "Love hippos and a party? Love a party! Join a party! We have lots of really cool hippos I'm sure you'd love to meet! There will be food, games, and all sorts of activities you could imagine! It's almost worth the price to see Moo Deng and his buddies!",
                 "$150.00",
@@ -104,6 +115,7 @@ public class EventFragment extends Fragment implements DBOnCompleteListener<Even
         navController = Navigation.findNavController(view);
 
         // Initialize the handlers
+        accountHandler = new AccountDB();
         dbHandler = new EventDB();
         imageHandler = new ImageStorage();
 
@@ -276,7 +288,6 @@ public class EventFragment extends Fragment implements DBOnCompleteListener<Even
         eventNameView.setText(event.getEventTitle());
         eventDateView.setText(event.getDate());
         eventTimeView.setText(event.getTime());
-        eventOrganizerView.setText(event.getOrganiserID());
         eventLocationView.setText(event.getLocation());
         eventCostView.setText(event.getCost());
         eventAboutDescriptionView.setText(event.getDescription());
@@ -298,6 +309,46 @@ public class EventFragment extends Fragment implements DBOnCompleteListener<Even
             }
         }
 
+        // Get the organiser so we can display the facility profile stuff
+        accountHandler.getAccountByID(event.getOrganiserID(), new DBOnCompleteListener<Account>() {
+            @Override
+            public void OnCompleteDB(@NonNull ArrayList<Account> docs, int queryID, int flags) {
+                if (flags == DBOnCompleteFlags.SINGLE_DOCUMENT.value) {
+                    // Get the organiser account
+                    Account organiserAccount = docs.get(0);
+                    eventOrganizerView.setText(organiserAccount.getFacilityProfile().getName());
+
+                    // Convert the facility image url to a drawable
+                    // https://stackoverflow.com/questions/56754123/how-can-i-get-drawable-from-glide-actually-i-want-to-return-drawable-from-glide
+                    // Accessed on 2024-11-29
+                    String imagePath = organiserAccount.getFacilityProfile().getFacilityPicture();
+                    if (!imagePath.isEmpty()) {
+                        Glide.with(getContext())
+                                .asBitmap()
+                                .load(imagePath)
+                                .into(new CustomTarget<Bitmap>() {
+                                    @Override
+                                    public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
+                                        // https://stackoverflow.com/questions/2415619/how-to-convert-a-bitmap-to-drawable-in-android
+                                        // 2024-11-29
+                                        Drawable facilityDrawable = RoundedBitmapDrawableFactory.create(getResources(), resource);
+
+                                        // Set the bounds of the drawable
+                                        facilityDrawable.setBounds(0, 0, 100, 100);
+
+                                        // Set the drawable
+                                        eventOrganizerView.setCompoundDrawables(facilityDrawable, null, null, null);
+                                    }
+
+                                    @Override
+                                    public void onLoadCleared(@Nullable Drawable placeholder) {
+                                    }
+                                });
+                    }
+                }
+            }
+        });
+
         // Get the event poster from firebase
         imageHandler.getImageDownloadUrl(event.getEventPoster(), new StorageOnCompleteListener<Uri>() {
             @Override
@@ -306,7 +357,6 @@ public class EventFragment extends Fragment implements DBOnCompleteListener<Even
                 if (flags == DBOnCompleteFlags.SUCCESS.value) {
                     // Get the image and format it
                     Uri downloadUri = docs.get(0);
-                    int imageSideLength = eventPoster.getWidth() / 2;
                     Picasso.get()
                             .load(downloadUri)
                             .resize(eventPoster.getWidth(), eventPoster.getHeight())

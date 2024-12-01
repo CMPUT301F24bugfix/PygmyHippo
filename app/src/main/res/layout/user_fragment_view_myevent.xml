@@ -65,9 +65,10 @@
             <!--    text fields - organizer -->
             <TextView
                 android:id="@+id/u_myOrganizerNameView"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="24dp"
+                android:layout_marginEnd="24dp"
                 android:background="@drawable/mid_light_rounded_corners"
                 android:drawableStart="@drawable/organizer_profile_picture"
                 android:drawablePadding="20dp"
