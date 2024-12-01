@@ -12,19 +12,20 @@ Purposes:
         - Let the User join the event if they wish
         - If they navigate back to this event, allow them the option to leave the event
         - Let Admin delete the event
-Contributors: Katharine
+Contributors: Katharine, Kori
 Issues:
         - Needs testing
         - Needs to stop user from joining or leaving waitlist if the event is closed
+        - Time display doesn't work
  */
 
-import static androidx.core.content.ContextCompat.getSystemService;
 
 import android.Manifest;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.location.Criteria;
+import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.content.pm.PackageManager;
 import android.location.Location;
@@ -46,10 +47,14 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.app.ActivityCompat;
+import androidx.core.graphics.drawable.RoundedBitmapDrawableFactory;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.target.CustomTarget;
+import com.bumptech.glide.request.transition.Transition;
 import com.example.pygmyhippo.R;
 import com.example.pygmyhippo.common.Account;
 import com.example.pygmyhippo.common.Entrant;
@@ -102,7 +107,6 @@ public class EventFragment extends Fragment implements DBOnCompleteListener<Even
         Code is from https://developer.android.com/develop/sensors-and-location/location/permissions#:~:text=ACCESS_FINE_LOCATION%20must%20be%20requested%20with,to%20only%20approximate%20location%20information.
         Accessed on 2024-11-17
         It sets up the permission launcher to ask for location permissions, and then launches it
-        TODO: Remove check box for geolocation, permissions handle it
          */
     ActivityResultLauncher<String> locationPermissionRequest =
             registerForActivityResult(new ActivityResultContracts
@@ -283,6 +287,47 @@ public class EventFragment extends Fragment implements DBOnCompleteListener<Even
             deleteQRCodeButton.setClickable(false);
         }
 
+
+        // Get the organiser so we can display the facility profile stuff
+        profileDBHandler.getAccountByID(event.getOrganiserID(), new DBOnCompleteListener<Account>() {
+            @Override
+            public void OnCompleteDB(@NonNull ArrayList<Account> docs, int queryID, int flags) {
+                if (flags == DBOnCompleteFlags.SINGLE_DOCUMENT.value) {
+                    // Get the organiser account
+                    Account organiserAccount = docs.get(0);
+                    eventOrganizerView.setText(organiserAccount.getFacilityProfile().getName());
+
+                    // Convert the facility image url to a drawable
+                    // https://stackoverflow.com/questions/56754123/how-can-i-get-drawable-from-glide-actually-i-want-to-return-drawable-from-glide
+                    // Accessed on 2024-11-29
+                    String imagePath = organiserAccount.getFacilityProfile().getFacilityPicture();
+                    if (!imagePath.isEmpty()) {
+                        Glide.with(getContext())
+                                .asBitmap()
+                                .load(imagePath)
+                                .into(new CustomTarget<Bitmap>() {
+                                    @Override
+                                    public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
+                                        // https://stackoverflow.com/questions/2415619/how-to-convert-a-bitmap-to-drawable-in-android
+                                        // 2024-11-29
+                                        Drawable facilityDrawable = RoundedBitmapDrawableFactory.create(getResources(), resource);
+
+                                        // Set the bounds of the drawable
+                                        facilityDrawable.setBounds(0, 0, 100, 100);
+
+                                        // Set the drawable
+                                        eventOrganizerView.setCompoundDrawables(facilityDrawable, null, null, null);
+                                    }
+
+                                    @Override
+                                    public void onLoadCleared(@Nullable Drawable placeholder) {
+                                    }
+                                });
+                    }
+                }
+            }
+        });
+
         // Get the poster for the event
         imageHandler.getImageDownloadUrl(event.getEventPoster(), new StorageOnCompleteListener<Uri>() {
             @Override
@@ -291,10 +336,9 @@ public class EventFragment extends Fragment implements DBOnCompleteListener<Even
                 if (flags == DBOnCompleteFlags.SUCCESS.value) {
                     // Get the image and format it
                     Uri downloadUri = docs.get(0);
-                    int imageSideLength = eventImageView.getWidth() / 2;
                     Picasso.get()
                             .load(downloadUri)
-                            .resize(imageSideLength, imageSideLength)
+                            .resize(eventImageView.getWidth(), eventImageView.getHeight())
                             .centerCrop()
                             .into(eventImageView);
                 } else {

@@ -5,6 +5,7 @@ import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.action.ViewActions.scrollTo;
 import static androidx.test.espresso.action.ViewActions.typeText;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
+import static androidx.test.espresso.matcher.RootMatchers.isDialog;
 import static androidx.test.espresso.matcher.ViewMatchers.isChecked;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withClassName;
@@ -21,6 +22,7 @@ import androidx.navigation.Navigation;
 import androidx.test.core.app.ActivityScenario;
 import androidx.test.espresso.IdlingRegistry;
 import androidx.test.espresso.action.TypeTextAction;
+import androidx.test.espresso.action.ViewActions;
 import androidx.test.espresso.contrib.PickerActions;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
@@ -39,11 +41,6 @@ import org.junit.runner.RunWith;
 
 /**
  * Testing class for my postEventFragment
- * TODO:
- *  - More verbose testing
- *  - Test if added to database
- *  - could read the toast (although using the toast should only be a temporary solution)
- *  - once database is connected check that qr code links
  * @author Griffin, Ethan
  * @version 1.2
  */
@@ -121,6 +118,7 @@ public class PostEventFragmentTesting {
 
         String testName = "Test Event";
         onView(withId(R.id.o_postEvent_name_edit)).perform(typeText(testName));
+        onView(withId(R.id.o_postEvent_name_edit)).perform(ViewActions.closeSoftKeyboard());
 
         int year = 2025;
         int month = 1;
@@ -134,21 +132,26 @@ public class PostEventFragmentTesting {
 
         String testPrice = "FREE";
         onView(withId(R.id.o_postEvent_price_edit)).perform(typeText(testPrice));
+        onView(withId(R.id.o_postEvent_price_edit)).perform(ViewActions.closeSoftKeyboard());
 
         String testLocation = "123 Park Street";
         onView(withId(R.id.o_postEvent_location_edit)).perform(typeText(testLocation));
+        onView(withId(R.id.o_postEvent_location_edit)).perform(ViewActions.closeSoftKeyboard());
 
         // Need to scroll so it is visible on the UI
         onView(withId(R.id.o_postEvent_bottom_scroll)).perform(scrollTo());
 
         String testDesc = "Test";
         onView(withId(R.id.o_postEvent_description_edit)).perform(typeText(testDesc));
+        onView(withId(R.id.o_postEvent_description_edit)).perform(ViewActions.closeSoftKeyboard());
 
         String testEntLim = "10";
         onView(withId(R.id.o_postEvent_limit_edit)).perform(typeText(testEntLim));
+        onView(withId(R.id.o_postEvent_limit_edit)).perform(ViewActions.closeSoftKeyboard());
 
         String testWin = "5";
         onView(withId(R.id.o_postEvent_winners_edit)).perform(typeText(testWin));
+        onView(withId(R.id.o_postEvent_winners_edit)).perform(ViewActions.closeSoftKeyboard());
 
         onView(withId(R.id.o_postEvent_geolocation_check)).perform(click());
 
