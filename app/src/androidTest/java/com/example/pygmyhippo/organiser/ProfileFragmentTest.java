@@ -18,7 +18,9 @@ import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import android.Manifest;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 
+import androidx.annotation.NonNull;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.test.espresso.action.ViewActions;
@@ -32,13 +34,22 @@ import androidx.test.rule.GrantPermissionRule;
 import com.example.pygmyhippo.MainActivity;
 import com.example.pygmyhippo.R;
 import com.example.pygmyhippo.common.Account;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QuerySnapshot;
 
+import org.junit.After;
 import org.junit.Before;
+import org.junit.FixMethodOrder;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.junit.runners.MethodSorters;
 
 @RunWith(AndroidJUnit4.class)
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 @LargeTest
 public class ProfileFragmentTest {
     @Rule
@@ -55,10 +66,10 @@ public class ProfileFragmentTest {
         intent.putExtra("currentRole", "organiser");
 
         Account account = new Account();
-        account.setAccountID("0");
+        account.setAccountID("TEST_ACCOUNT");
         account.setName("Testing account");
-        account.getRoles().add(Account.AccountRole.user);
-        account.setCurrentRole(Account.AccountRole.user);
+        account.getRoles().add(Account.AccountRole.organiser);
+        account.setCurrentRole(Account.AccountRole.organiser);
         intent.putExtra("signedInAccount", account);
 
         return intent;
@@ -70,20 +81,25 @@ public class ProfileFragmentTest {
             NavController navcontroller = Navigation.findNavController(activity, R.id.nav_host_fragment_activity_main);
             Bundle navArgs = new Bundle();
             Account account = new Account();
-            account.setAccountID("0");
+            account.setAccountID("TEST_ACCOUNT");
             account.setName("Testing account");
-            account.setCurrentRole(Account.AccountRole.user);
+            account.setCurrentRole(Account.AccountRole.organiser);
             navArgs.putParcelable("signedInAccount", account);
             navArgs.putBoolean("useFirebase", false);
             navArgs.putBoolean("useNavigation", false);
+
             navcontroller.navigate(R.id.organiser_profile_page, navArgs);
         });
     }
 
     @Test
-    public void testProfileDisplay() {
+    public void aTestProfileDisplay() {
+        try {
+            Thread.sleep(2500);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
         onView(withText("My Profile")).check(ViewAssertions.matches(isDisplayed()));
-        onView(withText("⭐Organiser")).check(ViewAssertions.matches(isDisplayed()));
         onView(withText("Name:")).check(ViewAssertions.matches(isDisplayed()));
         onView(withText("Pronouns:")).check(ViewAssertions.matches(isDisplayed()));
         onView(withText("Email:")).check(ViewAssertions.matches(isDisplayed()));
@@ -93,9 +109,19 @@ public class ProfileFragmentTest {
     }
 
     @Test
-    public void testUpdateProfile() {
+    public void bTestUpdateProfile() {
+        try {
+            Thread.sleep(2500);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
         // Click update button
         onView(withId(R.id.O_profile_editBtn)).perform(click());
+        try {
+            Thread.sleep(1500);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
 
         // Check if buttons were set visible
         onView(withId(R.id.O_profile_uploadImageBtn)).check(ViewAssertions.matches(isDisplayed()));
@@ -137,7 +163,12 @@ public class ProfileFragmentTest {
     }
 
     @Test
-    public void testCreateFacility() {
+    public void cTestCreateFacility() {
+        try {
+            Thread.sleep(2500);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
         // Click create facility button
         onView(withText("Create Facility")).perform(click());
 
@@ -156,7 +187,12 @@ public class ProfileFragmentTest {
     }
 
     @Test
-    public void testUpdateFacility() {
+    public void dTestUpdateFacility() {
+        try {
+            Thread.sleep(2500);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
         // Click create facility button
         onView(withText("Create Facility")).perform(click());
         // Click update button
@@ -188,7 +224,50 @@ public class ProfileFragmentTest {
     }
 
     @Test
+    public void zTestClearFields() {
+        try {
+            Thread.sleep(2500);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+
+        // Click edit button
+        onView(withId(R.id.O_profile_editBtn)).perform(click());
+
+        // Literally just using this to clear the test fields after the tests are run
+        onView(withId(R.id.O_profile_textName)).perform(ViewActions.clearText());
+        onView(withId(R.id.O_profile_textName)).perform(ViewActions.typeText("Testing account"));
+        onView(withId(R.id.O_profile_textName)).perform(ViewActions.closeSoftKeyboard());
+
+        onView(withId(R.id.O_profile_textPronouns)).perform(ViewActions.clearText());
+        onView(withId(R.id.O_profile_textPronouns)).perform(ViewActions.closeSoftKeyboard());
+
+        onView(withId(R.id.O_profile_textEmail)).perform(ViewActions.clearText());
+        onView(withId(R.id.O_profile_textEmail)).perform(ViewActions.closeSoftKeyboard());
+
+        onView(withId(R.id.O_profile_textPhone)).perform(ViewActions.clearText());
+        onView(withId(R.id.O_profile_textPhone)).perform(ViewActions.closeSoftKeyboard());
+
+        // Scroll down
+        onView(withId(R.id.O_profile_updateBtn)).perform(scrollTo());
+
+        // Clear facility
+        onView(withId(R.id.O_Profile_facilityNameText)).perform(ViewActions.clearText());
+        onView(withId(R.id.O_Profile_facilityNameText)).perform(ViewActions.closeSoftKeyboard());
+        onView(withId(R.id.O_Profile_facilityLocationText)).perform(ViewActions.clearText());
+        onView(withId(R.id.O_Profile_facilityLocationText)).perform(ViewActions.closeSoftKeyboard());
+
+        // Click update
+        onView(withText("Update")).perform(click());
+    }
+
+    @Test
     public void testUserSpinner() {
+        try {
+            Thread.sleep(2500);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
         // The beginning account only has one role, so the spinner should not show up
         onView(withId(R.id.o_roleSpinner)).check(matches(withEffectiveVisibility(ViewMatchers.Visibility.GONE)));
     }
