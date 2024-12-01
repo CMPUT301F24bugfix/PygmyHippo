@@ -174,7 +174,6 @@ public class ViewMyEventFragment extends Fragment implements DBOnCompleteListene
             userStatusDescription.setText("The organiser has revoked your invite");
         }
 
-
         // Get the organiser so we can display the facility profile stuff
         accountHandler.getAccountByID(event.getOrganiserID(), new DBOnCompleteListener<Account>() {
             @Override
