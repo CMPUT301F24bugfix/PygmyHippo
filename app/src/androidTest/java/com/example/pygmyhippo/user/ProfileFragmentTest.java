@@ -2,6 +2,7 @@ package com.example.pygmyhippo.user;
 
 /*
 UI tests for the user profile fragment
+Author: Kori
 Issues:
     - Test spinner in other profile fragment with more than one role
     - To test a matching account with the ID must be present in the database
