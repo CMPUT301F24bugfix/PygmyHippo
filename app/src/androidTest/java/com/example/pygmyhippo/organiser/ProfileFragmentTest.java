@@ -4,6 +4,7 @@ package com.example.pygmyhippo.organiser;
 UI tests for the organiser profile fragment
 Issues:
     - Test spinner in other profile fragment with more than one role
+    - To work a matching account with the specified ID must be in the database...
  */
 
 import static androidx.test.espresso.Espresso.onView;
