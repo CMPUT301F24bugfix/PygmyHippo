@@ -58,6 +58,18 @@ public class EntrantTest {
     }
 
     @Test
+    public void testSetEntrantStatusRejected() {
+        testEntrant.setEntrantStatus(Entrant.EntrantStatus.rejected);
+        assertEquals("rejected", testEntrant.getEntrantStatus().value);
+    }
+
+    @Test
+    public void testSetEntrantStatusLost() {
+        testEntrant.setEntrantStatus(Entrant.EntrantStatus.lost);
+        assertEquals("lost", testEntrant.getEntrantStatus().value);
+    }
+
+    @Test
     public void testLongitude() {
         assertEquals(null, testEntrant.getLongitude());
 

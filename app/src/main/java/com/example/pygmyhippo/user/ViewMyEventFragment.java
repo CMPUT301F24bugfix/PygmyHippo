@@ -145,11 +145,21 @@ public class ViewMyEventFragment extends Fragment implements DBOnCompleteListene
         eventAboutDescriptionView.setText(event.getDescription());
 
         if (signedInAccount != null && event.getEntrants() != null) {
+            // Get the corresponding entrant class to the account and event
             entrant = event.getEntrants()
                     .stream()
                     .filter(e -> e.getAccountID().equals(signedInAccount.getAccountID()))
                     .findFirst()
                     .orElse(null);
+        }
+
+        // If the entrant is already accepted then display that
+        if (entrant.getEntrantStatus().value.equals("accepted")) {
+            userWaitlistStatus.setText("ACCEPTED!");
+            userStatusDescription.setText("You are officially accepted into this event!");
+        } else if (entrant.getEntrantStatus().value.equals("cancelled")) {
+            userWaitlistStatus.setText("CANCELLED");
+            userStatusDescription.setText("The organiser has revoked your invite");
         }
 
         // Get the event poster from firebase
@@ -188,7 +198,7 @@ public class ViewMyEventFragment extends Fragment implements DBOnCompleteListene
                 } else if (event.getEntrants().stream().anyMatch(e -> e.getAccountID().equals(entrant.getAccountID()) && e.getEntrantStatus() == Entrant.EntrantStatus.invited)) {
                     wonWaitlistSelection();
                 // this is the case where the user did not get picked and the event is no longer ongoing
-                } else if (event.getEntrants().stream().anyMatch(e -> e.getAccountID().equals(entrant.getAccountID()) && e.getEntrantStatus() == Entrant.EntrantStatus.rejected)) {
+                } else if (event.getEntrants().stream().anyMatch(e -> e.getAccountID().equals(entrant.getAccountID()) && e.getEntrantStatus() == Entrant.EntrantStatus.lost)) {
                     lostWaitlistSelection();
                 }
 
@@ -215,6 +225,7 @@ public class ViewMyEventFragment extends Fragment implements DBOnCompleteListene
         leaveWaitlistButton.setVisibility(View.VISIBLE);
 
         leaveWaitlistButton.setOnClickListener(view -> {
+            // Remove them from the waitlist and update everything
             event.removeEntrant(entrant);
             dbHandler.updateEvent(event, this);
             leaveWaitlistButton.setVisibility(View.GONE);
@@ -239,6 +250,7 @@ public class ViewMyEventFragment extends Fragment implements DBOnCompleteListene
         declineWaitlistButton.setVisibility(View.VISIBLE);
 
         acceptWaitlistButton.setOnClickListener(view -> {
+            // Set the entrant status to accepted and update the database
             // https://hellokoding.com/query-an-arraylist-in-java/
             event.getEntrants()
                     .stream()
@@ -246,6 +258,7 @@ public class ViewMyEventFragment extends Fragment implements DBOnCompleteListene
                     .findFirst()
                     .ifPresent(e -> e.setEntrantStatus(Entrant.EntrantStatus.accepted));
             dbHandler.updateEvent(event, this);
+            // Update the views
             userWaitlistStatus.setText("ACCEPTED");
             userStatusDescription.setText("You are officially accepted into this event!");
             acceptWaitlistButton.setVisibility(View.GONE);
@@ -253,12 +266,14 @@ public class ViewMyEventFragment extends Fragment implements DBOnCompleteListene
         });
 
         declineWaitlistButton.setOnClickListener(view -> {
+            // Entrant rejected the invite
             event.getEntrants()
                     .stream()
                     .filter(e -> (e.getAccountID().equals(entrant.getAccountID())))
                     .findFirst()
-                    .ifPresent(e -> e.setEntrantStatus(Entrant.EntrantStatus.cancelled));
+                    .ifPresent(e -> e.setEntrantStatus(Entrant.EntrantStatus.rejected));
             dbHandler.updateEvent(event, this);
+            // Update the views
             userWaitlistStatus.setText("DECLINED");
             userStatusDescription.setText("You have declined to join the event :(");
             acceptWaitlistButton.setVisibility(View.GONE);
@@ -275,12 +290,14 @@ public class ViewMyEventFragment extends Fragment implements DBOnCompleteListene
         acceptWaitlistButton.setVisibility(View.VISIBLE);
         declineWaitlistButton.setVisibility(View.VISIBLE);
 
+        // Entrant chooses to have chance at being redrawn
         acceptWaitlistButton.setOnClickListener(view -> {
             userStatusDescription.setText("We will notify you if we have a spot for you!");
             acceptWaitlistButton.setVisibility(View.GONE);
             declineWaitlistButton.setVisibility(View.GONE);
         });
 
+        // Entrant decides not to wait for redraw
         declineWaitlistButton.setOnClickListener(view -> {
             event.removeEntrant(entrant);
             dbHandler.updateEvent(event, this);

@@ -189,11 +189,12 @@ public class EventFragment extends Fragment implements DBOnCompleteListener<Even
                     lotteryButton.setTextColor(0xFF3A5983);
                     lotteryButton.setTextSize(20);
 
-                    // Update the status of the event to closed
-                    event.setEventStatus(Event.EventStatus.cancelled);
-
                     // Draw the lottery winners and change their statuses
                     drawWinners(event);
+                    setLoserStatuses(event);
+
+                    // Update the status of the event to closed
+                    event.setEventStatus(Event.EventStatus.cancelled);
 
                     // After the draw, update the event in the database
                     dbHandler.updateEvent(event, EventFragment.this::OnCompleteDB);
@@ -211,6 +212,7 @@ public class EventFragment extends Fragment implements DBOnCompleteListener<Even
 
                     // Redraw the lottery to fill all the available spots
                     drawWinners(event);
+                    setLoserStatuses(event);
 
                     // After the redraw, update the event in the database
                     dbHandler.updateEvent(event, EventFragment.this::OnCompleteDB);
@@ -333,26 +335,60 @@ public class EventFragment extends Fragment implements DBOnCompleteListener<Even
         Random rand = new Random();
         int winnerNumber = event.getCurrentWinners();
 
-        // Loop for how many winners this event wants (using winner count to keep check on it)
-        while (winnerNumber < event.getEventWinnersCount()) {
-            // Only try to draw applicants if there are entrants in the waitlist
-            if (event.getNumberWaitlisted() > 0) {
-                // Draw a random index number between 0 and the size of the list
-                int drawIndex = rand.nextInt(event.getEntrants().size());
-
-                if (!event.getEntrants().get(drawIndex).getEntrantStatus().value.equals("waitlisted")) {
-                    // This entrant does not have the status for a draw/redraw, so skip them
-                    continue;
+        if (event.getEventStatus().value.equals("ongoing")) {
+            // For initial draw
+            while (winnerNumber < event.getEventWinnersCount()) {
+                // Only try to draw applicants if there are entrants in the waitlist
+                if (event.getNumberWaitlisted() > 0) {
+                    // Draw a random index number between 0 and the size of the list
+                    int drawIndex = rand.nextInt(event.getEntrants().size());
+                    // Redrawing so deciding factor is the "lost" entrants
+                    if (!event.getEntrants().get(drawIndex).getEntrantStatus().value.equals("waitlisted")) {
+                        // This entrant does not have the status for a draw/redraw, so skip them
+                        continue;
+                    }
+                    // If we get here, then the entrant hasn't already been invited
+                    event.getEntrants().get(drawIndex).setEntrantStatus(Entrant.EntrantStatus.invited);
+                    winnerNumber++;
+                } else {
+                    // There are no entrants in the waitlist, so no need to draw anymore
+                    break;
                 }
-
-                // If we get here, then the entrant hasn't already been invited
-                event.getEntrants().get(drawIndex).setEntrantStatus(Entrant.EntrantStatus.invited);
-                winnerNumber++;
-            } else {
-                // There are no entrants in the waitlist, so no need to draw anymore
-                break;
             }
+        } else {
+            // For redraw
+            while (winnerNumber < event.getEventWinnersCount()) {
+                // Only try to draw applicants if there are entrants in the waitlist
+                if (event.getNumberLost() > 0) {
+                    // Draw a random index number between 0 and the size of the list
+                    int drawIndex = rand.nextInt(event.getEntrants().size());
+                    // Redrawing so deciding factor is the "lost" entrants
+                    if (!event.getEntrants().get(drawIndex).getEntrantStatus().value.equals("lost")) {
+                        // This entrant does not have the status for a draw/redraw, so skip them
+                        continue;
+                    }
+                    // If we get here, then the entrant hasn't already been invited
+                    event.getEntrants().get(drawIndex).setEntrantStatus(Entrant.EntrantStatus.invited);
+                    winnerNumber++;
+                } else {
+                    // There are no entrants in the waitlist, so no need to draw anymore
+                    break;
+                }
+            }
+        }
+    }
 
+    /**
+     * This method will go through the waitlist of an event and change all the entrants with
+     * "waitlist" status to "lost." Done after the lottery draw
+     * @param event The event that had its lottery drawn (the entrants we want to update)
+     */
+    public void setLoserStatuses(Event event) {
+        for (Integer index = 0; index < event.getEntrants().size(); index++) {
+            if (event.getEntrants().get(index).getEntrantStatus().value.equals("waitlisted")) {
+                // The entrant has waitlist status, so convert that to "lost"
+                event.getEntrants().get(index).setEntrantStatus(Entrant.EntrantStatus.lost);
+            }
         }
     }
 
