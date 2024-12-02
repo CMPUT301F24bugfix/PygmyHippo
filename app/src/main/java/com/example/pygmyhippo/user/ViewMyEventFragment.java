@@ -84,8 +84,7 @@ public class ViewMyEventFragment extends Fragment implements DBOnCompleteListene
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         binding = UserFragmentViewMyeventBinding.inflate(inflater, container, false);
         View view = binding.getRoot();
 
@@ -182,7 +181,7 @@ public class ViewMyEventFragment extends Fragment implements DBOnCompleteListene
                 event = docs.get(0);
                 populateAllFields();
 
-                if (event.getEventStatus().value.equals("ongoing")) {
+                if (event.getEventStatus().equals(Event.EventStatus.ongoing)) {
                     pendingWaitlist();
                 } else if (event.getEntrants().stream().anyMatch(e -> e.getAccountID().equals(entrant.getAccountID()) && e.getEntrantStatus() == Entrant.EntrantStatus.invited)) {
                     wonWaitlistSelection();
@@ -251,14 +250,12 @@ public class ViewMyEventFragment extends Fragment implements DBOnCompleteListene
             declineWaitlistButton.setVisibility(View.GONE);
         });
 
-        // TODO: error here
-
         declineWaitlistButton.setOnClickListener(view -> {
             event.getEntrants()
                     .stream()
                     .filter(e -> (e.getAccountID().equals(entrant.getAccountID())))
                     .findFirst()
-                    .ifPresent(e -> e.setEntrantStatus(Entrant.EntrantStatus.rejected)); // TODO; set to rejected?
+                    .ifPresent(e -> e.setEntrantStatus(Entrant.EntrantStatus.rejected));
             dbHandler.updateEvent(event, this);
             userWaitlistStatus.setText("DECLINED");
             userStatusDescription.setText("You have declined to join the event :(");
