@@ -433,7 +433,7 @@ public class Event {
      * @return true if there are open spots, false otherwise
      */
     public Boolean hasAvailability() {
-        if (getCurrentWinners() < eventWinnersCount) {
+        if (getCurrentWinners() < eventWinnersCount && getNumberLost() > 0) {
             // Open spots available
             return true;
         }
