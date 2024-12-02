@@ -90,13 +90,14 @@ public class EventViewFragmentTest {
 
     @Test
     public void checkFragmentAppears() throws InterruptedException {
-        Thread.sleep(20); // i know this is not best practice
+        Thread.sleep(2000); // i know this is not best practice
+        // if this fails if could be the firebase lagging
         onView(withId(R.id.u_eventNameView)).check(matches(withText("Debug Event")));
     }
 
     @Test
     public void checkAdminButtonsAppear() throws InterruptedException{
-        Thread.sleep(20); // i know this is not best practice
+        Thread.sleep(2000); // i know this is not best practice
         onView(withId(R.id.a_deleteQRCodeButton)).check(matches(withText("Delete Hash QR Data")));
         onView(withId(R.id.a_deleteEventButton)).check(matches(withText("Delete Event")));
     }
