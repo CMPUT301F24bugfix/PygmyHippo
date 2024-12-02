@@ -80,7 +80,7 @@ public class EventViewFragmentTest {
             account.setCurrentRole(Account.AccountRole.user);
             navArgs.putParcelable("signedInAccount", account);
             navArgs.putBoolean("isAdmin", true);
-            navArgs.putString("eventID", "0"); // no event with this id exist therefor the default event is displayed
+            navArgs.putString("eventID", "TEST_EVENT"); // no event with this id exist therefor the default event is displayed
             navArgs.putBoolean("useFirebase", false);
             navArgs.putBoolean("useNavigation", false);
             navcontroller.navigate(R.id.admin_navigation_event_page, navArgs);
@@ -91,7 +91,7 @@ public class EventViewFragmentTest {
     @Test
     public void checkFragmentAppears() throws InterruptedException {
         Thread.sleep(20); // i know this is not best practice
-        onView(withId(R.id.u_eventNameView)).check(matches(withText("Hippo Party")));
+        onView(withId(R.id.u_eventNameView)).check(matches(withText("Debug Event")));
     }
 
     @Test
