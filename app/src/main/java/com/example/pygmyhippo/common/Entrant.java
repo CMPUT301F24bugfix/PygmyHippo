@@ -16,8 +16,6 @@ import androidx.annotation.Nullable;
  * will be composed inside of a Event with a singular Entrant linking an Account with their
  * current status relating to the Event. Statuses for entrants are conveyed used EntrantStatus
  * enum below.
- * TODO:
- *  - Use a builder for initialization
  * @author James Fu, Griffin, Katharine
  */
 public class Entrant {
@@ -35,7 +33,8 @@ public class Entrant {
         cancelled("cancelled"),
         invited("invited"),
         accepted("accepted"),
-        rejected("rejected");
+        rejected("rejected"),
+        lost("lost");
 
         public final String value;
 

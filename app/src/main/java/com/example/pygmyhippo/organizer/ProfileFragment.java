@@ -471,7 +471,7 @@ public class ProfileFragment extends Fragment implements AdapterView.OnItemSelec
             populateFacilityViews(account);
         }
         else{
-            facilityLayout.setVisibility(View.INVISIBLE);
+            facilityLayout.setVisibility(View.GONE);
         }
     }
 
