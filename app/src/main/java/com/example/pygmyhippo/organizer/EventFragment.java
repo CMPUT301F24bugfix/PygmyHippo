@@ -295,16 +295,14 @@ public class EventFragment extends Fragment implements DBOnCompleteListener<Even
         eventAboutDescriptionView.setText(event.getDescription());
 
         // If the event is closed, then change the style of the draw button (and there are no available spots)
-        if (!event.hasAvailability()) {
-            if (event.getEventStatus().value.equals("cancelled")) {
+        if (event.getEventStatus().value.equals("cancelled")) {
+            if (!event.hasAvailability() || event.getNumberLost() == 0) {
                 lotteryButton.setBackgroundColor(0xFFA4A8C3);
                 lotteryButton.setText("Lottery closed");
                 lotteryButton.setTextColor(0xFF3A5983);
                 lotteryButton.setClickable(false);
                 lotteryButton.setTextSize(20);
-            }
-        } else if (event.hasAvailability()) {
-            if (event.getEventStatus().value.equals("cancelled")) {
+            } else if (event.hasAvailability() && event.getNumberLost() > 0) {
                 // The lottery was drawn but there are available spots
                 // So layout the button for a redraw
                 lotteryButton.setText("Draw Replacements");

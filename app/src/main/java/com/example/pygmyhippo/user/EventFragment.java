@@ -354,7 +354,6 @@ public class EventFragment extends Fragment implements DBOnCompleteListener<Even
      *
      * Button is only visible when the signedInAccount is a user.
      */
-    // TODO: check to see if number of entrants have been exceeded (can limit number of people joining waitlist)
     private void registerUser() {
         // if the even already has the user, remove the user upon clicking
         // TODO: rescanning the qr code doesn't make options actually change
@@ -364,47 +363,54 @@ public class EventFragment extends Fragment implements DBOnCompleteListener<Even
             DBhandler.updateEvent(event, this);       // Add the changes to the database
             registerButton.setText("Register");
         } else {
-            // otherwise, check for enabled geolocation and add entrant accordingly
-            if (event.getGeolocation()) {
+            // Check to see if there's a limit and if the event is still open
+            if (event.getEventStatus().value.equals("ongoing")
+                    && (event.getEventLimitCount() == -1 || event.getEntrants().size() < event.getEventLimitCount())) {
 
-                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                builder.setTitle("WARNING!");
-                builder.setMessage("This event requires geolocation. Continue registering?");
-                builder.setCancelable(true);
-                builder.setPositiveButton("Yes", (DialogInterface.OnClickListener) (dialog, which) -> {
-                    // Get the user's location
-                    // Must check permission before getting location
-                    if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                        // Request for permission if there is none
-                        // Request will handle if the user granted permission or not
-                        locationPermissionRequest.launch(Manifest.permission.ACCESS_COARSE_LOCATION);
-                    } else {
-                        // Do a double check on geolocation status here because its possible user will update the checkbox
-                        // Without the permission actually getting changed. So reflect their desire not to share location
-                        if (signedInAccount.isEnableGeolocation()) {
-                            // Change the views of the buttons
-                            registerButton.setBackgroundColor(0xFF808080);
-                            registerButton.setText("✔");
+                // otherwise, check for enabled geolocation and add entrant accordingly
+                if (event.getGeolocation()) {
 
-                            // https://stackoverflow.com/questions/16898675/how-does-it-work-requestlocationupdates-locationrequest-listener
-                            // Accessed on 2024-11-19, used to help understand when the listener is called
-                            locationManager.requestLocationUpdates(locationManager.NETWORK_PROVIDER, 1000, 0, this);
+                    AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                    builder.setTitle("WARNING!");
+                    builder.setMessage("This event requires geolocation. Continue registering?");
+                    builder.setCancelable(true);
+                    builder.setPositiveButton("Yes", (DialogInterface.OnClickListener) (dialog, which) -> {
+                        // Get the user's location
+                        // Must check permission before getting location
+                        if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                            // Request for permission if there is none
+                            // Request will handle if the user granted permission or not
+                            locationPermissionRequest.launch(Manifest.permission.ACCESS_COARSE_LOCATION);
+                        } else {
+                            // Do a double check on geolocation status here because its possible user will update the checkbox
+                            // Without the permission actually getting changed. So reflect their desire not to share location
+                            if (signedInAccount.isEnableGeolocation()) {
+                                // Change the views of the buttons
+                                registerButton.setBackgroundColor(0xFF808080);
+                                registerButton.setText("✔");
+
+                                // https://stackoverflow.com/questions/16898675/how-does-it-work-requestlocationupdates-locationrequest-listener
+                                // Accessed on 2024-11-19, used to help understand when the listener is called
+                                locationManager.requestLocationUpdates(locationManager.NETWORK_PROVIDER, 1000, 0, this);
+                            }
                         }
-                    }
-                });
-                builder.setNegativeButton("No", (DialogInterface.OnClickListener) (dialog, which) -> {
-                    // Don't add the user to the waitlist
-                    dialog.cancel();
-                });
-                AlertDialog geolocationWarning = builder.create();
-                geolocationWarning.show();
+                    });
+                    builder.setNegativeButton("No", (DialogInterface.OnClickListener) (dialog, which) -> {
+                        // Don't add the user to the waitlist
+                        dialog.cancel();
+                    });
+                    AlertDialog geolocationWarning = builder.create();
+                    geolocationWarning.show();
 
+                } else {
+                    // If no geolocation, then the user will just get added
+                    registerButton.setBackgroundColor(0xFF808080);
+                    event.addEntrant(entrant);
+                    DBhandler.updateEvent(event, this);       // Update the database
+                    registerButton.setText("✔");
+                }
             } else {
-                // If no geolocation, then the user will just get added
-                registerButton.setBackgroundColor(0xFF808080);
-                event.addEntrant(entrant);
-                DBhandler.updateEvent(event, this);       // Update the database
-                registerButton.setText("✔");
+                Toast.makeText(getContext(), "This event is full or closed!", Toast.LENGTH_LONG).show();
             }
         }
     }

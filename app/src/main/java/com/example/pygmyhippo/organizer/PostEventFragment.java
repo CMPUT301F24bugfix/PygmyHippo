@@ -185,7 +185,7 @@ public class PostEventFragment extends Fragment implements DBOnCompleteListener<
                 myEvent.setEntrants(new ArrayList<>()); // no entrants of a newly created event
                 myEvent.setGeolocation(eventGeolocaion);
                 myEvent.setEventStatus(Event.EventStatus.ongoing); // default is ongoing
-                handler.addEvent(myEvent, this); // TODO: Get organiser ID and pass it to addEvent.??? (solved above)
+                handler.addEvent(myEvent, this);
             }
         });
 

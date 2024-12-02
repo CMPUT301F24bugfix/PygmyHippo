@@ -51,6 +51,7 @@ import org.junit.runners.MethodSorters;
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 @LargeTest
 public class NewUserTest {
+    // To run these tests delete your device ID from the database
     @Rule
     public ActivityScenarioRule<MainActivity> scenario = new ActivityScenarioRule<>(createIntent());
 
@@ -76,7 +77,7 @@ public class NewUserTest {
     }
 
     @Test
-    public void testDisplay() {
+    public void aTestDisplay() {
         onView(withId(R.id.new_name_txt))
                 .inRoot(isDialog())
                 .check(ViewAssertions.matches(isDisplayed()));
@@ -98,7 +99,7 @@ public class NewUserTest {
     }
 
     @Test
-    public void testNoFields() {
+    public void bTestNoFields() {
         onView(withText("Create"))
                 .inRoot(isDialog())
                 .perform(click());
@@ -125,7 +126,7 @@ public class NewUserTest {
     }
 
     @Test
-    public void testNameFields() {
+    public void cTestNameFields() {
         // Add name but no email, shouldn't go through
         // Update name
         onView(withId(R.id.new_name_txt)).inRoot(isDialog()).perform(ViewActions.typeText("Bobby Hill"));
@@ -158,7 +159,7 @@ public class NewUserTest {
     }
 
     @Test
-    public void testEmailFields() {
+    public void dTestEmailFields() {
         // Add email but no name, shouldn't go through
         // Update email
         onView(withId(R.id.new_email_txt)).inRoot(isDialog()).perform(ViewActions.typeText("bobby@yahoo.ca"));
@@ -191,7 +192,7 @@ public class NewUserTest {
     }
 
     @Test
-    public void testNoRoles() {
+    public void eTestNoRoles() {
         // Add email and name and phone, but no roles: It shouldn't go through
         // Update name
         onView(withId(R.id.new_name_txt)).inRoot(isDialog()).perform(ViewActions.typeText("Bobby Hill"));
@@ -235,7 +236,7 @@ public class NewUserTest {
     }
 
     @Test
-    public void ZTestCompleteCreation() throws InterruptedException {
+    public void zTestCompleteCreation() throws InterruptedException {
         // Add email and name and phone, and a role, it should go through
         // Update name
         onView(withId(R.id.new_name_txt)).inRoot(isDialog()).perform(ViewActions.typeText("This is hopefully a very specific test name"));
