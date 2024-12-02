@@ -76,7 +76,7 @@ public class ViewEntrantsTest {
             account.setName("Testing account");
             account.setCurrentRole(Account.AccountRole.user);
             navArgs.putParcelable("signedInAccount", account);
-            navArgs.putString("eventID", "nYpVxrA8Aw0JhoGEr1T5");
+            navArgs.putString("eventID", "TEST_EVENT");
             navcontroller.navigate(R.id.view_entrants_fragment, navArgs);
         });
     }
