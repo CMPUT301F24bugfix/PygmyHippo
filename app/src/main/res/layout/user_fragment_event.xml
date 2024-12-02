@@ -101,7 +101,8 @@
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/u_organizerNameView"
-                app:layout_constraintVertical_bias="1.0" />
+                app:layout_constraintVertical_bias="1.0"
+                android:visibility="gone"/>
 
             <TextView
                 android:id="@+id/u_eventLocationView"
@@ -118,7 +119,7 @@
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/u_organizerNameView"
-                app:layout_constraintVertical_bias="0.968" />
+                app:layout_constraintVertical_bias="0.25" />
 
             <TextView
                 android:id="@+id/u_eventCostView"
@@ -132,10 +133,10 @@
                 android:textSize="16sp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintHorizontal_bias="0.01"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/u_organizerNameView"
-                app:layout_constraintVertical_bias="0.221" />
+                app:layout_constraintVertical_bias="0.03" />
 
             <TextView
                 android:id="@+id/u_aboutEventTitleView"
@@ -149,7 +150,7 @@
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/u_eventCostView"
-                app:layout_constraintVertical_bias="0.1" />
+                app:layout_constraintVertical_bias="0.011" />
 
             <TextView
                 android:id="@+id/u_aboutEventDescriptionView"
@@ -164,9 +165,10 @@
                 android:text="@string/filler_long"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/u_aboutEventTitleView"
-                app:layout_constraintVertical_bias="0.05" />
+                app:layout_constraintVertical_bias="0.017" />
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>

@@ -166,12 +166,15 @@ public class ViewMyEventFragment extends Fragment implements DBOnCompleteListene
         }
 
         // If the entrant is already accepted then display that
-        if (entrant.getEntrantStatus().value.equals("accepted")) {
+        if (entrant.getEntrantStatus().equals(Entrant.EntrantStatus.accepted)) {
             userWaitlistStatus.setText("ACCEPTED!");
             userStatusDescription.setText("You are officially accepted into this event!");
-        } else if (entrant.getEntrantStatus().value.equals("cancelled")) {
+        } else if (entrant.getEntrantStatus().equals(Entrant.EntrantStatus.cancelled)) {
             userWaitlistStatus.setText("CANCELLED");
             userStatusDescription.setText("The organiser has revoked your invite");
+        }
+        else if (entrant.getEntrantStatus().equals(Entrant.EntrantStatus.lost)){
+            lostWaitlistSelection();
         }
 
         // Get the organiser so we can display the facility profile stuff
@@ -335,18 +338,9 @@ public class ViewMyEventFragment extends Fragment implements DBOnCompleteListene
     public void lostWaitlistSelection() {
         userWaitlistStatus.setText("LOST");
         userStatusDescription.setVisibility(View.VISIBLE);
-        userStatusDescription.setText("You have lost the waitlist lottery to attend this event. Do you stay on the waitlist?");
-        acceptWaitlistButton.setText("Yes");
+        userStatusDescription.setText("You have lost the lottery to attend this event. You will be notified if you win a lottery redraw. Do you want to stay on the waitlist?");
         declineWaitlistButton.setText("No");
-        acceptWaitlistButton.setVisibility(View.VISIBLE);
         declineWaitlistButton.setVisibility(View.VISIBLE);
-
-        // Entrant chooses to have chance at being redrawn
-        acceptWaitlistButton.setOnClickListener(view -> {
-            userStatusDescription.setText("We will notify you if we have a spot for you!");
-            acceptWaitlistButton.setVisibility(View.GONE);
-            declineWaitlistButton.setVisibility(View.GONE);
-        });
 
         // Entrant decides not to wait for redraw
         declineWaitlistButton.setOnClickListener(view -> {
