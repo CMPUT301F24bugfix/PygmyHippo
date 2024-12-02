@@ -70,6 +70,7 @@ public class ViewSingleEntrantFragment extends Fragment implements DBOnCompleteL
     private NavController navController;
 
     private boolean mapDimensionsGotten = false;     // A flag
+    private boolean canceledButtonPressed = false;
 
     private FrameLayout mapView;
     private FrameLayout mapMarker;
@@ -234,8 +235,12 @@ public class ViewSingleEntrantFragment extends Fragment implements DBOnCompleteL
         // TODO: Add settings for other statuses and provide more functionalities than just cancel
         if (status.equals("invited")) {
             // If the entrant is invited, then display the button to allow cancelling them
-            statusButton.setClickable(true);
-            statusButton.setVisibility(View.VISIBLE);
+            if (!canceledButtonPressed) {
+                // This is to prevent the layout listener from setting it off twice
+                statusButton.setClickable(true);
+                statusButton.setVisibility(View.VISIBLE);
+                canceledButtonPressed = true;
+            }
 
             // Set the listener so it'll change the status of the entrant to cancelled
             statusButton.setOnClickListener(new View.OnClickListener() {
