@@ -34,7 +34,6 @@ public class EventFragmentTest {
                 new ArrayList<>(),
                 "The Swamp",
                 "2024-10-31",
-                // TODO: there is a bit of an issue with aligning the time when it is shorter on the xml
                 "4:00 PM MST - 4:00 AM MST",
                 "Love hippos and a party? Love a party! Join a party! We have lots of really cool hippos I'm sure you'd love to meet! There will be food, games, and all sorts of activities you could imagine! It's almost worth the price to see Moo Deng and his buddies!",
                 "$150.00",
@@ -141,6 +140,37 @@ public class EventFragmentTest {
     }
 
     @Test
+    public void testSetAllLosers() {
+        eventFragment.setLoserStatuses(testEvent);
+        int loserCount = 0;
+        for (int id = 0 ; id < 1000 ; id++) {
+            if (testEvent.getEntrants().get(id).getEntrantStatus().value.equals("lost")) {
+                loserCount++;
+            }
+        }
+
+        assertEquals(1000, loserCount);
+    }
+
+    @Test
+    public void testSetLosersAfterDraw() {
+        eventFragment.drawWinners(testEvent);
+        eventFragment.setLoserStatuses(testEvent);
+        int loserCount = 0;
+        int invitedCount = 0;
+        for (int id = 0 ; id < 1000 ; id++) {
+            if (testEvent.getEntrants().get(id).getEntrantStatus().value.equals("lost")) {
+                loserCount++;
+            } else if (testEvent.getEntrants().get(id).getEntrantStatus().value.equals("invited")) {
+                invitedCount++;
+            }
+        }
+
+        assertEquals(980, loserCount);
+        assertEquals(20, invitedCount);
+    }
+
+    @Test
     public void testRedraw() {
         // Set some invited
         for (int id = 0 ; id < 5 ; id++) {
@@ -157,28 +187,45 @@ public class EventFragmentTest {
             testEvent.getEntrants().get(id).setEntrantStatus(Entrant.EntrantStatus.cancelled);
         }
 
+        // Set some as rejected
+        for (int id = 20 ; id < 28 ; id++) {
+            testEvent.getEntrants().get(id).setEntrantStatus(Entrant.EntrantStatus.rejected);
+        }
+        // set the waitlisted to lost and event status to cancelled
+        testEvent.setEventStatus(Event.EventStatus.cancelled);
+        eventFragment.setLoserStatuses(testEvent);
+
         // Do the redraw
         eventFragment.drawWinners(testEvent);
 
         int invitedCount = 0;
-        int waitlistCount = 0;
+        int lostCount = 0;
         int cancelledCount = 0;
         int acceptedCount = 0;
+        int waitlistedCount = 0;
+        int rejectedCount = 0;
         for (int id = 0 ; id < 1000 ; id++) {
             if (testEvent.getEntrants().get(id).getEntrantStatus().value.equals("invited")) {
                 invitedCount++;
-            } else if (testEvent.getEntrants().get(id).getEntrantStatus().value.equals("waitlisted")) {
-                waitlistCount++;
+            } else if (testEvent.getEntrants().get(id).getEntrantStatus().value.equals("lost")) {
+                lostCount++;
             } else if (testEvent.getEntrants().get(id).getEntrantStatus().value.equals("cancelled")) {
                 cancelledCount++;
             } else if (testEvent.getEntrants().get(id).getEntrantStatus().value.equals("accepted")) {
                 acceptedCount++;
+            } else if (testEvent.getEntrants().get(id).getEntrantStatus().value.equals("waitlisted")) {
+                waitlistedCount++;
+            } else if (testEvent.getEntrants().get(id).getEntrantStatus().value.equals("rejected")) {
+                rejectedCount++;
             }
         }
 
         assertEquals(15, invitedCount);
         assertEquals(5, acceptedCount);
         assertEquals(10, cancelledCount);
-        assertEquals(970 , waitlistCount);
+        assertEquals(962 , lostCount);
+        assertEquals(8 , rejectedCount);
+        assertEquals(0, waitlistedCount);
+        assertEquals(1000, testEvent.getEntrants().size());
     }
 }

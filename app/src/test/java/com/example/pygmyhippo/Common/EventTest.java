@@ -349,6 +349,24 @@ public class EventTest {
     }
 
     @Test
+    public void testGetNumberLost() {
+        assertEquals(0, (int) testEvent.getNumberLost());
+
+        testEvent.addEntrant(new Entrant("account5", Entrant.EntrantStatus.lost));
+        assertEquals(1, (int) testEvent.getNumberLost());
+
+        testEvent.removeEntrant(new Entrant("account5", Entrant.EntrantStatus.lost));
+        assertEquals(0, (int) testEvent.getNumberLost());
+
+        testEvent.removeEntrant(new Entrant("account1", Entrant.EntrantStatus.invited));
+        assertEquals(0, (int) testEvent.getNumberLost());
+        testEvent.removeEntrant(new Entrant("account2", Entrant.EntrantStatus.waitlisted));
+        assertEquals(0, (int) testEvent.getNumberLost());
+        testEvent.removeEntrant(new Entrant("account3", Entrant.EntrantStatus.cancelled));
+        assertEquals(0, (int) testEvent.getNumberLost());
+    }
+
+    @Test
     public void testGetEntrant() {
         Entrant gottenEntrant = testEvent.getEntrant("account1");
         assertEquals("account1", gottenEntrant.getAccountID());

@@ -82,4 +82,6 @@ dependencies {
     implementation("com.google.firebase:firebase-storage")
     debugImplementation("androidx.fragment:fragment-testing-manifest:1.8.5")
     implementation("com.google.firebase:firebase-storage:20.1.0")
+    // For converting URL to drawable
+    implementation("com.github.bumptech.glide:glide:4.15.1")
 }
