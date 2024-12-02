@@ -54,7 +54,7 @@ public class PostLotteryTest {
     private Event newEvent;
     private ArrayList<Entrant> entrants;
 
-    // Before running tests, update in EU2denNEmFMBe3pQ2A8L user_test_lost status to "rejected" and
+    // Before running tests, update in EU2denNEmFMBe3pQ2A8L user_test_lost status to "lost" and
     // in DYo8ytIPjVQc9wSIBxBY user_test_invited status to "invited"
 
     @Rule
@@ -176,8 +176,8 @@ public class PostLotteryTest {
             System.err.println(e);
         }
         // Test to see if event fragment is switched by seeing if accept button is displayed
-        onView(withId(R.id.u_acceptWaitlistButton)).check(matches(isDisplayed()));
-        onView(withId(R.id.u_acceptWaitlistButton)).perform(click());
+        onView(withId(R.id.u_declineWaitlistButton)).check(matches(isDisplayed()));
+        onView(withId(R.id.u_declineWaitlistButton)).perform(click());
 
         try {
             Thread.sleep(2000); // wait time to upload

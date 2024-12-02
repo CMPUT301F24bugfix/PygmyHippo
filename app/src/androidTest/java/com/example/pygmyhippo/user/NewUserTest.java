@@ -51,6 +51,7 @@ import org.junit.runners.MethodSorters;
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 @LargeTest
 public class NewUserTest {
+    // To run these tests delete your device ID from the database
     @Rule
     public ActivityScenarioRule<MainActivity> scenario = new ActivityScenarioRule<>(createIntent());
 
