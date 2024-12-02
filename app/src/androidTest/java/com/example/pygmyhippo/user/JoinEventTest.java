@@ -75,7 +75,7 @@ public class JoinEventTest {
             account.setName("Testing account");
             account.setCurrentRole(Account.AccountRole.user);
             navArgs.putParcelable("signedInAccount", account);
-            navArgs.putString("eventID", "nYpVxrA8Aw0JhoGEr1T5");
+            navArgs.putString("eventID", "TEST_EVENT");
             navcontroller.navigate(R.id.u_eventFragment, navArgs);
         });
     }
@@ -83,7 +83,7 @@ public class JoinEventTest {
     @Test
     public void aTestDisplay() {
         try {
-            Thread.sleep(2000);
+            Thread.sleep(4000);
         }
         catch (Exception e) {
             System.err.println(e);
